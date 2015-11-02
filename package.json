@@ -51,6 +51,7 @@
     "eslint-plugin-react": "^3.6.2",
     "express": "^4.13.3",
     "extract-text-webpack-plugin": "^0.8.2",
+    "node-sass": "^3.4.1",
     "nodemon": "^1.7.1",
     "opn": "^3.0.2",
     "postcss-loader": "^0.6.0",
