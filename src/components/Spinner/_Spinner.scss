@@ -1,0 +1,23 @@
+.spinner {
+	position: absolute;
+	text-align: center;
+	height: 100%;
+	width: 100%;
+	background-color: rgba(10, 10, 10, 0.5);
+	z-index: 1;
+
+	&:before {
+		content: "";
+		display: inline-block;
+		height: 100%;
+		vertical-align: middle;
+	}
+
+	&--hide {
+		display: none;
+	}
+	&__body {
+		display: inline-block;
+		vertical-align: middle;
+	}
+}
