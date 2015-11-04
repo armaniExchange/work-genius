@@ -1,0 +1,1 @@
+export const CONNECTION_STRING = 'mysql://root:workgenius@localhost:3306/workgenius';

@@ -32,6 +32,7 @@
     "history": "^1.12.5",
     "immutable": "^3.7.5",
     "material-design-lite": "^1.0.5",
+    "mysql": "^2.9.0",
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
     "react-redux": "^4.0.0",
@@ -39,6 +40,7 @@
     "redux": "^3.0.2",
     "redux-thunk": "^1.0.0",
     "request": "^2.65.0",
+    "sequelize": "^3.13.0",
     "superagent": "^1.4.0"
   },
   "devDependencies": {
