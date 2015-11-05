@@ -24,11 +24,11 @@ let TaskType = new GraphQLObjectType({
 			type: GraphQLString,
 			description: 'Current task status'
 		},
-		'devProgress': {
+		'dev_progress': {
 			type: GraphQLString,
 			description: 'Current developing progress'
 		},
-		'qaProgress': {
+		'qa_progress': {
 			type: GraphQLString,
 			description: 'Developer responsible for this task'
 		},
