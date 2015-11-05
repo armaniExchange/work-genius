@@ -105,8 +105,8 @@ function updateKeyName(task) {
 		'title': 'Title',
 		'pri': 'PRI',
 		'status': 'Status',
-		'devProgress': 'Dev (%)',
-		'qaProgress': 'QA (%)',
+		'dev_progress': 'Dev (%)',
+		'qa_progress': 'QA (%)',
 		'qa': 'QA',
 		'project': 'Project',
 		'eta': 'ETA'

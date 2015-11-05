@@ -1,1 +1,2 @@
-export const CONNECTION_STRING = 'mysql://root:workgenius@localhost:3306/workgenius';
+export const DB_HOST = '192.168.95.155';
+export const DB_PORT = 28015;

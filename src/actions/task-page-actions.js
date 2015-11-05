@@ -58,8 +58,8 @@ export function fetchTasks() {
 			        title,
 			        pri,
 			        status,
-			        devProgress,
-			        qaProgress,
+			        dev_progress,
+			        qa_progress,
 			        qa,
 			        project,
 			        eta
