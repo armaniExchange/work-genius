@@ -1,13 +1,18 @@
 // GraphQL types
 import {
 	GraphQLObjectType,
-	GraphQLString
+	GraphQLString,
+	GraphQLID
 } from 'graphql';
 
 let TaskType = new GraphQLObjectType({
 	name: 'Task',
 	description: 'A task object',
 	fields: () => ({
+		'task_id': {
+			type: GraphQLID,
+			description: 'Task ID'
+		},
 		'developer': {
 			type: GraphQLString,
 			description: 'Developer responsible for this task'

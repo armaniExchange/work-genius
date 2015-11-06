@@ -114,7 +114,8 @@ function updateKeyName(task) {
 	let result = {};
 
 	Object.keys(task).forEach((key) => {
-		result[keyTitleMap[key]] = task[key];
+		let title = keyTitleMap[key] ? keyTitleMap[key] : '';
+		result[title] = task[key];
 	});
 
 	return result;

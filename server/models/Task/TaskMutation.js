@@ -2,12 +2,14 @@
 import {
 	GraphQLNonNull,
 	GraphQLString,
-	GraphQLInt
+	GraphQLID
 } from 'graphql';
 // Models
 import TaskType from './TaskType.js';
-// Fake data (TODO: DELETE FAKE DATA WHEN REAL DATA ARE READY!)
-import { FAKE_TASK_DATA } from '../../fake-data.js';
+// RethinkDB
+import r from 'rethinkdb';
+// Constants
+import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 
 let TaskMutation = {
 	'editTaskEta': {
@@ -15,7 +17,7 @@ let TaskMutation = {
 		description: 'Edit task eta',
 		args: {
 			id: {
-				type: new GraphQLNonNull(GraphQLInt),
+				type: new GraphQLNonNull(GraphQLID),
 				description: 'Target task id'
 			},
 			eta: {
@@ -23,13 +25,45 @@ let TaskMutation = {
 				description: 'New eta to update'
 			}
 		},
-		resolve: (root, { id, eta }) => {
-			FAKE_TASK_DATA.forEach((task) => {
-				if (task._id === id) {
-					task.eta = eta;
+		resolve: async (root, { id, eta }) => {
+			let connection = null,
+				mutationResult = null,
+				queryResult = null,
+				mutationQuery = r.db('work_genius').table('tasks').get(id).update({
+					eta: eta
+				}),
+				query = r.db('work_genius').table('tasks')
+			        .eqJoin('developer_id', r.db('work_genius').table('users'))
+				    .map((data) => ({
+				    	'task_id'     : data('left')('id'),
+				    	'developer'   : data('right')('name'),
+						'title'       : data('left')('title'),
+						'pri'         : data('left')('pri'),
+						'status'      : data('left')('status'),
+						'dev_progress': data('left')('dev_progress'),
+						'qa_progress' : data('left')('qa_progress'),
+						'qa'          : data('left')('qa'),
+						'project'     : data('left')('project'),
+						'eta'         : data('left')('eta')
+				    }))
+				    .filter((task) => task('task_id').eq(id))
+				    .coerceTo('array');
+
+			try {
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				mutationResult = await mutationQuery.run(connection);
+				if (mutationResult.skipped) {
+					throw new Error('Task ID not Found!');
+				} else if (mutationResult.errors) {
+					throw new Error(mutationResult.first_error);
 				}
-			});
-			return FAKE_TASK_DATA.filter((task) => task._id === id)[0];
+				queryResult = await query.run(connection);
+				await connection.close();
+			} catch (err) {
+				return err;
+			}
+
+			return queryResult[0];
 		}
 	}
 };

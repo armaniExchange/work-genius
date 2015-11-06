@@ -62,7 +62,8 @@ export function fetchTasks() {
 			        qa_progress,
 			        qa,
 			        project,
-			        eta
+			        eta,
+			        task_id
 			    }
 			}`)
 			.end((err, res) => {

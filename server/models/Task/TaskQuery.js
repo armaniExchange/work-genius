@@ -19,6 +19,7 @@ let TaskQuery = {
 			    query = r.db('work_genius').table('tasks')
 			        .eqJoin('developer_id', r.db('work_genius').table('users'))
 				    .map((data) => ({
+				    	'task_id'     : data('left')('id'),
 				    	'developer'   : data('right')('name'),
 						'title'       : data('left')('title'),
 						'pri'         : data('left')('pri'),
