@@ -187,11 +187,7 @@ function resetTable(state, type) {
 	    )
 	    .set(
 	    	`${type}FilterConditions`,
-	    	Map({
-				'Developer': '',
-				'PRI': '',
-				'Project': ''
-			})
+	    	initialState.get(`${type}FilterConditions`)
 		);
 }
 
