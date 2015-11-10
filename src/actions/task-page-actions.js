@@ -4,6 +4,25 @@ import request from 'superagent';
 import * as actionTypes from '../constants/action-types';
 import { SERVER_API_URL } from '../constants/config';
 
+export function sortFeatureTableByCategory(category) {
+	return {
+		type: actionTypes.SORT_FEATURE_TABLE_BY_CATEGORY,
+		category
+	};
+};
+
+export function filterFeatureTable(filterConditions) {
+	return {
+		type: actionTypes.FILTER_FEATURE_TABLE,
+		filterConditions
+	};
+};
+
+export function resetFeatureTable() {
+	return {
+		type: actionTypes.RESET_FEATURE_TABLE
+	};
+};
 
 export function sortBugTableByCategory(category) {
 	return {
@@ -32,28 +51,35 @@ export function setLoadingState(state) {
 	};
 };
 
-export function fetchTasksSuccess(data) {
+export function fetchBugSuccess(data) {
 	return {
-		type: actionTypes.FETCH_TASKS_SUCCESS,
+		type: actionTypes.FETCH_BUG_SUCCESS,
 		data
 	};
 };
 
-export function fetchTasksFailure(err) {
+export function fetchFeatureSuccess(data) {
 	return {
-		type: actionTypes.FETCH_TASKS_FAILURE,
+		type: actionTypes.FETCH_FEATURE_SUCCESS,
+		data
+	};
+};
+
+export function fetchTaskFailure(err) {
+	return {
+		type: actionTypes.FETCH_TASK_FAILURE,
 		err
 	};
 };
 
-export function fetchTasks() {
+export function fetchBug() {
 	return (dispatch) => {
 		dispatch(setLoadingState(true));
 		return request
 			.post(SERVER_API_URL)
 			.set('Content-Type', 'application/graphql')
 			.send(`{
-			    tasks {
+			    tasks(taskType: "bug") {
 			        developer,
 			        title,
 			        pri,
@@ -68,10 +94,39 @@ export function fetchTasks() {
 			}`)
 			.end((err, res) => {
 				if (err) {
-                    dispatch(fetchTasksFailure(err));
+                    dispatch(fetchTaskFailure(err));
 	            } else {
 	            	let data = JSON.parse(res.text).data.tasks;
-	                dispatch(fetchTasksSuccess(data));
+	                dispatch(fetchBugSuccess(data));
+	            }
+			});
+	};
+};
+
+export function fetchFeature() {
+	return (dispatch) => {
+		dispatch(setLoadingState(true));
+		return request
+			.post(SERVER_API_URL)
+			.set('Content-Type', 'application/graphql')
+			.send(`{
+			    tasks(taskType: "feature") {
+			        developer,
+			        title,
+			        pri,
+			        status,
+			        dev_progress,
+			        project,
+			        eta,
+			        task_id
+			    }
+			}`)
+			.end((err, res) => {
+				if (err) {
+                    dispatch(fetchTaskFailure(err));
+	            } else {
+	            	let data = JSON.parse(res.text).data.tasks;
+	                dispatch(fetchFeatureSuccess(data));
 	            }
 			});
 	};

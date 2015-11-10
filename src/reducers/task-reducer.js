@@ -6,7 +6,8 @@ import * as actionTypes from '../constants/action-types';
 const initialState = Map({
 	isLoading: false,
 	loadingError: undefined,
-	bugsTableOriginalData: List.of(OrderedMap({
+	bugTableTitle: 'Bugs',
+	bugTableOriginalData: List.of(OrderedMap({
 		'Developer': '',
 		'Title': '',
 		'PRI': '',
@@ -17,7 +18,7 @@ const initialState = Map({
 		'Project': '',
 		'ETA': ''
 	})),
-	bugsTableData: List.of(OrderedMap({
+	bugTableData: List.of(OrderedMap({
 		'Developer': '',
 		'Title': '',
 		'PRI': '',
@@ -28,22 +29,50 @@ const initialState = Map({
 		'Project': '',
 		'ETA': ''
 	})),
-	sortBy: List.of(),
-	filterConditions: Map({
+	sortBugTableBy: List.of(),
+	bugFilterConditions: Map({
 		'Developer': '',
 		'PRI': '',
 		'Project': ''
-	})
+	}),
+	featureTableTitle: 'Features',
+	featureTableOriginalData: List.of(OrderedMap({
+		'Developer': '',
+		'Title': '',
+		'PRI': '',
+		'Status': '',
+		'Dev (%)': '',
+		'QA (%)': '',
+		'QA': '',
+		'Project': '',
+		'ETA': ''
+	})),
+	featureTableData: List.of(OrderedMap({
+		'Developer': '',
+		'Title': '',
+		'PRI': '',
+		'Status': '',
+		'Dev (%)': '',
+		'QA (%)': '',
+		'QA': '',
+		'Project': '',
+		'ETA': ''
+	})),
+	sortFeatureTableBy: List.of(),
+	featureFilterConditions: Map({
+		'Developer': '',
+		'PRI': '',
+		'Project': ''
+	}),
 });
 
-function filterOriginal(state) {
+function filterOriginal(state, type) {
 	let nextState = state;
-
-	nextState = nextState.update('bugsTableData', () => {
-		let keys = nextState.get('filterConditions').keySeq();
-		let filteredResult = nextState.get('bugsTableOriginalData').filter((bug) => {
+	nextState = nextState.update(`${type}TableData`, () => {
+		let keys = nextState.get(`${type}FilterConditions`).keySeq();
+		let filteredResult = nextState.get(`${type}TableOriginalData`).filter((bug) => {
 			return keys.reduce((acc, key) => {
-				if (bug.get(key) !== nextState.getIn(['filterConditions', key]) && nextState.getIn(['filterConditions', key]) !== '') {
+				if (bug.get(key) !== nextState.getIn([`${type}FilterConditions`, key]) && nextState.getIn([`${type}FilterConditions`, key]) !== '') {
 					return acc && false;
 				}
 				return acc && true;
@@ -80,13 +109,13 @@ function sortAlphaNum(a,b) {
     return aA > bA ? 1 : -1;
 }
 
-function sortOriginal(state) {
+function sortOriginal(state, type) {
 	let nextState = state;
 
-	nextState = nextState.update('bugsTableData', (data) => {
+	nextState = nextState.update(`${type}TableData`, (data) => {
 		return data.sort((curr, next) => {
 			let result = 0;
-			nextState.get('sortBy').forEach((category) => {
+			nextState.get(`sort${type[0].toUpperCase()+type.slice(1)}TableBy`).forEach((category) => {
 				let tempResult = sortAlphaNum(curr.get(category), next.get(category));
 				if (tempResult !== 0 && result === 0) {
 					result = tempResult;
@@ -132,54 +161,77 @@ function formatResponse(data) {
 	return result;
 }
 
+function filterTable(state, filterConditions, type) {
+	let nextState = state.set(`${type}FilterConditions`, Map(filterConditions));
+	nextState = filterOriginal(nextState, type);
+	nextState = sortOriginal(nextState, type);
+	return nextState;
+}
+
+function setTableData(state, data, type) {
+	let formatedData = formatResponse(data);;
+	return state
+	    .set('isLoading', false)
+	    .set('loadingError', undefined)
+	    .set(`${type}TableOriginalData`, formatedData)
+	    .set(`${type}TableData`, formatedData);
+}
+
+function resetTable(state, type) {
+	return state
+	    .update(`${type}TableData`, () => {
+			return state.get(`${type}TableOriginalData`);
+		})
+	    .set(`sort${type[0].toUpperCase()+type.slice(1)}TableBy`,
+	    	List.of()
+	    )
+	    .set(
+	    	`${type}FilterConditions`,
+	    	Map({
+				'Developer': '',
+				'PRI': '',
+				'Project': ''
+			})
+		);
+}
+
+function sortTable(state, newCategory, type) {
+	let indexToBeDeleted = state.get(`sort${type[0].toUpperCase()+type.slice(1)}TableBy`).indexOf(newCategory);
+	if (indexToBeDeleted === -1) {
+		state = state.update(`sort${type[0].toUpperCase()+type.slice(1)}TableBy`, (categories) => {
+			return categories.push(newCategory);
+		});
+	} else {
+		state = state.update(`sort${type[0].toUpperCase()+type.slice(1)}TableBy`, (categories) => {
+			return categories.delete(indexToBeDeleted);
+		});
+	}
+	state = filterOriginal(state, type);
+	state = sortOriginal(state, type);
+	return state;
+}
+
 export default function taskReducer(state = initialState, action) {
-	let nextState = state;
 	switch (action.type) {
 		case actionTypes.SORT_BUG_TABLE_BY_CATEGORY:
-			let indexToBeDeleted = state.get('sortBy').indexOf(action.category);
-			if (indexToBeDeleted === -1) {
-				nextState = state.update('sortBy', (categories) => {
-					return categories.push(action.category);
-				});
-			} else {
-				nextState = state.update('sortBy', (categories) => {
-					return categories.delete(indexToBeDeleted);
-				});
-			}
-			nextState = filterOriginal(nextState);
-			nextState = sortOriginal(nextState);
-			return nextState;
+			return sortTable(state, action.category, 'bug');
+		case actionTypes.SORT_FEATURE_TABLE_BY_CATEGORY:
+			return sortTable(state, action.category, 'feature');
 		case actionTypes.FILTER_BUG_TABLE:
-			nextState = nextState.set('filterConditions', Map(action.filterConditions));
-			nextState = filterOriginal(nextState);
-			nextState = sortOriginal(nextState);
-			return nextState;
+			return filterTable(state, action.filterConditions, 'bug');
+		case actionTypes.FILTER_FEATURE_TABLE:
+			return filterTable(state, action.filterConditions, 'feature');
 		case actionTypes.RESET_BUG_TABLE:
-			return state
-			    .update('bugsTableData', () => {
-					return state.get('bugsTableOriginalData');
-				})
-			    .set('sortBy',
-			    	List.of()
-			    )
-			    .set(
-			    	'filterConditions',
-			    	Map({
-						'Developer': '',
-						'PRI': '',
-						'Project': ''
-					})
-				);
+			return resetTable(state, 'bug');
+		case actionTypes.RESET_FEATURE_TABLE:
+			return resetTable(state, 'feature');
 		case actionTypes.SET_LOADING_STATE:
 			return state.set('isLoading', action.state);
-		case actionTypes.FETCH_TASKS_SUCCESS:
-			let formatedData = formatResponse(action.data);
-			return state
-			    .set('isLoading', false)
-			    .set('loadingError', undefined)
-			    .set('bugsTableOriginalData', formatedData)
-			    .set('bugsTableData', formatedData);
-		case actionTypes.FETCH_TASKS_FAILURE:
+		case actionTypes.FETCH_BUG_SUCCESS:
+			return setTableData(state, action.data, 'bug');
+		case actionTypes.FETCH_FEATURE_SUCCESS:
+			return setTableData(state, action.data, 'feature');
+		case actionTypes.FETCH_TASK_FAILURE:
 			alert(action.err);
 			return state
 			    .set('isLoading', false)

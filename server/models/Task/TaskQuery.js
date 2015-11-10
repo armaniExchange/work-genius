@@ -1,6 +1,7 @@
 // GraphQL
 import {
-	GraphQLList
+	GraphQLList,
+	GraphQLString
 } from 'graphql';
 // Models
 import TaskType from './TaskType.js';
@@ -13,9 +14,16 @@ let TaskQuery = {
 	'tasks': {
 		type: new GraphQLList(TaskType),
 		description: 'Get all tasks from GK2',
-		resolve: async () => {
+		args: {
+			taskType: {
+				type: GraphQLString,
+				description: 'Specify which task type to fetch'
+			}
+		},
+		resolve: async (root, { taskType }) => {
 			let connection = null,
 			    result = null,
+			    filterCondition = taskType ? { type: taskType } : {},
 			    query = r.db('work_genius').table('tasks')
 			        .eqJoin('developer_id', r.db('work_genius').table('users'))
 				    .map((data) => ({
@@ -28,8 +36,10 @@ let TaskQuery = {
 						'qa_progress' : data('left')('qa_progress'),
 						'qa'          : data('left')('qa'),
 						'project'     : data('left')('project'),
-						'eta'         : data('left')('eta')
+						'eta'         : data('left')('eta'),
+						'type'        : data('left')('type')
 				    }))
+				    .filter(filterCondition)
 				    .coerceTo('array');
 
 			try {
