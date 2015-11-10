@@ -7,27 +7,48 @@ import { bindActionCreators } from 'redux';
 // Actions
 import * as TaskPageActions from '../../actions/task-page-actions';
 // Components
-import BugsTable from '../../components/Bugs-Table/Bugs-Table';
+import TaskTable from '../../components/Task-Table/Task-Table';
 import Spinner from '../../components/Spinner/Spinner';
 
 class TaskPage extends Component {
 	componentWillMount() {
-		const { fetchTasks } = this.props.taskPageActions;
-		fetchTasks();
+		const { fetchBug, fetchFeature } = this.props.taskPageActions;
+		fetchFeature();
+		fetchBug();
 	}
 	render() {
-		const { bugsTableData, sortBy, bugsTableOriginalData, isLoading } = this.props.taskPageState;
+		const {
+			bugTableTitle,
+			bugTableData,
+			sortBugTableBy,
+			bugTableOriginalData,
+			isLoading,
+			featureTableTitle,
+			featureTableData,
+			sortFeatureTableBy,
+			featureTableOriginalData,
+		} = this.props.taskPageState;
 		const { sortBugTableByCategory, filterBugTable, resetBugTable } = this.props.taskPageActions;
 
 		return (
 			<section className="task-page">
 				<Spinner hide={!isLoading} />
 			    <span>Task Page</span>
-			    <BugsTable
-			        data={bugsTableData}
-			        originalData={bugsTableOriginalData}
+			    <TaskTable
+			        data={featureTableData}
+			        originalData={featureTableOriginalData}
+			        tableTitle={featureTableTitle}
 			        enableSort
-			        sortBy= {sortBy}
+			        sortBy={sortFeatureTableBy}
+			        onSortHandler={sortBugTableByCategory}
+			        onFilterHandler={filterBugTable}
+			        onUnmountHandler={resetBugTable} />
+			    <TaskTable
+			        data={bugTableData}
+			        originalData={bugTableOriginalData}
+			        tableTitle={bugTableTitle}
+			        enableSort
+			        sortBy={sortBugTableBy}
 			        onSortHandler={sortBugTableByCategory}
 			        onFilterHandler={filterBugTable}
 			        onUnmountHandler={resetBugTable} />

@@ -1,5 +1,5 @@
 // Styles
-import './_Bugs-Table.scss';
+import './_Task-Table.scss';
 
 // Libraries
 import React, { Component, PropTypes } from 'react';
@@ -54,7 +54,7 @@ let TableBody = ({ data }) => {
 		let cellHtml = (
 			<td
 			    colSpan={tableLength}
-			    className="bugs-table__body--empty">
+			    className="task-table__body--empty">
 			    No Match Result!
 			</td>
 		);
@@ -74,13 +74,13 @@ let TableBody = ({ data }) => {
 		);
 	});
 	return (
-		<tbody className="bugs-table__body">
+		<tbody className="task-table__body">
 		    {bodyHtml}
 		</tbody>
 	);
 };
 
-class BugsTable extends Component {
+class TaskTable extends Component {
 	constructor(props) {
 		super(props);
 		this._onSortHandler = this._onSortHandler.bind(this);
@@ -129,7 +129,7 @@ class BugsTable extends Component {
 		});
 
 		return (
-			<span className="bugs-table-filters__filter">
+			<span className="task-table-filters__filter">
 				<span>{type}: </span>
 				<select ref={`${lowerCaseType}Filter`} onChange={this._onFilterHandler}>
 					<option value={''}>All</option>
@@ -140,15 +140,15 @@ class BugsTable extends Component {
 	}
 
 	render () {
-		const { data, sortBy, enableSort } = this.props;
+		const { data, sortBy, enableSort, tableTitle } = this.props;
 		const devFilter = this._renderFilterByType('Developer');
 		const priFilter = this._renderFilterByType('PRI');
 		const projFilter = this._renderFilterByType('Project');
 
 		return (
-			<div className="bugs-table">
-			    <h5>Bugs Table</h5>
-			    <div className="bugs-table-filters">
+			<div className="task-table">
+			    <h5>{tableTitle}</h5>
+			    <div className="task-table-filters">
 			    	{devFilter}
 			    	{priFilter}
 			    	{projFilter}
@@ -166,9 +166,10 @@ class BugsTable extends Component {
 	}
 }
 
-BugsTable.propTypes = {
+TaskTable.propTypes = {
 	data: PropTypes.array.isRequired,
 	originalData: PropTypes.array.isRequired,
+	tableTitle: PropTypes.string.isRequired,
 	enableSort: PropTypes.bool,
 	sortBy: PropTypes.array,
 	onSortHandler: PropTypes.func,
@@ -176,7 +177,7 @@ BugsTable.propTypes = {
 	onUnmountHandler: PropTypes.func
 };
 
-BugsTable.defaultProps = {
+TaskTable.defaultProps = {
 	enableSort: false,
 	sortBy: [],
 	onSortHandler: () => {},
@@ -184,4 +185,4 @@ BugsTable.defaultProps = {
 	onUnmountHandler: () => {}
 };
 
-export default BugsTable;
+export default TaskTable;
