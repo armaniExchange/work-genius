@@ -4,6 +4,25 @@ import request from 'superagent';
 import * as actionTypes from '../constants/action-types';
 import { SERVER_API_URL } from '../constants/config';
 
+export function sortFeatureTableByCategory(category) {
+	return {
+		type: actionTypes.SORT_FEATURE_TABLE_BY_CATEGORY,
+		category
+	};
+};
+
+export function filterFeatureTable(filterConditions) {
+	return {
+		type: actionTypes.FILTER_FEATURE_TABLE,
+		filterConditions
+	};
+};
+
+export function resetFeatureTable() {
+	return {
+		type: actionTypes.RESET_FEATURE_TABLE
+	};
+};
 
 export function sortBugTableByCategory(category) {
 	return {

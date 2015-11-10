@@ -28,7 +28,14 @@ class TaskPage extends Component {
 			sortFeatureTableBy,
 			featureTableOriginalData,
 		} = this.props.taskPageState;
-		const { sortBugTableByCategory, filterBugTable, resetBugTable } = this.props.taskPageActions;
+		const {
+			sortFeatureTableByCategory,
+			filterFeatureTable,
+			resetFeatureTable,
+			sortBugTableByCategory,
+			filterBugTable,
+			resetBugTable
+		} = this.props.taskPageActions;
 
 		return (
 			<section className="task-page">
@@ -40,9 +47,9 @@ class TaskPage extends Component {
 			        tableTitle={featureTableTitle}
 			        enableSort
 			        sortBy={sortFeatureTableBy}
-			        onSortHandler={sortBugTableByCategory}
-			        onFilterHandler={filterBugTable}
-			        onUnmountHandler={resetBugTable} />
+			        onSortHandler={sortFeatureTableByCategory}
+			        onFilterHandler={filterFeatureTable}
+			        onUnmountHandler={resetFeatureTable} />
 			    <TaskTable
 			        data={bugTableData}
 			        originalData={bugTableOriginalData}
