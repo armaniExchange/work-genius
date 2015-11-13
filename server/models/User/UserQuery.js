@@ -1,14 +1,9 @@
 // GraphQL
 import {
-	GraphQLList,
 	GraphQLString
 } from 'graphql';
 // Models
 import UserType from './UserType.js';
-// RethinkDB
-import r from 'rethinkdb';
-// Constants
-import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 
 let UserQuery = {
 	'login': {
@@ -18,10 +13,10 @@ let UserQuery = {
 			account: {
 				type: GraphQLString,
 				description: 'Fetch User info by account'
-			}, 
+			},
 			password: {
 				type: GraphQLString,
-				description: 'Login password '				
+				description: 'Login password '
 			}
 		},
 		resolve: async (root, { account, password }) => {

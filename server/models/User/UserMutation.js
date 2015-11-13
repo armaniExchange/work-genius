@@ -21,7 +21,7 @@ function adPromise(account, password) {
 		// console.log(ad);
 		if (!(account.includes('@') || account.includes('\\'))) {
 			account = LDAP_AUTH_PREFIX + account;
-		}    
+		}
 
 		ad.authenticate(account, password, function(err, auth) {
 			if (err || !auth) {
@@ -63,7 +63,7 @@ let UserMutation = {
 						// password: password
 					}).run(connection);
 					//console.log(mutationResult);
-					// record session					
+					// record session
 					session.uid = account;
 				} catch (e) {
 					console.log(e);
@@ -79,7 +79,7 @@ let UserMutation = {
 			// // console.log(ad);
 			// if (!(account.includes('@') || account.includes('\\'))) {
 			// 	account = LDAP_AUTH_PREFIX + account;
-			// } 
+			// }
 
 			// ad.authenticate(account, password, async function(err, auth) {
 			// 	console.log(auth, 'test');
@@ -87,7 +87,7 @@ let UserMutation = {
 			// 		console.log('ERROR: '+JSON.stringify(err));
 			// 		return;
 			// 	}
-				
+
 			// 	if (auth) {
 			// 		// console.log('222');
 			// 		try {
@@ -104,7 +104,7 @@ let UserMutation = {
 			// 		// 	    .filter({username: account}).coerceTo('array');
 
 			// 		// try {
-						
+
 			// 		// 	connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 			// 		// 	mutationResult = await mutationQuery.run(connection);
 			// 		// 	console.log('333');
@@ -116,17 +116,17 @@ let UserMutation = {
 			// 		// 	console.log('444');
 			// 		// 	let queryResult = await query.run(connection);
 			// 		// 	console.log(queryResult);
-			// 		// 	await connection.close();						
+			// 		// 	await connection.close();
 			// 		// 	console.log('555');
 			// 		// } catch (e) {
 			// 		// 	console.log(e, 'test');
 			// 		// 	return e;
-			// 		// } 
+			// 		// }
 			// 		console.log('Authentication successed!');
 			// 	} else {
 			// 		console.log('Authentication failed!');
-			// 	}				
-				
+			// 	}
+
 			// });
 			// console.log('333');
 		}
