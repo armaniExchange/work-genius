@@ -1,10 +1,13 @@
 // Express
 import express from 'express';
 import bodyParser from 'body-parser';
+import session from 'express-session';
+import RDBStore from 'session-rethinkdb';
 
 // GraphQL and schema
 import { graphql } from 'graphql';
 import schema from './schema/schema.js';
+import { DB_HOST, DB_PORT, SECURE_KEY } from './constants/configurations.js';
 
 const PORT = 3000;
 let app = express();
@@ -19,8 +22,29 @@ app.use((req, res, next) => {
 	next();
 });
 
+
+// for express-session settings
+const options = {
+    servers: [
+        {host: DB_HOST, port: DB_PORT}
+    ],
+    // cleanupInterval: 5000, // optional, default is 60000 (60 seconds)
+    table: 'sessions' // optional, default is 'session'
+};
+
+const store = new RDBStore(session)(options);
+// console.log(store);
+app.use(session({
+    secret: SECURE_KEY,
+    store: store,
+    resave: true,
+    saveUninitialized: true
+}));
+
+
 app.post('/graphql', (req, res) => {
-	graphql(schema, req.body).then((result) => {
+	let rootValue = {request:req, response:res};
+	graphql(schema, req.body, rootValue).then((result) => {
 		res.send(JSON.stringify(result, null, 4));
 	});
 });

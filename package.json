@@ -40,7 +40,11 @@
     "redux-thunk": "^1.0.0",
     "request": "^2.65.0",
     "rethinkdb": "^2.1.1",
-    "superagent": "^1.4.0"
+    "superagent": "^1.4.0", 
+    "bcrypt": "^0.8.x",
+    "activedirectory": "^0.7.0",
+    "express-session": "^1.12.1",
+    "session-rethinkdb": "^1.0.7"
   },
   "devDependencies": {
     "autoprefixer": "^6.0.3",
