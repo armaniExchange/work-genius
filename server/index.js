@@ -44,6 +44,7 @@ app.use(session({
 
 app.post('/graphql', (req, res) => {
 	let rootValue = {request:req, response:res};
+	console.log(req);
 	graphql(schema, req.body, rootValue).then((result) => {
 		res.send(JSON.stringify(result, null, 4));
 	});
