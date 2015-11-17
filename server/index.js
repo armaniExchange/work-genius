@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 
 
 // for express-session settings
-const options = {
+const OPTIONS = {
     servers: [
         {host: DB_HOST, port: DB_PORT}
     ],
@@ -32,11 +32,11 @@ const options = {
     table: 'sessions' // optional, default is 'session'
 };
 
-const store = new RDBStore(session)(options);
+const STORE = new RDBStore(session)(OPTIONS);
 // console.log(store);
 app.use(session({
     secret: SECURE_KEY,
-    store: store,
+    store: STORE,
     resave: true,
     saveUninitialized: true
 }));
