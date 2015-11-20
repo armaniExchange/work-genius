@@ -5,7 +5,12 @@ import {
     GK2_LOG_IN_PASSWORD,
     GK2_LOG_IN_URL,
     GK2_REFERER_URL,
-    GK2_BEIJING_MUST_FIX_BUG_URL
+    GK2_BJ_4_1_MUST_FIX_BUG_URL,
+    GK2_SJ_4_1_MUST_FIX_BUG_URL,
+    GK2_BJ_3_2_MUST_FIX_BUG_URL,
+    GK2_SJ_3_2_MUST_FIX_BUG_URL,
+    GK2_BJ_4_0_3_MUST_FIX_BUG_URL,
+    GK2_SJ_4_0_3_MUST_FIX_BUG_URL
 } from '../constants/configurations.js';
 
 export function crawlerPromise(url = '', method = 'GET', formData = {}, headers = {}) {
@@ -44,9 +49,18 @@ export async function crawlGK2() {
         headers = {
             'Referer': GK2_REFERER_URL
         },
+        targetURLs = [
+            GK2_BJ_4_1_MUST_FIX_BUG_URL,
+            GK2_SJ_4_1_MUST_FIX_BUG_URL,
+            GK2_BJ_3_2_MUST_FIX_BUG_URL,
+            GK2_SJ_3_2_MUST_FIX_BUG_URL,
+            GK2_BJ_4_0_3_MUST_FIX_BUG_URL,
+            GK2_SJ_4_0_3_MUST_FIX_BUG_URL
+        ],
         bugs = [];
 
     try {
+        let startTime = new Date();
         // Get CSFR Token
         let { res: getRes } = await crawlerPromise(GK2_LOG_IN_URL,'GET');
         cookieKeyValMap = parseHeaderCookie(getRes.headers, cookieKeyValMap);
@@ -56,12 +70,15 @@ export async function crawlGK2() {
             res: postRes
         } = await crawlerPromise(GK2_LOG_IN_URL, 'POST', formData, headers);
         cookieKeyValMap = parseHeaderCookie(postRes.headers, cookieKeyValMap);
-        // Get beijing team must-fix bug data
-        let {
-            body: mustFixHtml
-        } = await crawlerPromise(GK2_BEIJING_MUST_FIX_BUG_URL,'GET');
-        bugs = bugs.concat(extractMustFixBugData(mustFixHtml));
+        // Get Target URLs data
+        for (let targetURL of targetURLs) {
+            let {
+                body: targetHTML
+            } = await crawlerPromise(targetURL,'GET');
+            bugs = bugs.concat(extractMustFixBugData(targetHTML));
+        }
         console.log(bugs);
+        console.log(`This crawling process took ${new Date() - startTime} ms`);
     } catch (e) {
         console.log(e);
     }
