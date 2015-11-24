@@ -12,9 +12,7 @@ const initialState = Map({
 		'Title': '',
 		'PRI': '',
 		'Status': '',
-		'Dev (%)': '',
-		'QA (%)': '',
-		'QA': '',
+		'QA Email': '',
 		'Project': '',
 		'ETA': ''
 	})),
@@ -23,9 +21,7 @@ const initialState = Map({
 		'Title': '',
 		'PRI': '',
 		'Status': '',
-		'Dev (%)': '',
-		'QA (%)': '',
-		'QA': '',
+		'QA Email': '',
 		'Project': '',
 		'ETA': ''
 	})),
@@ -41,9 +37,7 @@ const initialState = Map({
 		'Title': '',
 		'PRI': '',
 		'Status': '',
-		'Dev (%)': '',
-		'QA (%)': '',
-		'QA': '',
+		'QA Email': '',
 		'Project': '',
 		'ETA': ''
 	})),
@@ -52,9 +46,7 @@ const initialState = Map({
 		'Title': '',
 		'PRI': '',
 		'Status': '',
-		'Dev (%)': '',
-		'QA (%)': '',
-		'QA': '',
+		'QA Email': '',
 		'Project': '',
 		'ETA': ''
 	})),
@@ -83,9 +75,7 @@ function filterOriginal(state, type) {
 			'Title': '',
 			'PRI': '',
 			'Status': '',
-			'Dev (%)': '',
-			'QA (%)': '',
-			'QA': '',
+			'QA Email': '',
 			'Project': '',
 			'ETA': ''
 		})) : filteredResult;
@@ -130,15 +120,14 @@ function sortOriginal(state, type) {
 
 function updateKeyName(task) {
 	let keyTitleMap = {
-		'developer': 'Developer',
+		'developer_email': 'Developer',
 		'title': 'Title',
 		'pri': 'PRI',
 		'status': 'Status',
-		'dev_progress': 'Dev (%)',
-		'qa_progress': 'QA (%)',
-		'qa': 'QA',
+		'qa_email': 'QA Email',
 		'project': 'Project',
-		'eta': 'ETA'
+		'eta': 'ETA',
+		'id': 'ID'
 	};
 	let result = {};
 

@@ -32,21 +32,24 @@ let TaskMutation = {
 				mutationQuery = r.db('work_genius').table('tasks').get(id).update({
 					eta: eta
 				}),
+				// query = r.db('work_genius').table('tasks')
+			 //        .eqJoin('developer_id', r.db('work_genius').table('users'))
+				//     .map((data) => ({
+				//     	'task_id'     : data('left')('id'),
+				//     	'developer'   : data('right')('name'),
+				// 		'title'       : data('left')('title'),
+				// 		'pri'         : data('left')('pri'),
+				// 		'status'      : data('left')('status'),
+				// 		'dev_progress': data('left')('dev_progress'),
+				// 		'qa_progress' : data('left')('qa_progress'),
+				// 		'qa'          : data('left')('qa'),
+				// 		'project'     : data('left')('project'),
+				// 		'eta'         : data('left')('eta')
+				//     }))
+				//     .filter((task) => task('task_id').eq(id))
+				//     .coerceTo('array');
 				query = r.db('work_genius').table('tasks')
-			        .eqJoin('developer_id', r.db('work_genius').table('users'))
-				    .map((data) => ({
-				    	'task_id'     : data('left')('id'),
-				    	'developer'   : data('right')('name'),
-						'title'       : data('left')('title'),
-						'pri'         : data('left')('pri'),
-						'status'      : data('left')('status'),
-						'dev_progress': data('left')('dev_progress'),
-						'qa_progress' : data('left')('qa_progress'),
-						'qa'          : data('left')('qa'),
-						'project'     : data('left')('project'),
-						'eta'         : data('left')('eta')
-				    }))
-				    .filter((task) => task('task_id').eq(id))
+				    .filter((task) => task('id').eq(id))
 				    .coerceTo('array');
 
 			try {

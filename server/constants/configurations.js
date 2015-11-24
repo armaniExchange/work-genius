@@ -26,4 +26,4 @@ export const GK2_SJ_4_1_MUST_FIX_BUG_URL = 'https://gk2.a10networks.com/projects
 export const GK2_BJ_3_2_MUST_FIX_BUG_URL = 'https://gk2.a10networks.com/projects/283949/bugs/list/must-fix/?pb_status=open&team=10&group_by_member=yes&must_fix=on';
 export const GK2_SJ_3_2_MUST_FIX_BUG_URL = 'https://gk2.a10networks.com/projects/283949/bugs/list/must-fix/?pb_status=open&team=33&group_by_member=yes&must_fix=on';
 export const GK2_BJ_4_0_3_MUST_FIX_BUG_URL = 'https://gk2.a10networks.com/projects/518503/bugs/list/must-fix/?pb_status=open&team=10&group_by_member=yes&must_fix=on';
-export const GK2_SJ_4_0_3_MUST_FIX_BUG_URL = 'https://gk2.a10networks.com/projects/518503/#/bugs/list/must-fix/?pb_status=open&team=33&group_by_member=yes&must_fix=on';
+export const GK2_SJ_4_0_3_MUST_FIX_BUG_URL = 'https://gk2.a10networks.com/projects/518503/bugs/list/must-fix/?pb_status=open&team=33&group_by_member=yes&must_fix=on';
