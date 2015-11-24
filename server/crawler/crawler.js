@@ -1,5 +1,9 @@
 import request from 'request';
-import { parseHeaderCookie, extractMustFixBugData } from './utilities.js';
+import {
+    parseHeaderCookie,
+    extractMustFixBugData,
+    updateBugsToDB
+} from './utilities.js';
 import {
     GK2_LOG_IN_ACCOUNT,
     GK2_LOG_IN_PASSWORD,
@@ -49,7 +53,7 @@ export async function crawlGK2() {
         headers = {
             'Referer': GK2_REFERER_URL
         },
-        targetURLs = [
+        targetedBugURLs = [
             GK2_BJ_4_1_MUST_FIX_BUG_URL,
             GK2_SJ_4_1_MUST_FIX_BUG_URL,
             GK2_BJ_3_2_MUST_FIX_BUG_URL,
@@ -61,6 +65,7 @@ export async function crawlGK2() {
 
     try {
         let startTime = new Date();
+        console.log('Crawling GK2...');
         // Get CSFR Token
         let { res: getRes } = await crawlerPromise(GK2_LOG_IN_URL,'GET');
         cookieKeyValMap = parseHeaderCookie(getRes.headers, cookieKeyValMap);
@@ -70,15 +75,23 @@ export async function crawlGK2() {
             res: postRes
         } = await crawlerPromise(GK2_LOG_IN_URL, 'POST', formData, headers);
         cookieKeyValMap = parseHeaderCookie(postRes.headers, cookieKeyValMap);
-        // Get Target URLs data
-        for (let targetURL of targetURLs) {
+        // Get Targeted Bug URLs data
+        for (let bugURL of targetedBugURLs) {
+            let bugHeaderURL = bugURL.replace('/bugs', '/#/bugs');
+            let {
+                body: bugHeaderHTML
+            } = await crawlerPromise(bugHeaderURL,'GET');
             let {
                 body: targetHTML
-            } = await crawlerPromise(targetURL,'GET');
-            bugs = bugs.concat(extractMustFixBugData(targetHTML));
+            } = await crawlerPromise(bugURL,'GET');
+            bugs = bugs.concat(extractMustFixBugData(bugHeaderHTML + targetHTML));
         }
-        console.log(bugs);
-        console.log(`This crawling process took ${new Date() - startTime} ms`);
+        console.log(`Crawling complete! This crawling process took ${new Date() - startTime} ms`);
+        // Write new bug data to db
+        startTime = new Date();
+        console.log('About to write crawling data into db...');
+        updateBugsToDB(bugs);
+        console.log(`write to DB complete! This writing process took ${new Date() - startTime} ms`);
     } catch (e) {
         console.log(e);
     }

@@ -14,7 +14,7 @@ const schema = new GraphQLSchema({
 	query: new GraphQLObjectType({
 		name: 'RootQueryType',
 		fields: {
-			tasks: TaskQuery.tasks			
+			tasks: TaskQuery.tasks
 		}
 	}),
 	mutation: new GraphQLObjectType({

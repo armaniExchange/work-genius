@@ -24,21 +24,24 @@ let TaskQuery = {
 			let connection = null,
 			    result = null,
 			    filterCondition = taskType ? { type: taskType } : {},
-			    query = r.db('work_genius').table('tasks')
-			        .eqJoin('developer_id', r.db('work_genius').table('users'))
-				    .map((data) => ({
-				    	'task_id'     : data('left')('id'),
-				    	'developer'   : data('right')('name'),
-						'title'       : data('left')('title'),
-						'pri'         : data('left')('pri'),
-						'status'      : data('left')('status'),
-						'dev_progress': data('left')('dev_progress'),
-						'qa_progress' : data('left')('qa_progress'),
-						'qa'          : data('left')('qa'),
-						'project'     : data('left')('project'),
-						'eta'         : data('left')('eta'),
-						'type'        : data('left')('type')
-				    }))
+			   //  query = r.db('work_genius').table('tasks')
+			   //      .eqJoin('developer_id', r.db('work_genius').table('users'))
+				  //   .map((data) => ({
+				  //   	'task_id'     : data('left')('id'),
+				  //   	'developer'   : data('right')('name'),
+						// 'title'       : data('left')('title'),
+						// 'pri'         : data('left')('pri'),
+						// 'status'      : data('left')('status'),
+						// 'dev_progress': data('left')('dev_progress'),
+						// 'qa_progress' : data('left')('qa_progress'),
+						// 'qa'          : data('left')('qa'),
+						// 'project'     : data('left')('project'),
+						// 'eta'         : data('left')('eta'),
+						// 'type'        : data('left')('type')
+				  //   }))
+				  //   .filter(filterCondition)
+				  //   .coerceTo('array');
+				query = r.db('work_genius').table('tasks')
 				    .filter(filterCondition)
 				    .coerceTo('array');
 

@@ -80,16 +80,14 @@ export function fetchBug() {
 			.set('Content-Type', 'application/graphql')
 			.send(`{
 			    tasks(taskType: "bug") {
-			        developer,
+			        developer_email,
 			        title,
 			        pri,
 			        status,
-			        dev_progress,
-			        qa_progress,
-			        qa,
+			        qa_email,
 			        project,
 			        eta,
-			        task_id
+			        id
 			    }
 			}`)
 			.end((err, res) => {
@@ -111,14 +109,14 @@ export function fetchFeature() {
 			.set('Content-Type', 'application/graphql')
 			.send(`{
 			    tasks(taskType: "feature") {
-			        developer,
+			        developer_email,
 			        title,
 			        pri,
 			        status,
-			        dev_progress,
+			        qa_email,
 			        project,
 			        eta,
-			        task_id
+			        id
 			    }
 			}`)
 			.end((err, res) => {
