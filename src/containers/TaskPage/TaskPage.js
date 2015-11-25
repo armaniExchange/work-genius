@@ -27,6 +27,8 @@ class TaskPage extends Component {
 			featureTableData,
 			sortFeatureTableBy,
 			featureTableOriginalData,
+			featureFilterConditions,
+			bugFilterConditions
 		} = this.props.taskPageState;
 		const {
 			sortFeatureTableByCategory,
@@ -47,6 +49,7 @@ class TaskPage extends Component {
 			        tableTitle={featureTableTitle}
 			        enableSort
 			        sortBy={sortFeatureTableBy}
+			        filterBy={Object.keys(featureFilterConditions)}
 			        onSortHandler={sortFeatureTableByCategory}
 			        onFilterHandler={filterFeatureTable}
 			        onUnmountHandler={resetFeatureTable} />
@@ -56,6 +59,7 @@ class TaskPage extends Component {
 			        tableTitle={bugTableTitle}
 			        enableSort
 			        sortBy={sortBugTableBy}
+			        filterBy={Object.keys(bugFilterConditions)}
 			        onSortHandler={sortBugTableByCategory}
 			        onFilterHandler={filterBugTable}
 			        onUnmountHandler={resetBugTable} />

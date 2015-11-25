@@ -83,9 +83,10 @@ let TableBody = ({ data }) => {
 class TaskTable extends Component {
 	constructor(props) {
 		super(props);
-		this._onSortHandler = this._onSortHandler.bind(this);
-		this._onFilterHandler = this._onFilterHandler.bind(this);
-		this._renderFilterByType = this._renderFilterByType.bind(this);
+		this._onSortHandler = ::this._onSortHandler;
+		this._onFilterHandler = ::this._onFilterHandler;
+		this._renderFilterByType = ::this._renderFilterByType;
+		this._renderFilter = ::this._renderFilter;
 	}
 
 	componentWillUnmount() {
@@ -103,18 +104,19 @@ class TaskTable extends Component {
 
 	_onFilterHandler() {
 		const {
-			onFilterHandler
+			onFilterHandler,
+			filterBy
 		} = this.props;
-		let filterConditions = {
-			'Developer': this.refs.developerFilter.value,
-			'PRI': this.refs.priFilter.value,
-			'Project': this.refs.projectFilter.value,
-		};
+		let filterConditions = {};
+
+		filterBy.forEach((name) => {
+			filterConditions[name] = this.refs[`${name.toLowerCase()}Filter`].value;
+		});
 
 		onFilterHandler(filterConditions);
 	}
 
-	_renderFilterByType(type) {
+	_renderFilterByType(type, keyName) {
 		const { originalData } = this.props;
 		let lowerCaseType = type.toLowerCase();
 		let options = [];
@@ -129,7 +131,7 @@ class TaskTable extends Component {
 		});
 
 		return (
-			<span className="task-table-filters__filter">
+			<span className="task-table-filters__filter" key={keyName}>
 				<span>{type}: </span>
 				<select ref={`${lowerCaseType}Filter`} onChange={this._onFilterHandler}>
 					<option value={''}>All</option>
@@ -139,19 +141,21 @@ class TaskTable extends Component {
 		);
 	}
 
+	_renderFilter() {
+		const { filterBy } = this.props;
+		return filterBy.map((filterName, i) => {
+			return this._renderFilterByType(filterName, i);
+		});
+	}
+
 	render () {
 		const { data, sortBy, enableSort, tableTitle } = this.props;
-		const devFilter = this._renderFilterByType('Developer');
-		const priFilter = this._renderFilterByType('PRI');
-		const projFilter = this._renderFilterByType('Project');
 
 		return (
 			<div className="task-table">
 			    <h5>{tableTitle}</h5>
 			    <div className="task-table-filters">
-			    	{devFilter}
-			    	{priFilter}
-			    	{projFilter}
+			    	{this._renderFilter()}
 			    </div>
 			    <table className="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
 				    <TableHeaders
@@ -172,6 +176,7 @@ TaskTable.propTypes = {
 	tableTitle: PropTypes.string.isRequired,
 	enableSort: PropTypes.bool,
 	sortBy: PropTypes.array,
+	filterBy: PropTypes.array,
 	onSortHandler: PropTypes.func,
 	onFilterHandler: PropTypes.func,
 	onUnmountHandler: PropTypes.func
@@ -180,6 +185,7 @@ TaskTable.propTypes = {
 TaskTable.defaultProps = {
 	enableSort: false,
 	sortBy: [],
+	filterBy: [],
 	onSortHandler: () => {},
 	onFilterHandler: () => {},
 	onUnmountHandler: () => {}
