@@ -28,7 +28,7 @@ const initialState = Map({
 	sortBugTableBy: List.of(),
 	bugFilterConditions: Map({
 		'Developer': '',
-		'PRI': '',
+		'Status': '',
 		'Project': ''
 	}),
 	featureTableTitle: 'Features',
@@ -129,21 +129,41 @@ function updateKeyName(task) {
 		'eta': 'ETA',
 		'id': 'ID'
 	};
-	let result = {};
+	let result = Map();
 
 	Object.keys(task).forEach((key) => {
 		let title = keyTitleMap[key] ? keyTitleMap[key] : '';
-		result[title] = task[key];
+		result = result.set(title, task[key]);
 	});
 
-	return result;
+	return result.toJS();
+}
+
+function customizeTaskData(task) {
+	let result = Map();
+
+	Object.keys(task).forEach((key) => {
+		switch (key) {
+			case 'title':
+				result = result.set(key, task[key].substr(0, 50) + '...');
+			break;
+			case 'eta':
+				result = result.set(key, task[key] ? task[key] : 'TBA');
+			break;
+			default:
+				result = result.set(key, task[key]);
+		}
+	});
+
+	return result.toJS();
 }
 
 function formatResponse(data) {
 	let result = List.of();
 
 	data.forEach((task) => {
-		let updatedTask = updateKeyName(task);
+		let updatedTask = customizeTaskData(task);
+		updatedTask = updateKeyName(updatedTask);
 		result = result.push(OrderedMap(updatedTask));
 	});
 
