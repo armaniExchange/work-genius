@@ -1,7 +1,5 @@
 // Style
 import './_PTOPage';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'react-bootstrap-table/css/react-bootstrap-table.min.css';
 
 // React & Redux
 import React, { Component } from 'react';
