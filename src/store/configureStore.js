@@ -8,7 +8,7 @@ import rootReducer from '../reducers';
 // const __DEV__ = process.env.NODE_ENV === 'production' ? false : true;
 const finalCreateStore = compose(
 	applyMiddleware(thunk),
-    window.devToolsExtension || (f => f),
+    window.devToolsExtension ? window.devToolsExtension() : f => f
     // applyMiddleware(createLogger({
     //     // Only logs in development mode
     //     predicate: () => __DEV__,
