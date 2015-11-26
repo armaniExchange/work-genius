@@ -36,7 +36,8 @@ class TaskPage extends Component {
 			resetFeatureTable,
 			sortBugTableByCategory,
 			filterBugTable,
-			resetBugTable
+			resetBugTable,
+			editETA
 		} = this.props.taskPageActions;
 
 		return (
@@ -52,7 +53,8 @@ class TaskPage extends Component {
 			        filterBy={Object.keys(featureFilterConditions)}
 			        onSortHandler={sortFeatureTableByCategory}
 			        onFilterHandler={filterFeatureTable}
-			        onUnmountHandler={resetFeatureTable} />
+			        onUnmountHandler={resetFeatureTable}
+			        onETASubmitHandler={editETA} />
 			    <TaskTable
 			        data={bugTableData}
 			        originalData={bugTableOriginalData}
@@ -62,7 +64,8 @@ class TaskPage extends Component {
 			        filterBy={Object.keys(bugFilterConditions)}
 			        onSortHandler={sortBugTableByCategory}
 			        onFilterHandler={filterBugTable}
-			        onUnmountHandler={resetBugTable} />
+			        onUnmountHandler={resetBugTable}
+			        onETASubmitHandler={editETA} />
 			</section>
 		);
 	}
