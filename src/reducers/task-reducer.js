@@ -236,7 +236,7 @@ export default function taskReducer(state = initialState, action) {
 			return setTableData(state, action.data, 'bug');
 		case actionTypes.FETCH_FEATURE_SUCCESS:
 			return setTableData(state, action.data, 'feature');
-		case actionTypes.FETCH_TASK_FAILURE:
+		case actionTypes.TASK_API_FAILURE:
 			alert(action.err);
 			return state
 			    .set('isLoading', false)
