@@ -36,6 +36,7 @@
     "history": "^1.12.5",
     "immutable": "^3.7.5",
     "material-design-lite": "^1.0.5",
+    "moment": "^2.10.6",
     "react": "^0.14.0",
     "react-bootstrap": "^0.28.1",
     "react-bootstrap-table": "^1.2.13",
