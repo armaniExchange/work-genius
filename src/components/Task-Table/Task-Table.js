@@ -6,7 +6,7 @@ import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 
 // Components
-import InlineTableInput from '../Inline-Table-Input/Inline-Table-Input';
+import InlineTableInputDatePicker from '../Inline-Table-Input-DatePicker/Inline-Table-Input-DatePicker';
 
 let FilterIcons = ({ sortBy, onSortHandler, header, enableSort }) => {
 	const buttonClassNames = classnames('mdl-button mdl-js-button mdl-button--icon', {
@@ -71,7 +71,7 @@ let TableBody = ({ data, onETASubmitHandler }) => {
 				switch (key) {
 					case 'ETA':
 						tableData = (
-							<InlineTableInput
+							<InlineTableInputDatePicker
 							    key={cellIndex}
 							    defaultData={task[key]}
 							    onSubmitHandler={curriedSubmitHandler} />

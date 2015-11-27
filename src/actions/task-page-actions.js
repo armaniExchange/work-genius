@@ -137,7 +137,7 @@ export function editETA(id, eta) {
 			.post(SERVER_API_URL)
 			.set('Content-Type', 'application/graphql')
 			.send(`mutation RootMutationType {
-			    editTaskEta(id:${id}, eta:"${eta}") {
+			    editTaskEta(id:"${id}", eta:"${eta}") {
 			        eta
 			    }
 			}`)
