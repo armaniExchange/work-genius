@@ -15,12 +15,18 @@ class InlineTableInputDatePicker extends Component {
 		super(props);
 		this.state = {
 			showInput: false,
-			date: moment()
+			date: moment(new Date(props.defaultData)).isValid() ? moment(props.defaultData) : moment()
 		};
 		this._onEditHandler = ::this._onEditHandler;
 		this._onCancelHandler = ::this._onCancelHandler;
 		this._onSubmitHandler = ::this._onSubmitHandler;
 		this._onDateChangeHandler = ::this._onDateChangeHandler;
+	}
+
+	componentWillReceiveProps(nextProps) {
+		this.setState({
+			date: moment(new Date(nextProps.defaultData)).isValid() ? moment(nextProps.defaultData) : moment()
+		});
 	}
 
 	_onEditHandler() {
@@ -43,9 +49,12 @@ class InlineTableInputDatePicker extends Component {
 
 	_onSubmitHandler() {
 		const { onSubmitHandler } = this.props;
-		onSubmitHandler(this.state.date);
+		const { date } = this.state;
+		let newEta = date ? date.format('YYYY-MM-DD') : '';
+		onSubmitHandler(newEta);
 		this.setState({
-			showInput: false
+			showInput: false,
+			date: newEta ? date : moment()
 		});
 	}
 
@@ -71,6 +80,7 @@ class InlineTableInputDatePicker extends Component {
 				<span className={inputClass}>
 				    <DatePicker
 				        selected={date}
+				        minDate={moment()}
 				        onChange={this._onDateChangeHandler} />
 			    	<button
 				        className="mdl-button mdl-js-button mdl-button--icon"
