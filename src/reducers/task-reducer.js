@@ -1,7 +1,19 @@
 // Libraries
-import { Map, List, OrderedMap, fromJS } from 'immutable';
+import { Map, List, OrderedMap, fromJS, is } from 'immutable';
 // Constants
 import * as actionTypes from '../constants/action-types';
+
+const initialBugFilterConditions = Map({
+	'Developer': '',
+	'Status': '',
+	'Project': ''
+});
+
+const initialFeatureFilterConditions = Map({
+	'Developer': '',
+	'PRI': '',
+	'Project': ''
+});
 
 const initialState = Map({
 	isLoading: false,
@@ -26,11 +38,7 @@ const initialState = Map({
 		'ETA': ''
 	})),
 	sortBugTableBy: List.of(),
-	bugFilterConditions: Map({
-		'Developer': '',
-		'Status': '',
-		'Project': ''
-	}),
+	bugFilterConditions: initialBugFilterConditions,
 	featureTableTitle: 'Features',
 	featureTableOriginalData: List.of(OrderedMap({
 		'Developer': '',
@@ -51,11 +59,7 @@ const initialState = Map({
 		'ETA': ''
 	})),
 	sortFeatureTableBy: List.of(),
-	featureFilterConditions: Map({
-		'Developer': '',
-		'PRI': '',
-		'Project': ''
-	}),
+	featureFilterConditions: initialFeatureFilterConditions,
 });
 
 function filterOriginal(state, type) {
@@ -217,6 +221,7 @@ function sortTable(state, newCategory, type) {
 }
 
 export default function taskReducer(state = initialState, action) {
+	let nextState = state;
 	switch (action.type) {
 		case actionTypes.SORT_BUG_TABLE_BY_CATEGORY:
 			return sortTable(state, action.category, 'bug');
@@ -233,9 +238,23 @@ export default function taskReducer(state = initialState, action) {
 		case actionTypes.SET_LOADING_STATE:
 			return state.set('isLoading', action.state);
 		case actionTypes.FETCH_BUG_SUCCESS:
-			return setTableData(state, action.data, 'bug');
+			nextState = setTableData(state, action.data, 'bug');
+			if (!is(state.get('bugFilterConditions'), initialBugFilterConditions)) {
+				nextState = filterOriginal(nextState, 'bug');
+			}
+			if (state.get('sortBugTableBy').size > 0) {
+				nextState = sortOriginal(nextState, 'bug');
+			}
+			return nextState;
 		case actionTypes.FETCH_FEATURE_SUCCESS:
-			return setTableData(state, action.data, 'feature');
+			nextState = setTableData(state, action.data, 'feature');
+			if (!is(state.get('featureFilterConditions'), initialFeatureFilterConditions)) {
+				nextState = filterOriginal(nextState, 'feature');
+			}
+			if (state.get('sortFeatureTableBy').size > 0) {
+				nextState = sortOriginal(nextState, 'feature');
+			}
+			return nextState;
 		case actionTypes.TASK_API_FAILURE:
 			alert(action.err);
 			return state
