@@ -53,6 +53,9 @@ let TaskMutation = {
 				    .coerceTo('array');
 
 			try {
+				if (!/^(\d{4}-\d{2}-\d{2})?$/gi.test(eta)) {
+					throw new Error('Wrong ETA date format');
+				}
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				mutationResult = await mutationQuery.run(connection);
 				if (mutationResult.skipped) {

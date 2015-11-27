@@ -65,9 +65,9 @@ export function fetchFeatureSuccess(data) {
 	};
 };
 
-export function fetchTaskFailure(err) {
+export function taskApiFailure(err) {
 	return {
-		type: actionTypes.FETCH_TASK_FAILURE,
+		type: actionTypes.TASK_API_FAILURE,
 		err
 	};
 };
@@ -80,19 +80,19 @@ export function fetchBug() {
 			.set('Content-Type', 'application/graphql')
 			.send(`{
 			    tasks(taskType: "bug") {
+			    	id,
 			        developer_email,
 			        title,
 			        pri,
 			        status,
 			        qa_email,
 			        project,
-			        eta,
-			        id
+			        eta
 			    }
 			}`)
 			.end((err, res) => {
 				if (err) {
-                    dispatch(fetchTaskFailure(err));
+                    dispatch(taskApiFailure(err));
 	            } else {
 	            	let data = JSON.parse(res.text).data.tasks;
 	                dispatch(fetchBugSuccess(data));
@@ -109,22 +109,45 @@ export function fetchFeature() {
 			.set('Content-Type', 'application/graphql')
 			.send(`{
 			    tasks(taskType: "feature") {
+			    	id,
 			        developer_email,
 			        title,
 			        pri,
 			        status,
 			        qa_email,
 			        project,
-			        eta,
-			        id
+			        eta
 			    }
 			}`)
 			.end((err, res) => {
 				if (err) {
-                    dispatch(fetchTaskFailure(err));
+                    dispatch(taskApiFailure(err));
 	            } else {
 	            	let data = JSON.parse(res.text).data.tasks;
 	                dispatch(fetchFeatureSuccess(data));
+	            }
+			});
+	};
+};
+
+export function editETA(id, eta) {
+	return (dispatch) => {
+		dispatch(setLoadingState(true));
+		return request
+			.post(SERVER_API_URL)
+			.set('Content-Type', 'application/graphql')
+			.send(`mutation RootMutationType {
+			    editTaskEta(id:${id}, eta:"${eta}") {
+			        eta
+			    }
+			}`)
+			.end((err, res) => {
+				let response = JSON.parse(res.text);
+				if (err || response.errors) {
+					let error = err || response.errors[0].message;
+                    dispatch(taskApiFailure(error));
+	            } else {
+	                dispatch(fetchBug());
 	            }
 			});
 	};

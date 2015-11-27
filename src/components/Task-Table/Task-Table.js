@@ -5,6 +5,9 @@ import './_Task-Table.scss';
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 
+// Components
+import InlineTableInput from '../Inline-Table-Input/Inline-Table-Input';
+
 let FilterIcons = ({ sortBy, onSortHandler, header, enableSort }) => {
 	const buttonClassNames = classnames('mdl-button mdl-js-button mdl-button--icon', {
 		'mdl-button--colored': sortBy.indexOf(header) >= 0
@@ -47,10 +50,13 @@ let TableHeaders = ({ data, onSortHandler, sortBy, enableSort }) => {
 	);
 };
 
-let TableBody = ({ data }) => {
-	const bodyHtml = data.map((bug, bodyIndex) => {
-		const isBodyEmpty = Object.keys(data[0]).every((key) => { return !bug[key]; });
+let TableBody = ({ data, onETASubmitHandler }) => {
+	const bodyHtml = data.map((task, bodyIndex) => {
+		const isBodyEmpty = Object.keys(data[0]).every((key) => { return !task[key]; });
 		const tableLength = Object.keys(data[0]).length;
+		const curriedSubmitHandler = (eta) => {
+			onETASubmitHandler(task['ID'], eta);
+		};
 		let cellHtml = (
 			<td
 			    colSpan={tableLength}
@@ -61,9 +67,22 @@ let TableBody = ({ data }) => {
 
 		if (!isBodyEmpty) {
 			cellHtml = Object.keys(data[0]).map((key, cellIndex) => {
-				return (
-					<td key={cellIndex}>{bug[key]}</td>
-				);
+				let tableData;
+				switch (key) {
+					case 'ETA':
+						tableData = (
+							<InlineTableInput
+							    key={cellIndex}
+							    defaultData={task[key]}
+							    onSubmitHandler={curriedSubmitHandler} />
+						);
+					break;
+					default:
+						tableData = (
+							<td key={cellIndex}>{task[key]}</td>
+						);
+				}
+				return tableData;
 			});
 		}
 
@@ -149,7 +168,7 @@ class TaskTable extends Component {
 	}
 
 	render () {
-		const { data, sortBy, enableSort, tableTitle } = this.props;
+		const { data, sortBy, enableSort, tableTitle, onETASubmitHandler } = this.props;
 
 		return (
 			<div className="task-table">
@@ -162,8 +181,10 @@ class TaskTable extends Component {
 				        data={data[0]}
 				        onSortHandler={this._onSortHandler}
 				        enableSort={enableSort}
-				        sortBy={ sortBy } />
-				    <TableBody data={data} />
+				        sortBy={sortBy} />
+				    <TableBody
+				        data={data}
+				        onETASubmitHandler={onETASubmitHandler} />
 				</table>
 			</div>
 		);
@@ -179,7 +200,8 @@ TaskTable.propTypes = {
 	filterBy: PropTypes.array,
 	onSortHandler: PropTypes.func,
 	onFilterHandler: PropTypes.func,
-	onUnmountHandler: PropTypes.func
+	onUnmountHandler: PropTypes.func,
+	onETASubmitHandler: PropTypes.func
 };
 
 TaskTable.defaultProps = {
@@ -188,7 +210,8 @@ TaskTable.defaultProps = {
 	filterBy: [],
 	onSortHandler: () => {},
 	onFilterHandler: () => {},
-	onUnmountHandler: () => {}
+	onUnmountHandler: () => {},
+	onETASubmitHandler: () => {}
 };
 
 export default TaskTable;

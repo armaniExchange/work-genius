@@ -1,11 +1,12 @@
 // Style
 import './_PTOPage';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'react-bootstrap-table/css/react-bootstrap-table.min.css';
 
 // React & Redux
 import React, { Component } from 'react';
 import ReactBsTable from 'react-bootstrap-table';
+
+// Components
+import PTOForm from '../../components/PTO-Form/PTO-Form';
 
 var BootstrapTable = ReactBsTable.BootstrapTable;
 var TableHeaderColumn = ReactBsTable.TableHeaderColumn;
@@ -22,17 +23,19 @@ var products = [
   }];
 
 class PTOPage extends Component {
-
-
-	render () {
-    return (
-      <BootstrapTable data={products} striped={true} hover={true} >
-        <TableHeaderColumn isKey={true} dataField="id" dataSort={true}>Product ID</TableHeaderColumn>
-        <TableHeaderColumn dataField="name" dataSort={true} >Product Name</TableHeaderColumn>
-        <TableHeaderColumn dataField="price" dataSort={true}>Product Price</TableHeaderColumn>
-      </BootstrapTable>
-    );
-  }
+    render() {
+        return (
+            <div>
+                <section>PTO Page</section>
+                <PTOForm />
+                <BootstrapTable data={products} striped={true} hover={true} >
+                    <TableHeaderColumn isKey={true} dataField="id" dataSort={true}>Product ID</TableHeaderColumn>
+                    <TableHeaderColumn dataField="name" dataSort={true} >Product Name</TableHeaderColumn>
+                    <TableHeaderColumn dataField="price" dataSort={true}>Product Price</TableHeaderColumn>
+                </BootstrapTable>
+            </div>
+        );
+    }
 }
 
 export default PTOPage;
