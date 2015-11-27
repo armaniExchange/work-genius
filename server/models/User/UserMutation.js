@@ -81,7 +81,7 @@ let UserMutation = {
 		        return authenticated;
 		    } catch (e) {
 		        console.log('connect to ldap error or rethinkdb error:', e);
-		    }			
+		    }	
 		}
 	}
 };

@@ -20,10 +20,11 @@ app.use(bodyParser.text({
 }));
 
 app.use((req, res, next) => {
-	res.header('Access-Control-Allow-Origin', '*');
+	// console.log(req.headers.origin);
+	res.header('Access-Control-Allow-Origin', req.headers.origin);
 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    res.header('Access-Control-Allow-Headers', 'X-Requested-With');
-    res.header('Access-Control-Allow-Methods','PUT,POST,GET,DELETE,OPTIONS');	
+    res.header('Access-Control-Allow-Credentials', true);
+    res.header('Access-Control-Allow-Methods','PUT,POST,GET,DELETE,OPTIONS');    	
 	next();
 });
 
@@ -50,7 +51,7 @@ app.use(session({
 
 app.post('/graphql', (req, res) => {
 	let rootValue = {request:req, response:res};
-	console.log(req);
+	// console.log(req);
 	graphql(schema, req.body, rootValue).then((result) => {
 		res.send(JSON.stringify(result, null, 4));
 	});
