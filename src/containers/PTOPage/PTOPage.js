@@ -2,12 +2,15 @@
 import './_PTOPage';
 
 // React & Redux
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import ReactBsTable from 'react-bootstrap-table';
 
 // Components
 import PTOForm from '../../components/PTO-Form/PTO-Form';
 import PTOTable from '../../components/PTO-Table/PTO-Table';
+import * as PTOActions from '../../actions/pto-page-actions';
 
 var BootstrapTable = ReactBsTable.BootstrapTable;
 var TableHeaderColumn = ReactBsTable.TableHeaderColumn;
@@ -23,31 +26,18 @@ var products = [
       price: 80
   }];
 
-let ptoData = [{
-    startDate: '2015-08-17',
-    toDate: '2015-08-18',
-    totalHours: 16,
-    applyDate: '2015-08-10',
-    isApproved: 'Approved',
-    memory: 'go home'
-},
-{
-    startDate: '2015-09-11',
-    toDate: '2015-09-13',
-    totalHours: 24,
-    applyDate: '2015-09-10',
-    isApproved: 'Not Approved',
-    memory: 'go home'
-}];
-
 class PTOPage extends Component {
+
     render() {
+
+        const { ptos } = this.props;
+
         return (
             <div>
                 <section>PTO Page</section>
                 <div className="mdl-grid">
                     <PTOForm />
-                    <PTOTable data={ptoData} />
+                    <PTOTable data={ptos} />
                 </div>
                 <BootstrapTable data={products} striped={true} hover={true} >
                     <TableHeaderColumn isKey={true} dataField="id" dataSort={true}>Product ID</TableHeaderColumn>
@@ -59,4 +49,21 @@ class PTOPage extends Component {
     }
 }
 
-export default PTOPage;
+PTOPage.propTypes = {
+    ptos: PropTypes.object,
+};
+
+// export default ;
+
+export default connect(
+    (state) => {
+        return {
+            ptos: state.pto.toJS()
+        };
+    },
+    (dispatch) => {
+        return {
+            ptoActions: bindActionCreators(PTOActions, dispatch)
+        };
+    }
+)(PTOPage);

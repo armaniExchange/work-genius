@@ -32,6 +32,13 @@ class PTOForm extends Component {
                                 </div>
                             </td>
                         </tr>
+                        <tr>
+                            <td>
+                                <button className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+                                    Apply
+                                </button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
