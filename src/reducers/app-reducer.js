@@ -18,7 +18,7 @@ const initialState = Map({
 		Map({
 			displayText: 'Redux Demo',
 			link: '/redux-demo'
-		}),
+		})
 	),
 	hasLogo: true
 });

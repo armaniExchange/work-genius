@@ -53,6 +53,7 @@ let UserMutation = {
 		},
 		resolve: async (root, { account, password }) => {
 			let session = root.request.session;
+			// console.log('before auth session id', root.request);
 			console.log('before auth session id', session.uid);
 			if (!(account.includes('@') || account.includes('\\'))) {
 				account = LDAP_AUTH_PREFIX + account;

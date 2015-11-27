@@ -22,6 +22,8 @@ app.use(bodyParser.text({
 app.use((req, res, next) => {
 	res.header('Access-Control-Allow-Origin', '*');
 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+    res.header('Access-Control-Allow-Methods','PUT,POST,GET,DELETE,OPTIONS');	
 	next();
 });
 
@@ -39,15 +41,16 @@ const STORE = new RDBStore(session)(OPTIONS);
 // console.log(store);
 app.use(session({
     secret: SECURE_KEY,
+    key: 'sid',
     store: STORE,
-    resave: true,
-    saveUninitialized: true
+    cookie: { secure: 'auto' }
 }));
 
 // crawlGK2();
 
 app.post('/graphql', (req, res) => {
 	let rootValue = {request:req, response:res};
+	console.log(req);
 	graphql(schema, req.body, rootValue).then((result) => {
 		res.send(JSON.stringify(result, null, 4));
 	});
