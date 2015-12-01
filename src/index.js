@@ -7,8 +7,7 @@ import './assets/styles/index.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import Router from 'react-router';
-import createBrowserHistory from 'history/lib/createBrowserHistory';
+
 // Store
 import configureStore from './store/configureStore';
 // Routes
@@ -18,7 +17,7 @@ const store = configureStore();
 
 ReactDOM.render(
 	<Provider store={store}>
-	    <Router history={createBrowserHistory()}>{appRoutes}</Router>
+	    {appRoutes}
 	</Provider>,
 	document.getElementById('root')
 );
