@@ -39,10 +39,28 @@ export function extractMustFixBugData(source) {
 
 export async function updateBugsToDB(bugs) {
 	let connection, query, result = null;
+	let newBugIdMap = {};
+	let solvedBugs = [];
 
 	try {
 		connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-		for (var i = 0; i < bugs.length; i++) {
+		// Delete solved bugs
+		bugs.forEach((bug) => {
+			newBugIdMap[bug.id] = true;
+		});
+		query = r.db('work_genius').table('tasks').filter({type: 'bug'}).coerceTo('array');
+		result = await query.run(connection);
+		for (let j = 0; j < result.length; j++) {
+			if (!(result[j].id in newBugIdMap)) {
+				solvedBugs.push(result[j].id);
+			}
+		}
+		for (let k = 0; k < solvedBugs.length; k++) {
+			query = r.db('work_genius').table('tasks').get(solvedBugs[k]).delete();
+			await query.run(connection);
+		}
+		// Insert and Update new bugs
+		for (let i = 0; i < bugs.length; i++) {
 			query = r.db('work_genius').table('tasks').get(bugs[i]['id']);
 			result = await query.run(connection);
 

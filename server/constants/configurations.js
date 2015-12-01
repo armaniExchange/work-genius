@@ -9,8 +9,8 @@ export const LDAP = {
 export const ADMIN = ['zli', 'stsai'];
 export const LDAP_AUTH_PREFIX = 'corp\\';
 export const SECURE_KEY = '@a10networks';
-export const GK2_LOG_IN_ACCOUNT = '';
-export const GK2_LOG_IN_PASSWORD = '';
+export const GK2_LOG_IN_ACCOUNT = 'zli';
+export const GK2_LOG_IN_PASSWORD = 'lzp_2013';
 export const GK2_LOG_IN_URL = 'https://gk2.a10networks.com/login/';
 export const GK2_REFERER_URL = 'https://gk2.a10networks.com/login/?next=/';
 
