@@ -53,16 +53,15 @@ let UserMutation = {
 		},
 		resolve: async (root, { account, password }) => {
 			let session = root.request.session;
-			// console.log('before auth session id', root.request);
 			console.log('before auth session id', session.uid);
 			if (!(account.includes('@') || account.includes('\\'))) {
 				account = LDAP_AUTH_PREFIX + account;
 			}
-		    try {    		    	
+		    try {
 		        let authenticated = await adPromise(account, password);
 
 				try {
-					let connection = await r.connect({ host: DB_HOST, port: DB_PORT });					
+					let connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 					r.db('work_genius').table('users').insert({
 						user_id: account
 						// password: password
@@ -70,7 +69,7 @@ let UserMutation = {
 					//console.log(mutationResult);
 					// record session
 					if (authenticated) {
-						session.uid = account;						
+						session.uid = account;
 					} else {
 						console.log('Auth failed');
 					}
@@ -81,7 +80,7 @@ let UserMutation = {
 		        return authenticated;
 		    } catch (e) {
 		        console.log('connect to ldap error or rethinkdb error:', e);
-		    }	
+		    }
 		}
 	}
 };

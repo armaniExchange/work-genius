@@ -5,7 +5,7 @@ const initialState = Map({
 	navItems: List.of(
 		Map({
 			displayText: 'Dashboard',
-			link: '/'
+			link: '/dashboard'
 		}),
 		Map({
 			displayText: 'Task',

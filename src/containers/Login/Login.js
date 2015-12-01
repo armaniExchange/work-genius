@@ -1,43 +1,44 @@
 // Style
 import './_Login';
 // React & Redux
-import React, { Component } from 'react';
-// import { connect } from 'react-redux';
-// import { bindActionCreators } from 'redux';
-// // Actions
-// import * as LoginActions from '../../actions/login-actions';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 // Components
 import LoginForm from '../../components/Login/Login';
+// Actions
+import * as UserActions from '../../actions/user-actions';
 
 class Login extends Component {
-	componentWillMount() {
-
-	}
 	render() {
-
+		const { handleLogin } = this.props.loginPageActions;
 		return (
 		    <div className="container">
-		    	<LoginForm />
-		    </div> 
+		    	<LoginForm
+		    	    onSubmitHandler={handleLogin}/>
+		    </div>
 		);
 	}
 }
 
 Login.propTypes = {
-	// LoginState: PropTypes.object.isRequired
-// 	LoginActions: PropTypes.object.isRequired
+	loginPageState: PropTypes.object.isRequired,
+	loginPageActions: PropTypes.object.isRequired
 };
 
-// function mapStateToProps(state) {
-// 	return {
-// 		LoginState: state.task.toJS()
-// 	};
-// }
+function mapStateToProps(state) {
+	return {
+		loginPageState: state.user.toJS()
+	};
+}
 
-// function mapDispatchToProps(dispatch) {
-// 	return {
-// 		LoginActions: bindActionCreators(LoginActions, dispatch)
-// 	};
-// }
+function mapDispatchToProps(dispatch) {
+	return {
+		loginPageActions: bindActionCreators(UserActions, dispatch)
+	};
+}
 
-export default Login;
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Login);

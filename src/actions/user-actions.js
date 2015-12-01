@@ -11,24 +11,18 @@ export function handleLogout() {
 	};
 };
 
-
 export function handleLogin(user) {
-	
-	// console.log('handelLogin');
 	return () => {
-		// dispatch(setLoadingState(true));
-		//console.log(dispatch);
 		return request
 			.post(SERVER_API_URL)
 			.withCredentials()
-			// .set('Access-Control-Allow-Origin', 'localhost')
 			.set('Content-Type', 'application/graphql')
 			.send(`
 				mutation RootMutationType {
 				    login(account:"${user['username']}", password:"${user['password']}") {
 				        title
 				    }
-				}				
+				}
 			`)
 			.end((err, res) => {
 				if (res) {
