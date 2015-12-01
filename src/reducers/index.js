@@ -9,8 +9,7 @@ const rootReducer = combineReducers({
 	app,
 	demo,
 	task,
-	pto
-	task,
+	pto,
 	user
 });
 
