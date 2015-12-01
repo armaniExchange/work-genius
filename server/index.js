@@ -10,7 +10,7 @@ import schema from './schema/schema.js';
 import { DB_HOST, DB_PORT, SECURE_KEY } from './constants/configurations.js';
 
 // Crawler
-// import { crawlGK2 } from './crawler/crawler.js';
+import { crawlGK2 } from './crawler/crawler.js';
 
 const PORT = 3000;
 let app = express();
@@ -44,7 +44,7 @@ app.use(session({
     saveUninitialized: true
 }));
 
-// crawlGK2();
+crawlGK2();
 
 app.post('/graphql', (req, res) => {
 	let rootValue = {request:req, response:res};
