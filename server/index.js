@@ -1,14 +1,13 @@
-// Express
+// Libraries
 import express from 'express';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import RDBStore from 'session-rethinkdb';
-
+import { CronJob } from 'cron';
 // GraphQL and schema
 import { graphql } from 'graphql';
 import schema from './schema/schema.js';
 import { DB_HOST, DB_PORT, SECURE_KEY } from './constants/configurations.js';
-
 // Crawler
 import { crawlGK2 } from './crawler/crawler.js';
 
@@ -47,11 +46,13 @@ app.use(session({
     cookie: { secure: 'auto' }
 }));
 
-//crawlGK2();
+// Crawling GK2 every 10 minutes
+new CronJob('10 */10 * * * *', () => {
+	crawlGK2();
+}, null, true);
 
 app.post('/graphql', (req, res) => {
 	let rootValue = {request:req, response:res};
-	// console.log(req);
 	graphql(schema, req.body, rootValue).then((result) => {
 		res.send(JSON.stringify(result, null, 4));
 	});
