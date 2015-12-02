@@ -98,9 +98,11 @@ export async function crawlGK2() {
         await updateBugsToDB(bugs);
         global.isCrawling = false;
         console.log(`write to DB complete! This writing process took ${new Date() - startTime} ms`);
+        console.log(`====================================================================`);
     } catch (e) {
         global.isCrawling = false;
         console.log(`Crawling failed due to ${e}`);
+        console.log(`====================================================================`);
         throw e;
     }
 };

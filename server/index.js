@@ -47,7 +47,7 @@ app.use(session({
 }));
 
 // Crawling GK2 every 10 minutes
-new CronJob('10 */10 * * * *', () => {
+new CronJob('30 */10 * * * *', () => {
 	crawlGK2();
 }, null, true);
 
