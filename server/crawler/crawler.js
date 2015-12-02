@@ -70,7 +70,7 @@ export async function crawlGK2() {
 
     try {
         let startTime = new Date();
-        console.log('Crawling GK2...');
+        console.log(`[${startTime.toString()}] Crawling GK2...`);
         // Get CSFR Token
         let { res: getRes } = await crawlerPromise(GK2_LOG_IN_URL,'GET');
         cookieKeyValMap = parseHeaderCookie(getRes.headers, cookieKeyValMap);
