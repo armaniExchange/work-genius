@@ -11,10 +11,20 @@ import TaskTable from '../../components/Task-Table/Task-Table';
 import Spinner from '../../components/Spinner/Spinner';
 
 class TaskPage extends Component {
+	constructor(props) {
+		super(props);
+		this._onCrawlerButtonClicked = ::this._onCrawlerButtonClicked;
+	}
 	componentWillMount() {
 		const { fetchBug, fetchFeature } = this.props.taskPageActions;
 		fetchFeature();
 		fetchBug();
+	}
+	_onCrawlerButtonClicked() {
+		const {
+			initiateGK2Crawler
+		} = this.props.taskPageActions;
+		initiateGK2Crawler();
 	}
 	render() {
 		const {
@@ -43,7 +53,11 @@ class TaskPage extends Component {
 		return (
 			<section className="task-page">
 				<Spinner hide={!isLoading} />
-			    <span>Task Page</span>
+			    <button
+			    	className="btn btn-success"
+			        onClick={this._onCrawlerButtonClicked}>
+			        Crawl GK2
+			    </button>
 			    <TaskTable
 			        data={featureTableData}
 			        originalData={featureTableOriginalData}

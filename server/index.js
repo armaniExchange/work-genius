@@ -47,7 +47,7 @@ app.use(session({
     cookie: { secure: 'auto' }
 }));
 
-crawlGK2();
+//crawlGK2();
 
 app.post('/graphql', (req, res) => {
 	let rootValue = {request:req, response:res};

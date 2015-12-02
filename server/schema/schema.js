@@ -22,7 +22,8 @@ const schema = new GraphQLSchema({
 		name: 'RootMutationType',
 		fields: {
 			editTaskEta: TaskMutation.editTaskEta,
-			login: UserMutation.userLogin
+			login: UserMutation.userLogin,
+			initiateCrawler: TaskMutation.initiateCrawler
 		}
 	})
 });
