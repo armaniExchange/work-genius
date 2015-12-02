@@ -1,8 +1,8 @@
 // Styles
-import '../node_modules/material-design-lite/material.min.css';
+import './assets/styles/index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-bootstrap-table/css/react-bootstrap-table.min.css';
-import './assets/styles/index.css';
+import '../node_modules/material-design-lite/material.min.css';
 // Libraries
 import React from 'react';
 import ReactDOM from 'react-dom';

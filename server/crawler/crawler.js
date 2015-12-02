@@ -40,6 +40,11 @@ export function crawlerPromise(url = '', method = 'GET', formData = {}, headers 
 };
 
 export async function crawlGK2() {
+    if (global.isCrawling) {
+        console.log('Server is already crawling!');
+        throw new Error('Server is already crawling!');
+    }
+    global.isCrawling = true;
     let cookieKeyValMap = {
             'csrftoken': null,
             'sessionid': null
@@ -90,9 +95,12 @@ export async function crawlGK2() {
         // Write new bug data to db
         startTime = new Date();
         console.log('About to write crawling data into db...');
-        updateBugsToDB(bugs);
+        await updateBugsToDB(bugs);
+        global.isCrawling = false;
         console.log(`write to DB complete! This writing process took ${new Date() - startTime} ms`);
     } catch (e) {
-        console.log(e);
+        global.isCrawling = false;
+        console.log(`Crawling failed due to ${e}`);
+        throw e;
     }
 };

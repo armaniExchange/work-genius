@@ -10,6 +10,8 @@ import TaskType from './TaskType.js';
 import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
+// Crawler
+import { crawlGK2 } from '../../crawler/crawler.js';
 
 let TaskMutation = {
 	'editTaskEta': {
@@ -70,6 +72,18 @@ let TaskMutation = {
 			}
 
 			return queryResult[0];
+		}
+	},
+	'initiateCrawler': {
+		type: GraphQLString,
+		description: 'Initiate crawler to crawl features and GK2',
+		resolve: async () => {
+			try {
+				await crawlGK2();
+				return 'Crawl GK2 Success';
+			} catch (err) {
+				return err;
+			}
 		}
 	}
 };

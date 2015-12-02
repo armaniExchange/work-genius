@@ -152,3 +152,24 @@ export function editETA(id, eta) {
 			});
 	};
 };
+
+export function initiateGK2Crawler() {
+	return (dispatch) => {
+		dispatch(setLoadingState(true));
+		return request
+			.post(SERVER_API_URL)
+			.set('Content-Type', 'application/graphql')
+			.send(`mutation RootMutationType {
+			    initiateCrawler
+			}`)
+			.end((err, res) => {
+				let response = JSON.parse(res.text);
+				if (err || response.errors) {
+					let error = err || response.errors[0].message;
+                    dispatch(taskApiFailure(error));
+	            } else {
+	                dispatch(fetchBug());
+	            }
+			});
+	};
+};
