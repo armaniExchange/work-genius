@@ -103,9 +103,6 @@ class TaskTable extends Component {
 	constructor(props) {
 		super(props);
 		this._onSortHandler = ::this._onSortHandler;
-		this._onFilterHandler = ::this._onFilterHandler;
-		this._renderFilterByType = ::this._renderFilterByType;
-		this._renderFilter = ::this._renderFilter;
 	}
 
 	componentWillUnmount() {
@@ -121,61 +118,11 @@ class TaskTable extends Component {
 		onSortHandler(category);
 	}
 
-	_onFilterHandler() {
-		const {
-			onFilterHandler,
-			filterBy
-		} = this.props;
-		let filterConditions = {};
-
-		filterBy.forEach((name) => {
-			filterConditions[name] = this.refs[`${name.toLowerCase()}Filter`].value;
-		});
-
-		onFilterHandler(filterConditions);
-	}
-
-	_renderFilterByType(type, keyName) {
-		const { originalData } = this.props;
-		let lowerCaseType = type.toLowerCase();
-		let options = [];
-		let optionsHtml = originalData.map((bug, i) => {
-			if (options.indexOf(bug[type]) < 0) {
-				options.push(bug[type]);
-				return (
-					<option value={bug[type]} key={i}>{bug[type]}</option>
-				);
-			}
-			return null;
-		});
-
-		return (
-			<span className="task-table-filters__filter" key={keyName}>
-				<span>{type}: </span>
-				<select ref={`${lowerCaseType}Filter`} onChange={this._onFilterHandler}>
-					<option value={''}>All</option>
-					{optionsHtml}
-				</select>
-			</span>
-		);
-	}
-
-	_renderFilter() {
-		const { filterBy } = this.props;
-		return filterBy.map((filterName, i) => {
-			return this._renderFilterByType(filterName, i);
-		});
-	}
-
 	render () {
-		const { data, sortBy, enableSort, tableTitle, onETASubmitHandler } = this.props;
+		const { data, sortBy, enableSort, onETASubmitHandler } = this.props;
 
 		return (
 			<div className="task-table">
-			    <h5>{tableTitle}</h5>
-			    <div className="task-table-filters">
-			    	{this._renderFilter()}
-			    </div>
 			    <table className="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
 				    <TableHeaders
 				        data={data[0]}
@@ -193,13 +140,9 @@ class TaskTable extends Component {
 
 TaskTable.propTypes = {
 	data: PropTypes.array.isRequired,
-	originalData: PropTypes.array.isRequired,
-	tableTitle: PropTypes.string.isRequired,
 	enableSort: PropTypes.bool,
 	sortBy: PropTypes.array,
-	filterBy: PropTypes.array,
 	onSortHandler: PropTypes.func,
-	onFilterHandler: PropTypes.func,
 	onUnmountHandler: PropTypes.func,
 	onETASubmitHandler: PropTypes.func
 };
@@ -207,9 +150,7 @@ TaskTable.propTypes = {
 TaskTable.defaultProps = {
 	enableSort: false,
 	sortBy: [],
-	filterBy: [],
 	onSortHandler: () => {},
-	onFilterHandler: () => {},
 	onUnmountHandler: () => {},
 	onETASubmitHandler: () => {}
 };

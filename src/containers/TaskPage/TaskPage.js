@@ -9,6 +9,7 @@ import * as TaskPageActions from '../../actions/task-page-actions';
 // Components
 import TaskTable from '../../components/Task-Table/Task-Table';
 import Spinner from '../../components/Spinner/Spinner';
+import FilterList from '../../components/Filter-List/Filter-List';
 
 class TaskPage extends Component {
 	constructor(props) {
@@ -58,26 +59,28 @@ class TaskPage extends Component {
 			        onClick={this._onCrawlerButtonClicked}>
 			        Crawl GK2
 			    </button>
+			    <h5>{featureTableTitle}</h5>
+			    <FilterList
+			        data={featureTableOriginalData}
+			        categories={Object.keys(featureFilterConditions)}
+			        onFilterHandler={filterFeatureTable} />
 			    <TaskTable
 			        data={featureTableData}
-			        originalData={featureTableOriginalData}
-			        tableTitle={featureTableTitle}
 			        enableSort
 			        sortBy={sortFeatureTableBy}
-			        filterBy={Object.keys(featureFilterConditions)}
 			        onSortHandler={sortFeatureTableByCategory}
-			        onFilterHandler={filterFeatureTable}
 			        onUnmountHandler={resetFeatureTable}
 			        onETASubmitHandler={editETA} />
+			    <h5>{bugTableTitle}</h5>
+			    <FilterList
+			        data={bugTableOriginalData}
+			        categories={Object.keys(bugFilterConditions)}
+			        onFilterHandler={filterBugTable} />
 			    <TaskTable
 			        data={bugTableData}
-			        originalData={bugTableOriginalData}
-			        tableTitle={bugTableTitle}
 			        enableSort
 			        sortBy={sortBugTableBy}
-			        filterBy={Object.keys(bugFilterConditions)}
 			        onSortHandler={sortBugTableByCategory}
-			        onFilterHandler={filterBugTable}
 			        onUnmountHandler={resetBugTable}
 			        onETASubmitHandler={editETA} />
 			</section>
