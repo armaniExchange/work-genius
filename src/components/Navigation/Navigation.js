@@ -3,6 +3,8 @@ import './_Navigation.scss';
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
+// Components
+import LogoutButton from '../Logout-Button/Logout-Button';
 
 // Stateless functional components
 let HeaderLogo = () => {
@@ -12,6 +14,12 @@ let HeaderLogo = () => {
 };
 
 class Navigation extends Component {
+	constructor(props) {
+		super(props);
+		this._onNavItemsClick = ::this._onNavItemsClick;
+		this._onLogoutHandler = ::this._onLogoutHandler;
+	}
+
 	_onNavItemsClick(e) {
 		const { onNavItemsClick } = this.props;
 		let nameIndexCombo = e.target.name.split('-'),
@@ -19,6 +27,13 @@ class Navigation extends Component {
 		    index = nameIndexCombo[1];
 
 		onNavItemsClick (name, index);
+	}
+
+	_onLogoutHandler() {
+		const { onLogoutHandler } = this.props;
+		onLogoutHandler(() => {
+			location.reload();
+		});
 	}
 
 	render() {
@@ -46,22 +61,25 @@ class Navigation extends Component {
 				<nav className="mdl-navigation">
 					{ navItemsHtml }
 				</nav>
+				<LogoutButton onClickHandler={this._onLogoutHandler} />
 			</div>
 		);
 	}
 }
 
 Navigation.propTypes = {
+	navItems: PropTypes.array.isRequired,
 	headerTitle: PropTypes.string,
 	hasLogo: PropTypes.bool,
 	onNavItemsClick: PropTypes.func,
-	navItems: PropTypes.array.isRequired
+	onLogoutHandler: PropTypes.func,
 };
 
 Navigation.defaultProps = {
 	headerTitle: '',
 	hasLogo: false,
-	onNavItemsClick: () => {}
+	onNavItemsClick: () => {},
+	onLogoutHandler: () => {}
 };
 
 export default Navigation;
