@@ -1,30 +1,24 @@
-import { Map, List } from 'immutable';
+// Immutable
+import { Map } from 'immutable';
+// Constants
+import * as actionTypes from '../constants/action-types';
 
 const initialState = Map({
-	navHeaderTitle: 'WG',
-	navItems: List.of(
-		Map({
-			displayText: 'Dashboard',
-			link: '/dashboard'
-		}),
-		Map({
-			displayText: 'Task',
-			link: '/task'
-		}),
-		Map({
-			displayText: 'PTO',
-			link: '/pto'
-		}),
-		Map({
-			displayText: 'Redux Demo',
-			link: '/redux-demo'
-		})
-	),
-	hasLogo: true
+	token: '',
+	loginError: null
 });
 
-export default function appReducer(state = initialState, action) {
+export default function mainReducer(state = initialState, action) {
 	switch (action.type) {
+		case actionTypes.SET_TOKEN:
+			if (action.token) {
+				localStorage.token = action.token;
+			} else {
+				delete localStorage.token;
+			}
+		    return state.set('token', action.token);
+		case actionTypes.CHECK_LOGIN_FAILURE:
+		    return state.set('token', '').set('loginError', action.error);
 		default:
 			return state;
 	}

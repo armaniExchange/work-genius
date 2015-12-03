@@ -23,7 +23,6 @@ class LoginForm extends Component {
     	} else {
     		this.setState({usernameError:'Username is not right'});
     	}
-
     }
 
     _onHandlePasswordChange(e) {

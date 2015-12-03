@@ -27,23 +27,24 @@ app.use((req, res, next) => {
 	next();
 });
 
-
 // for express-session settings
 const OPTIONS = {
     servers: [
-        {host: DB_HOST, port: DB_PORT}
-    ],
-    // cleanupInterval: 5000, // optional, default is 60000 (60 seconds)
-    table: 'sessions' // optional, default is 'session'
+        {
+        	host: DB_HOST,
+        	port: DB_PORT
+        }
+    ]
 };
 
 const STORE = new RDBStore(session)(OPTIONS);
 // console.log(store);
 app.use(session({
     secret: SECURE_KEY,
-    key: 'sid',
     store: STORE,
-    cookie: { secure: 'auto' }
+    cookie: { secure: 'auto' },
+    resave: true,
+    saveUninitialized: true
 }));
 
 // Crawling GK2 every 10 minutes

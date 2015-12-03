@@ -7,34 +7,45 @@ import { bindActionCreators } from 'redux';
 // Components
 import LoginForm from '../../components/Login/Login';
 // Actions
-import * as UserActions from '../../actions/user-actions';
+import * as AppActions from '../../actions/app-actions';
 
 class Login extends Component {
+	constructor(props) {
+		super(props);
+		this._onLogin = ::this._onLogin;
+	}
+
+	_onLogin(user) {
+		const { login } = this.props.appActions;
+		login(user, () => {
+			location.reload();
+		});
+	}
+
 	render() {
-		const { handleLogin } = this.props.loginPageActions;
 		return (
 		    <div className="container">
 		    	<LoginForm
-		    	    onSubmitHandler={handleLogin}/>
+		    	    onSubmitHandler={this._onLogin}/>
 		    </div>
 		);
 	}
 }
 
 Login.propTypes = {
-	loginPageState: PropTypes.object.isRequired,
-	loginPageActions: PropTypes.object.isRequired
+	appState: PropTypes.object.isRequired,
+	appActions: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
 	return {
-		loginPageState: state.user.toJS()
+		appState: state.app.toJS()
 	};
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		loginPageActions: bindActionCreators(UserActions, dispatch)
+		appActions: bindActionCreators(AppActions, dispatch)
 	};
 }
 

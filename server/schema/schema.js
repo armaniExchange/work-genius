@@ -15,7 +15,7 @@ const schema = new GraphQLSchema({
 		name: 'RootQueryType',
 		fields: {
 			tasks: TaskQuery.tasks,
-			isLogin: UserQuery.login
+			isLogin: UserQuery.isLogin
 		}
 	}),
 	mutation: new GraphQLObjectType({
@@ -23,6 +23,7 @@ const schema = new GraphQLSchema({
 		fields: {
 			editTaskEta: TaskMutation.editTaskEta,
 			login: UserMutation.userLogin,
+			logout: UserMutation.userLogout,
 			initiateCrawler: TaskMutation.initiateCrawler
 		}
 	})

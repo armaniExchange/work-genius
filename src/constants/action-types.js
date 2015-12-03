@@ -18,3 +18,7 @@ export const SET_LOADING_STATE = 'SET_LOADING_STATE';
 export const EDIT_ETA_REQUEST = 'EDIT_ETA_REQUEST';
 export const EDIT_ETA_SUCCESS = 'EDIT_ETA_SUCCESS';
 export const INITIATE_CRAWLER = 'INITIATE_CRAWLER';
+
+// App actions
+export const LOGIN_FAILURE = 'LOGIN_FAILURE';
+export const SET_TOKEN = 'SET_TOKEN';

@@ -3,15 +3,18 @@ import {
 	GraphQLString,
 	GraphQLNonNull
 } from 'graphql';
-
-// Active Directory
+// Libraries
 import ActiveDirectory from 'activedirectory';
-// Models
-import UserType from './UserType.js';
-// RethinkDB
+import jwt from 'jsonwebtoken';
 import r from 'rethinkdb';
 // Constants
-import { DB_HOST, DB_PORT, LDAP, LDAP_AUTH_PREFIX } from '../../constants/configurations.js';
+import {
+	DB_HOST,
+	DB_PORT,
+	LDAP,
+	LDAP_AUTH_PREFIX,
+	SECURE_KEY
+} from '../../constants/configurations.js';
 
 function adPromise(account, password) {
     return new Promise((resolve, reject) => {
@@ -19,12 +22,11 @@ function adPromise(account, password) {
 		let	ad = new ActiveDirectory(LDAP);
 		ad.authenticate(account, password, function(err, auth) {
 			if (err || !auth) {
-                reject(new Error('No content!!'));
+                reject(new Error('Account or Password Incorrect!'));
             } else {
                 resolve(auth);
             }
 		});
-
     });
 };
 
@@ -39,7 +41,7 @@ mutation RootMutationType {
 
 let UserMutation = {
 	'userLogin': {
-		type: UserType,
+		type: GraphQLString,
 		description: 'Login User',
 		args: {
 			account: {
@@ -53,34 +55,42 @@ let UserMutation = {
 		},
 		resolve: async (root, { account, password }) => {
 			let session = root.request.session;
-			console.log('before auth session id', session.uid);
+			let token = jwt.sign({
+				account: account,
+				isLoggedIn: true
+			}, SECURE_KEY, {
+				expiresIn: "30 days"
+			});
+
 			if (!(account.includes('@') || account.includes('\\'))) {
 				account = LDAP_AUTH_PREFIX + account;
 			}
 		    try {
-		        let authenticated = await adPromise(account, password);
+		        // await adPromise(account, password);
+		        let connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+		        let insertion = r.db('work_genius').table('users').insert({
+						id: account
+					}, {
+						conflict: 'update'
+					});
 
-				try {
-					let connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-					r.db('work_genius').table('users').insert({
-						user_id: account
-						// password: password
-					}).run(connection);
-					//console.log(mutationResult);
-					// record session
-					if (authenticated) {
-						session.uid = account;
-					} else {
-						console.log('Auth failed');
-					}
-				} catch (e) {
-					console.log('connect to rethinkdb error:', e);
-				}
-
-		        return authenticated;
-		    } catch (e) {
-		        console.log('connect to ldap error or rethinkdb error:', e);
+				await insertion.run(connection);
+				session.token = token;
+		        return token;
+		    } catch (err) {
+		        return err;
 		    }
+		}
+	},
+	'userLogout': {
+		type: GraphQLString,
+		description: 'Logout User',
+		resolve: async (root) => {
+			let session = root.request.session;
+		    session.destroy((err) => {
+		    	return err;
+		    });
+		    return 'Log out successfully';
 		}
 	}
 };

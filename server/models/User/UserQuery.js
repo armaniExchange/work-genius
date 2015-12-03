@@ -1,20 +1,14 @@
 // GraphQL
 import {
-	GraphQLString
+	GraphQLBoolean
 } from 'graphql';
 
-// Models
-// import UserType from './UserType.js';
-
 let UserQuery = {
-	'login': {
-		type: GraphQLString,
-		description: 'second time real login to WG',
+	'isLogin': {
+		type: GraphQLBoolean,
+		description: 'check if the user is logged in',
 		resolve: async (root) => {
-			let session = root.request.session;
-			// to be add auth from DB
-
-			return session.uid;
+			return root.request.session.uid ? true : false;
 		}
 	}
 };
