@@ -1,7 +1,7 @@
 // React & Redux
 import React, { Component, PropTypes } from 'react';
 // Styles
-import './_Logout-button.scss';
+import './_Logout-Button.scss';
 
 class LogoutButton extends Component {
 	constructor(props) {

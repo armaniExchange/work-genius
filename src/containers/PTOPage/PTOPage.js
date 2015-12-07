@@ -30,14 +30,15 @@ class PTOPage extends Component {
 
     render() {
 
-        const { ptos } = this.props;
+        const { pto } = this.props;
+        const { applyPTO } = this.props.ptoActions;
 
         return (
             <div>
                 <section>PTO Page</section>
                 <div className="mdl-grid">
-                    <PTOForm />
-                    <PTOTable data={ptos} />
+                    <PTOForm handleApplyPTO={applyPTO}/>
+                    <PTOTable data={pto.ptos} />
                 </div>
                 <BootstrapTable data={products} striped={true} hover={true} >
                     <TableHeaderColumn isKey={true} dataField="id" dataSort={true}>Product ID</TableHeaderColumn>
@@ -50,15 +51,14 @@ class PTOPage extends Component {
 }
 
 PTOPage.propTypes = {
-    ptos: PropTypes.object,
+    pto: PropTypes.object,
+    ptoActions: PropTypes.object.isRequire,
 };
-
-// export default ;
 
 export default connect(
     (state) => {
         return {
-            ptos: state.pto.toJS()
+            pto: state.pto.toJS()
         };
     },
     (dispatch) => {

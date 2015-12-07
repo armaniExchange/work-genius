@@ -11,7 +11,7 @@ class PTOTableRow extends Component {
                 <td className="mdl-data-table__cell--non-numeric">{rowData.toDate}</td>
                 <td>{rowData.totalHours}</td>
                 <td className="mdl-data-table__cell--non-numeric">{rowData.applyDate}</td>
-                <td className="mdl-data-table__cell--non-numeric">{rowData.isApproved}</td>
+                <td className="mdl-data-table__cell--non-numeric">{rowData.status}</td>
                 <td className="mdl-data-table__cell--non-numeric">{rowData.memory}</td>
                 <td className="mdl-data-table__cell--non-numeric">
                     <a href="#">cancel</a>
