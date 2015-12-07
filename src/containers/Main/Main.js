@@ -22,7 +22,7 @@ class Main extends Component {
 
 	_mapPathNameToDisplayName(pathName, navItems) {
 		let filteredItems = navItems.filter((item) => {
-			return item.link === pathName;
+			return item.link === pathName.replace(/\/$/, '');
 		});
 		return filteredItems[0].displayText;
 	}

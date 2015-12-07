@@ -17,6 +17,10 @@ const initialState = Map({
 			link: '/main/pto'
 		}),
 		Map({
+			displayText: 'Data Explorer',
+			link: '/main/data-explorer'
+		}),
+		Map({
 			displayText: 'Redux Demo',
 			link: '/main/redux-demo'
 		})
