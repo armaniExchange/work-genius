@@ -9,7 +9,6 @@ export function requireAuth(nextState, replaceState) {
 	    	replaceState({ nextPathname: nextState.location.pathname }, '/');
 		} else {
 			let user = jwt.verify(localStorage.token, SECURE_KEY);
-			console.log(user);
 		    if (!user.isLoggedIn) {
 		    	replaceState({ nextPathname: nextState.location.pathname }, '/');
 		    }

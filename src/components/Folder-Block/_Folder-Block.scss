@@ -1,0 +1,22 @@
+.FolderBlock {
+	display: inline-block;
+	width: 40%;
+	height: 200px;
+	margin-bottom: 40px;
+
+	text-align: center;
+	vertical-align: middle;
+	line-height: 200px;
+	text-decoration: none;
+
+	color: white;
+	background-color: #5cb85c;
+
+	border-radius: 5px;
+
+	&:hover, &:active, &:focus {
+		color: white;
+		background-color: #449d44;
+		text-decoration: none;
+	}
+}
