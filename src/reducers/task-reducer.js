@@ -1,3 +1,7 @@
+/**
+ * @author Howard Chang
+ */
+
 // Libraries
 import { Map, List, OrderedMap, fromJS, is } from 'immutable';
 // Constants

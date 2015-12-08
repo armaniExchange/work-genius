@@ -46,11 +46,11 @@ var config = {
                 loaders: ['style', 'css', 'sass', 'postcss']
             },
             {
-                test: /\.(png|jpg|jpeg|gif|svg)$/,
+                test: /\.(png|jpg|jpeg|gif|svg)(\?v=\d\.\d\.\d)?$/,
                 loader: 'url?limit=8192'
             },
             {
-                test : /\.(woff|woff2|ttf|eot)$/,
+                test : /\.(woff|woff2|ttf|eot)(\?v=\d\.\d\.\d)?$/,
                 loader: 'url'
             }
         ]

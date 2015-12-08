@@ -1,3 +1,7 @@
+/**
+ * @author Howard Chang
+ */
+
 // Style
 import './_DataExplorerPage';
 // React & Redux
