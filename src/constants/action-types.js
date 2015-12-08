@@ -22,3 +22,9 @@ export const INITIATE_CRAWLER = 'INITIATE_CRAWLER';
 // App actions
 export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 export const SET_TOKEN = 'SET_TOKEN';
+
+// Data Explorer page actions
+export const TOGGLE_ADD_FOLDER_MODAL = 'TOGGLE_ADD_FOLDER_MODAL';
+export const ADD_NEW_FOLDER = 'ADD_NEW_FOLDER';
+export const SET_FOLDER_MODAL_ERROR_MESSAGE = 'SET_FOLDER_MODAL_ERROR_MESSAGE';
+export const DELETE_FOLDER = 'DELETE_FOLDER';

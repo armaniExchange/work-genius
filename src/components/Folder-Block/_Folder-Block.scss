@@ -1,22 +1,46 @@
-.FolderBlock {
-	display: inline-block;
+.folder-block {
+	position: relative;
 	width: 40%;
 	height: 200px;
 	margin-bottom: 40px;
 
-	text-align: center;
-	vertical-align: middle;
-	line-height: 200px;
-	text-decoration: none;
-
-	color: white;
 	background-color: #5cb85c;
-
 	border-radius: 5px;
 
-	&:hover, &:active, &:focus {
-		color: white;
-		background-color: #449d44;
+	cursor: pointer;
+
+	&__link {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		height: 200px;
+
+		font-size: 2.5em;
 		text-decoration: none;
+
+		color: white;
+		border-radius: 5px;
+
+		&:hover, &:active, &:focus {
+			color: white;
+			background-color: #449d44;
+			text-decoration: none;
+		}
+	}
+
+	&__close-button {
+		display: inline-block;
+		position: absolute;
+		width: 30px;
+		height: 30px;
+		top: -15px;
+		right: -15px;
+
+		text-align: center;
+		font-size: 30px;
+
+		z-index:10;
+		cursor: pointer;
 	}
 }
