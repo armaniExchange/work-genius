@@ -8,7 +8,6 @@ import { bindActionCreators } from 'redux';
 import * as TaskPageActions from '../../actions/task-page-actions';
 // Components
 import TaskTable from '../../components/Task-Table/Task-Table';
-import Spinner from '../../components/Spinner/Spinner';
 import FilterList from '../../components/Filter-List/Filter-List';
 
 class TaskPage extends Component {
@@ -33,7 +32,6 @@ class TaskPage extends Component {
 			bugTableData,
 			sortBugTableBy,
 			bugTableOriginalData,
-			isLoading,
 			featureTableTitle,
 			featureTableData,
 			sortFeatureTableBy,
@@ -53,7 +51,6 @@ class TaskPage extends Component {
 
 		return (
 			<section className="task-page">
-				<Spinner hide={!isLoading} />
 			    <button
 			    	className="btn btn-success"
 			        onClick={this._onCrawlerButtonClicked}>

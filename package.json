@@ -44,6 +44,7 @@
     "react-bootstrap-table": "^1.2.13",
     "react-datepicker": "^0.15.2",
     "react-dom": "^0.14.0",
+    "react-dropzone": "^3.2.2",
     "react-redux": "^4.0.0",
     "react-router": "^1.0.0-rc3",
     "redux": "^3.0.2",

@@ -10,6 +10,7 @@ import TaskPage from '../containers/TaskPage/TaskPage';
 import PTOPage from '../containers/PTOPage/PTOPage';
 import DataExplorerPage from '../containers/DataExplorerPage/DataExplorerPage';
 import DataExplorerFolderView from '../containers/DataExplorerFolderView/DataExplorerFolderView';
+import DataExplorerFileView from '../containers/DataExplorerFileView/DataExplorerFileView';
 import Login from '../containers/Login/Login';
 import NotFoundPage from '../containers/NotFoundPage/NotFoundPage';
 // Utilities
@@ -29,6 +30,7 @@ const appRoutes = (
 			    <Route path="/main/redux-demo" component={DemoPage} onEnter={requireAuth} />
 			    <Route path="/main/data-explorer" component={DataExplorerPage} onEnter={requireAuth}>
 			        <IndexRoute component={DataExplorerFolderView} onEnter={requireAuth}/>
+			        <Route path="/main/data-explorer/:folderName" component={DataExplorerFileView} onEnter={requireAuth} />
 			    </Route>
 		    </Route>
 		    <Route path="*" component={NotFoundPage} />

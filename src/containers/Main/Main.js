@@ -7,10 +7,18 @@ import { bindActionCreators } from 'redux';
 // Components
 import Navigation from '../../components/Navigation/Navigation';
 import PageHeader from '../../components/Page-Header/Page-Header';
+import Spinner from '../../components/Spinner/Spinner';
+import ErrorBox from '../../components/ErrorBox/ErrorBox';
 // Actions
 import * as AppActions from '../../actions/app-actions';
+import * as MainActions from '../../actions/main-actions';
 
 class Main extends Component {
+	constructor(props) {
+		super(props);
+		this._closeErrorBox = ::this._closeErrorBox;
+	}
+
 	componentDidUpdate() {
 		/* eslint-disable */
 		/* component handler is used by Material Design Lite, every react component
@@ -21,8 +29,13 @@ class Main extends Component {
 	}
 
 	_mapPathNameToDisplayName(pathName, navItems) {
+		var re = /main\/([a-zA-Z0-9-_]*)\/?/i;
+		let titleMatchResult = pathName.match(re);
+		let titleFromPath = titleMatchResult ? titleMatchResult[1] : titleMatchResult;
 		let filteredItems = navItems.filter((item) => {
-			return item.link === pathName.replace(/\/$/, '');
+			let itemMatchResult = item.link.match(re);
+			let titleFromItem = itemMatchResult ? itemMatchResult[1] : itemMatchResult;
+			return titleFromItem === titleFromPath;
 		});
 		return filteredItems[0].displayText;
 	}
@@ -31,11 +44,17 @@ class Main extends Component {
 		// console.log(name, index);
 	}
 
+	_closeErrorBox() {
+		this.props.mainActions.clearErrorMessage();
+	}
+
 	render() {
 		const {
 			navHeaderTitle,
 			navItems,
-			hasLogo
+			hasLogo,
+			isLoading,
+			errorMessage
 		} = this.props.mainState;
 
 		const { logout } = this.props.appActions;
@@ -47,6 +66,12 @@ class Main extends Component {
 			// The outer-most <div> is used by Material Design Lite to prevent DOM clash with React
 			<div>
 				<section className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
+					<Spinner hide={!isLoading} />
+					<ErrorBox
+					    show={!!errorMessage}
+					    errorMessage={errorMessage}
+					    onHideHandler={this._closeErrorBox}
+					    onConfirmHandler={this._closeErrorBox}/>
 					<Navigation
 					    headerTitle={navHeaderTitle}
 					    navItems={navItems}
@@ -66,9 +91,10 @@ class Main extends Component {
 }
 
 Main.propTypes = {
-	mainState : PropTypes.object.isRequired,
-	appActions: PropTypes.object.isRequired,
-	location  : PropTypes.object.isRequired
+	mainState  : PropTypes.object.isRequired,
+	appActions : PropTypes.object.isRequired,
+	mainActions: PropTypes.object.isRequired,
+	location   : PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
@@ -79,7 +105,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		appActions: bindActionCreators(AppActions, dispatch)
+		appActions : bindActionCreators(AppActions, dispatch),
+		mainActions: bindActionCreators(MainActions, dispatch)
 	};
 }
 

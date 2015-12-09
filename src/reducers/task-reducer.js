@@ -3,7 +3,7 @@
  */
 
 // Libraries
-import { Map, List, OrderedMap, fromJS, is } from 'immutable';
+import { Map, List, OrderedMap, is } from 'immutable';
 // Constants
 import * as actionTypes from '../constants/action-types';
 
@@ -20,8 +20,6 @@ const initialFeatureFilterConditions = Map({
 });
 
 const initialState = Map({
-	isLoading: false,
-	loadingError: undefined,
 	bugTableTitle: 'Bugs',
 	bugTableOriginalData: List.of(OrderedMap({
 		'Developer': '',
@@ -188,8 +186,6 @@ function filterTable(state, filterConditions, type) {
 function setTableData(state, data, type) {
 	let formatedData = formatResponse(data);;
 	return state
-	    .set('isLoading', false)
-	    .set('loadingError', undefined)
 	    .set(`${type}TableOriginalData`, formatedData)
 	    .set(`${type}TableData`, formatedData);
 }
@@ -239,8 +235,6 @@ export default function taskReducer(state = initialState, action) {
 			return resetTable(state, 'bug');
 		case actionTypes.RESET_FEATURE_TABLE:
 			return resetTable(state, 'feature');
-		case actionTypes.SET_LOADING_STATE:
-			return state.set('isLoading', action.state);
 		case actionTypes.FETCH_BUG_SUCCESS:
 			nextState = setTableData(state, action.data, 'bug');
 			if (!is(state.get('bugFilterConditions'), initialBugFilterConditions)) {
@@ -259,11 +253,6 @@ export default function taskReducer(state = initialState, action) {
 				nextState = sortOriginal(nextState, 'feature');
 			}
 			return nextState;
-		case actionTypes.TASK_API_FAILURE:
-			alert(action.err);
-			return state
-			    .set('isLoading', false)
-			    .set('loadingError', fromJS(action.err));
 		default:
 			return state;
 	}

@@ -7,7 +7,9 @@ import { Map, OrderedMap, List } from 'immutable';
 const initialState = Map({
     isLoading: false,
     showAddFolderModal: false,
+    showUploadFileModal: false,
     folderModalErrorMessage: '',
+    uploadFilesCache: List.of(),
     folders: OrderedMap({
         articles: List.of(
             OrderedMap({
@@ -42,6 +44,7 @@ const initialState = Map({
 
 export default function dataExplorer(state = initialState, action) {
     switch (action.type) {
+        // Folder View Actions
         case 'TOGGLE_ADD_FOLDER_MODAL':
             return state.update('showAddFolderModal', (originalState) => !originalState);
         case 'ADD_NEW_FOLDER':
@@ -50,6 +53,13 @@ export default function dataExplorer(state = initialState, action) {
             return state.set('folderModalErrorMessage', action.msg);
         case 'DELETE_FOLDER':
             return state.update('folders', (folders) => folders.delete(action.name));
+        // File View Actions
+        case 'TOGGLE_UPLOAD_FILE_MODAL':
+            return state.update('showUploadFileModal', (originalState) => !originalState);
+        case 'CLEAR_UPLOAD_FILES_CACHE':
+            return state.set('uploadFilesCache', List.of());
+        case 'SET_UPLOAD_FILES_CACHE':
+            return state.set('uploadFilesCache', List.of(...action.files));
         default:
             return state;
     }

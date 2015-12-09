@@ -3,6 +3,8 @@ import request from 'superagent';
 // Constants
 import * as actionTypes from '../constants/action-types';
 import { SERVER_API_URL } from '../constants/config';
+// Actions
+import * as mainActions from './main-actions';
 
 export function sortFeatureTableByCategory(category) {
 	return {
@@ -44,17 +46,13 @@ export function resetBugTable() {
 	};
 };
 
-export function setLoadingState(state) {
-	return {
-		type: actionTypes.SET_LOADING_STATE,
-		state
-	};
-};
-
 export function fetchBugSuccess(data) {
-	return {
-		type: actionTypes.FETCH_BUG_SUCCESS,
-		data
+	return (dispatch) => {
+		dispatch(mainActions.setLoadingState(false));
+		dispatch({
+			type: actionTypes.FETCH_BUG_SUCCESS,
+			data
+		});
 	};
 };
 
@@ -65,16 +63,9 @@ export function fetchFeatureSuccess(data) {
 	};
 };
 
-export function taskApiFailure(err) {
-	return {
-		type: actionTypes.TASK_API_FAILURE,
-		err
-	};
-};
-
 export function fetchBug() {
 	return (dispatch) => {
-		dispatch(setLoadingState(true));
+		dispatch(mainActions.setLoadingState(true));
 		return request
 			.post(SERVER_API_URL)
 			.set('Content-Type', 'application/graphql')
@@ -92,7 +83,7 @@ export function fetchBug() {
 			}`)
 			.end((err, res) => {
 				if (err) {
-                    dispatch(taskApiFailure(err));
+                    dispatch(mainActions.apiFailure(err));
 	            } else {
 	            	let data = JSON.parse(res.text).data.tasks;
 	                dispatch(fetchBugSuccess(data));
@@ -103,7 +94,7 @@ export function fetchBug() {
 
 export function fetchFeature() {
 	return (dispatch) => {
-		dispatch(setLoadingState(true));
+		dispatch(mainActions.setLoadingState(true));
 		return request
 			.post(SERVER_API_URL)
 			.set('Content-Type', 'application/graphql')
@@ -121,7 +112,7 @@ export function fetchFeature() {
 			}`)
 			.end((err, res) => {
 				if (err) {
-                    dispatch(taskApiFailure(err));
+                    dispatch(mainActions.apiFailure(err));
 	            } else {
 	            	let data = JSON.parse(res.text).data.tasks;
 	                dispatch(fetchFeatureSuccess(data));
@@ -132,7 +123,7 @@ export function fetchFeature() {
 
 export function editETA(id, eta) {
 	return (dispatch) => {
-		dispatch(setLoadingState(true));
+		dispatch(mainActions.setLoadingState(true));
 		return request
 			.post(SERVER_API_URL)
 			.set('Content-Type', 'application/graphql')
@@ -142,10 +133,11 @@ export function editETA(id, eta) {
 			    }
 			}`)
 			.end((err, res) => {
-				let response = JSON.parse(res.text);
-				if (err || response.errors) {
-					let error = err || response.errors[0].message;
-                    dispatch(taskApiFailure(error));
+				if (err || !res) {
+					let error = err || 'No response';
+					dispatch(mainActions.apiFailure(error));
+				} else if (res && JSON.parse(res.text).errors) {
+                    dispatch(mainActions.apiFailure(JSON.parse(res.text).errors[0].message));
 	            } else {
 	                dispatch(fetchBug());
 	            }
@@ -155,7 +147,7 @@ export function editETA(id, eta) {
 
 export function initiateGK2Crawler() {
 	return (dispatch) => {
-		dispatch(setLoadingState(true));
+		dispatch(mainActions.setLoadingState(true));
 		return request
 			.post(SERVER_API_URL)
 			.set('Content-Type', 'application/graphql')
@@ -163,10 +155,11 @@ export function initiateGK2Crawler() {
 			    initiateCrawler
 			}`)
 			.end((err, res) => {
-				let response = JSON.parse(res.text);
-				if (err || response.errors) {
-					let error = err || response.errors[0].message;
-                    dispatch(taskApiFailure(error));
+				if (err || !res) {
+					let error = err || 'No response';
+					dispatch(mainActions.apiFailure(error));
+				} else if (res && JSON.parse(res.text).errors) {
+                    dispatch(mainActions.apiFailure(JSON.parse(res.text).errors[0].message));
 	            } else {
 	                dispatch(fetchBug());
 	            }

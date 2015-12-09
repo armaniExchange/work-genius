@@ -27,7 +27,7 @@ class DataExplorerFolderView extends Component {
 		this._openAddFolderModal = ::this._openAddFolderModal;
 		this._closeAddFolderModal = ::this._closeAddFolderModal;
 		this._AddFolderModalSubmitHandler = ::this._AddFolderModalSubmitHandler;
-		this._AddFolderModalCloseHandler = ::this._AddFolderModalCloseHandler;
+		this._folderBlockCloseHandler = ::this._folderBlockCloseHandler;
 	}
 
 	_closeAddFolderModal() {
@@ -61,7 +61,7 @@ class DataExplorerFolderView extends Component {
 		}
 	}
 
-	_AddFolderModalCloseHandler(title) {
+	_folderBlockCloseHandler(title) {
 		const { deleteFolder } = this.props.dataExplorerActions;
 		deleteFolder(title);
 	}
@@ -84,7 +84,7 @@ class DataExplorerFolderView extends Component {
 				        title={folder}
 				        link={`/main/data-explorer/${folder}`}
 				        showCloseButton
-				        onCloseHandler={this._AddFolderModalCloseHandler} />
+				        onCloseHandler={this._folderBlockCloseHandler} />
 				);
 			});
 		}
