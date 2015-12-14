@@ -34,7 +34,7 @@
     "express-session": "^1.12.1",
     "font-awesome": "^4.5.0",
     "graphql": "^0.4.12",
-    "history": "^1.12.5",
+    "history": "~1.13.x",
     "immutable": "^3.7.5",
     "jsonwebtoken": "^5.4.1",
     "material-design-lite": "^1.0.5",
