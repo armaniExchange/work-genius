@@ -3,7 +3,28 @@ import request from 'superagent';
 // Constants
 import * as actionTypes from '../constants/action-types';
 import { SERVER_API_URL } from '../constants/config';
+// Actions
+import * as mainActions from './main-actions';
 
+export function sortFeatureTableByCategory(category) {
+	return {
+		type: actionTypes.SORT_FEATURE_TABLE_BY_CATEGORY,
+		category
+	};
+};
+
+export function filterFeatureTable(filterConditions) {
+	return {
+		type: actionTypes.FILTER_FEATURE_TABLE,
+		filterConditions
+	};
+};
+
+export function resetFeatureTable() {
+	return {
+		type: actionTypes.RESET_FEATURE_TABLE
+	};
+};
 
 export function sortBugTableByCategory(category) {
 	return {
@@ -25,52 +46,122 @@ export function resetBugTable() {
 	};
 };
 
-export function setLoadingState(state) {
-	return {
-		type: actionTypes.SET_LOADING_STATE,
-		state
+export function fetchBugSuccess(data) {
+	return (dispatch) => {
+		dispatch(mainActions.setLoadingState(false));
+		dispatch({
+			type: actionTypes.FETCH_BUG_SUCCESS,
+			data
+		});
 	};
 };
 
-export function fetchTasksSuccess(data) {
+export function fetchFeatureSuccess(data) {
 	return {
-		type: actionTypes.FETCH_TASKS_SUCCESS,
+		type: actionTypes.FETCH_FEATURE_SUCCESS,
 		data
 	};
 };
 
-export function fetchTasksFailure(err) {
-	return {
-		type: actionTypes.FETCH_TASKS_FAILURE,
-		err
-	};
-};
-
-export function fetchTasks() {
+export function fetchBug() {
 	return (dispatch) => {
-		dispatch(setLoadingState(true));
+		dispatch(mainActions.setLoadingState(true));
 		return request
 			.post(SERVER_API_URL)
 			.set('Content-Type', 'application/graphql')
 			.send(`{
-			    tasks {
-			        developer,
+			    tasks(taskType: "bug") {
+			    	id,
+			        developer_email,
 			        title,
 			        pri,
 			        status,
-			        devProgress,
-			        qaProgress,
-			        qa,
+			        qa_email,
 			        project,
 			        eta
 			    }
 			}`)
 			.end((err, res) => {
 				if (err) {
-                    dispatch(fetchTasksFailure(err));
+                    dispatch(mainActions.apiFailure(err));
 	            } else {
 	            	let data = JSON.parse(res.text).data.tasks;
-	                dispatch(fetchTasksSuccess(data));
+	                dispatch(fetchBugSuccess(data));
+	            }
+			});
+	};
+};
+
+export function fetchFeature() {
+	return (dispatch) => {
+		dispatch(mainActions.setLoadingState(true));
+		return request
+			.post(SERVER_API_URL)
+			.set('Content-Type', 'application/graphql')
+			.send(`{
+			    tasks(taskType: "feature") {
+			    	id,
+			        developer_email,
+			        title,
+			        pri,
+			        status,
+			        qa_email,
+			        project,
+			        eta
+			    }
+			}`)
+			.end((err, res) => {
+				if (err) {
+                    dispatch(mainActions.apiFailure(err));
+	            } else {
+	            	let data = JSON.parse(res.text).data.tasks;
+	                dispatch(fetchFeatureSuccess(data));
+	            }
+			});
+	};
+};
+
+export function editETA(id, eta) {
+	return (dispatch) => {
+		dispatch(mainActions.setLoadingState(true));
+		return request
+			.post(SERVER_API_URL)
+			.set('Content-Type', 'application/graphql')
+			.send(`mutation RootMutationType {
+			    editTaskEta(id:"${id}", eta:"${eta}") {
+			        eta
+			    }
+			}`)
+			.end((err, res) => {
+				if (err || !res) {
+					let error = err || 'No response';
+					dispatch(mainActions.apiFailure(error));
+				} else if (res && JSON.parse(res.text).errors) {
+                    dispatch(mainActions.apiFailure(JSON.parse(res.text).errors[0].message));
+	            } else {
+	                dispatch(fetchBug());
+	            }
+			});
+	};
+};
+
+export function initiateGK2Crawler() {
+	return (dispatch) => {
+		dispatch(mainActions.setLoadingState(true));
+		return request
+			.post(SERVER_API_URL)
+			.set('Content-Type', 'application/graphql')
+			.send(`mutation RootMutationType {
+			    initiateCrawler
+			}`)
+			.end((err, res) => {
+				if (err || !res) {
+					let error = err || 'No response';
+					dispatch(mainActions.apiFailure(error));
+				} else if (res && JSON.parse(res.text).errors) {
+                    dispatch(mainActions.apiFailure(JSON.parse(res.text).errors[0].message));
+	            } else {
+	                dispatch(fetchBug());
 	            }
 			});
 	};

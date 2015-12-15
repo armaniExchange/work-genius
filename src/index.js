@@ -1,12 +1,14 @@
 // Styles
-import '../node_modules/material-design-lite/material.min.css';
 import './assets/styles/index.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-bootstrap-table/css/react-bootstrap-table.min.css';
+import '../node_modules/material-design-lite/material.min.css';
+import '../node_modules/font-awesome/css/font-awesome.min.css';
 // Libraries
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import Router from 'react-router';
-import createBrowserHistory from 'history/lib/createBrowserHistory';
+
 // Store
 import configureStore from './store/configureStore';
 // Routes
@@ -16,7 +18,7 @@ const store = configureStore();
 
 ReactDOM.render(
 	<Provider store={store}>
-	    <Router history={createBrowserHistory()}>{appRoutes}</Router>
+	    {appRoutes}
 	</Provider>,
 	document.getElementById('root')
 );

@@ -1,0 +1,9 @@
+.data-explorer-folder-view {
+	&__folder-blocks {
+		display: flex;
+		justify-content: space-around;
+		flex-flow: row wrap;
+
+		padding: 40px;
+	}
+}

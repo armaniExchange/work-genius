@@ -1,16 +1,22 @@
 // GraphQL types
 import {
 	GraphQLObjectType,
-	GraphQLString
+	GraphQLString,
+	GraphQLID,
+	GraphQLBoolean
 } from 'graphql';
 
 let TaskType = new GraphQLObjectType({
 	name: 'Task',
 	description: 'A task object',
 	fields: () => ({
-		'developer': {
+		'id': {
+			type: GraphQLID,
+			description: 'Task ID'
+		},
+		'developer_email': {
 			type: GraphQLString,
-			description: 'Developer responsible for this task'
+			description: 'Email of the developer responsible for this task'
 		},
 		'title': {
 			type: GraphQLString,
@@ -24,17 +30,13 @@ let TaskType = new GraphQLObjectType({
 			type: GraphQLString,
 			description: 'Current task status'
 		},
-		'devProgress': {
-			type: GraphQLString,
-			description: 'Current developing progress'
-		},
-		'qaProgress': {
-			type: GraphQLString,
+		'must_fix': {
+			type: GraphQLBoolean,
 			description: 'Developer responsible for this task'
 		},
-		'qa': {
+		'qa_email': {
 			type: GraphQLString,
-			description: 'QA responsible for this task'
+			description: 'Email of the QA responsible for this task'
 		},
 		'project': {
 			type: GraphQLString,
@@ -43,6 +45,14 @@ let TaskType = new GraphQLObjectType({
 		'eta': {
 			type: GraphQLString,
 			description: 'Estimated time of completion'
+		},
+		'type': {
+			type: GraphQLString,
+			description: 'Task type'
+		},
+		'severity': {
+			type: GraphQLString,
+			description: 'Task severity'
 		}
 	})
 });
