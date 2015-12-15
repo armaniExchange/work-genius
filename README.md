@@ -1,8 +1,8 @@
 # work-genius
 
 ##Install
-1. Install Node 4.2.2 from [here](https://nodejs.org/en/])
-2. (Optional) Install Babel 5.8.21 using NPM by: `npm install -g babel@5.8.21`
+1. Install Node 4.2.2+ from [here](https://nodejs.org/en/])
+2. (Optional) Install Babel 6.x using NPM by: `npm install -g babel-cli`
 3. `git clone https://github.com/Rhadow/work-genius.git`
 4. `cd work-genius`
 5. `npm install`
