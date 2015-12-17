@@ -45,26 +45,30 @@ class LoginForm extends Component {
 	render() {
 		return (
 	        <form className="form-signin" onSubmit={this._onSubmitHandle}>
-		        <h4 className="form-signin-heading">Sign in Work Genius</h4>
-		        <input
-		            type="text"
-		            className="input-block-level"
-		            value={this.state.username}
-		            ref="username"
-		            onChange={this._onHandleUsernameChange}
-		            placeholder="Username" />
-		        <input
-		            type="password"
-		            className="input-block-level"
-		            value={this.state.password}
-		            ref="password"
-		            onChange={this._onHandlePasswordChange}
-		            placeholder="Password" />
-		        <button
-		            className="btn btn-large btn-primary"
-		            type="submit">
-		            Sign in
-		        </button>
+	        	<i className="logo"></i>
+		        <h5 className="form-signin-heading">Sign in Work Genius</h5>
+		        <div className="mdl-textfield mdl-js-textfield">
+			        <input
+			            type="text"
+			            className="mdl-textfield__input"
+			            value={this.state.username}
+			            ref="username"
+			            onChange={this._onHandleUsernameChange}
+			            placeholder="Username" />
+			        <input
+			            type="password"
+			            className="mdl-textfield__input"
+			            value={this.state.password}
+			            ref="password"
+			            onChange={this._onHandlePasswordChange}
+			            placeholder="Password" />
+			    </div>
+
+			    <div className="mdl-textfield mdl-js-textfield text-centerized">
+					<button className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
+					  Login
+					</button>
+				</div>
 	        </form>
 		);
 	}
