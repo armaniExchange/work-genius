@@ -1,7 +1,5 @@
 var Webpack = require('webpack'),
     path = require('path'),
-    autoprefixer = require('autoprefixer'),
-    precss = require('precss'),
     pkg = require('./package.json');
 
 var eslintrcPath = path.resolve(__dirname, '.eslintrc'),
@@ -43,7 +41,7 @@ var config = {
             },
             {
                 test: /\.(css|scss)$/,
-                loaders: ['style', 'css', 'sass', 'postcss']
+                loaders: ['style', 'css', 'sass', 'postcss', 'cssnext-loader']
             },
             {
                 test: /\.(png|jpg|jpeg|gif|svg)(\?v=\d\.\d\.\d)?$/,
@@ -67,7 +65,11 @@ var config = {
         configFile: eslintrcPath
     },
     postcss: function () {
-        return [autoprefixer, precss];
+        return [
+            require('autoprefixer')({ browsers: ['last 2 versions'] }),
+            require('precss'),
+            require('postcss-import')({path: ['node_modules', './src']})
+        ];
     }
 };
 

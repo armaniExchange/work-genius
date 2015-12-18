@@ -29,7 +29,7 @@ class Main extends Component {
 	}
 
 	_mapPathNameToDisplayName(pathName, navItems) {
-		var re = /main\/([a-zA-Z0-9-_]*)\/?/i;
+		let re = /main\/([a-zA-Z0-9-_]*)\/?/i;
 		let titleMatchResult = pathName.match(re);
 		let titleFromPath = titleMatchResult ? titleMatchResult[1] : titleMatchResult;
 		let filteredItems = navItems.filter((item) => {

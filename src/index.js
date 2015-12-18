@@ -17,8 +17,8 @@ import appRoutes from './routes/appRoutes';
 const store = configureStore();
 
 ReactDOM.render(
-	<Provider store={store}>
-	    {appRoutes}
-	</Provider>,
-	document.getElementById('root')
+    <Provider store={store}>
+        {appRoutes}
+    </Provider>,
+    document.getElementById('root')
 );
