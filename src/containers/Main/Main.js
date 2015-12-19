@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // Components
-import Navigation from '../../components/Navigation/Navigation';
+// import Navigation from '../../components/Navigation/Navigation';
 import PageHeader from '../../components/Page-Header/Page-Header';
 import Spinner from '../../components/Spinner/Spinner';
 import ErrorBox from '../../components/ErrorBox/ErrorBox';
@@ -50,14 +50,14 @@ class Main extends Component {
 
 	render() {
 		const {
-			navHeaderTitle,
+			//navHeaderTitle,
 			navItems,
-			hasLogo,
+			//hasLogo,
 			isLoading,
 			errorMessage
 		} = this.props.mainState;
 
-		const { logout } = this.props.appActions;
+		// const { logout } = this.props.appActions;
 
 		// Location props are coming from react router
 		const { pathname } = this.props.location;
@@ -72,18 +72,13 @@ class Main extends Component {
 					    errorMessage={errorMessage}
 					    onHideHandler={this._closeErrorBox}
 					    onConfirmHandler={this._closeErrorBox}/>
-					<Navigation
-					    headerTitle={navHeaderTitle}
-					    navItems={navItems}
-					    hasLogo={hasLogo}
-					    onNavItemsClick={this._navItemsClickHandler.bind(this)}
-					    onLogoutHandler={logout} />
+					
 					<PageHeader headerTitle={this._mapPathNameToDisplayName(pathname, navItems)} />
-					<main className="mdl-layout__content">
-					    <div className="page-content">
+					<section id="main" >
+					    <div className="container">
 							{this.props.children}
 					    </div>
-					</main>
+					</section>
 				</section>
 			</div>
 		);
