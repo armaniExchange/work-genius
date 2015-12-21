@@ -24,11 +24,13 @@ export function extractMustFixBugData(source) {
 		result[i] = {
 			id: $('td:nth-child(2) > a', row).text(),
 			title: $('td:nth-child(3) > span', row).text().trim(),
-			pri: $('td:nth-child(9)', row).text(),
-			severity: $('td:nth-child(10)', row).text(),
-			status: $('td:nth-child(11)', row).text(),
-			developer_email: $('td:nth-child(13)', row).text(),
-			qa_email: $('td:nth-child(14) > span:first-child', row).text(),
+			eta: $('td:nth-child(5) > a', row).text().trim(),
+			created: $('td:nth-child(6)', row).text().trim(),
+			pri: $('td:nth-child(11)', row).text(),
+			severity: $('td:nth-child(12)', row).text(),
+			status: $('td:nth-child(13)', row).text(),
+			developer_email: $('td:nth-child(15)', row).text(),
+			qa_email: $('td:nth-child(16) > span:first-child', row).text(),
 			must_fix: true,
 			project: $('a#summary-tab').text()
 		};
@@ -68,7 +70,6 @@ export async function updateBugsToDB(bugs) {
 				query = r.db('work_genius').table('tasks').get(bugs[i]['id']).update(bugs[i]);
 			} else {
 				bugs[i].type = 'bug';
-				bugs[i].eta = '';
 				query = r.db('work_genius').table('tasks').insert(bugs[i]);
 			}
 			await query.run(connection);

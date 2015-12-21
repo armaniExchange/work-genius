@@ -72,13 +72,16 @@ export function fetchBug() {
 			.send(`{
 			    tasks(taskType: "bug") {
 			    	id,
-			        developer_email,
 			        title,
+			        eta,
+			        created,
 			        pri,
+			        severity,
 			        status,
+			        developer_email,
 			        qa_email,
-			        project,
-			        eta
+			        must_fix,
+			        project
 			    }
 			}`)
 			.end((err, res) => {
