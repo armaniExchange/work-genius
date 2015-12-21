@@ -52,7 +52,6 @@ let TaskQuery = {
 			} catch (err) {
 				return err;
 			}
-
 			return result;
 		}
 	}

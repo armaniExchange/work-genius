@@ -1,0 +1,11 @@
+.static-data-table .static-data-table__body .static-data-table__body--empty {
+	text-align: center;
+}
+
+.static-data-table .hide {
+	display: none;
+}
+
+.static-data-table .static-table__header {
+	cursor: pointer;
+}

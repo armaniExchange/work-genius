@@ -7,8 +7,8 @@ import { bindActionCreators } from 'redux';
 // Actions
 import * as TaskPageActions from '../../actions/task-page-actions';
 // Components
-import TaskTable from '../../components/Task-Table/Task-Table';
 import FilterList from '../../components/Filter-List/Filter-List';
+import StaticDataTable from '../../components/Static-Data-Table/Static-Data-Table.js';
 
 class TaskPage extends Component {
 	constructor(props) {
@@ -16,9 +16,17 @@ class TaskPage extends Component {
 		this._onCrawlerButtonClicked = ::this._onCrawlerButtonClicked;
 	}
 	componentWillMount() {
-		const { fetchBug, fetchFeature } = this.props.taskPageActions;
-		fetchFeature();
+		const { fetchBug } = this.props.taskPageActions;
+		//fetchFeature();
 		fetchBug();
+	}
+	componentWillUnmount() {
+		const {
+			resetFeatureTable,
+			resetBugTable
+		} = this.props.taskPageActions;
+		resetFeatureTable();
+		resetBugTable();
 	}
 	_onCrawlerButtonClicked() {
 		const {
@@ -32,21 +40,19 @@ class TaskPage extends Component {
 			bugTableData,
 			sortBugTableBy,
 			bugTableOriginalData,
-			featureTableTitle,
-			featureTableData,
-			sortFeatureTableBy,
-			featureTableOriginalData,
-			featureFilterConditions,
+			bugTitleKeyMap,
 			bugFilterConditions
+			// featureTableTitle,
+			// featureTableData,
+			// sortFeatureTableBy,
+			// featureTableOriginalData,
+			// featureFilterConditions,
 		} = this.props.taskPageState;
 		const {
-			sortFeatureTableByCategory,
-			filterFeatureTable,
-			resetFeatureTable,
+			// sortFeatureTableByCategory,
+			// filterFeatureTable,
 			sortBugTableByCategory,
-			filterBugTable,
-			resetBugTable,
-			editETA
+			filterBugTable
 		} = this.props.taskPageActions;
 
 		return (
@@ -56,30 +62,28 @@ class TaskPage extends Component {
 			        onClick={this._onCrawlerButtonClicked}>
 			        Crawl GK2
 			    </button>
-			    <h5>{featureTableTitle}</h5>
-			    <FilterList
-			        data={featureTableOriginalData}
-			        categories={Object.keys(featureFilterConditions)}
-			        onFilterHandler={filterFeatureTable} />
-			    <TaskTable
-			        data={featureTableData}
-			        enableSort
-			        sortBy={sortFeatureTableBy}
-			        onSortHandler={sortFeatureTableByCategory}
-			        onUnmountHandler={resetFeatureTable}
-			        onETASubmitHandler={editETA} />
+			    {// <h5>{featureTableTitle}</h5>
+			    // <FilterList
+			    //     data={featureTableOriginalData}
+			    //     categories={Object.keys(featureFilterConditions)}
+			    //     onFilterHandler={filterFeatureTable} />
+			    // <StaticDataTable
+			    //     data={featureTableData}
+			    //     enableSort
+			    //     sortBy={sortFeatureTableBy}
+			    //     onSortHandler={sortFeatureTableByCategory} />
+				}
 			    <h5>{bugTableTitle}</h5>
 			    <FilterList
 			        data={bugTableOriginalData}
 			        categories={Object.keys(bugFilterConditions)}
 			        onFilterHandler={filterBugTable} />
-			    <TaskTable
+			    <StaticDataTable
 			        data={bugTableData}
+			        titleKeyMap={bugTitleKeyMap}
 			        enableSort
 			        sortBy={sortBugTableBy}
-			        onSortHandler={sortBugTableByCategory}
-			        onUnmountHandler={resetBugTable}
-			        onETASubmitHandler={editETA} />
+			        onSortHandler={sortBugTableByCategory} />
 			</section>
 		);
 	}
