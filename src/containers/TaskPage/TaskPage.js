@@ -7,8 +7,8 @@ import { bindActionCreators } from 'redux';
 // Actions
 import * as TaskPageActions from '../../actions/task-page-actions';
 // Components
-import TaskTable from '../../components/Task-Table/Task-Table';
 import FilterList from '../../components/Filter-List/Filter-List';
+import StaticDataTable from '../../components/Static-Data-Table/Static-Data-Table.js';
 
 class TaskPage extends Component {
 	constructor(props) {
@@ -19,6 +19,14 @@ class TaskPage extends Component {
 		const { fetchBug, fetchFeature } = this.props.taskPageActions;
 		fetchFeature();
 		fetchBug();
+	}
+	componentWillUnmount() {
+		const {
+			resetFeatureTable,
+			resetBugTable
+		} = this.props.taskPageActions;
+		resetFeatureTable();
+		resetBugTable();
 	}
 	_onCrawlerButtonClicked() {
 		const {
@@ -42,11 +50,8 @@ class TaskPage extends Component {
 		const {
 			sortFeatureTableByCategory,
 			filterFeatureTable,
-			resetFeatureTable,
 			sortBugTableByCategory,
-			filterBugTable,
-			resetBugTable,
-			editETA
+			filterBugTable
 		} = this.props.taskPageActions;
 
 		return (
@@ -61,25 +66,21 @@ class TaskPage extends Component {
 			        data={featureTableOriginalData}
 			        categories={Object.keys(featureFilterConditions)}
 			        onFilterHandler={filterFeatureTable} />
-			    <TaskTable
+			    <StaticDataTable
 			        data={featureTableData}
 			        enableSort
 			        sortBy={sortFeatureTableBy}
-			        onSortHandler={sortFeatureTableByCategory}
-			        onUnmountHandler={resetFeatureTable}
-			        onETASubmitHandler={editETA} />
+			        onSortHandler={sortFeatureTableByCategory} />
 			    <h5>{bugTableTitle}</h5>
 			    <FilterList
 			        data={bugTableOriginalData}
 			        categories={Object.keys(bugFilterConditions)}
 			        onFilterHandler={filterBugTable} />
-			    <TaskTable
+			    <StaticDataTable
 			        data={bugTableData}
 			        enableSort
 			        sortBy={sortBugTableBy}
-			        onSortHandler={sortBugTableByCategory}
-			        onUnmountHandler={resetBugTable}
-			        onETASubmitHandler={editETA} />
+			        onSortHandler={sortBugTableByCategory} />
 			</section>
 		);
 	}
