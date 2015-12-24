@@ -12,8 +12,6 @@ const initialBugFilterConditions = Map({
 });
 
 const initialFeatureFilterConditions = Map({
-	'developer_email': '',
-	'pri': '',
 	'project': ''
 });
 
@@ -38,22 +36,27 @@ const initialState = Map({
 		status: 0
 	}),
 	bugFilterConditions: initialBugFilterConditions,
-	featureTableHeaders: List.of(
+	featureTitleKeyMap: List.of(
 		Map({ title: 'ID', key: 'id'}),
 		Map({ title: 'Title', key: 'title'}),
-		Map({ title: 'ETA', key: 'eta'}),
-		Map({ title: 'Created', key: 'created'}),
-		Map({ title: 'PRI', key: 'pri'}),
-		Map({ title: 'Severity', key: 'severity'}),
 		Map({ title: 'Status', key: 'status'}),
-		Map({ title: 'Developer', key: 'developer_email'}),
-		Map({ title: 'QA', key: 'qa_email'}),
+		Map({ title: '%', key: 'total_percent'}),
+		Map({ title: 'Dev %', key: 'dev_percent'}),
+		Map({ title: 'QA %', key: 'qa_percent'}),
+		Map({ title: 'Duration', key: 'days_to_complete'}),
+		Map({ title: 'Complete Date', key: 'completed_date'}),
+		Map({ title: 'Owner', key: 'owner_name'}),
+		Map({ title: 'Developer', key: 'dev_name'}),
+		Map({ title: 'QA', key: 'qa_name'}),
 		Map({ title: 'Project', key: 'project'})
 	),
 	featureTableTitle: 'Features',
 	featureTableOriginalData: List.of(),
 	featureTableData: List.of(),
-	sortFeatureTableBy: '',
+	sortFeatureTableBy: Map({
+		category: '',
+		status: 0
+	}),
 	featureFilterConditions: initialFeatureFilterConditions,
 });
 

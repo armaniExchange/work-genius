@@ -1,6 +1,7 @@
 // GraphQL types
 import {
 	GraphQLObjectType,
+	GraphQLInt,
 	GraphQLString,
 	GraphQLID,
 	GraphQLBoolean
@@ -57,6 +58,38 @@ let TaskType = new GraphQLObjectType({
 		'type': {
 			type: GraphQLString,
 			description: 'Task type'
+		},
+		'total_percent': {
+			type: GraphQLString,
+			description: 'Feature completed percent: total'
+		},
+		'dev_percent': {
+			type: GraphQLString,
+			description: 'Feature completed percent: developer'
+		},
+		'qa_percent': {
+			type: GraphQLString,
+			description: 'Feature completed percent: QA'
+		},
+		'days_to_complete': {
+			type: GraphQLInt,
+			description: 'Days cost to develop the feature'
+		},
+		'completed_date': {
+			type: GraphQLString,
+			description: 'Completed date of the feature'
+		},
+		'owner_name': {
+			type: GraphQLString,
+			description: 'Feature owner name'
+		},
+		'dev_name': {
+			type: GraphQLString,
+			description: 'Feature developer name'
+		},
+		'qa_name': {
+			type: GraphQLString,
+			description: 'Feature QA name'
 		}
 	})
 });

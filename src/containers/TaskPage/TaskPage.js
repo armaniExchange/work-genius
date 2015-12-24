@@ -16,8 +16,8 @@ class TaskPage extends Component {
 		this._onCrawlerButtonClicked = ::this._onCrawlerButtonClicked;
 	}
 	componentWillMount() {
-		const { fetchBug } = this.props.taskPageActions;
-		//fetchFeature();
+		const { fetchBug, fetchFeature } = this.props.taskPageActions;
+		fetchFeature();
 		fetchBug();
 	}
 	componentWillUnmount() {
@@ -41,16 +41,17 @@ class TaskPage extends Component {
 			sortBugTableBy,
 			bugTableOriginalData,
 			bugTitleKeyMap,
-			bugFilterConditions
-			// featureTableTitle,
-			// featureTableData,
-			// sortFeatureTableBy,
-			// featureTableOriginalData,
-			// featureFilterConditions,
+			bugFilterConditions,
+			featureTableTitle,
+			featureTableData,
+			sortFeatureTableBy,
+			featureTableOriginalData,
+			featureTitleKeyMap,
+			featureFilterConditions,
 		} = this.props.taskPageState;
 		const {
-			// sortFeatureTableByCategory,
-			// filterFeatureTable,
+			sortFeatureTableByCategory,
+			filterFeatureTable,
 			sortBugTableByCategory,
 			filterBugTable
 		} = this.props.taskPageActions;
@@ -62,17 +63,17 @@ class TaskPage extends Component {
 			        onClick={this._onCrawlerButtonClicked}>
 			        Crawl GK2
 			    </button>
-			    {// <h5>{featureTableTitle}</h5>
-			    // <FilterList
-			    //     data={featureTableOriginalData}
-			    //     categories={Object.keys(featureFilterConditions)}
-			    //     onFilterHandler={filterFeatureTable} />
-			    // <StaticDataTable
-			    //     data={featureTableData}
-			    //     enableSort
-			    //     sortBy={sortFeatureTableBy}
-			    //     onSortHandler={sortFeatureTableByCategory} />
-				}
+			    <h5>{featureTableTitle}</h5>
+			    <FilterList
+			        data={featureTableOriginalData}
+			        categories={Object.keys(featureFilterConditions)}
+			        onFilterHandler={filterFeatureTable} />
+			    <StaticDataTable
+			        data={featureTableData}
+			        titleKeyMap={featureTitleKeyMap}
+			        enableSort
+			        sortBy={sortFeatureTableBy}
+			        onSortHandler={sortFeatureTableByCategory} />
 			    <h5>{bugTableTitle}</h5>
 			    <FilterList
 			        data={bugTableOriginalData}

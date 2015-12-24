@@ -104,13 +104,17 @@ export function fetchFeature() {
 			.send(`{
 			    tasks(taskType: "feature") {
 			    	id,
-			        developer_email,
 			        title,
-			        pri,
 			        status,
-			        qa_email,
-			        project,
-			        eta
+			        total_percent,
+			        dev_percent,
+			        qa_percent,
+			        days_to_complete,
+			        completed_date,
+			        owner_name,
+			        dev_name,
+			        qa_name,
+			        project
 			    }
 			}`)
 			.end((err, res) => {
@@ -118,6 +122,7 @@ export function fetchFeature() {
                     dispatch(mainActions.apiFailure(err));
 	            } else {
 	            	let data = JSON.parse(res.text).data.tasks;
+	            	console.log(data);
 	                dispatch(fetchFeatureSuccess(data));
 	            }
 			});

@@ -2,19 +2,17 @@ import request from 'request';
 import {
     parseHeaderCookie,
     extractMustFixBugData,
-    updateBugsToDB
+    updateBugsToDB,
+    extractFeatureData,
+    updateFeaturesToDB
 } from './utilities.js';
 import {
     GK2_LOG_IN_ACCOUNT,
     GK2_LOG_IN_PASSWORD,
     GK2_LOG_IN_URL,
     GK2_REFERER_URL,
-    GK2_BJ_4_1_MUST_FIX_BUG_URL,
-    GK2_SJ_4_1_MUST_FIX_BUG_URL,
-    GK2_BJ_3_2_MUST_FIX_BUG_URL,
-    GK2_SJ_3_2_MUST_FIX_BUG_URL,
-    GK2_BJ_4_0_3_MUST_FIX_BUG_URL,
-    GK2_SJ_4_0_3_MUST_FIX_BUG_URL
+    GK2_MUST_FIX_BUG_URLS,
+    GK2_FEATURE_URLS
 } from '../constants/configurations.js';
 
 export function crawlerPromise(url = '', method = 'GET', formData = {}, headers = {}) {
@@ -58,15 +56,8 @@ export async function crawlGK2() {
         headers = {
             'Referer': GK2_REFERER_URL
         },
-        targetedBugURLs = [
-            GK2_BJ_4_1_MUST_FIX_BUG_URL,
-            GK2_SJ_4_1_MUST_FIX_BUG_URL,
-            GK2_BJ_3_2_MUST_FIX_BUG_URL,
-            GK2_SJ_3_2_MUST_FIX_BUG_URL,
-            GK2_BJ_4_0_3_MUST_FIX_BUG_URL,
-            GK2_SJ_4_0_3_MUST_FIX_BUG_URL
-        ],
-        bugs = [];
+        bugs = [],
+        features = [];
 
     try {
         let startTime = new Date();
@@ -80,8 +71,8 @@ export async function crawlGK2() {
             res: postRes
         } = await crawlerPromise(GK2_LOG_IN_URL, 'POST', formData, headers);
         cookieKeyValMap = parseHeaderCookie(postRes.headers, cookieKeyValMap);
-        // Get Targeted Bug URLs data
-        for (let bugURL of targetedBugURLs) {
+        // Get Must Fix Bug URLs data
+        for (let bugURL of GK2_MUST_FIX_BUG_URLS) {
             let bugHeaderURL = bugURL.replace('/bugs', '/#/bugs');
             let {
                 body: bugHeaderHTML
@@ -91,11 +82,23 @@ export async function crawlGK2() {
             } = await crawlerPromise(bugURL,'GET');
             bugs = bugs.concat(extractMustFixBugData(bugHeaderHTML + targetHTML));
         }
+        // Get Feature URLs data
+        for (let featureURL of GK2_FEATURE_URLS) {
+            let featureHeaderURL = featureURL.replace('features/list/', '#/features/');
+            let {
+                body: featureHeaderHTML
+            } = await crawlerPromise(featureHeaderURL,'GET');
+            let {
+                body: targetHTML
+            } = await crawlerPromise(featureURL,'GET');
+            features = features.concat(extractFeatureData(featureHeaderHTML + targetHTML));
+        }
         console.log(`Crawling complete! This crawling process took ${new Date() - startTime} ms`);
         // Write new bug data to db
         startTime = new Date();
         console.log('About to write crawling data into db...');
         await updateBugsToDB(bugs);
+        await updateFeaturesToDB(features);
         global.isCrawling = false;
         console.log(`write to DB complete! This writing process took ${new Date() - startTime} ms`);
         console.log(`====================================================================`);
