@@ -8,7 +8,7 @@ const initialState = Map({
 	loginError: null
 });
 
-export default function mainReducer(state = initialState, action) {
+export default function appReducer(state = initialState, action) {
 	switch (action.type) {
 		case actionTypes.SET_TOKEN:
 			if (action.token) {

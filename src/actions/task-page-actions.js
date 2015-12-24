@@ -1,3 +1,7 @@
+/**
+ * @author Howard Chang
+ */
+
 // Libraries
 import request from 'superagent';
 // Constants
@@ -47,12 +51,9 @@ export function resetBugTable() {
 };
 
 export function fetchBugSuccess(data) {
-	return (dispatch) => {
-		dispatch(mainActions.setLoadingState(false));
-		dispatch({
-			type: actionTypes.FETCH_BUG_SUCCESS,
-			data
-		});
+	return {
+		type: actionTypes.FETCH_BUG_SUCCESS,
+		data
 	};
 };
 
@@ -63,9 +64,8 @@ export function fetchFeatureSuccess(data) {
 	};
 };
 
-export function fetchBug() {
+export function fetchBug(callback = () => {}) {
 	return (dispatch) => {
-		dispatch(mainActions.setLoadingState(true));
 		return request
 			.post(SERVER_API_URL)
 			.set('Content-Type', 'application/graphql')
@@ -91,13 +91,13 @@ export function fetchBug() {
 	            	let data = JSON.parse(res.text).data.tasks;
 	                dispatch(fetchBugSuccess(data));
 	            }
+	            callback();
 			});
 	};
 };
 
-export function fetchFeature() {
+export function fetchFeature(callback = () => {}) {
 	return (dispatch) => {
-		dispatch(mainActions.setLoadingState(true));
 		return request
 			.post(SERVER_API_URL)
 			.set('Content-Type', 'application/graphql')
@@ -124,7 +124,28 @@ export function fetchFeature() {
 	            	let data = JSON.parse(res.text).data.tasks;
 	                dispatch(fetchFeatureSuccess(data));
 	            }
+	            callback();
 			});
+	};
+};
+
+export function fetchTaskPageData(callback = () => {}) {
+	let tasks = [
+		fetchBug,
+		fetchFeature
+	];
+	let counter = 0;
+	let checkAllTasksDone = () => {
+		counter++;
+		if (counter === tasks.length) {
+			callback();
+		}
+	};
+
+	return (dispatch) => {
+		tasks.forEach((task) => {
+			dispatch(task(checkAllTasksDone));
+		});
 	};
 };
 
@@ -152,9 +173,8 @@ export function editETA(id, eta) {
 	};
 };
 
-export function initiateGK2Crawler() {
+export function initiateGK2Crawler(callback = () => {}) {
 	return (dispatch) => {
-		dispatch(mainActions.setLoadingState(true));
 		return request
 			.post(SERVER_API_URL)
 			.set('Content-Type', 'application/graphql')
@@ -168,7 +188,7 @@ export function initiateGK2Crawler() {
 				} else if (res && JSON.parse(res.text).errors) {
                     dispatch(mainActions.apiFailure(JSON.parse(res.text).errors[0].message));
 	            } else {
-	                dispatch(fetchBug());
+	                dispatch(fetchTaskPageData(callback));
 	            }
 			});
 	};

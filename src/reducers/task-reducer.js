@@ -8,11 +8,13 @@ import { Map, List, OrderedMap, is } from 'immutable';
 import * as actionTypes from '../constants/action-types';
 
 const initialBugFilterConditions = Map({
-	'project': ''
+	'project': '',
+	'developer_email': ''
 });
 
 const initialFeatureFilterConditions = Map({
-	'project': ''
+	'project': '',
+	'dev_name': ''
 });
 
 const initialState = Map({
@@ -58,6 +60,7 @@ const initialState = Map({
 		status: 0
 	}),
 	featureFilterConditions: initialFeatureFilterConditions,
+	internalFeatureTableTitle: 'Internal Features'
 });
 
 function filterOriginal(state, type) {

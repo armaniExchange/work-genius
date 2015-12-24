@@ -1,3 +1,7 @@
+/**
+ * @author Howard Chang
+ */
+
 // Style
 import './_TaskPage';
 // React & Redux
@@ -6,6 +10,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // Actions
 import * as TaskPageActions from '../../actions/task-page-actions';
+import * as mainActions from '../../actions/main-actions';
 // Components
 import FilterList from '../../components/Filter-List/Filter-List';
 import StaticDataTable from '../../components/Static-Data-Table/Static-Data-Table.js';
@@ -64,6 +69,15 @@ let BugTable = ({
 	);
 };
 
+let InternalFeatureTable = ({
+	internalFeatureTableTitle
+}) => {
+	return (
+		<div className="task-page__internal-feature-table">
+			<h5>{internalFeatureTableTitle}</h5>
+		</div>
+	);
+};
 
 class TaskPage extends Component {
 	constructor(props) {
@@ -71,9 +85,11 @@ class TaskPage extends Component {
 		this._onCrawlerButtonClicked = ::this._onCrawlerButtonClicked;
 	}
 	componentWillMount() {
-		const { fetchBug, fetchFeature } = this.props;
-		fetchFeature();
-		fetchBug();
+		const { fetchTaskPageData, setLoadingState } = this.props;
+		setLoadingState(true);
+		fetchTaskPageData(
+			() => setLoadingState(false)
+		);
 	}
 	componentWillUnmount() {
 		const { resetFeatureTable, resetBugTable } = this.props;
@@ -81,7 +97,11 @@ class TaskPage extends Component {
 		resetBugTable();
 	}
 	_onCrawlerButtonClicked() {
-		this.props.initiateGK2Crawler();
+		const { initiateGK2Crawler, setLoadingState } = this.props;
+		setLoadingState(true);
+		initiateGK2Crawler(
+			() => setLoadingState(false)
+		);
 	}
 	render() {
 		return (
@@ -93,6 +113,7 @@ class TaskPage extends Component {
 			    </button>
 			    <BugTable {...this.props} />
 			    <FeatureTable {...this.props} />
+			    <InternalFeatureTable {...this.props} />
 			</section>
 		);
 	}
@@ -103,7 +124,14 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-	return bindActionCreators(TaskPageActions, dispatch);
+	return Object.assign({},
+		bindActionCreators(TaskPageActions, dispatch),
+		{
+			setLoadingState: (loadingState) => {
+				dispatch(mainActions.setLoadingState(loadingState));
+			}
+		}
+	);
 }
 
 TaskPage.propTypes = {
@@ -119,15 +147,16 @@ TaskPage.propTypes = {
 	featureTableOriginalData  : PropTypes.array,
 	featureTitleKeyMap        : PropTypes.array,
 	featureFilterConditions   : PropTypes.object,
+	internalFeatureTableTitle : PropTypes.string,
 	sortFeatureTableByCategory: PropTypes.func,
 	filterFeatureTable        : PropTypes.func,
 	sortBugTableByCategory    : PropTypes.func,
 	filterBugTable            : PropTypes.func,
 	initiateGK2Crawler        : PropTypes.func,
-	fetchFeature              : PropTypes.func,
 	resetFeatureTable         : PropTypes.func,
-	fetchBug                  : PropTypes.func,
-	resetBugTable             : PropTypes.func
+	resetBugTable             : PropTypes.func,
+	setLoadingState           : PropTypes.func,
+	fetchTaskPageData         : PropTypes.func
 };
 
 export default connect(
