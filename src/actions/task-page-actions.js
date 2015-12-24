@@ -122,7 +122,6 @@ export function fetchFeature() {
                     dispatch(mainActions.apiFailure(err));
 	            } else {
 	            	let data = JSON.parse(res.text).data.tasks;
-	            	console.log(data);
 	                dispatch(fetchFeatureSuccess(data));
 	            }
 			});
