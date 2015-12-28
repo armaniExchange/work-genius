@@ -66,7 +66,7 @@ let UserMutation = {
 				account = LDAP_AUTH_PREFIX + account;
 			}
 		    try {
-		        await adPromise(account, password);
+		        //await adPromise(account, password);
 		        let connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 		        let insertion = r.db('work_genius').table('users').insert({
 						id: account
