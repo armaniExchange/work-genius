@@ -1,5 +1,5 @@
 // Styles
-import './Static-Data-Table.css';
+import './Job-Table.css';
 
 // Libraries
 import React, { Component, PropTypes } from 'react';
@@ -34,7 +34,7 @@ let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort }) => {
 		return (
 			<th
 			    key={index}
-			    className="static-data-table__header"
+			    className="job-table__header"
 			    data-name={header}
 			    onClick={onSortHandler}>
 			    <span data-name={header}>{header}</span>
@@ -51,12 +51,12 @@ let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort }) => {
 	);
 };
 
-let TableBody = ({ data, titleKeyMap }) => {
+let TableBody = ({ data, titleKeyMap, onEditHandler, onDeleteHandler }) => {
 	let bodyHtml = (
 		<tr>
 		    <td
 			    colSpan={titleKeyMap.length}
-			    className="static-data-table__body--empty">
+			    className="job-table__body--empty">
 			    No Match Result!
 			</td>
 		</tr>
@@ -65,6 +65,18 @@ let TableBody = ({ data, titleKeyMap }) => {
 	if (data.length > 0) {
 		bodyHtml = data.map((task, bodyIndex) => {
 			const cellHtml = titleKeyMap.map((header, cellIndex) => {
+				if (header['key'] === 'id') {
+					return (
+						<td key={cellIndex}>
+							<button onClick={() => {onEditHandler(task[header['key']]);}}>
+							    <i className="glyphicon glyphicon-pencil"></i>
+							</button>
+							<button onClick={() => {onDeleteHandler(task[header['key']]);}}>
+							    <i className="glyphicon glyphicon-trash"></i>
+							</button>
+						</td>
+					);
+				}
 				return (
 					<td key={cellIndex}>{task[header['key']]}</td>
 				);
@@ -79,13 +91,13 @@ let TableBody = ({ data, titleKeyMap }) => {
 	}
 
 	return (
-		<tbody className="static-data-table__body">
+		<tbody className="job-table__body">
 		    {bodyHtml}
 		</tbody>
 	);
 };
 
-class StaticDataTable extends Component {
+class JobTable extends Component {
 	constructor(props) {
 		super(props);
 		this._onSortHandler = ::this._onSortHandler;
@@ -97,34 +109,30 @@ class StaticDataTable extends Component {
 	}
 
 	render () {
-		const { data, titleKeyMap, sortBy, enableSort } = this.props;
-
 		return (
-			<div className="static-data-table">
+			<div className="job-table">
 			    <table className="table table-bordered table-responsive">
 				    <TableHeaders
-				        titleKeyMap={titleKeyMap}
-				        onSortHandler={this._onSortHandler}
-				        enableSort={enableSort}
-				        sortBy={sortBy} />
-				    <TableBody
-				        data={data}
-				        titleKeyMap={titleKeyMap} />
+				        {...this.props}
+				        onSortHandler={this._onSortHandler} />
+				    <TableBody {...this.props} />
 				</table>
 			</div>
 		);
 	}
 }
 
-StaticDataTable.propTypes = {
-	data: PropTypes.array.isRequired,
-	titleKeyMap: PropTypes.array.isRequired,
-	enableSort: PropTypes.bool,
-	sortBy: PropTypes.object,
-	onSortHandler: PropTypes.func
+JobTable.propTypes = {
+	data           : PropTypes.array.isRequired,
+	titleKeyMap    : PropTypes.array.isRequired,
+	enableSort     : PropTypes.bool,
+	sortBy         : PropTypes.object,
+	onSortHandler  : PropTypes.func,
+	onEditHandler  : PropTypes.func,
+	onDeleteHandler: PropTypes.func,
 };
 
-StaticDataTable.defaultProps = {
+JobTable.defaultProps = {
 	enableSort: false,
 	sortBy: {
 		category: '',
@@ -133,4 +141,4 @@ StaticDataTable.defaultProps = {
 	onSortHandler: () => {}
 };
 
-export default StaticDataTable;
+export default JobTable;

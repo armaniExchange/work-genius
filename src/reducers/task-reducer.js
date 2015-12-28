@@ -17,6 +17,10 @@ const initialFeatureFilterConditions = Map({
 	'dev_name': ''
 });
 
+const initialInternalFeatureFilterConditions = Map({
+	'dev_name': ''
+});
+
 const initialState = Map({
 	bugTitleKeyMap: List.of(
 		Map({ title: 'ID', key: 'id'}),
@@ -45,7 +49,7 @@ const initialState = Map({
 		Map({ title: '%', key: 'total_percent'}),
 		Map({ title: 'Dev %', key: 'dev_percent'}),
 		Map({ title: 'QA %', key: 'qa_percent'}),
-		Map({ title: 'Duration', key: 'days_to_complete'}),
+		Map({ title: 'Duration (days)', key: 'days_to_complete'}),
 		Map({ title: 'Complete Date', key: 'completed_date'}),
 		Map({ title: 'Owner', key: 'owner_name'}),
 		Map({ title: 'Developer', key: 'dev_name'}),
@@ -60,16 +64,32 @@ const initialState = Map({
 		status: 0
 	}),
 	featureFilterConditions: initialFeatureFilterConditions,
-	internalFeatureTableTitle: 'Internal Features'
+	internalFeatureTitleKeyMap: List.of(
+		Map({ title: 'Title', key: 'title'}),
+		Map({ title: 'PRI', key: 'pri'}),
+		Map({ title: 'Dev %', key: 'dev_percent'}),
+		Map({ title: 'Developer', key: 'dev_name'}),
+		Map({ title: 'Project', key: 'project'}),
+		Map({ title: 'ETA', key: 'eta'}),
+		Map({ title: 'ID', key: 'id'})
+	),
+	internalFeatureTableTitle: 'Internal Features',
+	internalFeatureTableOriginalData: List.of(),
+	internalFeatureTableData: List.of(),
+	sortInternalFeatureTableBy: Map({
+		category: '',
+		status: 0
+	}),
+	internalFeatureFilterConditions: initialInternalFeatureFilterConditions,
 });
 
 function filterOriginal(state, type) {
 	let nextState = state;
 	nextState = nextState.update(`${type}TableData`, () => {
 		let keys = nextState.get(`${type}FilterConditions`).keySeq();
-		let filteredResult = nextState.get(`${type}TableOriginalData`).filter((bug) => {
+		let filteredResult = nextState.get(`${type}TableOriginalData`).filter((item) => {
 			return keys.reduce((acc, key) => {
-				if (bug.get(key) !== nextState.getIn([`${type}FilterConditions`, key]) && nextState.getIn([`${type}FilterConditions`, key]) !== '') {
+				if (item.get(key) !== nextState.getIn([`${type}FilterConditions`, key]) && nextState.getIn([`${type}FilterConditions`, key]) !== '') {
 					return acc && false;
 				}
 				return acc && true;
@@ -77,7 +97,6 @@ function filterOriginal(state, type) {
 		});
 		return filteredResult.isEmpty() ? List.of() : filteredResult;
 	});
-
 	return nextState;
 }
 
@@ -111,7 +130,7 @@ function sortOriginal(state, type) {
 			let key = state.get(`${type}TitleKeyMap`).filter((map) => {
 				return map.get('title') === category;
 			}).first().get('key');
-			let tempResult = sortAlphaNum(curr.get(key), next.get(key));
+			let tempResult = sortAlphaNum(curr.get(key).toString(10), next.get(key).toString(10));
 			if (tempResult !== 0 && result === 0) {
 				result = tempResult;
 			}
@@ -210,14 +229,20 @@ export default function taskReducer(state = initialState, action) {
 			return sortTable(state, action.category, 'bug');
 		case actionTypes.SORT_FEATURE_TABLE_BY_CATEGORY:
 			return sortTable(state, action.category, 'feature');
+		case actionTypes.SORT_INTERNAL_FEATURE_TABLE_BY_CATEGORY:
+			return sortTable(state, action.category, 'internalFeature');
 		case actionTypes.FILTER_BUG_TABLE:
 			return filterTable(state, action.filterConditions, 'bug');
 		case actionTypes.FILTER_FEATURE_TABLE:
 			return filterTable(state, action.filterConditions, 'feature');
+		case actionTypes.FILTER_INTERNAL_FEATURE_TABLE:
+			return filterTable(state, action.filterConditions, 'internalFeature');
 		case actionTypes.RESET_BUG_TABLE:
 			return resetTable(state, 'bug');
 		case actionTypes.RESET_FEATURE_TABLE:
 			return resetTable(state, 'feature');
+		case actionTypes.RESET_FEATURE_TABLE:
+			return resetTable(state, 'internalFeature');
 		case actionTypes.FETCH_BUG_SUCCESS:
 			nextState = setTableData(state, action.data, 'bug');
 			if (!is(state.get('bugFilterConditions'), initialBugFilterConditions)) {
@@ -234,6 +259,15 @@ export default function taskReducer(state = initialState, action) {
 			}
 			if (state.get('sortFeatureTableBy').get('category')) {
 				nextState = sortOriginal(nextState, 'feature');
+			}
+			return nextState;
+		case actionTypes.FETCH_INTERNAL_FEATURE_SUCCESS:
+			nextState = setTableData(state, action.data, 'internalFeature');
+			if (!is(state.get('internalFeatureFilterConditions'), initialInternalFeatureFilterConditions)) {
+				nextState = filterOriginal(nextState, 'internalFeature');
+			}
+			if (state.get('sortInternalFeatureTableBy').get('category')) {
+				nextState = sortOriginal(nextState, 'internalFeature');
 			}
 			return nextState;
 		default:

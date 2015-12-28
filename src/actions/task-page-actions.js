@@ -50,6 +50,26 @@ export function resetBugTable() {
 	};
 };
 
+export function sortInternalFeatureTableByCategory(category) {
+	return {
+		type: actionTypes.SORT_INTERNAL_FEATURE_TABLE_BY_CATEGORY,
+		category
+	};
+};
+
+export function filterInternalFeatureTable(filterConditions) {
+	return {
+		type: actionTypes.FILTER_INTERNAL_FEATURE_TABLE,
+		filterConditions
+	};
+};
+
+export function resetInternalFeatureTable() {
+	return {
+		type: actionTypes.RESET_INTERNAL_FEATURE_TABLE
+	};
+};
+
 export function fetchBugSuccess(data) {
 	return {
 		type: actionTypes.FETCH_BUG_SUCCESS,
@@ -60,6 +80,13 @@ export function fetchBugSuccess(data) {
 export function fetchFeatureSuccess(data) {
 	return {
 		type: actionTypes.FETCH_FEATURE_SUCCESS,
+		data
+	};
+};
+
+export function fetchInternalFeatureSuccess(data) {
+	return {
+		type: actionTypes.FETCH_INTERNAL_FEATURE_SUCCESS,
 		data
 	};
 };
@@ -129,10 +156,39 @@ export function fetchFeature(callback = () => {}) {
 	};
 };
 
+export function fetchInternalFeature(callback = () => {}) {
+	return (dispatch) => {
+		return request
+			.post(SERVER_API_URL)
+			.set('Content-Type', 'application/graphql')
+			.send(`{
+			    tasks(taskType: "internal") {
+			        title,
+			        pri,
+			        dev_percent,
+			        dev_name,
+			        project,
+			        eta,
+			        id
+			    }
+			}`)
+			.end((err, res) => {
+				if (err) {
+                    dispatch(mainActions.apiFailure(err));
+	            } else {
+	            	let data = JSON.parse(res.text).data.tasks;
+	                dispatch(fetchInternalFeatureSuccess(data));
+	            }
+	            callback();
+			});
+	};
+};
+
 export function fetchTaskPageData(callback = () => {}) {
 	let tasks = [
 		fetchBug,
-		fetchFeature
+		fetchFeature,
+		fetchInternalFeature
 	];
 	let counter = 0;
 	let checkAllTasksDone = () => {
