@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 import Navigation from '../../components/Navigation/Navigation';
 import PageHeader from '../../components/Page-Header/Page-Header';
 import Spinner from '../../components/Spinner/Spinner';
-import ErrorBox from '../../components/ErrorBox/ErrorBox';
+import AlertBox from '../../components/AlertBox/AlertBox';
 // Actions
 import * as AppActions from '../../actions/app-actions';
 import * as MainActions from '../../actions/main-actions';
@@ -16,7 +16,7 @@ import * as MainActions from '../../actions/main-actions';
 class Main extends Component {
 	constructor(props) {
 		super(props);
-		this._closeErrorBox = ::this._closeErrorBox;
+		this._closeAlertBox = ::this._closeAlertBox;
 	}
 
 	componentDidUpdate() {
@@ -44,7 +44,7 @@ class Main extends Component {
 		// console.log(name, index);
 	}
 
-	_closeErrorBox() {
+	_closeAlertBox() {
 		this.props.mainActions.clearErrorMessage();
 	}
 
@@ -67,11 +67,12 @@ class Main extends Component {
 			<div>
 				<section className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
 					<Spinner hide={!isLoading} />
-					<ErrorBox
+					<AlertBox
+						type="error"
 					    show={!!errorMessage}
-					    errorMessage={errorMessage}
-					    onHideHandler={this._closeErrorBox}
-					    onConfirmHandler={this._closeErrorBox}/>
+					    message={errorMessage}
+					    onHideHandler={this._closeAlertBox}
+					    onConfirmHandler={this._closeAlertBox} />
 					<Navigation
 					    headerTitle={navHeaderTitle}
 					    navItems={navItems}

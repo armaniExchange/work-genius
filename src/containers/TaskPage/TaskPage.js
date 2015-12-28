@@ -14,6 +14,7 @@ import * as mainActions from '../../actions/main-actions';
 // Components
 import FilterList from '../../components/Filter-List/Filter-List';
 import StaticDataTable from '../../components/Static-Data-Table/Static-Data-Table.js';
+import JobTable from '../../components/Job-Table/Job-Table.js';
 
 let FeatureTable = ({
 	featureTableTitle,
@@ -70,11 +71,30 @@ let BugTable = ({
 };
 
 let InternalFeatureTable = ({
-	internalFeatureTableTitle
+	internalFeatureTableTitle,
+	internalFeatureTableData,
+	sortInternalFeatureTableBy,
+	internalFeatureTableOriginalData,
+	internalFeatureTitleKeyMap,
+	internalFeatureFilterConditions,
+	sortInternalFeatureTableByCategory,
+	filterInternalFeatureTable
 }) => {
 	return (
 		<div className="task-page__internal-feature-table">
 			<h5>{internalFeatureTableTitle}</h5>
+			<FilterList
+		        data={internalFeatureTableOriginalData}
+		        categories={Object.keys(internalFeatureFilterConditions)}
+		        onFilterHandler={filterInternalFeatureTable} />
+		    <JobTable
+		        data={internalFeatureTableData}
+		        titleKeyMap={internalFeatureTitleKeyMap}
+		        enableSort
+		        sortBy={sortInternalFeatureTableBy}
+		        onSortHandler={sortInternalFeatureTableByCategory}
+		        onEditHandler={(id) => console.log(`edit ${id}`)}
+		        onDeleteHandler={(id) => console.log(`delete ${id}`)} />
 		</div>
 	);
 };
@@ -92,9 +112,10 @@ class TaskPage extends Component {
 		);
 	}
 	componentWillUnmount() {
-		const { resetFeatureTable, resetBugTable } = this.props;
+		const { resetFeatureTable, resetBugTable, resetInternalFeatureTable } = this.props;
 		resetFeatureTable();
 		resetBugTable();
+		resetInternalFeatureTable();
 	}
 	_onCrawlerButtonClicked() {
 		const { initiateGK2Crawler, setLoadingState } = this.props;
@@ -156,7 +177,8 @@ TaskPage.propTypes = {
 	resetFeatureTable         : PropTypes.func,
 	resetBugTable             : PropTypes.func,
 	setLoadingState           : PropTypes.func,
-	fetchTaskPageData         : PropTypes.func
+	fetchTaskPageData         : PropTypes.func,
+	resetInternalFeatureTable : PropTypes.func
 };
 
 export default connect(

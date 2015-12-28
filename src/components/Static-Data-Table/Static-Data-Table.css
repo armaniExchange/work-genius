@@ -6,6 +6,6 @@
 	display: none;
 }
 
-.static-data-table .static-table__header {
+.static-data-table .static-data-table__header {
 	cursor: pointer;
 }

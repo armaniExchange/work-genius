@@ -1,0 +1,11 @@
+.job-table .job-table__body .job-table__body--empty {
+	text-align: center;
+}
+
+.job-table .hide {
+	display: none;
+}
+
+.job-table .job-table__header {
+	cursor: pointer;
+}
