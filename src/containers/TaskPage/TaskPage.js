@@ -16,6 +16,7 @@ import FilterList from '../../components/Filter-List/Filter-List';
 import StaticDataTable from '../../components/Static-Data-Table/Static-Data-Table.js';
 import JobTable from '../../components/Job-Table/Job-Table.js';
 import AlertBox from '../../components/AlertBox/AlertBox';
+import EditFeatureModal from '../../components/EditFeatureModal/EditFeatureModal';
 
 let FeatureTable = ({
 	featureTableTitle,
@@ -124,6 +125,8 @@ class TaskPage extends Component {
 		this._onCrawlerButtonClicked = ::this._onCrawlerButtonClicked;
 		this._onDeleteClicked = ::this._onDeleteClicked;
 		this._onConfirmDeleteClicked = ::this._onConfirmDeleteClicked;
+		this._onCreateButtonClicked = ::this._onCreateButtonClicked;
+		this._onFeatureSubmitClicked = ::this._onFeatureSubmitClicked;
 	}
 	componentWillMount() {
 		const { fetchTaskPageData, setLoadingState } = this.props;
@@ -159,7 +162,21 @@ class TaskPage extends Component {
 			() => setLoadingState(false)
 		);
 	}
+	_onCreateButtonClicked() {
+		const { setFeatureModalState } = this.props;
+		setFeatureModalState(true);
+	}
+	_onFeatureSubmitClicked(data) {
+		const { setLoadingState, setFeatureModalState, createFeature } = this.props;
+		setFeatureModalState(false);
+		setLoadingState(true);
+		createFeature(
+			data,
+			() => setLoadingState(false)
+		);
+	}
 	render() {
+		const { formOptions, showFeatureModal, setFeatureModalState } = this.props;
 		return (
 			<section className="task-page">
 			    <button
@@ -175,6 +192,17 @@ class TaskPage extends Component {
 			    <DeleteWarningBox
 			    	onConfirmDeleteClicked={this._onConfirmDeleteClicked}
 			        {...this.props} />
+			    <button
+			    	className="btn btn-success"
+			        onClick={this._onCreateButtonClicked}>
+			        Create Feature
+			    </button>
+			    <EditFeatureModal
+			        show={showFeatureModal}
+			        formOptions={formOptions}
+			        onHideHandler={() => { setFeatureModalState(false); }}
+			        onSubmitHandler={this._onFeatureSubmitClicked}
+					onCancelHandler={() => { setFeatureModalState(false); }} />
 			</section>
 		);
 	}
@@ -211,7 +239,9 @@ TaskPage.propTypes = {
 	internalFeatureTableTitle : PropTypes.string,
 	deleteFeatureWarning      : PropTypes.string,
 	selectedID                : PropTypes.array,
+	formOptions               : PropTypes.object,
 	showDeleteWarning         : PropTypes.bool,
+	showFeatureModal          : PropTypes.bool,
 	sortFeatureTableByCategory: PropTypes.func,
 	filterFeatureTable        : PropTypes.func,
 	sortBugTableByCategory    : PropTypes.func,
@@ -224,7 +254,9 @@ TaskPage.propTypes = {
 	resetInternalFeatureTable : PropTypes.func,
 	setDeleteWarningBoxState  : PropTypes.func,
 	setSelectedID             : PropTypes.func,
-	deleteSelectedItems       : PropTypes.func
+	deleteSelectedItems       : PropTypes.func,
+	setFeatureModalState      : PropTypes.func,
+	createFeature             : PropTypes.func
 };
 
 export default connect(
