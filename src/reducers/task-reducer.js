@@ -83,7 +83,15 @@ const initialState = Map({
 	internalFeatureFilterConditions: initialInternalFeatureFilterConditions,
 	deleteFeatureWarning: 'Are you sure you want to delete?',
 	showDeleteWarning: false,
-	selectedID: List.of()
+	selectedID: List.of(),
+	showFeatureModal: false,
+	// Fake Form Options (Will be getting all these data from rethinkDB in the future!!)
+	formOptions: Map({
+		dev_name: List.of('', 'Howard Chang', 'Roll Tsai', 'Vans Lai', 'Albert Huang', 'Steven Huang', 'William Ho'),
+		project: List.of('', 'Work Genius', '4.1.0', '3.2.0'),
+		pri: List.of('', 'P1', 'P2', 'P3'),
+		owner_name: List.of('', 'Roll Tsai', 'Craig Huang', 'Zuoping Li')
+	})
 });
 
 function filterOriginal(state, type) {
@@ -248,6 +256,8 @@ export default function taskReducer(state = initialState, action) {
 			return resetTable(state, 'internalFeature');
 		case actionTypes.SET_DELETE_WARNING_BOX_STATE:
 			return state.set('showDeleteWarning', action.state);
+		case actionTypes.SET_FEATURE_MODAL_STATE:
+			return state.set('showFeatureModal', action.state);
 		case actionTypes.SET_SELECTED_ID:
 			return state.update('selectedID', (original) => {
 				return original.set(0, action.id);

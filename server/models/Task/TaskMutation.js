@@ -89,7 +89,7 @@ let TaskMutation = {
 	},
 	'deleteInternalFeatures': {
 		type: GraphQLString,
-		description: 'Edit task eta',
+		description: 'Delete internal features',
 		args: {
 			ids: {
 				type: new GraphQLList(GraphQLString),
@@ -117,6 +117,30 @@ let TaskMutation = {
 			}
 
 			return 'Delete successfully!';
+		}
+	},
+	'createInternalFeatures': {
+		type: GraphQLString,
+		description: 'Create new internal features',
+		args: {
+			data: {
+				type: GraphQLString,
+				description: 'new internal feature data'
+			}
+		},
+		resolve: async (root, { data }) => {
+			let connection = null,
+				mutationQuery = null;
+			try {
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				mutationQuery = r.db('work_genius').table('tasks').insert(JSON.parse(data));
+				await mutationQuery.run(connection);
+				await connection.close();
+			} catch (err) {
+				return err;
+			}
+
+			return 'Create successfully!';
 		}
 	}
 };

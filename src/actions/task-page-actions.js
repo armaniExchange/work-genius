@@ -105,6 +105,13 @@ export function setSelectedID(id) {
 	};
 };
 
+export function setFeatureModalState(state) {
+	return {
+		type: actionTypes.SET_FEATURE_MODAL_STATE,
+		state
+	};
+};
+
 export function fetchBug(callback = () => {}) {
 	return (dispatch) => {
 		return request
@@ -271,6 +278,27 @@ export function deleteSelectedItems(ids, callback = () => {}) {
 			.set('Content-Type', 'application/graphql')
 			.send(`mutation RootMutationType {
 			    deleteInternalFeatures(ids:"${ids}")
+			}`)
+			.end((err, res) => {
+				if (err || !res) {
+					let error = err || 'No response';
+					dispatch(mainActions.apiFailure(error));
+				} else if (res && JSON.parse(res.text).errors) {
+                    dispatch(mainActions.apiFailure(JSON.parse(res.text).errors[0].message));
+	            } else {
+	                dispatch(fetchInternalFeature(callback));
+	            }
+			});
+	};
+};
+
+export function createFeature(data, callback = () => {}) {
+	return (dispatch) => {
+		return request
+			.post(SERVER_API_URL)
+			.set('Content-Type', 'application/graphql')
+			.send(`mutation RootMutationType {
+			    createInternalFeatures(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
 			}`)
 			.end((err, res) => {
 				if (err || !res) {
