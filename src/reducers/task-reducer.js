@@ -81,6 +81,9 @@ const initialState = Map({
 		status: 0
 	}),
 	internalFeatureFilterConditions: initialInternalFeatureFilterConditions,
+	deleteFeatureWarning: 'Are you sure you want to delete?',
+	showDeleteWarning: false,
+	selectedID: List.of()
 });
 
 function filterOriginal(state, type) {
@@ -243,6 +246,12 @@ export default function taskReducer(state = initialState, action) {
 			return resetTable(state, 'feature');
 		case actionTypes.RESET_FEATURE_TABLE:
 			return resetTable(state, 'internalFeature');
+		case actionTypes.SET_DELETE_WARNING_BOX_STATE:
+			return state.set('showDeleteWarning', action.state);
+		case actionTypes.SET_SELECTED_ID:
+			return state.update('selectedID', (original) => {
+				return original.set(0, action.id);
+			});
 		case actionTypes.FETCH_BUG_SUCCESS:
 			nextState = setTableData(state, action.data, 'bug');
 			if (!is(state.get('bugFilterConditions'), initialBugFilterConditions)) {

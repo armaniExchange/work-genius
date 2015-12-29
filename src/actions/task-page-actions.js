@@ -91,6 +91,20 @@ export function fetchInternalFeatureSuccess(data) {
 	};
 };
 
+export function setDeleteWarningBoxState(state) {
+	return {
+		type: actionTypes.SET_DELETE_WARNING_BOX_STATE,
+		state
+	};
+};
+
+export function setSelectedID(id) {
+	return {
+		type: actionTypes.SET_SELECTED_ID,
+		id
+	};
+};
+
 export function fetchBug(callback = () => {}) {
 	return (dispatch) => {
 		return request
@@ -245,6 +259,27 @@ export function initiateGK2Crawler(callback = () => {}) {
                     dispatch(mainActions.apiFailure(JSON.parse(res.text).errors[0].message));
 	            } else {
 	                dispatch(fetchTaskPageData(callback));
+	            }
+			});
+	};
+};
+
+export function deleteSelectedItems(ids, callback = () => {}) {
+	return (dispatch) => {
+		return request
+			.post(SERVER_API_URL)
+			.set('Content-Type', 'application/graphql')
+			.send(`mutation RootMutationType {
+			    deleteInternalFeatures(ids:"${ids}")
+			}`)
+			.end((err, res) => {
+				if (err || !res) {
+					let error = err || 'No response';
+					dispatch(mainActions.apiFailure(error));
+				} else if (res && JSON.parse(res.text).errors) {
+                    dispatch(mainActions.apiFailure(JSON.parse(res.text).errors[0].message));
+	            } else {
+	                dispatch(fetchInternalFeature(callback));
 	            }
 			});
 	};

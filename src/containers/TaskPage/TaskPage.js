@@ -15,6 +15,7 @@ import * as mainActions from '../../actions/main-actions';
 import FilterList from '../../components/Filter-List/Filter-List';
 import StaticDataTable from '../../components/Static-Data-Table/Static-Data-Table.js';
 import JobTable from '../../components/Job-Table/Job-Table.js';
+import AlertBox from '../../components/AlertBox/AlertBox';
 
 let FeatureTable = ({
 	featureTableTitle,
@@ -78,7 +79,8 @@ let InternalFeatureTable = ({
 	internalFeatureTitleKeyMap,
 	internalFeatureFilterConditions,
 	sortInternalFeatureTableByCategory,
-	filterInternalFeatureTable
+	filterInternalFeatureTable,
+	onDeleteClicked
 }) => {
 	return (
 		<div className="task-page__internal-feature-table">
@@ -94,8 +96,25 @@ let InternalFeatureTable = ({
 		        sortBy={sortInternalFeatureTableBy}
 		        onSortHandler={sortInternalFeatureTableByCategory}
 		        onEditHandler={(id) => console.log(`edit ${id}`)}
-		        onDeleteHandler={(id) => console.log(`delete ${id}`)} />
+		        onDeleteHandler={onDeleteClicked} />
 		</div>
+	);
+};
+
+let DeleteWarningBox = ({
+	showDeleteWarning,
+	deleteFeatureWarning,
+	setDeleteWarningBoxState,
+	onConfirmDeleteClicked
+}) => {
+	return (
+		<AlertBox
+			type="warning"
+			show={showDeleteWarning}
+			message={deleteFeatureWarning}
+			onHideHandler={() => { setDeleteWarningBoxState(false); }}
+			onConfirmHandler={onConfirmDeleteClicked}
+			onCancelHandler={() => { setDeleteWarningBoxState(false); }} />
 	);
 };
 
@@ -103,6 +122,8 @@ class TaskPage extends Component {
 	constructor(props) {
 		super(props);
 		this._onCrawlerButtonClicked = ::this._onCrawlerButtonClicked;
+		this._onDeleteClicked = ::this._onDeleteClicked;
+		this._onConfirmDeleteClicked = ::this._onConfirmDeleteClicked;
 	}
 	componentWillMount() {
 		const { fetchTaskPageData, setLoadingState } = this.props;
@@ -124,6 +145,20 @@ class TaskPage extends Component {
 			() => setLoadingState(false)
 		);
 	}
+	_onDeleteClicked(id) {
+		const { setDeleteWarningBoxState, setSelectedID } = this.props;
+		setDeleteWarningBoxState(true);
+		setSelectedID(id);
+	}
+	_onConfirmDeleteClicked() {
+		const { setLoadingState, selectedID, setDeleteWarningBoxState, deleteSelectedItems } = this.props;
+		setDeleteWarningBoxState(false);
+		setLoadingState(true);
+		deleteSelectedItems(
+			selectedID,
+			() => setLoadingState(false)
+		);
+	}
 	render() {
 		return (
 			<section className="task-page">
@@ -134,7 +169,12 @@ class TaskPage extends Component {
 			    </button>
 			    <BugTable {...this.props} />
 			    <FeatureTable {...this.props} />
-			    <InternalFeatureTable {...this.props} />
+			    <InternalFeatureTable
+			    	onDeleteClicked={this._onDeleteClicked}
+			        {...this.props} />
+			    <DeleteWarningBox
+			    	onConfirmDeleteClicked={this._onConfirmDeleteClicked}
+			        {...this.props} />
 			</section>
 		);
 	}
@@ -169,6 +209,9 @@ TaskPage.propTypes = {
 	featureTitleKeyMap        : PropTypes.array,
 	featureFilterConditions   : PropTypes.object,
 	internalFeatureTableTitle : PropTypes.string,
+	deleteFeatureWarning      : PropTypes.string,
+	selectedID                : PropTypes.array,
+	showDeleteWarning         : PropTypes.bool,
 	sortFeatureTableByCategory: PropTypes.func,
 	filterFeatureTable        : PropTypes.func,
 	sortBugTableByCategory    : PropTypes.func,
@@ -178,7 +221,10 @@ TaskPage.propTypes = {
 	resetBugTable             : PropTypes.func,
 	setLoadingState           : PropTypes.func,
 	fetchTaskPageData         : PropTypes.func,
-	resetInternalFeatureTable : PropTypes.func
+	resetInternalFeatureTable : PropTypes.func,
+	setDeleteWarningBoxState  : PropTypes.func,
+	setSelectedID             : PropTypes.func,
+	deleteSelectedItems       : PropTypes.func
 };
 
 export default connect(

@@ -38,15 +38,15 @@ class FolderBlock extends Component {
 };
 
 FolderBlock.propTypes = {
-	title: PropTypes.string.isRequired,
-	link: PropTypes.string.isRequired,
+	title          : PropTypes.string.isRequired,
+	link           : PropTypes.string.isRequired,
 	showCloseButton: PropTypes.bool,
-	onCloseHandler: PropTypes.func
+	onCloseHandler : PropTypes.func
 };
 
 FolderBlock.defaultProps = {
 	showCloseButton: false,
-	onCloseHandler: () => {}
+	onCloseHandler : () => {}
 };
 
 export default FolderBlock;

@@ -41,7 +41,7 @@ class DemoPage extends Component {
 }
 
 DemoPage.propTypes = {
-	demoState: PropTypes.object.isRequired,
+	demoState  : PropTypes.object.isRequired,
 	demoActions: PropTypes.object.isRequired
 };
 

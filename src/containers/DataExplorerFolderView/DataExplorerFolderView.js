@@ -128,7 +128,7 @@ class DataExplorerFolderView extends Component {
 }
 
 DataExplorerFolderView.propTypes = {
-	dataExplorerState: PropTypes.object.isRequired,
+	dataExplorerState  : PropTypes.object.isRequired,
 	dataExplorerActions: PropTypes.object.isRequired
 };
 

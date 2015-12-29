@@ -63,13 +63,13 @@ class FilterList extends Component {
 }
 
 FilterList.propTypes = {
-	data: PropTypes.array.isRequired,
-	categories: PropTypes.array,
+	data           : PropTypes.array.isRequired,
+	categories     : PropTypes.array,
 	onFilterHandler: PropTypes.func
 };
 
 FilterList.defaultProps = {
-	categories: [],
+	categories     : [],
 	onFilterHandler: () => {}
 };
 

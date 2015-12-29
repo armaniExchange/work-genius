@@ -24,7 +24,8 @@ const schema = new GraphQLSchema({
 			editTaskEta: TaskMutation.editTaskEta,
 			login: UserMutation.userLogin,
 			logout: UserMutation.userLogout,
-			initiateCrawler: TaskMutation.initiateCrawler
+			initiateCrawler: TaskMutation.initiateCrawler,
+			deleteInternalFeatures: TaskMutation.deleteInternalFeatures
 		}
 	})
 });

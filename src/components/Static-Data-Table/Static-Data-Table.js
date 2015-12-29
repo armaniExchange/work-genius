@@ -117,10 +117,10 @@ class StaticDataTable extends Component {
 }
 
 StaticDataTable.propTypes = {
-	data: PropTypes.array.isRequired,
-	titleKeyMap: PropTypes.array.isRequired,
-	enableSort: PropTypes.bool,
-	sortBy: PropTypes.object,
+	data         : PropTypes.array.isRequired,
+	titleKeyMap  : PropTypes.array.isRequired,
+	enableSort   : PropTypes.bool,
+	sortBy       : PropTypes.object,
 	onSortHandler: PropTypes.func
 };
 

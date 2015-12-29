@@ -99,7 +99,7 @@ class InlineTableInputDatePicker extends Component {
 }
 
 InlineTableInputDatePicker.propTypes = {
-	defaultData: PropTypes.string.isRequired,
+	defaultData    : PropTypes.string.isRequired,
 	onSubmitHandler: PropTypes.func
 };
 InlineTableInputDatePicker.defaultProps = {
