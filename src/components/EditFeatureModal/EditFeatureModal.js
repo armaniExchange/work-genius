@@ -1,13 +1,15 @@
 // Styles
 import './EditFeatureModal.css';
-// React & Redux
+// Libraries
 import React, { Component, PropTypes } from 'react';
+import moment from 'moment';
 // Components
 import {
 	Button,
 	Modal,
 	Input
 } from 'react-bootstrap';
+import DateTimeField from 'react-bootstrap-datetimepicker';
 
 let ModalHeader = ({ data }) => {
 	if (data.id) {
@@ -45,6 +47,7 @@ class EditFeatureModal extends Component {
 	constructor(props) {
 		super(props);
 		this._onSubmit = ::this._onSubmit;
+		this._onDateChange = ::this._onDateChange;
 	}
 
 	_onSubmit() {
@@ -53,8 +56,8 @@ class EditFeatureModal extends Component {
 		let dev_name = this.refs.dev_name.getValue();
 		let project = this.refs.project.getValue();
 		let pri = this.refs.pri.getValue();
-		let dev_percent = this.refs.dev_percent.getValue();
-		let eta = this.refs.eta.getValue();
+		let dev_percent = this.refs.dev_percent.getValue() + '%';
+		let eta = this.refs.eta.value;
 		let owner_name = this.refs.owner_name.getValue();
 		let data = {
 			title,
@@ -67,6 +70,9 @@ class EditFeatureModal extends Component {
 			type: 'internal'
 		};
 		onSubmitHandler(data);
+	}
+	_onDateChange(newDate) {
+		this.refs.eta.value = newDate;
 	}
 
 	render() {
@@ -131,19 +137,27 @@ class EditFeatureModal extends Component {
 					        {priorityOptionsHtml}
 					    </Input>
 					    <Input
-					        type="text"
+					        type="number"
+					        min={0}
+					        max={100}
 					        label="Progress"
 					        labelClassName="col-xs-2"
 					        wrapperClassName="col-xs-10"
-					        defaultValue={data.dev_percent ? data.dev_percent : ''}
+					        defaultValue={data.dev_percent ? parseInt(data.dev_percent, 10) : 0}
 					        ref="dev_percent" />
-					    <Input
-					        type="text"
-					        label="ETA"
-					        labelClassName="col-xs-2"
-					        wrapperClassName="col-xs-10"
-					        defaultValue={data.eta ? data.eta : ''}
-					        ref="eta" />
+					    <input className="hidden" ref="eta" defaultValue={data.eta ? data.eta : moment().format('YYYY-MM-DD')} />
+					    <div className="form-group">
+						    <label className="col-xs-2 control-label">ETA</label>
+						    <div className="col-xs-10">
+						        <DateTimeField
+						            dateTime={data.eta || moment().format('YYYY-MM-DD')}
+						            format="YYYY-MM-DD"
+						            inputFormat="YYYY-MM-DD"
+						            mode="date"
+						            showToday
+						            onChange={this._onDateChange} />
+						    </div>
+						</div>
 					    <Input
 					        type="select"
 					        label="Assignee"
