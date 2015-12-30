@@ -29,7 +29,7 @@ class FilterList extends Component {
 		let lowerCaseCategory = category.toLowerCase();
 		let options = [];
 		let optionsHtml = data.map((cell, i) => {
-			if (options.indexOf(cell[category]) < 0) {
+			if (cell[category] !== '' && options.indexOf(cell[category]) < 0) {
 				options.push(cell[category]);
 				return (
 					<option value={cell[category]} key={i}>{cell[category]}</option>

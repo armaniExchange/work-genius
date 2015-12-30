@@ -98,10 +98,16 @@ export function setDeleteWarningBoxState(state) {
 	};
 };
 
-export function setSelectedID(id) {
+export function setSelectedItem(id) {
 	return {
-		type: actionTypes.SET_SELECTED_ID,
+		type: actionTypes.SET_SELECTED_ITEM,
 		id
+	};
+};
+
+export function resetSelectedItem() {
+	return {
+		type: actionTypes.RESET_SELECTED_ITEM
 	};
 };
 
@@ -188,6 +194,7 @@ export function fetchInternalFeature(callback = () => {}) {
 			        pri,
 			        dev_percent,
 			        dev_name,
+			        owner_name,
 			        project,
 			        eta,
 			        id
@@ -299,6 +306,27 @@ export function createFeature(data, callback = () => {}) {
 			.set('Content-Type', 'application/graphql')
 			.send(`mutation RootMutationType {
 			    createInternalFeatures(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+			}`)
+			.end((err, res) => {
+				if (err || !res) {
+					let error = err || 'No response';
+					dispatch(mainActions.apiFailure(error));
+				} else if (res && JSON.parse(res.text).errors) {
+                    dispatch(mainActions.apiFailure(JSON.parse(res.text).errors[0].message));
+	            } else {
+	                dispatch(fetchInternalFeature(callback));
+	            }
+			});
+	};
+};
+
+export function updateFeature(id, data, callback = () => {}) {
+	return (dispatch) => {
+		return request
+			.post(SERVER_API_URL)
+			.set('Content-Type', 'application/graphql')
+			.send(`mutation RootMutationType {
+			    updateInternalFeatures(id:"${id}", data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
 			}`)
 			.end((err, res) => {
 				if (err || !res) {

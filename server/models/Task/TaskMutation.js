@@ -142,6 +142,34 @@ let TaskMutation = {
 
 			return 'Create successfully!';
 		}
+	},
+	'updateInternalFeatures': {
+		type: GraphQLString,
+		description: 'Create new internal features',
+		args: {
+			id: {
+				type: GraphQLString,
+				description: 'internal feature id'
+			},
+			data: {
+				type: GraphQLString,
+				description: 'new internal feature data'
+			}
+		},
+		resolve: async (root, { id, data }) => {
+			let connection = null,
+				mutationQuery = null;
+			try {
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				mutationQuery = r.db('work_genius').table('tasks').get(id).update(JSON.parse(data));
+				await mutationQuery.run(connection);
+				await connection.close();
+			} catch (err) {
+				return err;
+			}
+
+			return 'Update successfully!';
+		}
 	}
 };
 

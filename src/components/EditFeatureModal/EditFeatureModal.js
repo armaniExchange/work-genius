@@ -70,7 +70,7 @@ class EditFeatureModal extends Component {
 	}
 
 	render() {
-		const { show, onHideHandler, formOptions } = this.props;
+		const { show, data, onHideHandler, formOptions } = this.props;
 		let developerOptionsHtml = formOptions['dev_name'].map((developer, i) => {
 			return (
 				<option value={developer} key={i}>{developer}</option>
@@ -101,12 +101,14 @@ class EditFeatureModal extends Component {
 					        label="Title"
 					        labelClassName="col-xs-2"
 					        wrapperClassName="col-xs-10"
+					        defaultValue={data.title ? data.title : ''}
 					        ref="title"/>
 					    <Input
 					        type="select"
 					        label="Developer"
 					        labelClassName="col-xs-2"
 					        wrapperClassName="col-xs-10"
+					        defaultValue={data.dev_name ? data.dev_name : ''}
 					        ref="dev_name">
 					        {developerOptionsHtml}
 					    </Input>
@@ -115,6 +117,7 @@ class EditFeatureModal extends Component {
 					        label="Project"
 					        labelClassName="col-xs-2"
 					        wrapperClassName="col-xs-10"
+					        defaultValue={data.project ? data.project : ''}
 					        ref="project">
 					        {projectOptionsHtml}
 					    </Input>
@@ -123,6 +126,7 @@ class EditFeatureModal extends Component {
 					        label="Priority"
 					        labelClassName="col-xs-2"
 					        wrapperClassName="col-xs-10"
+					        defaultValue={data.pri ? data.pri : ''}
 					        ref="pri">
 					        {priorityOptionsHtml}
 					    </Input>
@@ -131,18 +135,21 @@ class EditFeatureModal extends Component {
 					        label="Progress"
 					        labelClassName="col-xs-2"
 					        wrapperClassName="col-xs-10"
+					        defaultValue={data.dev_percent ? data.dev_percent : ''}
 					        ref="dev_percent" />
 					    <Input
 					        type="text"
 					        label="ETA"
 					        labelClassName="col-xs-2"
 					        wrapperClassName="col-xs-10"
+					        defaultValue={data.eta ? data.eta : ''}
 					        ref="eta" />
 					    <Input
 					        type="select"
 					        label="Assignee"
 					        labelClassName="col-xs-2"
 					        wrapperClassName="col-xs-10"
+					        defaultValue={data.owner_name ? data.owner_name : ''}
 					        ref="owner_name">
 					        {assigneeOptionsHtml}
 					    </Input>
@@ -158,7 +165,7 @@ class EditFeatureModal extends Component {
 
 EditFeatureModal.propTypes = {
 	formOptions     : PropTypes.object.isRequired,
-	data            : PropTypes.string,
+	data            : PropTypes.object,
 	show            : PropTypes.bool,
 	onHideHandler   : PropTypes.func,
 	onSubmitHandler : PropTypes.func,
@@ -166,7 +173,7 @@ EditFeatureModal.propTypes = {
 };
 
 EditFeatureModal.defaultProps = {
-	data            : '',
+	data            : {},
 	show            : false,
 	onHideHandler   : () => {},
 	onSubmitHandler : () => {},

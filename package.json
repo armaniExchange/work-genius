@@ -8,7 +8,7 @@
     "clean": "rimraf dist",
     "babel-node": "babel-node",
     "dev": "node start-webpack-dev-server.js",
-    "serverDev": "nodemon --exec npm run babel-node -- server",
+    "serverDev": "nodemon --watch server --exec npm run babel-node -- server",
     "deploy": "npm run clean && NODE_ENV=production webpack -p --progress --config webpack.production.config.js",
     "wdeploy": "npm run clean&&set NODE_ENV=production&&webpack -p --progress --config webpack.production.config.js"
   },
