@@ -26,7 +26,8 @@ const schema = new GraphQLSchema({
 			logout: UserMutation.userLogout,
 			initiateCrawler: TaskMutation.initiateCrawler,
 			deleteInternalFeatures: TaskMutation.deleteInternalFeatures,
-			createInternalFeatures: TaskMutation.createInternalFeatures
+			createInternalFeatures: TaskMutation.createInternalFeatures,
+			updateInternalFeatures: TaskMutation.updateInternalFeatures
 		}
 	})
 });

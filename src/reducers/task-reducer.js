@@ -18,6 +18,7 @@ const initialFeatureFilterConditions = Map({
 });
 
 const initialInternalFeatureFilterConditions = Map({
+	'project': '',
 	'dev_name': ''
 });
 
@@ -69,9 +70,10 @@ const initialState = Map({
 		Map({ title: 'PRI', key: 'pri'}),
 		Map({ title: 'Dev %', key: 'dev_percent'}),
 		Map({ title: 'Developer', key: 'dev_name'}),
+		Map({ title: 'Assignee', key: 'owner_name'}),
 		Map({ title: 'Project', key: 'project'}),
 		Map({ title: 'ETA', key: 'eta'}),
-		Map({ title: 'ID', key: 'id'})
+		Map({ title: 'Actions', key: 'id'})
 	),
 	internalFeatureTableTitle: 'Internal Features',
 	internalFeatureTableOriginalData: List.of(),
@@ -85,6 +87,7 @@ const initialState = Map({
 	showDeleteWarning: false,
 	selectedID: List.of(),
 	showFeatureModal: false,
+	selectedItem: Map({}),
 	// Fake Form Options (Will be getting all these data from rethinkDB in the future!!)
 	formOptions: Map({
 		dev_name: List.of('', 'Howard Chang', 'Roll Tsai', 'Vans Lai', 'Albert Huang', 'Steven Huang', 'William Ho'),
@@ -164,7 +167,8 @@ function customizeTaskData(task) {
 	Object.keys(task).forEach((key) => {
 		switch (key) {
 			case 'title':
-				result = result.set(key, task[key].substr(0, 50) + '...');
+				let newValue = task[key].length > 75 ? task[key].substr(0, 75) + '...' : task[key];
+				result = result.set(key, newValue);
 			break;
 			default:
 				result = result.set(key, task[key]);
@@ -233,6 +237,13 @@ function sortTable(state, newCategory, type) {
 	return state;
 }
 
+function setSelectedItem(state, id) {
+	let matchItem = state.get('internalFeatureTableOriginalData').filter(item => item.get('id') === id).first();
+	return state.update('selectedID', (original) => {
+		return original.set(0, id);
+	}).set('selectedItem', matchItem);
+}
+
 export default function taskReducer(state = initialState, action) {
 	let nextState = state;
 	switch (action.type) {
@@ -258,10 +269,10 @@ export default function taskReducer(state = initialState, action) {
 			return state.set('showDeleteWarning', action.state);
 		case actionTypes.SET_FEATURE_MODAL_STATE:
 			return state.set('showFeatureModal', action.state);
-		case actionTypes.SET_SELECTED_ID:
-			return state.update('selectedID', (original) => {
-				return original.set(0, action.id);
-			});
+		case actionTypes.SET_SELECTED_ITEM:
+			return setSelectedItem(state, action.id);
+		case actionTypes.RESET_SELECTED_ITEM:
+			return state.set('selectedItem', Map({})).set('selectedID', List.of());
 		case actionTypes.FETCH_BUG_SUCCESS:
 			nextState = setTableData(state, action.data, 'bug');
 			if (!is(state.get('bugFilterConditions'), initialBugFilterConditions)) {
