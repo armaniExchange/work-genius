@@ -1,6 +1,7 @@
 // GraphQL types
 import {
 	GraphQLObjectType,
+	GraphQLInt,
 	GraphQLString,
 	GraphQLID,
 	GraphQLBoolean
@@ -14,45 +15,81 @@ let TaskType = new GraphQLObjectType({
 			type: GraphQLID,
 			description: 'Task ID'
 		},
-		'developer_email': {
-			type: GraphQLString,
-			description: 'Email of the developer responsible for this task'
-		},
 		'title': {
 			type: GraphQLString,
 			description: 'Task title'
-		},
-		'pri': {
-			type: GraphQLString,
-			description: 'Task pri'
-		},
-		'status': {
-			type: GraphQLString,
-			description: 'Current task status'
-		},
-		'must_fix': {
-			type: GraphQLBoolean,
-			description: 'Developer responsible for this task'
-		},
-		'qa_email': {
-			type: GraphQLString,
-			description: 'Email of the QA responsible for this task'
-		},
-		'project': {
-			type: GraphQLString,
-			description: 'Project that this task belongs to'
 		},
 		'eta': {
 			type: GraphQLString,
 			description: 'Estimated time of completion'
 		},
-		'type': {
+		'created': {
 			type: GraphQLString,
-			description: 'Task type'
+			description: 'date when the task is created'
+		},
+		'pri': {
+			type: GraphQLString,
+			description: 'Task priority'
 		},
 		'severity': {
 			type: GraphQLString,
 			description: 'Task severity'
+		},
+		'status': {
+			type: GraphQLString,
+			description: 'Current task status'
+		},
+		'developer_email': {
+			type: GraphQLString,
+			description: 'Email of the developer responsible for this task'
+		},
+		'qa_email': {
+			type: GraphQLString,
+			description: 'Email of the QA responsible for this task'
+		},
+		'must_fix': {
+			type: GraphQLBoolean,
+			description: 'Developer responsible for this task'
+		},
+		'project': {
+			type: GraphQLString,
+			description: 'Project that this task belongs to'
+		},
+		'type': {
+			type: GraphQLString,
+			description: 'Task type'
+		},
+		'total_percent': {
+			type: GraphQLString,
+			description: 'Feature completed percent: total'
+		},
+		'dev_percent': {
+			type: GraphQLString,
+			description: 'Feature completed percent: developer'
+		},
+		'qa_percent': {
+			type: GraphQLString,
+			description: 'Feature completed percent: QA'
+		},
+		'days_to_complete': {
+			type: GraphQLInt,
+			description: 'Days cost to develop the feature'
+		},
+		'completed_date': {
+			type: GraphQLString,
+			description: 'Completed date of the feature'
+		},
+		'owner_name': {
+			type: GraphQLString,
+			description: 'Feature owner name'
+		},
+		'dev_name': {
+			type: GraphQLString,
+			description: 'Feature developer name'
+		},
+		'qa_name': {
+			type: GraphQLString,
+			description: 'Feature QA name'
 		}
 	})
 });

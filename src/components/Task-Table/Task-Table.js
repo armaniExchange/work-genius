@@ -139,19 +139,19 @@ class TaskTable extends Component {
 }
 
 TaskTable.propTypes = {
-	data: PropTypes.array.isRequired,
-	enableSort: PropTypes.bool,
-	sortBy: PropTypes.array,
-	onSortHandler: PropTypes.func,
-	onUnmountHandler: PropTypes.func,
+	data              : PropTypes.array.isRequired,
+	enableSort        : PropTypes.bool,
+	sortBy            : PropTypes.array,
+	onSortHandler     : PropTypes.func,
+	onUnmountHandler  : PropTypes.func,
 	onETASubmitHandler: PropTypes.func
 };
 
 TaskTable.defaultProps = {
-	enableSort: false,
-	sortBy: [],
-	onSortHandler: () => {},
-	onUnmountHandler: () => {},
+	enableSort        : false,
+	sortBy            : [],
+	onSortHandler     : () => {},
+	onUnmountHandler  : () => {},
 	onETASubmitHandler: () => {}
 };
 

@@ -8,85 +8,109 @@ import { Map, List, OrderedMap, is } from 'immutable';
 import * as actionTypes from '../constants/action-types';
 
 const initialBugFilterConditions = Map({
-	'Developer': '',
-	'Status': '',
-	'Project': ''
+	'project': '',
+	'developer_email': ''
 });
 
 const initialFeatureFilterConditions = Map({
-	'Developer': '',
-	'PRI': '',
-	'Project': ''
+	'project': '',
+	'dev_name': ''
+});
+
+const initialInternalFeatureFilterConditions = Map({
+	'project': '',
+	'dev_name': ''
 });
 
 const initialState = Map({
+	bugTitleKeyMap: List.of(
+		Map({ title: 'ID', key: 'id'}),
+		Map({ title: 'Title', key: 'title'}),
+		Map({ title: 'ETA', key: 'eta'}),
+		Map({ title: 'Created', key: 'created'}),
+		Map({ title: 'PRI', key: 'pri'}),
+		Map({ title: 'Severity', key: 'severity'}),
+		Map({ title: 'Status', key: 'status'}),
+		Map({ title: 'Developer', key: 'developer_email'}),
+		Map({ title: 'QA', key: 'qa_email'}),
+		Map({ title: 'Project', key: 'project'})
+	),
 	bugTableTitle: 'Bugs',
-	bugTableOriginalData: List.of(OrderedMap({
-		'Developer': '',
-		'Title': '',
-		'PRI': '',
-		'Status': '',
-		'QA Email': '',
-		'Project': '',
-		'ETA': ''
-	})),
-	bugTableData: List.of(OrderedMap({
-		'Developer': '',
-		'Title': '',
-		'PRI': '',
-		'Status': '',
-		'QA Email': '',
-		'Project': '',
-		'ETA': ''
-	})),
-	sortBugTableBy: List.of(),
+	bugTableOriginalData: List.of(),
+	bugTableData: List.of(),
+	sortBugTableBy: Map({
+		category: '',
+		status: 0
+	}),
 	bugFilterConditions: initialBugFilterConditions,
+	featureTitleKeyMap: List.of(
+		Map({ title: 'ID', key: 'id'}),
+		Map({ title: 'Title', key: 'title'}),
+		Map({ title: 'Status', key: 'status'}),
+		Map({ title: '%', key: 'total_percent'}),
+		Map({ title: 'Dev %', key: 'dev_percent'}),
+		Map({ title: 'QA %', key: 'qa_percent'}),
+		Map({ title: 'Duration (days)', key: 'days_to_complete'}),
+		Map({ title: 'Complete Date', key: 'completed_date'}),
+		Map({ title: 'Owner', key: 'owner_name'}),
+		Map({ title: 'Developer', key: 'dev_name'}),
+		Map({ title: 'QA', key: 'qa_name'}),
+		Map({ title: 'Project', key: 'project'})
+	),
 	featureTableTitle: 'Features',
-	featureTableOriginalData: List.of(OrderedMap({
-		'Developer': '',
-		'Title': '',
-		'PRI': '',
-		'Status': '',
-		'QA Email': '',
-		'Project': '',
-		'ETA': ''
-	})),
-	featureTableData: List.of(OrderedMap({
-		'Developer': '',
-		'Title': '',
-		'PRI': '',
-		'Status': '',
-		'QA Email': '',
-		'Project': '',
-		'ETA': ''
-	})),
-	sortFeatureTableBy: List.of(),
+	featureTableOriginalData: List.of(),
+	featureTableData: List.of(),
+	sortFeatureTableBy: Map({
+		category: '',
+		status: 0
+	}),
 	featureFilterConditions: initialFeatureFilterConditions,
+	internalFeatureTitleKeyMap: List.of(
+		Map({ title: 'Title', key: 'title'}),
+		Map({ title: 'PRI', key: 'pri'}),
+		Map({ title: 'Dev %', key: 'dev_percent'}),
+		Map({ title: 'Developer', key: 'dev_name'}),
+		Map({ title: 'Assignee', key: 'owner_name'}),
+		Map({ title: 'Project', key: 'project'}),
+		Map({ title: 'ETA', key: 'eta'}),
+		Map({ title: 'Actions', key: 'id'})
+	),
+	internalFeatureTableTitle: 'Internal Features',
+	internalFeatureTableOriginalData: List.of(),
+	internalFeatureTableData: List.of(),
+	sortInternalFeatureTableBy: Map({
+		category: '',
+		status: 0
+	}),
+	internalFeatureFilterConditions: initialInternalFeatureFilterConditions,
+	deleteFeatureWarning: 'Are you sure you want to delete?',
+	showDeleteWarning: false,
+	selectedID: List.of(),
+	showFeatureModal: false,
+	selectedItem: Map({}),
+	// Fake Form Options (Will be getting all these data from rethinkDB in the future!!)
+	formOptions: Map({
+		dev_name: List.of('', 'Howard Chang', 'Roll Tsai', 'Vans Lai', 'Albert Huang', 'Steven Huang', 'William Ho'),
+		project: List.of('', 'Work Genius', '4.1.0', '3.2.0'),
+		pri: List.of('', 'P1', 'P2', 'P3'),
+		owner_name: List.of('', 'Roll Tsai', 'Craig Huang', 'Zuoping Li')
+	})
 });
 
 function filterOriginal(state, type) {
 	let nextState = state;
 	nextState = nextState.update(`${type}TableData`, () => {
 		let keys = nextState.get(`${type}FilterConditions`).keySeq();
-		let filteredResult = nextState.get(`${type}TableOriginalData`).filter((bug) => {
+		let filteredResult = nextState.get(`${type}TableOriginalData`).filter((item) => {
 			return keys.reduce((acc, key) => {
-				if (bug.get(key) !== nextState.getIn([`${type}FilterConditions`, key]) && nextState.getIn([`${type}FilterConditions`, key]) !== '') {
+				if (item.get(key) !== nextState.getIn([`${type}FilterConditions`, key]) && nextState.getIn([`${type}FilterConditions`, key]) !== '') {
 					return acc && false;
 				}
 				return acc && true;
 			}, true);
 		});
-		return filteredResult.isEmpty() ? List.of(OrderedMap({
-			'Developer': '',
-			'Title': '',
-			'PRI': '',
-			'Status': '',
-			'QA Email': '',
-			'Project': '',
-			'ETA': ''
-		})) : filteredResult;
+		return filteredResult.isEmpty() ? List.of() : filteredResult;
 	});
-
 	return nextState;
 }
 
@@ -106,43 +130,35 @@ function sortAlphaNum(a,b) {
 }
 
 function sortOriginal(state, type) {
-	let nextState = state;
+	let category = state.get(`sort${type[0].toUpperCase()+type.slice(1)}TableBy`).get('category');
+	let sortStatus = state.get(`sort${type[0].toUpperCase()+type.slice(1)}TableBy`).get('status');
 
-	nextState = nextState.update(`${type}TableData`, (data) => {
-		return data.sort((curr, next) => {
+	if (!category || sortStatus === 0) {
+		return state;
+	}
+
+	state = state.update(`${type}TableData`, (data) => {
+		let sorted = data.sort((curr, next) => {
 			let result = 0;
-			nextState.get(`sort${type[0].toUpperCase()+type.slice(1)}TableBy`).forEach((category) => {
-				let tempResult = sortAlphaNum(curr.get(category), next.get(category));
-				if (tempResult !== 0 && result === 0) {
-					result = tempResult;
-				}
-			});
+			// Get key corresponded to filter title
+			let key = state.get(`${type}TitleKeyMap`).filter((map) => {
+				return map.get('title') === category;
+			}).first().get('key');
+			let tempResult = sortAlphaNum(curr.get(key).toString(10), next.get(key).toString(10));
+			if (tempResult !== 0 && result === 0) {
+				result = tempResult;
+			}
 			return result;
 		});
+
+		if (sortStatus === -1) {
+			return sorted.reverse();
+		}
+
+		return sorted;
 	});
 
-	return nextState;
-}
-
-function updateKeyName(task) {
-	let keyTitleMap = {
-		'developer_email': 'Developer',
-		'title': 'Title',
-		'pri': 'PRI',
-		'status': 'Status',
-		'qa_email': 'QA Email',
-		'project': 'Project',
-		'eta': 'ETA',
-		'id': 'ID'
-	};
-	let result = Map();
-
-	Object.keys(task).forEach((key) => {
-		let title = keyTitleMap[key] ? keyTitleMap[key] : '';
-		result = result.set(title, task[key]);
-	});
-
-	return result.toJS();
+	return state;
 }
 
 function customizeTaskData(task) {
@@ -151,10 +167,8 @@ function customizeTaskData(task) {
 	Object.keys(task).forEach((key) => {
 		switch (key) {
 			case 'title':
-				result = result.set(key, task[key].substr(0, 50) + '...');
-			break;
-			case 'eta':
-				result = result.set(key, task[key] ? task[key] : 'TBA');
+				let newValue = task[key].length > 75 ? task[key].substr(0, 75) + '...' : task[key];
+				result = result.set(key, newValue);
 			break;
 			default:
 				result = result.set(key, task[key]);
@@ -169,7 +183,6 @@ function formatResponse(data) {
 
 	data.forEach((task) => {
 		let updatedTask = customizeTaskData(task);
-		updatedTask = updateKeyName(updatedTask);
 		result = result.push(OrderedMap(updatedTask));
 	});
 
@@ -184,7 +197,7 @@ function filterTable(state, filterConditions, type) {
 }
 
 function setTableData(state, data, type) {
-	let formatedData = formatResponse(data);;
+	let formatedData = formatResponse(data);
 	return state
 	    .set(`${type}TableOriginalData`, formatedData)
 	    .set(`${type}TableData`, formatedData);
@@ -195,9 +208,10 @@ function resetTable(state, type) {
 	    .update(`${type}TableData`, () => {
 			return state.get(`${type}TableOriginalData`);
 		})
-	    .set(`sort${type[0].toUpperCase()+type.slice(1)}TableBy`,
-	    	List.of()
-	    )
+	    .set(`sort${type[0].toUpperCase()+type.slice(1)}TableBy`, Map({
+			category: '',
+			status: 0
+		}))
 	    .set(
 	    	`${type}FilterConditions`,
 	    	initialState.get(`${type}FilterConditions`)
@@ -205,19 +219,29 @@ function resetTable(state, type) {
 }
 
 function sortTable(state, newCategory, type) {
-	let indexToBeDeleted = state.get(`sort${type[0].toUpperCase()+type.slice(1)}TableBy`).indexOf(newCategory);
-	if (indexToBeDeleted === -1) {
-		state = state.update(`sort${type[0].toUpperCase()+type.slice(1)}TableBy`, (categories) => {
-			return categories.push(newCategory);
-		});
+	let oldCategory = state.get(`sort${type[0].toUpperCase()+type.slice(1)}TableBy`).get('category');
+	let oldStatus = state.get(`sort${type[0].toUpperCase()+type.slice(1)}TableBy`).get('status');
+	let newStatus = 0;
+	if (oldCategory === newCategory) {
+		newStatus = oldStatus === 1 ? -1 : oldStatus === -1 ? 0 : 1;
 	} else {
-		state = state.update(`sort${type[0].toUpperCase()+type.slice(1)}TableBy`, (categories) => {
-			return categories.delete(indexToBeDeleted);
-		});
+		newStatus = 1;
 	}
+	let category = Map({
+		category: newCategory,
+		status: newStatus
+	});
+	state = state.set(`sort${type[0].toUpperCase()+type.slice(1)}TableBy`, category);
 	state = filterOriginal(state, type);
 	state = sortOriginal(state, type);
 	return state;
+}
+
+function setSelectedItem(state, id) {
+	let matchItem = state.get('internalFeatureTableOriginalData').filter(item => item.get('id') === id).first();
+	return state.update('selectedID', (original) => {
+		return original.set(0, id);
+	}).set('selectedItem', matchItem);
 }
 
 export default function taskReducer(state = initialState, action) {
@@ -227,20 +251,34 @@ export default function taskReducer(state = initialState, action) {
 			return sortTable(state, action.category, 'bug');
 		case actionTypes.SORT_FEATURE_TABLE_BY_CATEGORY:
 			return sortTable(state, action.category, 'feature');
+		case actionTypes.SORT_INTERNAL_FEATURE_TABLE_BY_CATEGORY:
+			return sortTable(state, action.category, 'internalFeature');
 		case actionTypes.FILTER_BUG_TABLE:
 			return filterTable(state, action.filterConditions, 'bug');
 		case actionTypes.FILTER_FEATURE_TABLE:
 			return filterTable(state, action.filterConditions, 'feature');
+		case actionTypes.FILTER_INTERNAL_FEATURE_TABLE:
+			return filterTable(state, action.filterConditions, 'internalFeature');
 		case actionTypes.RESET_BUG_TABLE:
 			return resetTable(state, 'bug');
 		case actionTypes.RESET_FEATURE_TABLE:
 			return resetTable(state, 'feature');
+		case actionTypes.RESET_FEATURE_TABLE:
+			return resetTable(state, 'internalFeature');
+		case actionTypes.SET_DELETE_WARNING_BOX_STATE:
+			return state.set('showDeleteWarning', action.state);
+		case actionTypes.SET_FEATURE_MODAL_STATE:
+			return state.set('showFeatureModal', action.state);
+		case actionTypes.SET_SELECTED_ITEM:
+			return setSelectedItem(state, action.id);
+		case actionTypes.RESET_SELECTED_ITEM:
+			return state.set('selectedItem', Map({})).set('selectedID', List.of());
 		case actionTypes.FETCH_BUG_SUCCESS:
 			nextState = setTableData(state, action.data, 'bug');
 			if (!is(state.get('bugFilterConditions'), initialBugFilterConditions)) {
 				nextState = filterOriginal(nextState, 'bug');
 			}
-			if (state.get('sortBugTableBy').size > 0) {
+			if (state.get('sortBugTableBy').get('category')) {
 				nextState = sortOriginal(nextState, 'bug');
 			}
 			return nextState;
@@ -249,8 +287,17 @@ export default function taskReducer(state = initialState, action) {
 			if (!is(state.get('featureFilterConditions'), initialFeatureFilterConditions)) {
 				nextState = filterOriginal(nextState, 'feature');
 			}
-			if (state.get('sortFeatureTableBy').size > 0) {
+			if (state.get('sortFeatureTableBy').get('category')) {
 				nextState = sortOriginal(nextState, 'feature');
+			}
+			return nextState;
+		case actionTypes.FETCH_INTERNAL_FEATURE_SUCCESS:
+			nextState = setTableData(state, action.data, 'internalFeature');
+			if (!is(state.get('internalFeatureFilterConditions'), initialInternalFeatureFilterConditions)) {
+				nextState = filterOriginal(nextState, 'internalFeature');
+			}
+			if (state.get('sortInternalFeatureTableBy').get('category')) {
+				nextState = sortOriginal(nextState, 'internalFeature');
 			}
 			return nextState;
 		default:

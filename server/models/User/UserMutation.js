@@ -59,14 +59,14 @@ let UserMutation = {
 				account: account,
 				isLoggedIn: true
 			}, SECURE_KEY, {
-				expiresIn: "30 days"
+				expiresIn: '30 days'
 			});
 
 			if (!(account.includes('@') || account.includes('\\'))) {
 				account = LDAP_AUTH_PREFIX + account;
 			}
 		    try {
-		        // await adPromise(account, password);
+		        //await adPromise(account, password);
 		        let connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 		        let insertion = r.db('work_genius').table('users').insert({
 						id: account

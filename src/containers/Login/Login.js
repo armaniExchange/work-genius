@@ -33,7 +33,7 @@ class Login extends Component {
 }
 
 Login.propTypes = {
-	appState: PropTypes.object.isRequired,
+	appState  : PropTypes.object.isRequired,
 	appActions: PropTypes.object.isRequired
 };
 

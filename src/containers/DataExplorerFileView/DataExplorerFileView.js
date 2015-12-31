@@ -102,8 +102,8 @@ class DataExplorerFileView extends Component {
 
 // Params prop is coming from react router
 DataExplorerFileView.propTypes = {
-	params: PropTypes.object.isRequired,
-	dataExplorerState: PropTypes.object.isRequired,
+	params             : PropTypes.object.isRequired,
+	dataExplorerState  : PropTypes.object.isRequired,
 	dataExplorerActions: PropTypes.object.isRequired
 };
 

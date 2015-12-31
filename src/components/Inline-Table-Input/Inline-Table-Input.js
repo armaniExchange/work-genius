@@ -79,7 +79,7 @@ class InlineTableInput extends Component {
 }
 
 InlineTableInput.propTypes = {
-	defaultData: PropTypes.string.isRequired,
+	defaultData    : PropTypes.string.isRequired,
 	onSubmitHandler: PropTypes.func
 };
 InlineTableInput.defaultProps = {

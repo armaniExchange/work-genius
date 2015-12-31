@@ -2,7 +2,8 @@
 import {
 	GraphQLNonNull,
 	GraphQLString,
-	GraphQLID
+	GraphQLID,
+	GraphQLList
 } from 'graphql';
 // Models
 import TaskType from './TaskType.js';
@@ -84,6 +85,90 @@ let TaskMutation = {
 			} catch (err) {
 				return err;
 			}
+		}
+	},
+	'deleteInternalFeatures': {
+		type: GraphQLString,
+		description: 'Delete internal features',
+		args: {
+			ids: {
+				type: new GraphQLList(GraphQLString),
+				description: 'IDs to be deleted'
+			}
+		},
+		resolve: async (root, { ids }) => {
+			let connection = null,
+				mutationResult = null,
+				mutationQuery = null;
+			try {
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				for (var i = 0; i < ids.length; i++) {
+					mutationQuery = r.db('work_genius').table('tasks').get(ids[i]).delete();
+					mutationResult = await mutationQuery.run(connection);
+					if (mutationResult.skipped) {
+						throw new Error('Task ID not Found!');
+					} else if (mutationResult.errors) {
+						throw new Error(mutationResult.first_error);
+					}
+				}
+				await connection.close();
+			} catch (err) {
+				return err;
+			}
+
+			return 'Delete successfully!';
+		}
+	},
+	'createInternalFeatures': {
+		type: GraphQLString,
+		description: 'Create new internal features',
+		args: {
+			data: {
+				type: GraphQLString,
+				description: 'new internal feature data'
+			}
+		},
+		resolve: async (root, { data }) => {
+			let connection = null,
+				mutationQuery = null;
+			try {
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				mutationQuery = r.db('work_genius').table('tasks').insert(JSON.parse(data));
+				await mutationQuery.run(connection);
+				await connection.close();
+			} catch (err) {
+				return err;
+			}
+
+			return 'Create successfully!';
+		}
+	},
+	'updateInternalFeatures': {
+		type: GraphQLString,
+		description: 'Create new internal features',
+		args: {
+			id: {
+				type: GraphQLString,
+				description: 'internal feature id'
+			},
+			data: {
+				type: GraphQLString,
+				description: 'new internal feature data'
+			}
+		},
+		resolve: async (root, { id, data }) => {
+			let connection = null,
+				mutationQuery = null;
+			try {
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				mutationQuery = r.db('work_genius').table('tasks').get(id).update(JSON.parse(data));
+				await mutationQuery.run(connection);
+				await connection.close();
+			} catch (err) {
+				return err;
+			}
+
+			return 'Update successfully!';
 		}
 	}
 };

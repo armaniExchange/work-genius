@@ -68,16 +68,16 @@ class Navigation extends Component {
 }
 
 Navigation.propTypes = {
-	navItems: PropTypes.array.isRequired,
-	headerTitle: PropTypes.string,
-	hasLogo: PropTypes.bool,
+	navItems       : PropTypes.array.isRequired,
+	headerTitle    : PropTypes.string,
+	hasLogo        : PropTypes.bool,
 	onNavItemsClick: PropTypes.func,
 	onLogoutHandler: PropTypes.func,
 };
 
 Navigation.defaultProps = {
-	headerTitle: '',
-	hasLogo: false,
+	headerTitle    : '',
+	hasLogo        : false,
 	onNavItemsClick: () => {},
 	onLogoutHandler: () => {}
 };
