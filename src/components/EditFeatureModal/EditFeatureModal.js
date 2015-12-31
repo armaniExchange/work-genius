@@ -2,6 +2,7 @@
 import './EditFeatureModal.css';
 // Libraries
 import React, { Component, PropTypes } from 'react';
+import classnames from 'classnames';
 import moment from 'moment';
 // Components
 import {
@@ -48,6 +49,33 @@ class EditFeatureModal extends Component {
 		super(props);
 		this._onSubmit = ::this._onSubmit;
 		this._onDateChange = ::this._onDateChange;
+		this._validateInput = ::this._validateInput;
+		this.state = {
+			isDevPercentInvalid: false,
+			isEtaInvalid: false
+		};
+	}
+
+	_validateInput() {
+		let devPercent = this.refs.dev_percent.getValue();
+		let eta = this.refs.eta.value;
+		if (devPercent < 0 || devPercent > 100 || devPercent.includes('e') || !devPercent) {
+			this.setState({
+				isDevPercentInvalid: true
+			});
+			return false;
+		} else if (!/^(\d{4}-\d{2}-\d{2})?$/gi.test(eta)) {
+			this.setState({
+				isEtaInvalid: true
+			});
+			return false;
+		} else {
+			this.setState({
+				isDevPercentInvalid: false,
+				isEtaInvalid: false
+			});
+			return true;
+		}
 	}
 
 	_onSubmit() {
@@ -69,10 +97,15 @@ class EditFeatureModal extends Component {
 			owner_name,
 			type: 'internal'
 		};
-		onSubmitHandler(data);
+		let isInputValid = this._validateInput();
+
+		if (isInputValid) {
+			onSubmitHandler(data);
+		}
 	}
 	_onDateChange(newDate) {
 		this.refs.eta.value = newDate;
+		this._validateInput();
 	}
 
 	render() {
@@ -96,6 +129,10 @@ class EditFeatureModal extends Component {
 			return (
 				<option value={assignee} key={i}>{assignee}</option>
 			);
+		});
+		let etaClassName = classnames({
+			'form-group': true,
+			'has-error': this.state.isEtaInvalid
 		});
 		return (
 			<Modal show={show} onHide={onHideHandler}>
@@ -144,9 +181,15 @@ class EditFeatureModal extends Component {
 					        labelClassName="col-xs-2"
 					        wrapperClassName="col-xs-10"
 					        defaultValue={data.dev_percent ? parseInt(data.dev_percent, 10) : 0}
+					        bsStyle={this.state.isDevPercentInvalid ? 'error' : undefined}
+					        onChange={this._validateInput}
 					        ref="dev_percent" />
-					    <input className="hidden" ref="eta" defaultValue={data.eta ? data.eta : moment().format('YYYY-MM-DD')} />
-					    <div className="form-group">
+					    <input
+					        className="hidden"
+					        defaultValue={data.eta || moment().format('YYYY-MM-DD')}
+					        onChange={this._validateInput}
+					        ref="eta" />
+					    <div className={etaClassName}>
 						    <label className="col-xs-2 control-label">ETA</label>
 						    <div className="col-xs-10">
 						        <DateTimeField
