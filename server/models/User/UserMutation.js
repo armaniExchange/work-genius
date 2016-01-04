@@ -22,8 +22,10 @@ function adPromise(account, password) {
 		let	ad = new ActiveDirectory(LDAP);
 		ad.authenticate(account, password, function(err, auth) {
 			if (err || !auth) {
+				console.log('Login Failed');
                 reject(new Error('Account or Password Incorrect!'));
             } else {
+            	console.log('Login successfully');
                 resolve(auth);
             }
 		});
@@ -66,17 +68,26 @@ let UserMutation = {
 				account = LDAP_AUTH_PREFIX + account;
 			}
 		    try {
-		        //await adPromise(account, password);
-		        let connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-		        let insertion = r.db('work_genius').table('users').insert({
-						id: account
-					}, {
-						conflict: 'update'
-					});
+		        let auth = await adPromise(account, password);
+		        if (auth) {
+			        let connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+			        let insertion = r.db('work_genius').table('users').insert({
+							id: account
+						}, {
+							conflict: 'update'
+						});
 
-				await insertion.run(connection);
-				session.token = token;
-		        return token;
+					await insertion.run(connection);
+					session.token = token;
+			        return token;
+		    	} else {
+					token = jwt.sign({
+						account: account,
+						isLoggedIn: false
+					}, SECURE_KEY, {
+						expiresIn: '30 days'
+					});		    		
+		    	}
 		    } catch (err) {
 		        return err;
 		    }
