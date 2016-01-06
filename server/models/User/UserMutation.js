@@ -69,25 +69,17 @@ let UserMutation = {
 			}
 		    try {
 		        let auth = await adPromise(account, password);
-		        if (auth) {
-			        let connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-			        let insertion = r.db('work_genius').table('users').insert({
-							id: account
-						}, {
-							conflict: 'update'
-						});
+		        console.log(auth);
+		        let connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+		        let insertion = r.db('work_genius').table('users').insert({
+						id: account
+					}, {
+						conflict: 'update'
+					});
 
-					await insertion.run(connection);
-					session.token = token;
-			        return token;
-		    	} else {
-					token = jwt.sign({
-						account: account,
-						isLoggedIn: false
-					}, SECURE_KEY, {
-						expiresIn: '30 days'
-					});		    		
-		    	}
+				await insertion.run(connection);
+				session.token = token;
+		        return token;
 		    } catch (err) {
 		        return err;
 		    }

@@ -23,9 +23,11 @@ class Login extends Component {
 	}
 
 	render() {
+		const { loginError } = this.props.appState;
 		return (
 		    <div className="container">
 		    	<LoginForm
+		    		error={loginError}
 		    	    onSubmitHandler={this._onLogin}/>
 		    </div>
 		);
