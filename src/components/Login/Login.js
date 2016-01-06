@@ -1,5 +1,6 @@
-// React & Redux
+// Libraries
 import React, { Component, PropTypes } from 'react';
+import classnames from 'classnames';
 // Styles
 import './_Login.scss';
 
@@ -8,9 +9,7 @@ class LoginForm extends Component {
 		super(props);
 		this.state = {
 			username: '',
-			password: '',
-		  	usernameError:'',
-		  	passwordError: ''
+			password: ''
 		};
 		this._onHandleUsernameChange = ::this._onHandleUsernameChange;
 		this._onHandlePasswordChange = ::this._onHandlePasswordChange;
@@ -18,17 +17,11 @@ class LoginForm extends Component {
 	}
 
     _onHandleUsernameChange(e) {
-    	if (e.target.value) {
-    		this.setState({username: e.target.value});
-    	} else {
-    		this.setState({usernameError:'Username is not right'});
-    	}
+    	this.setState({username: e.target.value});
     }
 
     _onHandlePasswordChange(e) {
-    	if (e.target.value) {
-    		this.setState({password: e.target.value});
-    	}
+    	this.setState({password: e.target.value});
     }
 
     _onSubmitHandle(e) {
@@ -43,6 +36,12 @@ class LoginForm extends Component {
     }
 
 	render() {
+		const { error } = this.props;
+		let warningClass = classnames({
+			'error-message': true,
+			'text-danger'  : true,
+			'hide'         : !error
+		});
 		return (
 	        <form className="form-signin" onSubmit={this._onSubmitHandle}>
 		        <h4 className="form-signin-heading">Sign in Work Genius</h4>
@@ -50,16 +49,15 @@ class LoginForm extends Component {
 		            type="text"
 		            className="input-block-level"
 		            value={this.state.username}
-		            ref="username"
 		            onChange={this._onHandleUsernameChange}
 		            placeholder="Username" />
 		        <input
 		            type="password"
 		            className="input-block-level"
 		            value={this.state.password}
-		            ref="password"
 		            onChange={this._onHandlePasswordChange}
 		            placeholder="Password" />
+		        <div className={warningClass}>{this.props.error}</div>
 		        <button
 		            className="btn btn-large btn-primary"
 		            type="submit">
@@ -71,10 +69,12 @@ class LoginForm extends Component {
 }
 
 LoginForm.propTypes = {
+	error          : PropTypes.string,
 	onSubmitHandler: PropTypes.func
 };
 
 LoginForm.defaultProps = {
+	error          : '',
 	onSubmitHandler: () => {}
 };
 

@@ -43,7 +43,7 @@ export function logout(cb) {
 	};
 };
 
-export function login(user, cb) {
+export function login(user, success = () => {}, failure = () => {}) {
 	return (dispatch) => {
 		return request
 			.post(SERVER_API_URL)
@@ -59,11 +59,16 @@ export function login(user, cb) {
 				if (err || response.errors) {
 					let error = err || response.errors[0].message;
 					dispatch(loginFailure(error));
+					failure();
+				} else if (response) {
+					if (!response.data.login) {
+						dispatch(loginFailure('Invalid user name or password!'));
+						failure();
+					} else {
+						dispatch(setToken(response.data.login));
+						success();
+					}
 				}
-				if (res) {
-					dispatch(setToken(response.data.login));
-				}
-				cb();
 			});
 	};
 };
