@@ -3,7 +3,7 @@
  */
 
 // Libraries
-import { Map, List } from 'immutable';
+import { Map, List, OrderedMap, is } from 'immutable';
 // Constants
 import * as actionTypes from '../constants/action-types';
 
@@ -12,75 +12,13 @@ const initialPTOFilterConditions = Map({
 });
 
 const initialState = Map({
-    applicationsOriginalData: List.of(
-        Map({
-            'start_date': '2016/01/07',
-            'end_date': '2016/01/08',
-            'applied_date': '2016/01/07',
-            'hours': '8',
-            'applicant': 'Howard',
-            'status': 'APPROVED',
-            'memo': 'Test1',
-            'id': '111'
-        }),
-        Map({
-            'start_date': '2016/02/09',
-            'end_date': '2016/02/10',
-            'applied_date': '2016/02/07',
-            'hours': '16',
-            'applicant': 'Roll',
-            'status': 'PENDING',
-            'memo': 'Test2',
-            'id': '222'
-        }),
-        Map({
-            'start_date': '2016/03/07',
-            'end_date': '2016/03/28',
-            'applied_date': '2016/03/01',
-            'hours': '68',
-            'applicant': 'Howard',
-            'status': 'DENIED',
-            'memo': 'Test3',
-            'id': '333'
-        })
-    ),
-    applications: List.of(
-        Map({
-            'start_date': '2016/01/07',
-            'end_date': '2016/01/08',
-            'applied_date': '2016/01/07',
-            'hours': '8',
-            'applicant': 'Howard',
-            'status': 'APPROVED',
-            'memo': 'Test1',
-            'id': '111'
-        }),
-        Map({
-            'start_date': '2016/02/09',
-            'end_date': '2016/02/10',
-            'applied_date': '2016/02/07',
-            'hours': '16',
-            'applicant': 'Roll',
-            'status': 'PENDING',
-            'memo': 'Test2',
-            'id': '222'
-        }),
-        Map({
-            'start_date': '2016/03/07',
-            'end_date': '2016/03/28',
-            'applied_date': '2016/03/01',
-            'hours': '68',
-            'applicant': 'Howard',
-            'status': 'DENIED',
-            'memo': 'Test3',
-            'id': '333'
-        })
-    ),
+    applicationsOriginalData: List.of(),
+    applications: List.of(),
     ptoTitleKeyMap: List.of(
         Map({ title: 'Start Date', key: 'start_date'}),
         Map({ title: 'End Date', key: 'end_date'}),
         Map({ title: 'Total Hours', key: 'hours'}),
-        Map({ title: 'Applied Date', key: 'applied_date'}),
+        Map({ title: 'Apply Date', key: 'apply_date'}),
         Map({ title: 'Status', key: 'status'}),
         Map({ title: 'Memo', key: 'memo'}),
         Map({ title: 'Applicant', key: 'applicant'}),
@@ -183,7 +121,39 @@ function sortTable(state, newCategory, type) {
     return state;
 }
 
+function customizeTaskData(task) {
+    let result = Map();
+
+    Object.keys(task).forEach((key) => {
+        switch (key) {
+            default:
+                result = result.set(key, task[key]);
+        }
+    });
+
+    return result.toJS();
+}
+
+function formatResponse(data) {
+    let result = List.of();
+
+    data.forEach((task) => {
+        let updatedTask = customizeTaskData(task);
+        result = result.push(OrderedMap(updatedTask));
+    });
+
+    return result;
+}
+
+function setTableData(state, data) {
+    let formatedData = formatResponse(data);
+    return state
+        .set(`applicationsOriginalData`, formatedData)
+        .set(`applications`, formatedData);
+}
+
 export default function ptoReducer(state = initialState, action) {
+    let nextState = state;
     switch (action.type) {
         case actionTypes.SET_PTO_APPLY_MODAL_STATE:
             return state.set('showPTOApplyModal', action.state);
@@ -191,6 +161,15 @@ export default function ptoReducer(state = initialState, action) {
             return sortTable(state, action.category);
         case actionTypes.FILTER_PTO_TABLE:
             return filterTable(state, action.filterConditions);
+        case actionTypes.FETCH_PTO_APPLICATION_SUCCESS:
+            nextState = setTableData(state, action.data);
+            if (!is(state.get('ptoFilterConditions'), initialPTOFilterConditions)) {
+                nextState = filterOriginal(nextState);
+            }
+            if (state.get('sortPTOTableBy').get('category')) {
+                nextState = sortOriginal(nextState);
+            }
+            return nextState;
         default:
             return state;
     }

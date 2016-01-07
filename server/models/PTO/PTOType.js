@@ -33,7 +33,11 @@ let PTOType = new GraphQLObjectType({
 			type: GraphQLString,
 			description: 'Current pto application status'
 		},
-		'applied_date': {
+		'memo': {
+			type: GraphQLString,
+			description: 'PTO application memo'
+		},
+		'apply_date': {
 			type: GraphQLString,
 			description: 'Date when this PTO application is applied'
 		}

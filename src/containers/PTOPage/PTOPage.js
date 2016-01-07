@@ -22,6 +22,13 @@ class PTOPage extends Component {
         this._onPTOApplySubmitClicked = ::this._onPTOApplySubmitClicked;
         this._closePTOApplyModal = ::this._closePTOApplyModal;
     }
+    componentWillMount() {
+        const { fetchPTOApplications, setLoadingState } = this.props;
+        setLoadingState(true);
+        fetchPTOApplications(
+            () => setLoadingState(false)
+        );
+    }
     _onApplyButtonClicked() {
         const { setPTOApplyModalState } = this.props;
         setPTOApplyModalState(true);
@@ -107,7 +114,8 @@ PTOPage.propTypes = {
     filterPTOTable: PropTypes.func,
     sortPTOTableByCategory: PropTypes.func,
     setPTOApplicationStatus: PropTypes.func,
-    removePTOApplication: PropTypes.func
+    removePTOApplication: PropTypes.func,
+    fetchPTOApplications: PropTypes.func
 };
 
 function mapStateToProps(state) {
