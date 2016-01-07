@@ -1,6 +1,5 @@
 // Styles
 import './Job-Table.css';
-
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';

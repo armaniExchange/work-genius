@@ -11,7 +11,9 @@ import * as mainActions from '../../actions/main-actions';
 // Constants
 import * as PTOConstants from '../../constants/pto-constants';
 // Components
+import FilterList from '../../components/Filter-List/Filter-List';
 import PTOApplyModal from '../../components/PTO-Apply-Modal/PTO-Apply-Modal';
+import PTOTable from '../../components/PTO-Table/PTO-Table.js';
 
 class PTOPage extends Component {
     constructor(props) {
@@ -19,6 +21,13 @@ class PTOPage extends Component {
         this._onApplyButtonClicked = ::this._onApplyButtonClicked;
         this._onPTOApplySubmitClicked = ::this._onPTOApplySubmitClicked;
         this._closePTOApplyModal = ::this._closePTOApplyModal;
+    }
+    componentWillMount() {
+        const { fetchPTOApplications, setLoadingState } = this.props;
+        setLoadingState(true);
+        fetchPTOApplications(
+            () => setLoadingState(false)
+        );
     }
     _onApplyButtonClicked() {
         const { setPTOApplyModalState } = this.props;
@@ -50,9 +59,33 @@ class PTOPage extends Component {
         );
     }
     render() {
-        const { showPTOApplyModal } = this.props;
+        const {
+            showPTOApplyModal,
+            applications,
+            ptoTitleKeyMap,
+            ptoFilterConditions,
+            applicationsOriginalData,
+            filterPTOTable,
+            sortPTOTableByCategory,
+            sortPTOTableBy,
+            setPTOApplicationStatus,
+            removePTOApplication
+        } = this.props;
+
         return (
             <section>
+                <FilterList
+                    data={applicationsOriginalData}
+                    categories={Object.keys(ptoFilterConditions)}
+                    onFilterHandler={filterPTOTable} />
+                <PTOTable
+                    data={applications}
+                    titleKeyMap={ptoTitleKeyMap}
+                    enableSort={true}
+                    sortBy={sortPTOTableBy}
+                    onSortHandler={sortPTOTableByCategory}
+                    onStatusUpdateHandler={setPTOApplicationStatus}
+                    onDeleteHandler={removePTOApplication} />
                 <button
                     className="btn btn-success"
                     onClick={this._onApplyButtonClicked}>
@@ -69,10 +102,20 @@ class PTOPage extends Component {
 }
 
 PTOPage.propTypes = {
+    applications: PropTypes.array.isRequired,
+    ptoTitleKeyMap: PropTypes.array.isRequired,
+    applicationsOriginalData: PropTypes.array,
     showPTOApplyModal: PropTypes.bool,
+    ptoFilterConditions: PropTypes.object,
+    sortPTOTableBy: PropTypes.object,
     setPTOApplyModalState: PropTypes.func,
     setLoadingState: PropTypes.func,
-    createPTOApplication: PropTypes.func
+    createPTOApplication: PropTypes.func,
+    filterPTOTable: PropTypes.func,
+    sortPTOTableByCategory: PropTypes.func,
+    setPTOApplicationStatus: PropTypes.func,
+    removePTOApplication: PropTypes.func,
+    fetchPTOApplications: PropTypes.func
 };
 
 function mapStateToProps(state) {

@@ -1,10 +1,8 @@
 // Styles
 import './_Task-Table.scss';
-
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
-
 // Components
 import InlineTableInputDatePicker from '../Inline-Table-Input-DatePicker/Inline-Table-Input-DatePicker';
 
