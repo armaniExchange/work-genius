@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-bootstrap-table/css/react-bootstrap-table.min.css';
 import '../node_modules/material-design-lite/material.min.css';
 import '../node_modules/font-awesome/css/font-awesome.min.css';
+import 'react-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css';
 // Libraries
 import React from 'react';
 import ReactDOM from 'react-dom';
