@@ -1,69 +1,97 @@
 // Style
 import './_PTOPage';
-
-// React & Redux
+// Libraries
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import ReactBsTable from 'react-bootstrap-table';
-
-// Components
-import PTOForm from '../../components/PTO-Form/PTO-Form';
-import PTOTable from '../../components/PTO-Table/PTO-Table';
+import moment from 'moment';
+// Actions
 import * as PTOActions from '../../actions/pto-page-actions';
-
-var BootstrapTable = ReactBsTable.BootstrapTable;
-var TableHeaderColumn = ReactBsTable.TableHeaderColumn;
-
-var products = [
-  {
-      id: 1,
-      name: 'Product1',
-      price: 120
-  },{
-      id: 2,
-      name: 'Product2',
-      price: 80
-  }];
+import * as mainActions from '../../actions/main-actions';
+// Constants
+import * as PTOConstants from '../../constants/pto-constants';
+// Components
+import PTOApplyModal from '../../components/PTO-Apply-Modal/PTO-Apply-Modal';
 
 class PTOPage extends Component {
-
+    constructor(props) {
+        super(props);
+        this._onApplyButtonClicked = ::this._onApplyButtonClicked;
+        this._onPTOApplySubmitClicked = ::this._onPTOApplySubmitClicked;
+        this._closePTOApplyModal = ::this._closePTOApplyModal;
+    }
+    _onApplyButtonClicked() {
+        const { setPTOApplyModalState } = this.props;
+        setPTOApplyModalState(true);
+    }
+    _closePTOApplyModal() {
+        const { setPTOApplyModalState } = this.props;
+        setPTOApplyModalState(false);
+    }
+    _onPTOApplySubmitClicked(data) {
+        const { createPTOApplication, setPTOApplyModalState, setLoadingState } = this.props;
+        let finalData = {
+            start_date: data.startDate,
+            end_date: data.endDate,
+            memo: data.memo,
+            hours: data.hours,
+            apply_date: moment().format('YYYY-MM-DD'),
+            applicant: 'Tester',
+            status: PTOConstants.PENDING
+        };
+        setPTOApplyModalState(false);
+        setLoadingState(true);
+        createPTOApplication(
+            finalData,
+            () => {
+                setLoadingState(false);
+                this._closePTOApplyModal();
+            }
+        );
+    }
     render() {
-
-        const { pto } = this.props;
-        const { applyPTO } = this.props.ptoActions;
-
+        const { showPTOApplyModal } = this.props;
         return (
-            <div>
-                <section>PTO Page</section>
-                <div className="mdl-grid">
-                    <PTOForm handleApplyPTO={applyPTO}/>
-                    <PTOTable data={pto.ptos} />
-                </div>
-                <BootstrapTable data={products} striped={true} hover={true} >
-                    <TableHeaderColumn isKey={true} dataField="id" dataSort={true}>Product ID</TableHeaderColumn>
-                    <TableHeaderColumn dataField="name" dataSort={true} >Product Name</TableHeaderColumn>
-                    <TableHeaderColumn dataField="price" dataSort={true}>Product Price</TableHeaderColumn>
-                </BootstrapTable>
-            </div>
+            <section>
+                <button
+                    className="btn btn-success"
+                    onClick={this._onApplyButtonClicked}>
+                    PTO Application
+                </button>
+                <PTOApplyModal
+                    show={showPTOApplyModal}
+                    onHideHandler={this._closePTOApplyModal}
+                    onSubmitHandler={this._onPTOApplySubmitClicked}
+                    onCancelHandler={this._closePTOApplyModal} />
+            </section>
         );
     }
 }
 
 PTOPage.propTypes = {
-    pto: PropTypes.object,
-    ptoActions: PropTypes.object.isRequire,
+    showPTOApplyModal: PropTypes.bool,
+    setPTOApplyModalState: PropTypes.func,
+    setLoadingState: PropTypes.func,
+    createPTOApplication: PropTypes.func
 };
 
+function mapStateToProps(state) {
+    return state.pto.toJS();
+}
+
+function mapDispatchToProps(dispatch) {
+    return Object.assign(
+        {},
+        bindActionCreators(PTOActions, dispatch),
+        {
+            setLoadingState: (loadingState) => {
+                dispatch(mainActions.setLoadingState(loadingState));
+            }
+        }
+    );
+}
+
 export default connect(
-    (state) => {
-        return {
-            pto: state.pto.toJS()
-        };
-    },
-    (dispatch) => {
-        return {
-            ptoActions: bindActionCreators(PTOActions, dispatch)
-        };
-    }
+    mapStateToProps,
+    mapDispatchToProps
 )(PTOPage);

@@ -9,6 +9,7 @@ import TaskQuery from '../models/Task/TaskQuery.js';
 import TaskMutation from '../models/Task/TaskMutation.js';
 import UserQuery from '../models/User/UserQuery.js';
 import UserMutation from '../models/User/UserMutation.js';
+import PTOMutation from '../models/PTO/PTOMutation.js';
 
 const schema = new GraphQLSchema({
 	query: new GraphQLObjectType({
@@ -21,13 +22,16 @@ const schema = new GraphQLSchema({
 	mutation: new GraphQLObjectType({
 		name: 'RootMutationType',
 		fields: {
-			editTaskEta: TaskMutation.editTaskEta,
 			login: UserMutation.userLogin,
 			logout: UserMutation.userLogout,
+			// Task Page
 			initiateCrawler: TaskMutation.initiateCrawler,
+			editTaskEta: TaskMutation.editTaskEta,
 			deleteInternalFeatures: TaskMutation.deleteInternalFeatures,
 			createInternalFeatures: TaskMutation.createInternalFeatures,
-			updateInternalFeatures: TaskMutation.updateInternalFeatures
+			updateInternalFeatures: TaskMutation.updateInternalFeatures,
+			// PTO Page
+			createPTOApplication: PTOMutation.createPTOApplication
 		}
 	})
 });

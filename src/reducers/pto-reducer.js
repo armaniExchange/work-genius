@@ -1,43 +1,31 @@
-import { fromJS, Record } from 'immutable';
+/**
+ * @author Howard Chang
+ */
 
-import { APPLY_PTO, APPLIED_PTO } from '../actions/pto-page-actions';
+// Libraries
+import { Map, List } from 'immutable';
+// Constants
+import * as actionTypes from '../constants/action-types';
 
-export const PTORecord = Record({
-        startDate: '',
-        toDate: '',
-        totalHours: 0,
-        applyDate: '',
-        status: 'Not Approved',
-        memory: ''});
-
-const initPTO = fromJS({
-    ptos: [new PTORecord({
-        startDate: '2015-08-17',
-        toDate: '2015-08-18',
-        totalHours: 16,
-        applyDate: '2015-08-10',
-        status: 'Approved',
-        memory: 'go home'
-    }),
-    new PTORecord({
-        startDate: '2015-09-11',
-        toDate: '2015-09-13',
-        totalHours: 24,
-        applyDate: '2015-09-10',
-        status: 'Not Approved',
-        memory: 'go home'
-    })]
+const initialState = Map({
+    applications: List.of(
+        Map({
+            'startDate': '2016/01/07',
+            'endDate': '2016/01/08',
+            'appliedDate': '2016/01/07',
+            'hours': 8,
+            'applicant': 'Howard',
+            'status': 'approved',
+            'memo': 'Test'
+        })
+    ),
+    showPTOApplyModal: false
 });
 
-export default function pto(state = initPTO, action) {
-
+export default function ptoReducer(state = initialState, action) {
     switch (action.type) {
-        case APPLY_PTO:
-            return state.update('ptos', ptos => 
-                ptos.push(new PTORecord(action.newPTO))
-            );
-        case APPLIED_PTO:
-            return state;
+        case actionTypes.SET_PTO_APPLY_MODAL_STATE:
+            return state.set('showPTOApplyModal', action.state);
         default:
             return state;
     }
