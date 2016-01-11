@@ -33,7 +33,9 @@ const schema = new GraphQLSchema({
 			createInternalFeatures: TaskMutation.createInternalFeatures,
 			updateInternalFeatures: TaskMutation.updateInternalFeatures,
 			// PTO Page
-			createPTOApplication: PTOMutation.createPTOApplication
+			createPTOApplication: PTOMutation.createPTOApplication,
+			deletePTOApplication: PTOMutation.deletePTOApplication,
+			updatePTOApplicationStatus: PTOMutation.updatePTOApplicationStatus,
 		}
 	})
 });

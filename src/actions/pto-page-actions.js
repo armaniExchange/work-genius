@@ -30,27 +30,10 @@ export function sortPTOTableByCategory(category) {
 	};
 };
 
-export function setPTOApplicationStatus(id, status) {
-	console.log(id, status);
-	return {
-		type: 'SET_PTO_APPLICATION_STATUS',
-		id,
-		status
-	};
-};
-
 export function fetchPTOApplicationsSuccess(data) {
 	return {
 		type: actionTypes.FETCH_PTO_APPLICATION_SUCCESS,
 		data
-	};
-};
-
-export function removePTOApplication(id) {
-	console.log(`removing ${id}`);
-	return {
-		type: 'REMOVE_PTO_APPLICATION',
-		id
 	};
 };
 
@@ -90,6 +73,48 @@ export function createPTOApplication(data, callback = () => {}) {
 			.set('Content-Type', 'application/graphql')
 			.send(`mutation RootMutationType {
 			    createPTOApplication(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+			}`)
+			.end((err, res) => {
+				if (err || !res) {
+					let error = err || 'No response';
+					dispatch(mainActions.apiFailure(error));
+				} else if (res && JSON.parse(res.text).errors) {
+                    dispatch(mainActions.apiFailure(JSON.parse(res.text).errors[0].message));
+	            } else {
+	                dispatch(fetchPTOApplications(callback));
+	            }
+			});
+	};
+};
+
+export function removePTOApplication(id, callback = () => {}) {
+	return (dispatch) => {
+		return request
+			.post(SERVER_API_URL)
+			.set('Content-Type', 'application/graphql')
+			.send(`mutation RootMutationType {
+			    deletePTOApplication(id:"${id}")
+			}`)
+			.end((err, res) => {
+				if (err || !res) {
+					let error = err || 'No response';
+					dispatch(mainActions.apiFailure(error));
+				} else if (res && JSON.parse(res.text).errors) {
+                    dispatch(mainActions.apiFailure(JSON.parse(res.text).errors[0].message));
+	            } else {
+	                dispatch(fetchPTOApplications(callback));
+	            }
+			});
+	};
+};
+
+export function setPTOApplicationStatus(id, status, callback = () => {}) {
+	return (dispatch) => {
+		return request
+			.post(SERVER_API_URL)
+			.set('Content-Type', 'application/graphql')
+			.send(`mutation RootMutationType {
+			    updatePTOApplicationStatus(id:"${id}", status:"${status}")
 			}`)
 			.end((err, res) => {
 				if (err || !res) {
