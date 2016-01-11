@@ -21,6 +21,8 @@ class PTOPage extends Component {
         this._onApplyButtonClicked = ::this._onApplyButtonClicked;
         this._onPTOApplySubmitClicked = ::this._onPTOApplySubmitClicked;
         this._closePTOApplyModal = ::this._closePTOApplyModal;
+        this._onPTORemoveClicked = ::this._onPTORemoveClicked;
+        this._onApplicationStatusUpdate = ::this._onApplicationStatusUpdate;
     }
     componentWillMount() {
         const { fetchPTOApplications, setLoadingState } = this.props;
@@ -58,6 +60,29 @@ class PTOPage extends Component {
             }
         );
     }
+    _onPTORemoveClicked(id) {
+        const { removePTOApplication, setLoadingState } = this.props;
+        setLoadingState(true);
+        removePTOApplication(
+            id,
+            () => {
+                setLoadingState(false);
+                this._closePTOApplyModal();
+            }
+        );
+    }
+    _onApplicationStatusUpdate(id, newState) {
+        const { setPTOApplicationStatus, setLoadingState } = this.props;
+        setLoadingState(true);
+        setPTOApplicationStatus(
+            id,
+            newState,
+            () => {
+                setLoadingState(false);
+                this._closePTOApplyModal();
+            }
+        );
+    }
     render() {
         const {
             showPTOApplyModal,
@@ -67,9 +92,7 @@ class PTOPage extends Component {
             applicationsOriginalData,
             filterPTOTable,
             sortPTOTableByCategory,
-            sortPTOTableBy,
-            setPTOApplicationStatus,
-            removePTOApplication
+            sortPTOTableBy
         } = this.props;
 
         return (
@@ -84,8 +107,8 @@ class PTOPage extends Component {
                     enableSort={true}
                     sortBy={sortPTOTableBy}
                     onSortHandler={sortPTOTableByCategory}
-                    onStatusUpdateHandler={setPTOApplicationStatus}
-                    onDeleteHandler={removePTOApplication} />
+                    onStatusUpdateHandler={this._onApplicationStatusUpdate}
+                    onDeleteHandler={this._onPTORemoveClicked} />
                 <button
                     className="btn btn-success"
                     onClick={this._onApplyButtonClicked}>
