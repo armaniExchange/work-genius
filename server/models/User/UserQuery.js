@@ -1,14 +1,12 @@
-// GraphQL
-import {
-	GraphQLBoolean
-} from 'graphql';
+// Types
+import UserType from './UserType.js';
 
 let UserQuery = {
-	'isLogin': {
-		type: GraphQLBoolean,
-		description: 'check if the user is logged in',
+	'currentUser': {
+		type: UserType,
+		description: 'Check user login status',
 		resolve: async (root) => {
-			return root.request.session.uid ? true : false;
+			return root.req.decoded;
 		}
 	}
 };

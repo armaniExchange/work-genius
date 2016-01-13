@@ -2,7 +2,7 @@
 import request from 'superagent';
 // Constants
 import * as actionTypes from '../constants/action-types';
-import { SERVER_API_URL } from '../constants/config';
+import { SERVER_API_URL, SERVER_LOGIN_URL } from '../constants/config';
 
 export function loginFailure(error) {
 	return {
@@ -18,76 +18,59 @@ export function setToken(token) {
 	};
 }
 
-export function logout(cb) {
-	return (dispatch) => {
-		return request
-			.post(SERVER_API_URL)
-			.withCredentials()
-			.set('Content-Type', 'application/graphql')
-			.send(`
-				mutation RootMutationType {
-				    logout
-				}
-			`)
-			.end((err, res) => {
-				let response = JSON.parse(res.text);
-				if (err || response.errors) {
-					let error = err || response.errors[0].message;
-					dispatch(loginFailure(error));
-				}
-				if (res) {
-					dispatch(setToken(''));
-				}
-				cb();
-			});
+export function setCurrentUser(user) {
+	return {
+		type: actionTypes.SET_CURRENT_USER,
+		user
 	};
+}
+
+export function logout(cb) {
+	localStorage.removeItem('token');
+	cb();
+	return setToken('');
 };
 
 export function login(user, success = () => {}, failure = () => {}) {
 	return (dispatch) => {
 		return request
-			.post(SERVER_API_URL)
+			.post(SERVER_LOGIN_URL)
 			.withCredentials()
-			.set('Content-Type', 'application/graphql')
-			.send(`
-				mutation RootMutationType {
-				    login(account:"${user['username']}", password:"${user['password']}")
-				}
-			`)
+			.send({
+				'account': user.username,
+				'password': user.password
+			})
 			.end((err, res) => {
 				let response = JSON.parse(res.text);
-				if (err || response.errors) {
-					let error = err || response.errors[0].message;
-					dispatch(loginFailure(error));
+				if (err) {
+					dispatch(loginFailure(err));
 					failure();
-				} else if (response) {
-					if (!response.data.login) {
-						dispatch(loginFailure('Invalid user name or password!'));
-						failure();
-					} else {
-						dispatch(setToken(response.data.login));
-						success();
-					}
+				} else {
+					dispatch(setToken(response.token));
+					success();
 				}
 			});
 	};
 };
 
-export function checkLogin() {
-	return (dispatch) => {
+export function getCurrentUser(success = () => {}, failure = () => {}) {
+	return () => {
 		return request
 			.post(SERVER_API_URL)
 			.set('Content-Type', 'application/graphql')
+			.set('x-access-token', localStorage.token)
 			.send(`{
-			    isLogin
+			    currentUser {
+			    	name,
+			    	birthday
+			    }
 			}`)
 			.end((err, res) => {
 				let response = JSON.parse(res.text);
-				if (err || response.errors) {
-					let error = err || response.errors[0].message;
-                    dispatch(loginFailure(error));
+				if (err) {
+                    failure(response);
 	            } else {
-	                dispatch(setToken(response.data.isLogin));
+	                success(response);
 	            }
 			});
 	};

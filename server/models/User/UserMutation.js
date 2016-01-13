@@ -6,11 +6,8 @@ import {
 // Libraries
 import ActiveDirectory from 'activedirectory';
 import jwt from 'jsonwebtoken';
-import r from 'rethinkdb';
 // Constants
 import {
-	DB_HOST,
-	DB_PORT,
 	LDAP,
 	LDAP_AUTH_PREFIX,
 	SECURE_KEY
@@ -32,14 +29,13 @@ function adPromise(account, password) {
     });
 };
 
-/*
-// query example
-mutation RootMutationType {
-    login(account:"zli", password:"xxxxxx") {
-        title
-    }
+function extractUserInformation() {
+	let user = {};
+	user.name = 'Test';
+	user.email = 'test@test.com';
+	user.birthday = Math.random() * 100;
+	return user;
 }
-*/
 
 let UserMutation = {
 	'userLogin': {
@@ -55,8 +51,8 @@ let UserMutation = {
 				description: 'Login password'
 			}
 		},
-		resolve: async (root, { account, password }) => {
-			let session = root.request.session;
+		resolve: async (root, { account, /*password*/ }) => {
+			let session = root;
 			let token = jwt.sign({
 				account: account,
 				isLoggedIn: true
@@ -68,17 +64,8 @@ let UserMutation = {
 				account = LDAP_AUTH_PREFIX + account;
 			}
 		    try {
-		        let auth = await adPromise(account, password);
-		        console.log(auth);
-		        let connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-		        let insertion = r.db('work_genius').table('users').insert({
-						id: account
-					}, {
-						conflict: 'update'
-					});
-
-				await insertion.run(connection);
-				session.token = token;
+		        // let auth = await adPromise(account, password);
+				session.user = extractUserInformation();
 		        return token;
 		    } catch (err) {
 		        return err;
@@ -89,7 +76,7 @@ let UserMutation = {
 		type: GraphQLString,
 		description: 'Logout User',
 		resolve: async (root) => {
-			let session = root.request.session;
+			let session = root;
 		    session.destroy((err) => {
 		    	return err;
 		    });

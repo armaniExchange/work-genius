@@ -1,15 +1,19 @@
 // Libraries
 import express from 'express';
 import bodyParser from 'body-parser';
-import session from 'express-session';
-import RDBStore from 'session-rethinkdb';
+import graphqlHTTP from 'express-graphql';
 import { CronJob } from 'cron';
+import jwt from 'jsonwebtoken';
 // GraphQL and schema
-import { graphql } from 'graphql';
 import schema from './schema/schema.js';
-import { DB_HOST, DB_PORT, SECURE_KEY } from './constants/configurations.js';
 // Crawler
 import { crawlGK2 } from './crawler/crawler.js';
+// Constants
+import {
+    LDAP,
+    LDAP_AUTH_PREFIX,
+    SECURE_KEY
+} from './constants/configurations.js';
 
 const PORT = 3000;
 let app = express();
@@ -17,47 +21,72 @@ let app = express();
 app.use(bodyParser.text({
 	type: 'application/graphql'
 }));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.use((req, res, next) => {
-	// console.log(req.headers.origin);
 	res.header('Access-Control-Allow-Origin', req.headers.origin);
-	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, x-access-token');
     res.header('Access-Control-Allow-Credentials', true);
-    res.header('Access-Control-Allow-Methods','PUT,POST,GET,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Methods','PUT,POST,GET,DELETE');
 	next();
 });
 
-// for express-session settings
-const OPTIONS = {
-    servers: [
-        {
-        	host: DB_HOST,
-        	port: DB_PORT
-        }
-    ]
-};
+app.use((req, res, next) => {
+    if (req.method === 'OPTIONS') {
+        res.send();
+    } else {
+        next();
+    }
+});
 
-const STORE = new RDBStore(session)(OPTIONS);
-// console.log(store);
-app.use(session({
-    secret: SECURE_KEY,
-    store: STORE,
-    cookie: { secure: 'auto' },
-    resave: true,
-    saveUninitialized: true
-}));
+app.post('/login', (req, res) => {
+    let { account, password } = req.body;
+    let token = jwt.sign({
+        name: 'Test',
+        email: 'test@test.com',
+        birthday: Math.random() * 100
+    }, SECURE_KEY, {
+        expiresIn: '30 days'
+    });
+    res.json({
+      success: true,
+      token: token
+    });
+});
+
+app.use((req, res, next) => {
+    let token = req.body.token || req.query.token || req.headers['x-access-token'];
+    if (token) {
+        jwt.verify(token, SECURE_KEY, (err, decoded) => {
+            if (err) {
+                return res.status(401).send({ success: false, message: 'Failed to authenticate token.' });
+            } else {
+                // if everything is good, save to request for use in other routes
+                req.decoded = decoded;
+                next();
+            }
+        });
+    } else {
+        res.status(401).send({
+            success: false,
+            message: 'No token provided'
+        });
+
+    }
+});
 
 // Crawling GK2 every 10 minutes
 new CronJob('30 */10 * * * *', () => {
 	crawlGK2();
 }, null, true);
 
-app.post('/graphql', (req, res) => {
-	let rootValue = {request:req, response:res};
-	graphql(schema, req.body, rootValue).then((result) => {
-		res.send(JSON.stringify(result, null, 4));
-	});
-});
+app.use('/graphql', graphqlHTTP(request => ({
+    schema: schema,
+    rootValue: { req: request },
+    pretty: true,
+    graphiql: true
+})));
 
 app.listen(PORT, () => {
 	console.log(`Server is listening at port: ${PORT}`);

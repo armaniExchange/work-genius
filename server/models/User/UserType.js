@@ -21,7 +21,7 @@ let UserType = new GraphQLObjectType({
 			type: GraphQLString,
 			description: 'AD Password stored for craw'
 		},
-		'nick': {
+		'name': {
 			type: GraphQLString,
 			description: 'Nick name'
 		},

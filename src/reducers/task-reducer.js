@@ -263,7 +263,7 @@ export default function taskReducer(state = initialState, action) {
 			return resetTable(state, 'bug');
 		case actionTypes.RESET_FEATURE_TABLE:
 			return resetTable(state, 'feature');
-		case actionTypes.RESET_FEATURE_TABLE:
+		case actionTypes.RESET_INTERNAL_FEATURE_TABLE:
 			return resetTable(state, 'internalFeature');
 		case actionTypes.SET_DELETE_WARNING_BOX_STATE:
 			return state.set('showDeleteWarning', action.state);
