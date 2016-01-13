@@ -1,34 +1,35 @@
-// Libraries
-import jwt from 'jsonwebtoken';
-// Constant
-import { SECURE_KEY } from '../constants/config';
+// Actions
+import * as AppActions from '../actions/app-actions';
 
-export function requireAuth(nextState, replaceState) {
-	try {
+export function requireAuth(store) {
+	return (nextState, replaceState) => {
 		if (!localStorage.token) {
 	    	replaceState({ nextPathname: nextState.location.pathname }, '/');
 		} else {
-			let user = jwt.verify(localStorage.token, SECURE_KEY);
-		    if (!user.isLoggedIn) {
-		    	replaceState({ nextPathname: nextState.location.pathname }, '/');
-		    }
+			// Use the token to get user information, if token is bad, return to home page as unauthorized
+			store.dispatch(AppActions.getCurrentUser(
+				(res) => {
+					store.dispatch(AppActions.setCurrentUser(res.data.currentUser));
+				},
+				() => {
+					localStorage.removeItem('token');
+					location.href = location.origin;
+					store.dispatch(AppActions.setCurrentUser({}));
+				}
+			));
 		}
-	} catch (err) {
-		alert('token expired');
-		delete localStorage.token;
-		replaceState({ nextPathname: nextState.location.pathname }, '/');
-	}
+	};
 };
 
-export function redirectIfAuthorized(nextState, replaceState) {
-	try {
+export function redirectIfAuthorized(store) {
+	return (nextState, replaceState) => {
 		if (localStorage.token) {
-			let user = jwt.verify(localStorage.token, SECURE_KEY);
-		    if (user.isLoggedIn) {
-		    	replaceState({ nextPathname: nextState.location.pathname }, '/main');
-		    }
+	    	replaceState({ nextPathname: nextState.location.pathname }, '/main');
 		}
-	} catch (err) {
-		console.log('token expired');
-	}
+		store.dispatch(AppActions.getCurrentUser(
+			(res) => {
+                store.dispatch(AppActions.setCurrentUser(res.data.currentUser));
+			}
+		));
+	};
 };

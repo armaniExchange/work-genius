@@ -122,7 +122,9 @@ export function fetchBug(callback = () => {}) {
 	return (dispatch) => {
 		return request
 			.post(SERVER_API_URL)
+			.withCredentials()
 			.set('Content-Type', 'application/graphql')
+			.set('x-access-token', localStorage.token)
 			.send(`{
 			    tasks(taskType: "bug") {
 			    	id,
@@ -154,7 +156,9 @@ export function fetchFeature(callback = () => {}) {
 	return (dispatch) => {
 		return request
 			.post(SERVER_API_URL)
+			.withCredentials()
 			.set('Content-Type', 'application/graphql')
+			.set('x-access-token', localStorage.token)
 			.send(`{
 			    tasks(taskType: "feature") {
 			    	id,
@@ -187,7 +191,9 @@ export function fetchInternalFeature(callback = () => {}) {
 	return (dispatch) => {
 		return request
 			.post(SERVER_API_URL)
+			.withCredentials()
 			.set('Content-Type', 'application/graphql')
+			.set('x-access-token', localStorage.token)
 			.send(`{
 			    tasks(taskType: "internal") {
 			        title,
@@ -238,7 +244,9 @@ export function editETA(id, eta) {
 		dispatch(mainActions.setLoadingState(true));
 		return request
 			.post(SERVER_API_URL)
+			.withCredentials()
 			.set('Content-Type', 'application/graphql')
+			.set('x-access-token', localStorage.token)
 			.send(`mutation RootMutationType {
 			    editTaskEta(id:"${id}", eta:"${eta}") {
 			        eta
@@ -261,7 +269,9 @@ export function initiateGK2Crawler(callback = () => {}) {
 	return (dispatch) => {
 		return request
 			.post(SERVER_API_URL)
+			.withCredentials()
 			.set('Content-Type', 'application/graphql')
+			.set('x-access-token', localStorage.token)
 			.send(`mutation RootMutationType {
 			    initiateCrawler
 			}`)
@@ -282,7 +292,9 @@ export function deleteSelectedItems(ids, callback = () => {}) {
 	return (dispatch) => {
 		return request
 			.post(SERVER_API_URL)
+			.withCredentials()
 			.set('Content-Type', 'application/graphql')
+			.set('x-access-token', localStorage.token)
 			.send(`mutation RootMutationType {
 			    deleteInternalFeatures(ids:"${ids}")
 			}`)
@@ -303,7 +315,9 @@ export function createFeature(data, callback = () => {}) {
 	return (dispatch) => {
 		return request
 			.post(SERVER_API_URL)
+			.withCredentials()
 			.set('Content-Type', 'application/graphql')
+			.set('x-access-token', localStorage.token)
 			.send(`mutation RootMutationType {
 			    createInternalFeatures(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
 			}`)
@@ -324,7 +338,9 @@ export function updateFeature(id, data, callback = () => {}) {
 	return (dispatch) => {
 		return request
 			.post(SERVER_API_URL)
+			.withCredentials()
 			.set('Content-Type', 'application/graphql')
+			.set('x-access-token', localStorage.token)
 			.send(`mutation RootMutationType {
 			    updateInternalFeatures(id:"${id}", data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
 			}`)

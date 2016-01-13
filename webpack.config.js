@@ -58,7 +58,10 @@ var config = {
     plugins: [
         new Webpack.HotModuleReplacementPlugin(),
         new Webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.bundle.js'),
-        new Webpack.NoErrorsPlugin()
+        new Webpack.NoErrorsPlugin(),
+        new Webpack.ProvidePlugin({
+            'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
+        })
     ],
     resolve: {
         extensions: ['', '.js', '.jsx', '.css', '.scss']

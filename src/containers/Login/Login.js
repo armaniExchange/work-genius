@@ -18,7 +18,7 @@ class Login extends Component {
 	_onLogin(user) {
 		const { login } = this.props.appActions;
 		login(user, () => {
-			location.reload();
+			location.href = `${location.href}main`;
 		});
 	}
 

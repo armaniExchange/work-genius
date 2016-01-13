@@ -41,7 +41,9 @@ export function fetchPTOApplications(callback = () => {}) {
 	return (dispatch) => {
 		return request
 			.post(SERVER_API_URL)
+			.withCredentials()
 			.set('Content-Type', 'application/graphql')
+			.set('x-access-token', localStorage.token)
 			.send(`{
 			    ptoApplications {
 			    	id,
@@ -70,7 +72,9 @@ export function createPTOApplication(data, callback = () => {}) {
     return (dispatch) => {
 		return request
 			.post(SERVER_API_URL)
+			.withCredentials()
 			.set('Content-Type', 'application/graphql')
+			.set('x-access-token', localStorage.token)
 			.send(`mutation RootMutationType {
 			    createPTOApplication(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
 			}`)
@@ -91,7 +95,9 @@ export function removePTOApplication(id, callback = () => {}) {
 	return (dispatch) => {
 		return request
 			.post(SERVER_API_URL)
+			.withCredentials()
 			.set('Content-Type', 'application/graphql')
+			.set('x-access-token', localStorage.token)
 			.send(`mutation RootMutationType {
 			    deletePTOApplication(id:"${id}")
 			}`)
@@ -112,7 +118,9 @@ export function setPTOApplicationStatus(id, status, callback = () => {}) {
 	return (dispatch) => {
 		return request
 			.post(SERVER_API_URL)
+			.withCredentials()
 			.set('Content-Type', 'application/graphql')
+			.set('x-access-token', localStorage.token)
 			.send(`mutation RootMutationType {
 			    updatePTOApplicationStatus(id:"${id}", status:"${status}")
 			}`)
