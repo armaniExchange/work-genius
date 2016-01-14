@@ -17,6 +17,7 @@ var config = {
     watch: true,
     entry: {
         app: [
+            'babel-polyfill',
             'webpack-hot-middleware/client',
             mainPath
         ],

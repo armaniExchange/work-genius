@@ -14,23 +14,23 @@ import DataExplorerFileView from '../containers/DataExplorerFileView/DataExplore
 import Login from '../containers/Login/Login';
 import NotFoundPage from '../containers/NotFoundPage/NotFoundPage';
 // Utilities
-import { requireAuth, redirectIfAuthorized } from './routeUtilities';
+import requireAuth from '../containers/Require-Auth/Require-Auth';
 
 // Demo Component (To be removed)
 import DemoPage from '../containers/DemoPage/DemoPage';
 
-const appRoutes = (store) => (
+const appRoutes = () => (
 	<Router history={createBrowserHistory()}>
 	    <Route path="/" component={App}>
-			<IndexRoute component={Login} onEnter={redirectIfAuthorized(store)}/>
-			<Route path="/main" component={Main} onEnter={requireAuth(store)}>
-			    <IndexRoute component={DashboardPage} onEnter={requireAuth(store)}/>
-			    <Route path="/main/task" component={TaskPage} onEnter={requireAuth(store)} />
-			    <Route path="/main/pto" component={PTOPage} onEnter={requireAuth(store)} />
-			    <Route path="/main/redux-demo" component={DemoPage} onEnter={requireAuth(store)} />
-			    <Route path="/main/data-explorer" component={DataExplorerPage} onEnter={requireAuth(store)}>
-			        <IndexRoute component={DataExplorerFolderView} onEnter={requireAuth(store)}/>
-			        <Route path="/main/data-explorer/:folderName" component={DataExplorerFileView} onEnter={requireAuth(store)} />
+			<IndexRoute component={Login} />
+			<Route path="/main" component={requireAuth(Main)}>
+			    <IndexRoute component={DashboardPage}/>
+			    <Route path="/main/task" component={TaskPage} />
+			    <Route path="/main/pto" component={PTOPage} />
+			    <Route path="/main/redux-demo" component={DemoPage} />
+			    <Route path="/main/data-explorer" component={DataExplorerPage}>
+			        <IndexRoute component={DataExplorerFolderView}/>
+			        <Route path="/main/data-explorer/:folderName" component={DataExplorerFileView} />
 			    </Route>
 		    </Route>
 		    <Route path="*" component={NotFoundPage} />

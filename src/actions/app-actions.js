@@ -11,28 +11,23 @@ export function loginFailure(error) {
 	};
 }
 
-export function setToken(token) {
+export function loginSuccess(token, user, isAuthenticated) {
 	return {
-		type: actionTypes.SET_TOKEN,
-		token
+		type: actionTypes.LOGIN_SUCCESS,
+		token,
+		user,
+		isAuthenticated
 	};
 }
 
-export function setCurrentUser(user) {
+export function logout() {
 	return {
-		type: actionTypes.SET_CURRENT_USER,
-		user
+		type: actionTypes.LOG_OUT
 	};
-}
-
-export function logout(cb) {
-	localStorage.removeItem('token');
-	cb();
-	return setToken('');
 };
 
 export function login(user, success = () => {}, failure = () => {}) {
-	return (dispatch) => {
+	return () => {
 		return request
 			.post(SERVER_LOGIN_URL)
 			.withCredentials()
@@ -43,11 +38,9 @@ export function login(user, success = () => {}, failure = () => {}) {
 			.end((err, res) => {
 				let response = JSON.parse(res.text);
 				if (err) {
-					dispatch(loginFailure(err));
-					failure();
+					failure(err);
 				} else {
-					dispatch(setToken(response.token));
-					success();
+					success(response);
 				}
 			});
 	};
@@ -62,7 +55,8 @@ export function getCurrentUser(success = () => {}, failure = () => {}) {
 			.send(`{
 			    currentUser {
 			    	name,
-			    	birthday
+			    	birthday,
+			    	token
 			    }
 			}`)
 			.end((err, res) => {

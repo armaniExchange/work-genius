@@ -7,7 +7,6 @@ import { bindActionCreators } from 'redux';
 // Components
 import Navigation from '../../components/Navigation/Navigation';
 import PageHeader from '../../components/Page-Header/Page-Header';
-import Spinner from '../../components/Spinner/Spinner';
 import AlertBox from '../../components/AlertBox/AlertBox';
 // Actions
 import * as AppActions from '../../actions/app-actions';
@@ -45,6 +44,12 @@ class Main extends Component {
 	}
 
 	_closeAlertBox() {
+		const {
+			errorMessage
+		} = this.props.mainState;
+		if (errorMessage.toLowerCase() === 'unauthorized') {
+			location.reload();
+		}
 		this.props.mainActions.clearErrorMessage();
 	}
 
@@ -53,7 +58,6 @@ class Main extends Component {
 			navHeaderTitle,
 			navItems,
 			hasLogo,
-			isLoading,
 			errorMessage
 		} = this.props.mainState;
 
@@ -66,7 +70,6 @@ class Main extends Component {
 			// The outer-most <div> is used by Material Design Lite to prevent DOM clash with React
 			<div>
 				<section className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
-					<Spinner hide={!isLoading} />
 					<AlertBox
 						type="error"
 					    show={!!errorMessage}
