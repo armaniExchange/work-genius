@@ -6,28 +6,37 @@ import * as actionTypes from '../constants/action-types';
 const initialState = Map({
 	token: '',
 	currentUser: Map({}),
+	isAuthenticated: undefined,
 	loginError: ''
 });
 
 export default function appReducer(state = initialState, action) {
 	switch (action.type) {
-		case actionTypes.SET_TOKEN:
-			if (action.token) {
+	    case actionTypes.LOGIN_SUCCESS:
+	    	let newUser = Map(action.user);
+	    	if (action.token) {
 				localStorage.token = action.token;
 			} else {
-				delete localStorage.token;
+				localStorage.removeItem('token');
 			}
-		    return state.set('token', action.token).set('loginError', '');
-		case actionTypes.SET_CURRENT_USER:
-			if (action.user) {
-				let newUser = Map(action.user);
-				state = state.set('currentUser', newUser);
-			} else {
-				state = state.set('currentUser', Map({}));
-			}
-		    return state.set('loginError', '');
+		    return state
+		                .set('token', action.token)
+		                .set('isAuthenticated', action.isAuthenticated)
+		                .set('currentUser', newUser)
+		                .set('loginError', '');
 		case actionTypes.LOGIN_FAILURE:
-		    return state.set('token', '').set('currentUser', Map({})).set('loginError', action.error);
+			localStorage.removeItem('token');
+		    return state
+		                .set('token', '')
+		                .set('isAuthenticated', false)
+		                .set('currentUser', Map({}))
+		                .set('loginError', action.error);
+		case actionTypes.LOG_OUT:
+			localStorage.removeItem('token');
+		    return state
+		                .set('token', '')
+		                .set('isAuthenticated', false)
+		                .set('currentUser', Map({}));
 		default:
 			return state;
 	}

@@ -42,16 +42,18 @@ app.use((req, res, next) => {
 
 app.post('/login', (req, res) => {
     let { account, password } = req.body;
-    let token = jwt.sign({
+    let user = {
         name: 'Test',
         email: 'test@test.com',
         birthday: Math.random() * 100
-    }, SECURE_KEY, {
+    };
+    let token = jwt.sign(user, SECURE_KEY, {
         expiresIn: '30 days'
     });
     res.json({
       success: true,
-      token: token
+      token: token,
+      user: user
     });
 });
 
@@ -64,6 +66,7 @@ app.use((req, res, next) => {
             } else {
                 // if everything is good, save to request for use in other routes
                 req.decoded = decoded;
+                req.token = token;
                 next();
             }
         });

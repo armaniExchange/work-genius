@@ -56,6 +56,10 @@ let UserType = new GraphQLObjectType({
 		'last_login_date': {
 			type: GraphQLString,
 			description: 'Date Time'
+		},
+		'token': {
+			type: GraphQLString,
+			description: 'User token'
 		}
 	})
 });

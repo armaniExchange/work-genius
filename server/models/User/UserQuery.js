@@ -6,7 +6,7 @@ let UserQuery = {
 		type: UserType,
 		description: 'Check user login status',
 		resolve: async (root) => {
-			return root.req.decoded;
+			return Object.assign({}, root.req.decoded, { token: root.req.token });
 		}
 	}
 };

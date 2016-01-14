@@ -31,9 +31,7 @@ class Navigation extends Component {
 
 	_onLogoutHandler() {
 		const { onLogoutHandler } = this.props;
-		onLogoutHandler(() => {
-			location.reload();
-		});
+		onLogoutHandler();
 	}
 
 	render() {

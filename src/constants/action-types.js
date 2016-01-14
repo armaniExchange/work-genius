@@ -31,8 +31,11 @@ export const RESET_INTERNAL_FEATURE_TABLE = 'RESET_INTERNAL_FEATURE_TABLE';
 
 // App actions
 export const LOGIN_FAILURE = 'LOGIN_FAILURE';
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const SET_TOKEN = 'SET_TOKEN';
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
+export const SET_AUTHENTICATION = 'SET_AUTHENTICATION';
+export const LOG_OUT = 'LOG_OUT';
 
 // Data Explorer page actions
 export const TOGGLE_ADD_FOLDER_MODAL = 'TOGGLE_ADD_FOLDER_MODAL';
