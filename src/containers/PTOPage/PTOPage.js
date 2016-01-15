@@ -14,6 +14,7 @@ import * as PTOConstants from '../../constants/pto-constants';
 import FilterList from '../../components/Filter-List/Filter-List';
 import PTOApplyModal from '../../components/PTO-Apply-Modal/PTO-Apply-Modal';
 import PTOTable from '../../components/PTO-Table/PTO-Table.js';
+import Spinner from '../../components/Spinner/Spinner';
 
 class PTOPage extends Component {
     constructor(props) {
@@ -25,11 +26,8 @@ class PTOPage extends Component {
         this._onApplicationStatusUpdate = ::this._onApplicationStatusUpdate;
     }
     componentWillMount() {
-        const { fetchPTOApplications, setLoadingState } = this.props;
-        setLoadingState(true);
-        fetchPTOApplications(
-            () => setLoadingState(false)
-        );
+        const { fetchPTOApplications } = this.props;
+        fetchPTOApplications();
     }
     _onApplyButtonClicked() {
         const { setPTOApplyModalState } = this.props;
@@ -40,7 +38,7 @@ class PTOPage extends Component {
         setPTOApplyModalState(false);
     }
     _onPTOApplySubmitClicked(data) {
-        const { createPTOApplication, setPTOApplyModalState, setLoadingState } = this.props;
+        const { createPTOApplication } = this.props;
         let finalData = {
             start_date: data.startDate,
             end_date: data.endDate,
@@ -50,38 +48,15 @@ class PTOPage extends Component {
             applicant: 'Tester',
             status: PTOConstants.PENDING
         };
-        setPTOApplyModalState(false);
-        setLoadingState(true);
-        createPTOApplication(
-            finalData,
-            () => {
-                setLoadingState(false);
-                this._closePTOApplyModal();
-            }
-        );
+        createPTOApplication(finalData);
     }
     _onPTORemoveClicked(id) {
-        const { removePTOApplication, setLoadingState } = this.props;
-        setLoadingState(true);
-        removePTOApplication(
-            id,
-            () => {
-                setLoadingState(false);
-                this._closePTOApplyModal();
-            }
-        );
+        const { removePTOApplication } = this.props;
+        removePTOApplication(id);
     }
     _onApplicationStatusUpdate(id, newState) {
-        const { setPTOApplicationStatus, setLoadingState } = this.props;
-        setLoadingState(true);
-        setPTOApplicationStatus(
-            id,
-            newState,
-            () => {
-                setLoadingState(false);
-                this._closePTOApplyModal();
-            }
-        );
+        const { setPTOApplicationStatus } = this.props;
+        setPTOApplicationStatus(id, newState);
     }
     render() {
         const {
@@ -92,11 +67,13 @@ class PTOPage extends Component {
             applicationsOriginalData,
             filterPTOTable,
             sortPTOTableByCategory,
-            sortPTOTableBy
+            sortPTOTableBy,
+            isLoading
         } = this.props;
 
         return (
             <section>
+                <Spinner hide={!isLoading} />
                 <FilterList
                     data={applicationsOriginalData}
                     categories={Object.keys(ptoFilterConditions)}
@@ -129,6 +106,7 @@ PTOPage.propTypes = {
     ptoTitleKeyMap: PropTypes.array.isRequired,
     applicationsOriginalData: PropTypes.array,
     showPTOApplyModal: PropTypes.bool,
+    isLoading: PropTypes.bool,
     ptoFilterConditions: PropTypes.object,
     sortPTOTableBy: PropTypes.object,
     setPTOApplyModalState: PropTypes.func,

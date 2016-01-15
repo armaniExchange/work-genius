@@ -1,3 +1,6 @@
+/**
+ * @author Howard Chang
+ */
 // Styles
 import './_App.scss';
 // React & Redux
@@ -12,24 +15,8 @@ import * as MainActions from '../../actions/main-actions';
 
 class App extends Component {
 	componentWillMount() {
-		const {
-			getCurrentUser,
-			loginSuccess,
-			loginFailure
-		} = this.props.appActions;
-
-		getCurrentUser(
-			(res) => {
-				loginSuccess(
-                    res.data.currentUser.token,
-                    res.data.currentUser,
-                    true
-                );
-			},
-			() => {
-				loginFailure('');
-			}
-		);
+		const {	getCurrentUser } = this.props.appActions;
+		getCurrentUser();
 	}
 	render() {
 		const {

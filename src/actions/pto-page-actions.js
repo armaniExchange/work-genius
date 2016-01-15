@@ -1,13 +1,9 @@
 /**
  * @author Howard Chang
  */
-// Libraries
-import request from 'superagent';
 // Constants
 import * as actionTypes from '../constants/action-types';
-import { SERVER_API_URL } from '../constants/config';
-// Actions
-import * as mainActions from './main-actions';
+import { CALL_GRAPHQL_API } from '../middlewares/graphql-api.js';
 
 export function setPTOApplyModalState(state) {
     return {
@@ -30,6 +26,12 @@ export function sortPTOTableByCategory(category) {
 	};
 };
 
+export function fetchPTOApplicationsRequest() {
+	return {
+		type: actionTypes.FETCH_PTO_APPLICATION_REQUEST
+	};
+};
+
 export function fetchPTOApplicationsSuccess(data) {
 	return {
 		type: actionTypes.FETCH_PTO_APPLICATION_SUCCESS,
@@ -37,14 +39,10 @@ export function fetchPTOApplicationsSuccess(data) {
 	};
 };
 
-export function fetchPTOApplications(callback = () => {}) {
-	return (dispatch) => {
-		return request
-			.post(SERVER_API_URL)
-			.withCredentials()
-			.set('Content-Type', 'application/graphql')
-			.set('x-access-token', localStorage.token)
-			.send(`{
+export function fetchPTOApplications() {
+	return {
+		[CALL_GRAPHQL_API]: {
+			body: `{
 			    ptoApplications {
 			    	id,
 			        start_date,
@@ -55,84 +53,88 @@ export function fetchPTOApplications(callback = () => {}) {
 			        status,
 			        memo
 			    }
-			}`)
-			.end((err, res) => {
-				if (err) {
-                    dispatch(mainActions.apiFailure(err));
-	            } else {
-	            	let data = JSON.parse(res.text).data.ptoApplications;
-	                dispatch(fetchPTOApplicationsSuccess(data));
-	            }
-	            callback();
-			});
+			}`,
+			types: [
+			    actionTypes.FETCH_PTO_APPLICATION_REQUEST,
+			    actionTypes.FETCH_PTO_APPLICATION_SUCCESS,
+			    actionTypes.API_FAILURE
+			],
+			needAuthentication: true
+		}
 	};
 };
 
-export function createPTOApplication(data, callback = () => {}) {
-    return (dispatch) => {
-		return request
-			.post(SERVER_API_URL)
-			.withCredentials()
-			.set('Content-Type', 'application/graphql')
-			.set('x-access-token', localStorage.token)
-			.send(`mutation RootMutationType {
-			    createPTOApplication(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
-			}`)
-			.end((err, res) => {
-				if (err || !res) {
-					let error = err || 'No response';
-					dispatch(mainActions.apiFailure(error));
-				} else if (res && JSON.parse(res.text).errors) {
-                    dispatch(mainActions.apiFailure(JSON.parse(res.text).errors[0].message));
-	            } else {
-	                dispatch(fetchPTOApplications(callback));
-	            }
-			});
+export function createPTOApplication(data) {
+	return {
+		[CALL_GRAPHQL_API]: {
+			body: `mutation RootMutationType {
+			    createPTOApplication(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}") {
+			    	id,
+			    	start_date,
+			    	end_date,
+			    	memo,
+			    	hours,
+			    	apply_date,
+			    	applicant,
+			    	status
+			    }
+			}`,
+			types: [
+			    actionTypes.CREATE_PTO_APPLICATION_REQUEST,
+			    actionTypes.CREATE_PTO_APPLICATION_SUCCESS,
+			    actionTypes.API_FAILURE
+			],
+			needAuthentication: true
+		}
 	};
 };
 
-export function removePTOApplication(id, callback = () => {}) {
-	return (dispatch) => {
-		return request
-			.post(SERVER_API_URL)
-			.withCredentials()
-			.set('Content-Type', 'application/graphql')
-			.set('x-access-token', localStorage.token)
-			.send(`mutation RootMutationType {
-			    deletePTOApplication(id:"${id}")
-			}`)
-			.end((err, res) => {
-				if (err || !res) {
-					let error = err || 'No response';
-					dispatch(mainActions.apiFailure(error));
-				} else if (res && JSON.parse(res.text).errors) {
-                    dispatch(mainActions.apiFailure(JSON.parse(res.text).errors[0].message));
-	            } else {
-	                dispatch(fetchPTOApplications(callback));
-	            }
-			});
+export function removePTOApplication(id) {
+	return {
+		[CALL_GRAPHQL_API]: {
+			body: `mutation RootMutationType {
+			    deletePTOApplication(id:"${id}") {
+			    	id,
+			    	start_date,
+			    	end_date,
+			    	memo,
+			    	hours,
+			    	apply_date,
+			    	applicant,
+			    	status
+			    }
+			}`,
+			types: [
+			    actionTypes.DELETE_PTO_APPLICATION_REQUEST,
+			    actionTypes.DELETE_PTO_APPLICATION_SUCCESS,
+			    actionTypes.API_FAILURE
+			],
+			needAuthentication: true
+		}
 	};
 };
 
-export function setPTOApplicationStatus(id, status, callback = () => {}) {
-	return (dispatch) => {
-		return request
-			.post(SERVER_API_URL)
-			.withCredentials()
-			.set('Content-Type', 'application/graphql')
-			.set('x-access-token', localStorage.token)
-			.send(`mutation RootMutationType {
-			    updatePTOApplicationStatus(id:"${id}", status:"${status}")
-			}`)
-			.end((err, res) => {
-				if (err || !res) {
-					let error = err || 'No response';
-					dispatch(mainActions.apiFailure(error));
-				} else if (res && JSON.parse(res.text).errors) {
-                    dispatch(mainActions.apiFailure(JSON.parse(res.text).errors[0].message));
-	            } else {
-	                dispatch(fetchPTOApplications(callback));
-	            }
-			});
+export function setPTOApplicationStatus(id, status) {
+	return {
+		[CALL_GRAPHQL_API]: {
+			body: `mutation RootMutationType {
+			    updatePTOApplicationStatus(id:"${id}", status:"${status}") {
+			    	id,
+			    	start_date,
+			    	end_date,
+			    	memo,
+			    	hours,
+			    	apply_date,
+			    	applicant,
+			    	status
+			    }
+			}`,
+			types: [
+			    actionTypes.UPDATE_PTO_APPLICATION_REQUEST,
+			    actionTypes.UPDATE_PTO_APPLICATION_SUCCESS,
+			    actionTypes.API_FAILURE
+			],
+			needAuthentication: true
+		}
 	};
 };

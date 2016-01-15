@@ -13,6 +13,7 @@ const initialPTOFilterConditions = Map({
 
 const initialState = Map({
     applicationsOriginalData: List.of(),
+    isLoading: false,
     applications: List.of(),
     ptoTitleKeyMap: List.of(
         Map({ title: 'Start Date', key: 'start_date'}),
@@ -161,15 +162,51 @@ export default function ptoReducer(state = initialState, action) {
             return sortTable(state, action.category);
         case actionTypes.FILTER_PTO_TABLE:
             return filterTable(state, action.filterConditions);
+        case actionTypes.FETCH_PTO_APPLICATION_REQUEST:
+            return nextState.set('isLoading', true);
         case actionTypes.FETCH_PTO_APPLICATION_SUCCESS:
-            nextState = setTableData(state, action.data);
+            nextState = setTableData(state, action.res.data.ptoApplications);
             if (!is(state.get('ptoFilterConditions'), initialPTOFilterConditions)) {
                 nextState = filterOriginal(nextState);
             }
             if (state.get('sortPTOTableBy').get('category')) {
                 nextState = sortOriginal(nextState);
             }
-            return nextState;
+            return nextState.set('isLoading', false);
+        case actionTypes.CREATE_PTO_APPLICATION_REQUEST:
+            return nextState.set('isLoading', true);
+        case actionTypes.CREATE_PTO_APPLICATION_SUCCESS:
+            let newApplication = action.res.data.createPTOApplication;
+            return nextState
+                    .set('showPTOApplyModal', false)
+                    .update('applications', (list) => list.push(Map(newApplication)))
+                    .update('applicationsOriginalData', (list) => list.push(Map(newApplication)))
+                    .set('isLoading', false);
+        case actionTypes.DELETE_PTO_APPLICATION_REQUEST:
+            return nextState.set('isLoading', true);
+        case actionTypes.DELETE_PTO_APPLICATION_SUCCESS:
+            let applicationToBeRemoved = action.res.data.deletePTOApplication;
+            return nextState
+                    .update('applications', (list) => list.filter(item => item.get('id') !== applicationToBeRemoved.id))
+                    .update('applicationsOriginalData', (list) => list.filter(item => item.get('id') !== applicationToBeRemoved.id))
+                    .set('isLoading', false);
+        case actionTypes.UPDATE_PTO_APPLICATION_REQUEST:
+            return nextState.set('isLoading', true);
+        case actionTypes.UPDATE_PTO_APPLICATION_SUCCESS:
+            let applicationToBeUpdated = action.res.data.updatePTOApplicationStatus;
+            let updateImmutableApplicationList = (list) => {
+                let index = 0;
+                list.forEach((item, i) => {
+                    if (item.get('id') === applicationToBeUpdated.id) {
+                        index = i;
+                    }
+                });
+                return list.set(index, Map(applicationToBeUpdated));
+            };
+            return nextState
+                    .update('applications', updateImmutableApplicationList)
+                    .update('applicationsOriginalData', updateImmutableApplicationList)
+                    .set('isLoading', false);
         default:
             return state;
     }

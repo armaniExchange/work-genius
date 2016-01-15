@@ -4,10 +4,11 @@ import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
 import Immutable from 'immutable';
 import rootReducer from '../reducers';
+import graphqlAPIMiddleware from '../middlewares/graphql-api.js';
 
 // const __DEV__ = process.env.NODE_ENV === 'production' ? false : true;
 const finalCreateStore = compose(
-	applyMiddleware(thunk),
+	applyMiddleware(thunk, graphqlAPIMiddleware),
     // window.devToolsExtension ? window.devToolsExtension() : f => f
     applyMiddleware(createLogger({
         // Transform Immutable object to plain json for better debuggin experience
