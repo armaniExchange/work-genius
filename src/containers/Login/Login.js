@@ -18,34 +18,12 @@ class Login extends Component {
 	componentWillReceiveProps(nextProps) {
 		const { isAuthenticated } = nextProps.appState;
 		if (isAuthenticated) {
-			// console.log(this.context.history);
-			// this.context.history.goBack();
 			this.context.history.pushState(null, '/main');
 		}
 	}
 	_onLogin(user) {
-		const {
-			login,
-			loginFailure,
-			loginSuccess
-		} = this.props.appActions;
-		const { setLoadingState } = this.props.mainActions;
-
-		setLoadingState(true);
-		login(user,
-			(res) => {
-				loginSuccess(
-                    res.token,
-                    res.user,
-                    true
-                );
-				setLoadingState(false);
-			},
-			(err) => {
-				loginFailure(err);
-				setLoadingState(false);
-			}
-		);
+		const { login } = this.props.appActions;
+		login(user);
 	}
 	render() {
 		const { loginError } = this.props.appState;
