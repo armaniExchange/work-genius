@@ -25,11 +25,8 @@ class PTOPage extends Component {
         this._onApplicationStatusUpdate = ::this._onApplicationStatusUpdate;
     }
     componentWillMount() {
-        const { fetchPTOApplications, setLoadingState } = this.props;
-        setLoadingState(true);
-        fetchPTOApplications(
-            () => setLoadingState(false)
-        );
+        const { fetchPTOApplications } = this.props;
+        fetchPTOApplications();
     }
     _onApplyButtonClicked() {
         const { setPTOApplyModalState } = this.props;
@@ -40,7 +37,7 @@ class PTOPage extends Component {
         setPTOApplyModalState(false);
     }
     _onPTOApplySubmitClicked(data) {
-        const { createPTOApplication, setPTOApplyModalState, setLoadingState } = this.props;
+        const { createPTOApplication } = this.props;
         let finalData = {
             start_date: data.startDate,
             end_date: data.endDate,
@@ -50,38 +47,15 @@ class PTOPage extends Component {
             applicant: 'Tester',
             status: PTOConstants.PENDING
         };
-        setPTOApplyModalState(false);
-        setLoadingState(true);
-        createPTOApplication(
-            finalData,
-            () => {
-                setLoadingState(false);
-                this._closePTOApplyModal();
-            }
-        );
+        createPTOApplication(finalData);
     }
     _onPTORemoveClicked(id) {
-        const { removePTOApplication, setLoadingState } = this.props;
-        setLoadingState(true);
-        removePTOApplication(
-            id,
-            () => {
-                setLoadingState(false);
-                this._closePTOApplyModal();
-            }
-        );
+        const { removePTOApplication } = this.props;
+        removePTOApplication(id);
     }
     _onApplicationStatusUpdate(id, newState) {
-        const { setPTOApplicationStatus, setLoadingState } = this.props;
-        setLoadingState(true);
-        setPTOApplicationStatus(
-            id,
-            newState,
-            () => {
-                setLoadingState(false);
-                this._closePTOApplyModal();
-            }
-        );
+        const { setPTOApplicationStatus } = this.props;
+        setPTOApplicationStatus(id, newState);
     }
     render() {
         const {
