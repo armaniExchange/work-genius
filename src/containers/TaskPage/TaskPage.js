@@ -1,7 +1,6 @@
 /**
  * @author Howard Chang
  */
-
 // Style
 import './_TaskPage';
 // React & Redux
@@ -132,11 +131,8 @@ class TaskPage extends Component {
 		this._closeFeatureModal = ::this._closeFeatureModal;
 	}
 	componentWillMount() {
-		const { fetchTaskPageData, setLoadingState } = this.props;
-		setLoadingState(true);
-		fetchTaskPageData(
-			() => setLoadingState(false)
-		);
+		const { fetchTaskPageData } = this.props;
+		fetchTaskPageData();
 	}
 	componentWillUnmount() {
 		const { resetFeatureTable, resetBugTable, resetInternalFeatureTable } = this.props;
@@ -145,11 +141,8 @@ class TaskPage extends Component {
 		resetInternalFeatureTable();
 	}
 	_onCrawlerButtonClicked() {
-		const { initiateGK2Crawler, setLoadingState } = this.props;
-		setLoadingState(true);
-		initiateGK2Crawler(
-			() => setLoadingState(false)
-		);
+		const { initiateGK2Crawler } = this.props;
+		initiateGK2Crawler();
 	}
 	_onDeleteClicked(id) {
 		const { setDeleteWarningBoxState, setSelectedItem } = this.props;
@@ -166,38 +159,15 @@ class TaskPage extends Component {
 		setFeatureModalState(true);
 	}
 	_onConfirmDeleteClicked() {
-		const { setLoadingState, selectedID, setDeleteWarningBoxState, deleteSelectedItems } = this.props;
-		setDeleteWarningBoxState(false);
-		setLoadingState(true);
-		deleteSelectedItems(
-			selectedID,
-			() => {
-				setLoadingState(false);
-				this._closeFeatureModal();
-			}
-		);
+		const { selectedID, deleteSelectedItems } = this.props;
+		deleteSelectedItems(selectedID);
 	}
 	_onFeatureSubmitClicked(data) {
-		const { setLoadingState, setFeatureModalState, createFeature, updateFeature, selectedItem } = this.props;
-		setFeatureModalState(false);
-		setLoadingState(true);
+		const { createFeature, updateFeature, selectedItem } = this.props;
 		if (selectedItem.id) {
-			updateFeature(
-				selectedItem.id,
-				data,
-				() => {
-					setLoadingState(false);
-					this._closeFeatureModal();
-				}
-			);
+			updateFeature(selectedItem.id, data);
 		} else {
-			createFeature(
-				data,
-				() => {
-					setLoadingState(false);
-					this._closeFeatureModal();
-				}
-			);
+			createFeature(data);
 		}
 	}
 	_closeFeatureModal() {
