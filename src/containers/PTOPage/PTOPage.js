@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 // Actions
 import * as PTOActions from '../../actions/pto-page-actions';
+import * as appActions from '../../actions/app-actions';
 import * as mainActions from '../../actions/main-actions';
 // Constants
 import * as PTOConstants from '../../constants/pto-constants';
@@ -14,7 +15,7 @@ import * as PTOConstants from '../../constants/pto-constants';
 import FilterList from '../../components/Filter-List/Filter-List';
 import PTOApplyModal from '../../components/PTO-Apply-Modal/PTO-Apply-Modal';
 import PTOTable from '../../components/PTO-Table/PTO-Table.js';
-import Spinner from '../../components/Spinner/Spinner';
+import NameFilter from '../../components/Name-Filter/Name-Filter.js';
 
 class PTOPage extends Component {
     constructor(props) {
@@ -38,14 +39,14 @@ class PTOPage extends Component {
         setPTOApplyModalState(false);
     }
     _onPTOApplySubmitClicked(data) {
-        const { createPTOApplication } = this.props;
+        const { createPTOApplication, currentUser } = this.props;
         let finalData = {
             start_date: data.startDate,
             end_date: data.endDate,
             memo: data.memo,
             hours: data.hours,
             apply_date: moment().format('YYYY-MM-DD'),
-            applicant: 'Tester',
+            applicant: currentUser.name,
             status: PTOConstants.PENDING
         };
         createPTOApplication(finalData);
@@ -67,13 +68,16 @@ class PTOPage extends Component {
             applicationsOriginalData,
             filterPTOTable,
             sortPTOTableByCategory,
-            sortPTOTableBy,
-            isLoading
+            sortPTOTableBy
         } = this.props;
 
         return (
             <section>
-                <Spinner hide={!isLoading} />
+                <NameFilter
+                    name="Howard"
+                    subtitle="2015-01-18"
+                    selected={true}
+                    onClickHandler={(name) => console.log(name)}/>
                 <FilterList
                     data={applicationsOriginalData}
                     categories={Object.keys(ptoFilterConditions)}
@@ -106,11 +110,12 @@ PTOPage.propTypes = {
     ptoTitleKeyMap: PropTypes.array.isRequired,
     applicationsOriginalData: PropTypes.array,
     showPTOApplyModal: PropTypes.bool,
-    isLoading: PropTypes.bool,
     ptoFilterConditions: PropTypes.object,
     sortPTOTableBy: PropTypes.object,
+    currentUser: PropTypes.object,
     setPTOApplyModalState: PropTypes.func,
     setLoadingState: PropTypes.func,
+    getCurrentUser: PropTypes.func,
     createPTOApplication: PropTypes.func,
     filterPTOTable: PropTypes.func,
     sortPTOTableByCategory: PropTypes.func,
@@ -120,7 +125,11 @@ PTOPage.propTypes = {
 };
 
 function mapStateToProps(state) {
-    return state.pto.toJS();
+    return Object.assign(
+        {},
+        state.pto.toJS(),
+        state.app.toJS()
+    );
 }
 
 function mapDispatchToProps(dispatch) {
@@ -130,6 +139,9 @@ function mapDispatchToProps(dispatch) {
         {
             setLoadingState: (loadingState) => {
                 dispatch(mainActions.setLoadingState(loadingState));
+            },
+            getCurrentUser: () => {
+                dispatch(appActions.getCurrentUser());
             }
         }
     );

@@ -1,6 +1,3 @@
-/**
- * @author Howard Chang
- */
 // Libraries
 import fetch from 'isomorphic-fetch';
 // Constants
@@ -25,6 +22,15 @@ export function loginSuccess(token, user, isAuthenticated) {
 	};
 }
 
+export function getCurrentUserSuccess(token, user, isAuthenticated) {
+	return {
+		type: actionTypes.GET_CURRENT_USER_SUCCESS,
+		token,
+		user,
+		isAuthenticated
+	};
+}
+
 export function logout() {
 	return {
 		type: actionTypes.LOG_OUT
@@ -35,12 +41,12 @@ export function login(user) {
 	return (dispatch) => {
 		let config = {
 			method: 'POST',
-			body: {
-				'account': user.username,
-				'password': user.password
-			},
+			body: `{
+				"account": "${user.username}",
+				"password": "${user.password}"
+			}`,
 			headers: {
-				'Content-Type': 'application/graphql',
+				'Content-Type': 'application/json',
 				'x-access-token': localStorage.token
 			}
 		};
@@ -65,6 +71,8 @@ export function getCurrentUser() {
 			body: `{
 			    currentUser {
 			    	name,
+			    	email,
+			    	nickname,
 			    	birthday,
 			    	token
 			    }
@@ -74,17 +82,20 @@ export function getCurrentUser() {
 				'x-access-token': localStorage.token
 			}
 		};
+		dispatch(setLoadingState(true));
 		return fetch(SERVER_API_URL, config)
 			.then((res) => {
-				if (res.status >= 300) {
+				if (res.status >= 400) {
 					throw new Error(res.statusText);
 				}
 				return res.json();
 			})
 			.then((body) => {
-				dispatch(loginSuccess(body.data.currentUser.token, body.data.currentUser.user, true));
+				dispatch(setLoadingState(false));
+				dispatch(getCurrentUserSuccess(body.data.currentUser.token, body.data.currentUser, true));
 			})
 			.catch(() => {
+				dispatch(setLoadingState(false));
 				dispatch(loginFailure(''));
 			});
 	};
