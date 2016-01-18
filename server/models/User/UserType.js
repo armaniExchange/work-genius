@@ -23,7 +23,11 @@ let UserType = new GraphQLObjectType({
 		},
 		'name': {
 			type: GraphQLString,
-			description: 'Nick name'
+			description: 'User name'
+		},
+		'nickname': {
+			type: GraphQLString,
+			description: 'User nickname'
 		},
 		'title': {
 			type: GraphQLString,

@@ -3,6 +3,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import graphqlHTTP from 'express-graphql';
 import { CronJob } from 'cron';
+import ActiveDirectory from 'activedirectory';
 import jwt from 'jsonwebtoken';
 // GraphQL and schema
 import schema from './schema/schema.js';
@@ -21,8 +22,8 @@ let app = express();
 app.use(bodyParser.text({
 	type: 'application/graphql'
 }));
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
 	res.header('Access-Control-Allow-Origin', req.headers.origin);
@@ -40,21 +41,59 @@ app.use((req, res, next) => {
     }
 });
 
-app.post('/login', (req, res) => {
+
+
+app.post('/login', async (req, res) => {
+    let adPromise = (account, password) => {
+        return new Promise((resolve, reject) => {
+            // try to login
+            let ad = new ActiveDirectory(LDAP);
+            ad.authenticate(account, password, (err, auth) => {
+                if (err || !auth) {
+                    console.log('Login Failed');
+                    reject(new Error('Account or Password Incorrect!'));
+                } else {
+                    console.log('Login successfully');
+                    resolve(auth);
+                }
+            });
+        });
+    };
     let { account, password } = req.body;
     let user = {
-        name: 'Test',
-        email: 'test@test.com',
+        name: 'Howard Chang',
+        nickname: 'Howard C',
+        email: 'howardc@a10networks.com',
         birthday: Math.random() * 100
     };
-    let token = jwt.sign(user, SECURE_KEY, {
-        expiresIn: '30 days'
-    });
-    res.json({
-      success: true,
-      token: token,
-      user: user
-    });
+    let admin = {
+        name: 'Admin',
+        nickname: 'Admin',
+        email: 'admin@a10networks.com',
+        birthday: Math.random() * 100
+    };
+    if (account === 'admin') {
+        user = admin;
+    }
+    if (!(account.includes('@') || account.includes('\\'))) {
+        account = LDAP_AUTH_PREFIX + account;
+    }
+    try {
+        // let auth = await adPromise(account, password);
+        let token = jwt.sign(user, SECURE_KEY, {
+            expiresIn: '30 days'
+        });
+        res.json({
+          success: true,
+          token: token,
+          user: user
+        });
+    } catch (err) {
+        res.status(401).send({
+            success: false,
+            message: 'Not authorized'
+        });
+    }
 });
 
 app.use((req, res, next) => {
@@ -75,7 +114,6 @@ app.use((req, res, next) => {
             success: false,
             message: 'No token provided'
         });
-
     }
 });
 

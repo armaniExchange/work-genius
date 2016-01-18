@@ -8,7 +8,8 @@ import { Map, List, OrderedMap, is } from 'immutable';
 import * as actionTypes from '../constants/action-types';
 
 const initialPTOFilterConditions = Map({
-    'status': ''
+    'status': '',
+    'applicant': ''
 });
 
 const initialState = Map({
@@ -170,6 +171,8 @@ export default function ptoReducer(state = initialState, action) {
                 nextState = sortOriginal(nextState);
             }
             return nextState;
+        case actionTypes.GET_CURRENT_USER_SUCCESS:
+            return nextState.setIn(['ptoFilterConditions', 'applicant'], action.user.name);
         default:
             return state;
     }

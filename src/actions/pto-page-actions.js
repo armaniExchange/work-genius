@@ -37,6 +37,13 @@ export function fetchPTOApplicationsSuccess(data) {
 	};
 };
 
+export function setApplicantToFilter(applicant) {
+	return {
+		type: actionTypes.SET_APPLICANT_NAME_TO_FILTER,
+		applicant
+	};
+};
+
 export function fetchPTOApplications() {
 	return (dispatch) => {
 		let config = {

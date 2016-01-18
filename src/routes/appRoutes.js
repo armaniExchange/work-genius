@@ -24,13 +24,13 @@ const appRoutes = () => (
 	    <Route path="/" component={App}>
 			<IndexRoute component={Login} />
 			<Route path="/main" component={requireAuth(Main)}>
-			    <IndexRoute component={DashboardPage}/>
-			    <Route path="/main/task" component={TaskPage} />
-			    <Route path="/main/pto" component={PTOPage} />
-			    <Route path="/main/redux-demo" component={DemoPage} />
-			    <Route path="/main/data-explorer" component={DataExplorerPage}>
-			        <IndexRoute component={DataExplorerFolderView}/>
-			        <Route path="/main/data-explorer/:folderName" component={DataExplorerFileView} />
+			    <IndexRoute component={requireAuth(DashboardPage)}/>
+			    <Route path="/main/task" component={requireAuth(TaskPage)} />
+			    <Route path="/main/pto" component={requireAuth(PTOPage)} />
+			    <Route path="/main/redux-demo" component={requireAuth(DemoPage)} />
+			    <Route path="/main/data-explorer" component={requireAuth(DataExplorerPage)}>
+			        <IndexRoute component={requireAuth(DataExplorerFolderView)}/>
+			        <Route path="/main/data-explorer/:folderName" component={requireAuth(DataExplorerFileView)} />
 			    </Route>
 		    </Route>
 		    <Route path="*" component={NotFoundPage} />

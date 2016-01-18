@@ -11,9 +11,22 @@ const initialState = Map({
 });
 
 export default function appReducer(state = initialState, action) {
+	let newUser = null;
 	switch (action.type) {
 	    case actionTypes.LOGIN_SUCCESS:
-	    	let newUser = Map(action.user);
+	    	newUser = Map(action.user);
+	    	if (action.token) {
+				localStorage.token = action.token;
+			} else {
+				localStorage.removeItem('token');
+			}
+		    return state
+		                .set('token', action.token)
+		                .set('isAuthenticated', action.isAuthenticated)
+		                .set('currentUser', newUser)
+		                .set('loginError', '');
+		case actionTypes.GET_CURRENT_USER_SUCCESS:
+	    	newUser = Map(action.user);
 	    	if (action.token) {
 				localStorage.token = action.token;
 			} else {
