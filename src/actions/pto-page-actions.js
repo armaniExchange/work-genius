@@ -1,9 +1,13 @@
 /**
  * @author Howard Chang
  */
+// Libraries
+import fetch from 'isomorphic-fetch';
 // Constants
 import * as actionTypes from '../constants/action-types';
-import { CALL_GRAPHQL_API } from '../middlewares/graphql-api.js';
+import { SERVER_API_URL } from '../constants/config';
+// Actions
+import { setLoadingState, apiFailure } from './main-actions';
 
 export function setPTOApplyModalState(state) {
     return {
@@ -26,12 +30,6 @@ export function sortPTOTableByCategory(category) {
 	};
 };
 
-export function fetchPTOApplicationsRequest() {
-	return {
-		type: actionTypes.FETCH_PTO_APPLICATION_REQUEST
-	};
-};
-
 export function fetchPTOApplicationsSuccess(data) {
 	return {
 		type: actionTypes.FETCH_PTO_APPLICATION_SUCCESS,
@@ -40,8 +38,9 @@ export function fetchPTOApplicationsSuccess(data) {
 };
 
 export function fetchPTOApplications() {
-	return {
-		[CALL_GRAPHQL_API]: {
+	return (dispatch) => {
+		let config = {
+			method: 'POST',
 			body: `{
 			    ptoApplications {
 			    	id,
@@ -54,87 +53,100 @@ export function fetchPTOApplications() {
 			        memo
 			    }
 			}`,
-			types: [
-			    actionTypes.FETCH_PTO_APPLICATION_REQUEST,
-			    actionTypes.FETCH_PTO_APPLICATION_SUCCESS,
-			    actionTypes.API_FAILURE
-			],
-			needAuthentication: true
-		}
+			headers: {
+				'Content-Type': 'application/graphql',
+				'x-access-token': localStorage.token
+			}
+		};
+		dispatch(setLoadingState(true));
+		return fetch(SERVER_API_URL, config)
+			.then((res) => res.json())
+			.then((body) => {
+				dispatch(setLoadingState(false));
+				dispatch(fetchPTOApplicationsSuccess(body.data.ptoApplications));
+			})
+			.catch((err) => {
+				dispatch(setLoadingState(false));
+				dispatch(apiFailure(err));
+			});
 	};
 };
 
 export function createPTOApplication(data) {
-	return {
-		[CALL_GRAPHQL_API]: {
+	return (dispatch) => {
+		let config = {
+			method: 'POST',
 			body: `mutation RootMutationType {
-			    createPTOApplication(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}") {
-			    	id,
-			    	start_date,
-			    	end_date,
-			    	memo,
-			    	hours,
-			    	apply_date,
-			    	applicant,
-			    	status
-			    }
+			    createPTOApplication(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
 			}`,
-			types: [
-			    actionTypes.CREATE_PTO_APPLICATION_REQUEST,
-			    actionTypes.CREATE_PTO_APPLICATION_SUCCESS,
-			    actionTypes.API_FAILURE
-			],
-			needAuthentication: true
-		}
+			headers: {
+				'Content-Type': 'application/graphql',
+				'x-access-token': localStorage.token
+			}
+		};
+		dispatch(setPTOApplyModalState(false));
+		dispatch(setLoadingState(true));
+		return fetch(SERVER_API_URL, config)
+			.then((res) => res.json())
+			.then(() => {
+				dispatch(setLoadingState(false));
+				dispatch(fetchPTOApplications());
+			})
+			.catch((err) => {
+				dispatch(setLoadingState(false));
+				dispatch(apiFailure(err));
+			});
 	};
 };
 
 export function removePTOApplication(id) {
-	return {
-		[CALL_GRAPHQL_API]: {
+	return (dispatch) => {
+		let config = {
+			method: 'POST',
 			body: `mutation RootMutationType {
-			    deletePTOApplication(id:"${id}") {
-			    	id,
-			    	start_date,
-			    	end_date,
-			    	memo,
-			    	hours,
-			    	apply_date,
-			    	applicant,
-			    	status
-			    }
+			    deletePTOApplication(id:"${id}")
 			}`,
-			types: [
-			    actionTypes.DELETE_PTO_APPLICATION_REQUEST,
-			    actionTypes.DELETE_PTO_APPLICATION_SUCCESS,
-			    actionTypes.API_FAILURE
-			],
-			needAuthentication: true
-		}
+			headers: {
+				'Content-Type': 'application/graphql',
+				'x-access-token': localStorage.token
+			}
+		};
+		dispatch(setLoadingState(true));
+		return fetch(SERVER_API_URL, config)
+			.then((res) => res.json())
+			.then(() => {
+				dispatch(setLoadingState(false));
+				dispatch(fetchPTOApplications());
+			})
+			.catch((err) => {
+				dispatch(setLoadingState(false));
+				dispatch(apiFailure(err));
+			});
 	};
 };
 
 export function setPTOApplicationStatus(id, status) {
-	return {
-		[CALL_GRAPHQL_API]: {
+	return (dispatch) => {
+		let config = {
+			method: 'POST',
 			body: `mutation RootMutationType {
-			    updatePTOApplicationStatus(id:"${id}", status:"${status}") {
-			    	id,
-			    	start_date,
-			    	end_date,
-			    	memo,
-			    	hours,
-			    	apply_date,
-			    	applicant,
-			    	status
-			    }
+			    updatePTOApplicationStatus(id:"${id}", status:"${status}")
 			}`,
-			types: [
-			    actionTypes.UPDATE_PTO_APPLICATION_REQUEST,
-			    actionTypes.UPDATE_PTO_APPLICATION_SUCCESS,
-			    actionTypes.API_FAILURE
-			],
-			needAuthentication: true
-		}
+			headers: {
+				'Content-Type': 'application/graphql',
+				'x-access-token': localStorage.token
+			}
+		};
+		dispatch(setLoadingState(true));
+		return fetch(SERVER_API_URL, config)
+			.then((res) => res.json())
+			.then(() => {
+				dispatch(setLoadingState(false));
+				dispatch(fetchPTOApplications());
+			})
+			.catch((err) => {
+				dispatch(setLoadingState(false));
+				dispatch(apiFailure(err));
+			});
 	};
 };

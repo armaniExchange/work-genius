@@ -1,6 +1,3 @@
-/**
- * @author Howard Chang
- */
 // Styles
 import './_App.scss';
 // React & Redux

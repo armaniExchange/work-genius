@@ -14,7 +14,6 @@ import * as PTOConstants from '../../constants/pto-constants';
 import FilterList from '../../components/Filter-List/Filter-List';
 import PTOApplyModal from '../../components/PTO-Apply-Modal/PTO-Apply-Modal';
 import PTOTable from '../../components/PTO-Table/PTO-Table.js';
-import Spinner from '../../components/Spinner/Spinner';
 
 class PTOPage extends Component {
     constructor(props) {
@@ -67,13 +66,11 @@ class PTOPage extends Component {
             applicationsOriginalData,
             filterPTOTable,
             sortPTOTableByCategory,
-            sortPTOTableBy,
-            isLoading
+            sortPTOTableBy
         } = this.props;
 
         return (
             <section>
-                <Spinner hide={!isLoading} />
                 <FilterList
                     data={applicationsOriginalData}
                     categories={Object.keys(ptoFilterConditions)}
@@ -106,7 +103,6 @@ PTOPage.propTypes = {
     ptoTitleKeyMap: PropTypes.array.isRequired,
     applicationsOriginalData: PropTypes.array,
     showPTOApplyModal: PropTypes.bool,
-    isLoading: PropTypes.bool,
     ptoFilterConditions: PropTypes.object,
     sortPTOTableBy: PropTypes.object,
     setPTOApplyModalState: PropTypes.func,

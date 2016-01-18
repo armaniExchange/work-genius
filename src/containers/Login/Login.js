@@ -1,6 +1,3 @@
-/**
- * @author Howard Chang
- */
 // Style
 import './_Login';
 // React & Redux

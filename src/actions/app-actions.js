@@ -1,6 +1,3 @@
-/**
- * @author Howard Chang
- */
 // Libraries
 import fetch from 'isomorphic-fetch';
 // Constants
@@ -76,7 +73,7 @@ export function getCurrentUser() {
 		};
 		return fetch(SERVER_API_URL, config)
 			.then((res) => {
-				if (res.status >= 300) {
+				if (res.status >= 400) {
 					throw new Error(res.statusText);
 				}
 				return res.json();
