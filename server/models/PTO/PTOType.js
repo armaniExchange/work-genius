@@ -25,6 +25,10 @@ let PTOType = new GraphQLObjectType({
 			type: GraphQLString,
 			description: 'PTO applicant'
 		},
+		'applicant_id': {
+			type: GraphQLID,
+			description: 'Applicant ID'
+		},
 		'hours': {
 			type: GraphQLString,
 			description: 'Total hours of PTO'

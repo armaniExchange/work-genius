@@ -27,8 +27,9 @@ class PTOPage extends Component {
         this._onApplicationStatusUpdate = ::this._onApplicationStatusUpdate;
     }
     componentWillMount() {
-        const { fetchPTOApplications } = this.props;
+        const { fetchPTOApplications, fetchUsersWithPTO } = this.props;
         fetchPTOApplications();
+        fetchUsersWithPTO();
     }
     _onApplyButtonClicked() {
         const { setPTOApplyModalState } = this.props;
@@ -47,6 +48,7 @@ class PTOPage extends Component {
             hours: data.hours,
             apply_date: moment().format('YYYY-MM-DD'),
             applicant: currentUser.name,
+            applicant_id: currentUser.id,
             status: PTOConstants.PENDING
         };
         createPTOApplication(finalData);
@@ -106,22 +108,23 @@ class PTOPage extends Component {
 }
 
 PTOPage.propTypes = {
-    applications: PropTypes.array.isRequired,
-    ptoTitleKeyMap: PropTypes.array.isRequired,
+    applications            : PropTypes.array.isRequired,
+    ptoTitleKeyMap          : PropTypes.array.isRequired,
     applicationsOriginalData: PropTypes.array,
-    showPTOApplyModal: PropTypes.bool,
-    ptoFilterConditions: PropTypes.object,
-    sortPTOTableBy: PropTypes.object,
-    currentUser: PropTypes.object,
-    setPTOApplyModalState: PropTypes.func,
-    setLoadingState: PropTypes.func,
-    getCurrentUser: PropTypes.func,
-    createPTOApplication: PropTypes.func,
-    filterPTOTable: PropTypes.func,
-    sortPTOTableByCategory: PropTypes.func,
-    setPTOApplicationStatus: PropTypes.func,
-    removePTOApplication: PropTypes.func,
-    fetchPTOApplications: PropTypes.func
+    showPTOApplyModal       : PropTypes.bool,
+    ptoFilterConditions     : PropTypes.object,
+    sortPTOTableBy          : PropTypes.object,
+    currentUser             : PropTypes.object,
+    setPTOApplyModalState   : PropTypes.func,
+    setLoadingState         : PropTypes.func,
+    getCurrentUser          : PropTypes.func,
+    createPTOApplication    : PropTypes.func,
+    filterPTOTable          : PropTypes.func,
+    sortPTOTableByCategory  : PropTypes.func,
+    setPTOApplicationStatus : PropTypes.func,
+    removePTOApplication    : PropTypes.func,
+    fetchPTOApplications    : PropTypes.func,
+    fetchUsersWithPTO       : PropTypes.func
 };
 
 function mapStateToProps(state) {

@@ -2,14 +2,16 @@
 import {
 	GraphQLObjectType,
 	GraphQLString,
-	GraphQLInt
+	GraphQLInt,
+	GraphQLList
 } from 'graphql';
+import PTOType from '../PTO/PTOType.js';
 
 let UserType = new GraphQLObjectType({
 	name: 'User',
 	description: 'A User object',
 	fields: () => ({
-		'user_id': {
+		'id': {
 			type: GraphQLString,
 			description: 'User ID'
 		},
@@ -64,6 +66,10 @@ let UserType = new GraphQLObjectType({
 		'token': {
 			type: GraphQLString,
 			description: 'User token'
+		},
+		pto: {
+			type: new GraphQLList(PTOType),
+			description: 'User pto applications'
 		}
 	})
 });

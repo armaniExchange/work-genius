@@ -15,6 +15,7 @@ const schema = new GraphQLSchema({
 	query: new GraphQLObjectType({
 		name: 'RootQueryType',
 		fields: {
+			allUserWithPto: UserQuery.allUserWithPto,
 			currentUser: UserQuery.currentUser,
 			tasks: TaskQuery.tasks,
 			ptoApplications: PTOQuery.ptoApplications

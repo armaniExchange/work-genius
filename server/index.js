@@ -3,16 +3,14 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import graphqlHTTP from 'express-graphql';
 import { CronJob } from 'cron';
-import ActiveDirectory from 'activedirectory';
 import jwt from 'jsonwebtoken';
 // GraphQL and schema
 import schema from './schema/schema.js';
+import { loginHandler } from './models/User/UserMutation.js';
 // Crawler
 import { crawlGK2 } from './crawler/crawler.js';
 // Constants
 import {
-    LDAP,
-    LDAP_AUTH_PREFIX,
     SECURE_KEY
 } from './constants/configurations.js';
 
@@ -41,60 +39,7 @@ app.use((req, res, next) => {
     }
 });
 
-
-
-app.post('/login', async (req, res) => {
-    let adPromise = (account, password) => {
-        return new Promise((resolve, reject) => {
-            // try to login
-            let ad = new ActiveDirectory(LDAP);
-            ad.authenticate(account, password, (err, auth) => {
-                if (err || !auth) {
-                    console.log('Login Failed');
-                    reject(new Error('Account or Password Incorrect!'));
-                } else {
-                    console.log('Login successfully');
-                    resolve(auth);
-                }
-            });
-        });
-    };
-    let { account, password } = req.body;
-    let user = {
-        name: 'Howard Chang',
-        nickname: 'Howard C',
-        email: 'howardc@a10networks.com',
-        birthday: Math.random() * 100
-    };
-    let admin = {
-        name: 'Admin',
-        nickname: 'Admin',
-        email: 'admin@a10networks.com',
-        birthday: Math.random() * 100
-    };
-    if (account === 'admin') {
-        user = admin;
-    }
-    if (!(account.includes('@') || account.includes('\\'))) {
-        account = LDAP_AUTH_PREFIX + account;
-    }
-    try {
-        // let auth = await adPromise(account, password);
-        let token = jwt.sign(user, SECURE_KEY, {
-            expiresIn: '30 days'
-        });
-        res.json({
-          success: true,
-          token: token,
-          user: user
-        });
-    } catch (err) {
-        res.status(401).send({
-            success: false,
-            message: 'Not authorized'
-        });
-    }
-});
+app.post('/login', loginHandler);
 
 app.use((req, res, next) => {
     let token = req.body.token || req.query.token || req.headers['x-access-token'];
