@@ -157,3 +157,34 @@ export function setPTOApplicationStatus(id, status) {
 			});
 	};
 };
+
+export function fetchUsersWithPTO() {
+	return (dispatch) => {
+		let config = {
+			method: 'POST',
+			body: `{
+			    allUserWithPto {
+			    	name,
+			    	pto {
+			    		end_date
+			    	}
+			    }
+			}`,
+			headers: {
+				'Content-Type': 'application/graphql',
+				'x-access-token': localStorage.token
+			}
+		};
+		dispatch(setLoadingState(true));
+		return fetch(SERVER_API_URL, config)
+			.then((res) => res.json())
+			.then((body) => {
+				dispatch(setLoadingState(false));
+				console.log(body);
+			})
+			.catch((err) => {
+				dispatch(setLoadingState(false));
+				dispatch(apiFailure(err));
+			});
+	};
+};

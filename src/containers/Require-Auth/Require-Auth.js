@@ -49,12 +49,10 @@ export default function requireAuthentication(ProtectedComponent) {
         isAuthenticated: state.app.toJS().isAuthenticated
     });
 
-    function mapDispatchToProps(dispatch) {
-        return {
-            appActions : bindActionCreators(AppActions, dispatch),
-            mainActions: bindActionCreators(MainActions, dispatch)
-        };
-    }
+    const mapDispatchToProps = (dispatch) => ({
+        appActions : bindActionCreators(AppActions, dispatch),
+        mainActions: bindActionCreators(MainActions, dispatch)
+    });
 
     return connect(mapStateToProps, mapDispatchToProps)(AuthenticatedComponent);
 }

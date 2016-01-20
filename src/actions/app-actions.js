@@ -70,10 +70,10 @@ export function getCurrentUser() {
 			method: 'POST',
 			body: `{
 			    currentUser {
+			    	id,
 			    	name,
 			    	email,
 			    	nickname,
-			    	birthday,
 			    	token
 			    }
 			}`,
