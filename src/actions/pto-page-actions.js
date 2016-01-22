@@ -37,6 +37,13 @@ export function fetchPTOApplicationsSuccess(data) {
 	};
 };
 
+export function fetchUsersWithPTOSuccess(data) {
+	return {
+		type: actionTypes.FETCH_USERS_WITH_PTO_SUCCESS,
+		data
+	};
+};
+
 export function setApplicantToFilter(applicant) {
 	return {
 		type: actionTypes.SET_APPLICANT_NAME_TO_FILTER,
@@ -180,7 +187,7 @@ export function fetchUsersWithPTO() {
 			.then((res) => res.json())
 			.then((body) => {
 				dispatch(setLoadingState(false));
-				console.log(body);
+				dispatch(fetchUsersWithPTOSuccess(body.data.allUserWithPto));
 			})
 			.catch((err) => {
 				dispatch(setLoadingState(false));
