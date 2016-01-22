@@ -1,8 +1,10 @@
 .name-filter {
 	display: inline-block;
+	margin-right: 20px;
 	padding: 5px 10px;
 
 	text-align: center;
+	vertical-align: middle;
 
 	color: #fff;
 	background-color: #1ba1e2;
@@ -20,4 +22,8 @@
 	background-color: #2cb2f3;
 	cursor: default;
 	pointer-events: none;
+}
+
+.name-filter .name-filter__subtitle--hide {
+	display: none;
 }
