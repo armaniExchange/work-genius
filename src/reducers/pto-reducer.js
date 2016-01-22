@@ -8,8 +8,7 @@ import moment from 'moment';
 import * as actionTypes from '../constants/action-types';
 
 const initialPTOFilterConditions = Map({
-    'status': '',
-    'applicant': ''
+    'status': ''
 });
 
 const initialState = Map({
@@ -31,7 +30,8 @@ const initialState = Map({
         status: 0
     }),
     allUsersWithClosestPTO: List.of(),
-    showPTOApplyModal: false
+    showPTOApplyModal: false,
+    currentSelectedUserID: ''
 });
 
 function filterOriginal(state) {
@@ -192,13 +192,16 @@ export default function ptoReducer(state = initialState, action) {
         case actionTypes.FETCH_USERS_WITH_PTO_SUCCESS:
             let newAllUsersWithClosestPTO = action.data.map((user) => {
                 return {
+                    id: user.id,
                     name: user.name,
-                    closestPTO: findClosestDateToToday(user.pto.map((application) => application.end_date))
+                    subtitle: findClosestDateToToday(user.pto.map((application) => application.end_date))
                 };
             });
             return nextState.set('allUsersWithClosestPTO', newAllUsersWithClosestPTO);
         case actionTypes.GET_CURRENT_USER_SUCCESS:
-            return nextState.setIn(['ptoFilterConditions', 'applicant'], action.user.name);
+            return nextState.set('currentSelectedUserID', action.user.id);
+        case actionTypes.SET_CURRENT_SELECTED_USER_ID:
+            return nextState.set('currentSelectedUserID', action.id);
         default:
             return state;
     }

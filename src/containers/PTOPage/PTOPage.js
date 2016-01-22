@@ -15,7 +15,7 @@ import * as PTOConstants from '../../constants/pto-constants';
 import FilterList from '../../components/Filter-List/Filter-List';
 import PTOApplyModal from '../../components/PTO-Apply-Modal/PTO-Apply-Modal';
 import PTOTable from '../../components/PTO-Table/PTO-Table.js';
-import NameFilter from '../../components/Name-Filter/Name-Filter.js';
+import NameFilterGroup from '../../components/Name-Filter-Group/Name-Filter-Group.js';
 
 class PTOPage extends Component {
     constructor(props) {
@@ -27,9 +27,8 @@ class PTOPage extends Component {
         this._onApplicationStatusUpdate = ::this._onApplicationStatusUpdate;
     }
     componentWillMount() {
-        const { fetchPTOApplications, fetchUsersWithPTO } = this.props;
-        fetchPTOApplications();
-        fetchUsersWithPTO();
+        const { fetchPTOPageData, currentUser } = this.props;
+        fetchPTOPageData(currentUser.id);
     }
     _onApplyButtonClicked() {
         const { setPTOApplyModalState } = this.props;
@@ -67,19 +66,21 @@ class PTOPage extends Component {
             applications,
             ptoTitleKeyMap,
             ptoFilterConditions,
+            allUsersWithClosestPTO,
+            currentSelectedUserID,
             applicationsOriginalData,
             filterPTOTable,
+            fetchPTOPageData,
             sortPTOTableByCategory,
             sortPTOTableBy
         } = this.props;
 
         return (
             <section>
-                <NameFilter
-                    name="Howard"
-                    subtitle="2015-01-18"
-                    selected={true}
-                    onClickHandler={(name) => console.log(name)}/>
+                <NameFilterGroup
+                    users={allUsersWithClosestPTO}
+                    currentSelectedUserID={currentSelectedUserID}
+                    onUserClickedHandler={fetchPTOPageData}/>
                 <FilterList
                     data={applicationsOriginalData}
                     categories={Object.keys(ptoFilterConditions)}
@@ -108,13 +109,15 @@ class PTOPage extends Component {
 }
 
 PTOPage.propTypes = {
-    applications            : PropTypes.array.isRequired,
-    ptoTitleKeyMap          : PropTypes.array.isRequired,
+    applications            : PropTypes.array,
+    ptoTitleKeyMap          : PropTypes.array,
     applicationsOriginalData: PropTypes.array,
+    allUsersWithClosestPTO  : PropTypes.array,
     showPTOApplyModal       : PropTypes.bool,
     ptoFilterConditions     : PropTypes.object,
     sortPTOTableBy          : PropTypes.object,
     currentUser             : PropTypes.object,
+    currentSelectedUserID   : PropTypes.string,
     setPTOApplyModalState   : PropTypes.func,
     setLoadingState         : PropTypes.func,
     getCurrentUser          : PropTypes.func,
@@ -123,8 +126,7 @@ PTOPage.propTypes = {
     sortPTOTableByCategory  : PropTypes.func,
     setPTOApplicationStatus : PropTypes.func,
     removePTOApplication    : PropTypes.func,
-    fetchPTOApplications    : PropTypes.func,
-    fetchUsersWithPTO       : PropTypes.func
+    fetchPTOPageData        : PropTypes.func
 };
 
 function mapStateToProps(state) {

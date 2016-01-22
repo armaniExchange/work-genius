@@ -10,19 +10,23 @@ class NameFilter extends Component {
 		this._onClickHandler = ::this._onClickHandler;
 	}
 	_onClickHandler() {
-		const { name, onClickHandler } = this.props;
-		onClickHandler(name);
+		const { onClickHandler, nameID } = this.props;
+		onClickHandler(nameID);
 	}
 	render() {
 		const { name, subtitle, selected } = this.props;
 		let filterClass = classnames({
-			'name-filter': true,
-			'selected'   : selected
-		});
+				'name-filter': true,
+				'selected'   : selected
+			}),
+			subtitleClass = classnames({
+				'name-filter__subtitle': true,
+				'name-filter__subtitle--hide': !subtitle,
+			});
 		return (
 	        <div className={filterClass} onClick={this._onClickHandler}>
 	        	<div>{ name }</div>
-	        	<div>({ subtitle })</div>
+	        	<div className={subtitleClass}>({ subtitle })</div>
 	        </div>
 		);
 	}
@@ -30,6 +34,7 @@ class NameFilter extends Component {
 
 NameFilter.propTypes = {
 	name          : PropTypes.string.isRequired,
+	nameID        : PropTypes.string.isRequired,
 	subtitle      : PropTypes.string,
 	selected      : PropTypes.bool,
 	onClickHandler: PropTypes.func

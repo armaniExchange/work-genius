@@ -51,12 +51,19 @@ export function setApplicantToFilter(applicant) {
 	};
 };
 
-export function fetchPTOApplications() {
+export function setCurrentSelectedUserId(id) {
+	return {
+		type: actionTypes.SET_CURRENT_SELECTED_USER_ID,
+		id
+	};
+};
+
+export function fetchPTOApplications(userId) {
 	return (dispatch) => {
 		let config = {
 			method: 'POST',
 			body: `{
-			    ptoApplications {
+			    ptoApplications(applicantId: "${userId}") {
 			    	id,
 			        start_date,
 			        end_date,
@@ -72,95 +79,13 @@ export function fetchPTOApplications() {
 				'x-access-token': localStorage.token
 			}
 		};
-		dispatch(setLoadingState(true));
 		return fetch(SERVER_API_URL, config)
 			.then((res) => res.json())
 			.then((body) => {
-				dispatch(setLoadingState(false));
 				dispatch(fetchPTOApplicationsSuccess(body.data.ptoApplications));
 			})
 			.catch((err) => {
-				dispatch(setLoadingState(false));
-				dispatch(apiFailure(err));
-			});
-	};
-};
-
-export function createPTOApplication(data) {
-	return (dispatch) => {
-		let config = {
-			method: 'POST',
-			body: `mutation RootMutationType {
-			    createPTOApplication(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
-			}`,
-			headers: {
-				'Content-Type': 'application/graphql',
-				'x-access-token': localStorage.token
-			}
-		};
-		dispatch(setPTOApplyModalState(false));
-		dispatch(setLoadingState(true));
-		return fetch(SERVER_API_URL, config)
-			.then((res) => res.json())
-			.then(() => {
-				dispatch(setLoadingState(false));
-				dispatch(fetchPTOApplications());
-			})
-			.catch((err) => {
-				dispatch(setLoadingState(false));
-				dispatch(apiFailure(err));
-			});
-	};
-};
-
-export function removePTOApplication(id) {
-	return (dispatch) => {
-		let config = {
-			method: 'POST',
-			body: `mutation RootMutationType {
-			    deletePTOApplication(id:"${id}")
-			}`,
-			headers: {
-				'Content-Type': 'application/graphql',
-				'x-access-token': localStorage.token
-			}
-		};
-		dispatch(setLoadingState(true));
-		return fetch(SERVER_API_URL, config)
-			.then((res) => res.json())
-			.then(() => {
-				dispatch(setLoadingState(false));
-				dispatch(fetchPTOApplications());
-			})
-			.catch((err) => {
-				dispatch(setLoadingState(false));
-				dispatch(apiFailure(err));
-			});
-	};
-};
-
-export function setPTOApplicationStatus(id, status) {
-	return (dispatch) => {
-		let config = {
-			method: 'POST',
-			body: `mutation RootMutationType {
-			    updatePTOApplicationStatus(id:"${id}", status:"${status}")
-			}`,
-			headers: {
-				'Content-Type': 'application/graphql',
-				'x-access-token': localStorage.token
-			}
-		};
-		dispatch(setLoadingState(true));
-		return fetch(SERVER_API_URL, config)
-			.then((res) => res.json())
-			.then(() => {
-				dispatch(setLoadingState(false));
-				dispatch(fetchPTOApplications());
-			})
-			.catch((err) => {
-				dispatch(setLoadingState(false));
-				dispatch(apiFailure(err));
+				throw new Error(err);
 			});
 	};
 };
@@ -171,6 +96,7 @@ export function fetchUsersWithPTO() {
 			method: 'POST',
 			body: `{
 			    allUserWithPto {
+			    	id,
 			    	name,
 			    	pto {
 			    		end_date
@@ -182,12 +108,111 @@ export function fetchUsersWithPTO() {
 				'x-access-token': localStorage.token
 			}
 		};
-		dispatch(setLoadingState(true));
 		return fetch(SERVER_API_URL, config)
 			.then((res) => res.json())
 			.then((body) => {
-				dispatch(setLoadingState(false));
 				dispatch(fetchUsersWithPTOSuccess(body.data.allUserWithPto));
+			})
+			.catch((err) => {
+				throw new Error(err);
+			});
+	};
+};
+
+export function fetchPTOPageData(userId) {
+	return (dispatch) => {
+		dispatch(setLoadingState(true));
+		dispatch(setCurrentSelectedUserId(userId));
+		Promise.all([
+			dispatch(fetchUsersWithPTO()),
+			dispatch(fetchPTOApplications(userId))
+		]).then(
+			() => { dispatch(setLoadingState(false)); },
+			(err) => {
+				dispatch(setLoadingState(false));
+				dispatch(apiFailure(err));
+			}
+		);
+	};
+};
+
+export function createPTOApplication(data) {
+	return (dispatch, getState) => {
+		let config = {
+				method: 'POST',
+				body: `mutation RootMutationType {
+				    createPTOApplication(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+				}`,
+				headers: {
+					'Content-Type': 'application/graphql',
+					'x-access-token': localStorage.token
+				}
+			},
+			currentSelectedUserID = getState().pto.toJS().currentSelectedUserID;
+
+		dispatch(setPTOApplyModalState(false));
+		dispatch(setLoadingState(true));
+		return fetch(SERVER_API_URL, config)
+			.then((res) => res.json())
+			.then(() => {
+				dispatch(setLoadingState(false));
+				dispatch(fetchPTOPageData(currentSelectedUserID));
+			})
+			.catch((err) => {
+				dispatch(setLoadingState(false));
+				dispatch(apiFailure(err));
+			});
+	};
+};
+
+export function removePTOApplication(id) {
+	return (dispatch, getState) => {
+		let config = {
+				method: 'POST',
+				body: `mutation RootMutationType {
+				    deletePTOApplication(id:"${id}")
+				}`,
+				headers: {
+					'Content-Type': 'application/graphql',
+					'x-access-token': localStorage.token
+				}
+			},
+			currentSelectedUserID = getState().pto.toJS().currentSelectedUserID;
+
+		dispatch(setLoadingState(true));
+		return fetch(SERVER_API_URL, config)
+			.then((res) => res.json())
+			.then(() => {
+				dispatch(setLoadingState(false));
+				dispatch(fetchPTOPageData(currentSelectedUserID));
+			})
+			.catch((err) => {
+				dispatch(setLoadingState(false));
+				dispatch(apiFailure(err));
+			});
+	};
+};
+
+export function setPTOApplicationStatus(id, status) {
+	return (dispatch, getState) => {
+		let config = {
+				method: 'POST',
+				body: `mutation RootMutationType {
+				    updatePTOApplicationStatus(id:"${id}", status:"${status}")
+				}`,
+				headers: {
+					'Content-Type': 'application/graphql',
+					'x-access-token': localStorage.token
+				}
+			},
+			currentSelectedUserID = getState().pto.toJS().currentSelectedUserID;
+
+		dispatch(setLoadingState(true));
+		return fetch(SERVER_API_URL, config)
+			.then((res) => res.json())
+			.then(() => {
+				dispatch(setLoadingState(false));
+				dispatch(fetchPTOPageData(currentSelectedUserID));
 			})
 			.catch((err) => {
 				dispatch(setLoadingState(false));

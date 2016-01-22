@@ -1,5 +1,6 @@
 // GraphQL
 import {
+	GraphQLString,
 	GraphQLList
 } from 'graphql';
 // Models
@@ -13,11 +14,20 @@ let TaskQuery = {
 	'ptoApplications': {
 		type: new GraphQLList(PTOType),
 		description: 'Get all tasks from GK2',
-		resolve: async () => {
+		args: {
+			applicantId: {
+				type: GraphQLString,
+				description: 'The applicant id for filtering applications'
+			}
+		},
+		resolve: async (root, { applicantId }) => {
 			let connection = null,
+				filterCondition = !applicantId ? {} : {
+					'applicant_id': applicantId
+				},
 			    result = null,
 				query = r.db('work_genius').table('pto')
-				    .filter({})
+				    .filter(filterCondition)
 				    .coerceTo('array');
 
 			try {
