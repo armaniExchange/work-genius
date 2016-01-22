@@ -1,9 +1,9 @@
 /**
  * @author Howard Chang
  */
-
 // Libraries
 import { Map, List, OrderedMap, is } from 'immutable';
+import moment from 'moment';
 // Constants
 import * as actionTypes from '../constants/action-types';
 
@@ -30,6 +30,7 @@ const initialState = Map({
         category: '',
         status: 0
     }),
+    allUsersWithClosestPTO: List.of(),
     showPTOApplyModal: false
 });
 
@@ -153,6 +154,23 @@ function setTableData(state, data) {
         .set(`applications`, formatedData);
 }
 
+function findClosestDateToToday(dates) {
+    let result = undefined,
+        today = moment().format('YYYY-MM-DD');;
+
+    if (dates.length !== 0) {
+        result = dates.reduce((acc, x) => {
+            let accMoment = moment(acc),
+                xMoment = moment(x),
+                accDiff = Math.abs(parseInt(accMoment.diff(today, 'days'), 10)),
+                xDiff = Math.abs(parseInt(xMoment.diff(today, 'days'), 10));
+            return (accDiff <= xDiff) ? acc : x;
+        });
+    }
+
+    return result;
+}
+
 export default function ptoReducer(state = initialState, action) {
     let nextState = state;
     switch (action.type) {
@@ -171,6 +189,14 @@ export default function ptoReducer(state = initialState, action) {
                 nextState = sortOriginal(nextState);
             }
             return nextState;
+        case actionTypes.FETCH_USERS_WITH_PTO_SUCCESS:
+            let newAllUsersWithClosestPTO = action.data.map((user) => {
+                return {
+                    name: user.name,
+                    closestPTO: findClosestDateToToday(user.pto.map((application) => application.end_date))
+                };
+            });
+            return nextState.set('allUsersWithClosestPTO', newAllUsersWithClosestPTO);
         case actionTypes.GET_CURRENT_USER_SUCCESS:
             return nextState.setIn(['ptoFilterConditions', 'applicant'], action.user.name);
         default:
