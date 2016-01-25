@@ -79,16 +79,18 @@ class EditFeatureModal extends Component {
 	}
 
 	_onSubmit() {
-		const { onSubmitHandler } = this.props;
+		const { onSubmitHandler, formOptions } = this.props;
 		let title = this.refs.title.getValue();
-		let dev_name = this.refs.dev_name.getValue();
+		let dev_id = this.refs.dev_id.getValue();
 		let project = this.refs.project.getValue();
 		let pri = this.refs.pri.getValue();
 		let dev_percent = this.refs.dev_percent.getValue() + '%';
 		let eta = this.refs.eta.value;
 		let owner_name = this.refs.owner_name.getValue();
+		let dev_name = formOptions.devs.filter((dev) => dev.id === dev_id).map((user) => user.name)[0];
 		let data = {
 			title,
+			dev_id,
 			dev_name,
 			project,
 			pri,
@@ -110,9 +112,9 @@ class EditFeatureModal extends Component {
 
 	render() {
 		const { show, data, onHideHandler, formOptions } = this.props;
-		let developerOptionsHtml = formOptions['dev_name'].map((developer, i) => {
+		let developerOptionsHtml = formOptions['devs'].map((developer, i) => {
 			return (
-				<option value={developer} key={i}>{developer}</option>
+				<option value={developer.id} key={i}>{developer.name}</option>
 			);
 		});
 		let projectOptionsHtml = formOptions['project'].map((project, i) => {
@@ -151,8 +153,8 @@ class EditFeatureModal extends Component {
 					        label="Developer"
 					        labelClassName="col-xs-2"
 					        wrapperClassName="col-xs-10"
-					        defaultValue={data.dev_name ? data.dev_name : ''}
-					        ref="dev_name">
+					        defaultValue={data.dev_id ? data.dev_id : ''}
+					        ref="dev_id">
 					        {developerOptionsHtml}
 					    </Input>
 					    <Input

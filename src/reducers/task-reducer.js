@@ -8,18 +8,15 @@ import { Map, List, OrderedMap, is } from 'immutable';
 import * as actionTypes from '../constants/action-types';
 
 const initialBugFilterConditions = Map({
-	'project': '',
-	'developer_email': ''
+	'project': ''
 });
 
 const initialFeatureFilterConditions = Map({
-	'project': '',
-	'dev_name': ''
+	'project': ''
 });
 
 const initialInternalFeatureFilterConditions = Map({
-	'project': '',
-	'dev_name': ''
+	'project': ''
 });
 
 const initialState = Map({
@@ -88,9 +85,44 @@ const initialState = Map({
 	selectedID: List.of(),
 	showFeatureModal: false,
 	selectedItem: Map({}),
+    currentSelectedUserID: '',
+    allUsersWithTaskCount: List.of(),
 	// Fake Form Options (Will be getting all these data from rethinkDB in the future!!)
 	formOptions: Map({
-		dev_name: List.of('', 'Howard Chang', 'Roll Tsai', 'Vans Lai', 'Albert Huang', 'Steven Huang', 'William Ho'),
+		devs: List.of(
+			{
+				id: '00000',
+				name: 'Tester'
+			},
+			{
+				id: '00001',
+				name: 'Howard Chang'
+			},
+			{
+				id: '00002',
+				name: 'Vans Lai'
+			},
+			{
+				id: '00003',
+				name: 'Albert Huang'
+			},
+			{
+				id: '00004',
+				name: 'Roll Tsai'
+			},
+			{
+				id: '00005',
+				name: 'Shih-Ming Huang'
+			},
+			{
+				id: '00006',
+				name: 'Shau-Hua Ho'
+			},
+			{
+				id: '00007',
+				name: 'Kuang-Hui Fong'
+			}
+		),
 		project: List.of('', 'Work Genius', '4.1.0', '3.2.0'),
 		pri: List.of('', 'P1', 'P2', 'P3'),
 		owner_name: List.of('', 'Roll Tsai', 'Craig Huang', 'Zuoping Li')
@@ -101,14 +133,21 @@ function filterOriginal(state, type) {
 	let nextState = state;
 	nextState = nextState.update(`${type}TableData`, () => {
 		let keys = nextState.get(`${type}FilterConditions`).keySeq();
+		let isKeyDeprecated = true;
 		let filteredResult = nextState.get(`${type}TableOriginalData`).filter((item) => {
 			return keys.reduce((acc, key) => {
+				if (nextState.getIn([`${type}FilterConditions`, key]) === item.get(key)) {
+					isKeyDeprecated = false;
+				}
 				if (item.get(key) !== nextState.getIn([`${type}FilterConditions`, key]) && nextState.getIn([`${type}FilterConditions`, key]) !== '') {
 					return acc && false;
 				}
 				return acc && true;
 			}, true);
 		});
+		if (isKeyDeprecated && filteredResult.isEmpty()) {
+			return nextState.get(`${type}TableOriginalData`);
+		}
 		return filteredResult.isEmpty() ? List.of() : filteredResult;
 	});
 	return nextState;
@@ -244,6 +283,38 @@ function setSelectedItem(state, id) {
 	}).set('selectedItem', matchItem);
 }
 
+function countTasksNumberByType(state, users) {
+	let newAllUsersWithTaskCOunt = users.map((user) => {
+		let typeCounts = {
+				'B': 0,
+				'F': 0,
+				'N': 0
+			},
+			subtitle = '';
+
+		user.tasks.forEach((task) => {
+			if (task.type === 'bug') {
+				typeCounts['B']++;
+			} else if (task.type === 'feature') {
+				typeCounts['F']++;
+			} else if (task.type === 'internal') {
+				typeCounts['N']++;
+			}
+		});
+		subtitle = Object.keys(typeCounts).reduce((acc, type) => {
+			return `${acc} ${type} ${typeCounts[type]}`;
+		}, '').trim();
+
+
+		return {
+			id: user.id,
+			name: user.name,
+			subtitle
+		};
+	});
+	return state.set('allUsersWithTaskCount', newAllUsersWithTaskCOunt);
+}
+
 export default function taskReducer(state = initialState, action) {
 	let nextState = state;
 	switch (action.type) {
@@ -300,6 +371,12 @@ export default function taskReducer(state = initialState, action) {
 				nextState = sortOriginal(nextState, 'internalFeature');
 			}
 			return nextState;
+        case actionTypes.GET_CURRENT_USER_SUCCESS:
+            return nextState.set('currentSelectedUserID', action.user.id);
+        case actionTypes.SET_CURRENT_SELECTED_USER_ID:
+            return nextState.set('currentSelectedUserID', action.id);
+        case actionTypes.FETCH_USERS_WITH_TASKS_SUCCESS:
+            return countTasksNumberByType(nextState, action.data);
 		default:
 			return state;
 	}

@@ -63,9 +63,9 @@ app.use((req, res, next) => {
 });
 
 // Crawling GK2 every 10 minutes
-new CronJob('30 */10 * * * *', () => {
-	crawlGK2();
-}, null, true);
+// new CronJob('30 */10 * * * *', () => {
+// 	crawlGK2();
+// }, null, true);
 
 app.use('/graphql', graphqlHTTP(request => ({
     schema: schema,

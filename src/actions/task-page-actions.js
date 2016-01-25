@@ -7,7 +7,11 @@ import fetch from 'isomorphic-fetch';
 import * as actionTypes from '../constants/action-types';
 import { SERVER_API_URL } from '../constants/config';
 // Actions
-import { setLoadingState, apiFailure } from './main-actions';
+import {
+	setLoadingState,
+	apiFailure,
+	setCurrentSelectedUserId
+} from './main-actions';
 
 export function sortFeatureTableByCategory(category) {
 	return {
@@ -117,12 +121,19 @@ export function setFeatureModalState(state) {
 	};
 };
 
-export function fetchBug() {
+export function fetchUsersWithTasksSuccess(data) {
+	return {
+		type: actionTypes.FETCH_USERS_WITH_TASKS_SUCCESS,
+		data
+	};
+};
+
+export function fetchBug(userId) {
 	return (dispatch) => {
 		let config = {
 			method: 'POST',
 			body: `{
-			    tasks(taskType: "bug") {
+			    tasks(taskType: "bug", devId: "${userId}") {
 			    	id,
 			        title,
 			        eta,
@@ -152,12 +163,12 @@ export function fetchBug() {
 	};
 };
 
-export function fetchFeature() {
+export function fetchFeature(userId) {
 	return (dispatch) => {
 		let config = {
 			method: 'POST',
 			body: `{
-			    tasks(taskType: "feature") {
+			    tasks(taskType: "feature", devId: "${userId}") {
 			    	id,
 			        title,
 			        status,
@@ -188,15 +199,16 @@ export function fetchFeature() {
 	};
 };
 
-export function fetchInternalFeature() {
+export function fetchInternalFeature(userId) {
 	return (dispatch) => {
 		let config = {
 			method: 'POST',
 			body: `{
-			    tasks(taskType: "internal") {
+			    tasks(taskType: "internal", devId: "${userId}") {
 			        title,
 			        pri,
 			        dev_percent,
+			        dev_id,
 			        dev_name,
 			        owner_name,
 			        project,
@@ -220,15 +232,49 @@ export function fetchInternalFeature() {
 	};
 };
 
-export function fetchTaskPageData() {
+export function fetchUsersWithTasks() {
+	return (dispatch) => {
+		let config = {
+			method: 'POST',
+			body: `{
+			    allUserWithTasks {
+			    	id,
+			    	name,
+			    	tasks {
+			    		dev_id,
+			    		type
+			    	}
+			    }
+			}`,
+			headers: {
+				'Content-Type': 'application/graphql',
+				'x-access-token': localStorage.token
+			}
+		};
+		return fetch(SERVER_API_URL, config)
+			.then((res) => res.json())
+			.then((body) => {
+				dispatch(fetchUsersWithTasksSuccess(body.data.allUserWithTasks));
+			})
+			.catch((err) => {
+				throw new Error(err);
+			});
+	};
+};
+
+export function fetchTaskPageData(userId) {
 	return (dispatch) => {
 		dispatch(setLoadingState(true));
 		Promise.all([
-			dispatch(fetchBug()),
-			dispatch(fetchFeature()),
-			dispatch(fetchInternalFeature())
+			dispatch(fetchUsersWithTasks()),
+			dispatch(fetchBug(userId)),
+			dispatch(fetchFeature(userId)),
+			dispatch(fetchInternalFeature(userId))
 		]).then(
-			() => { dispatch(setLoadingState(false)); },
+			() => {
+				dispatch(setCurrentSelectedUserId(userId));
+				dispatch(setLoadingState(false));
+			},
 			(err) => {
 				dispatch(setLoadingState(false));
 				dispatch(apiFailure(err));
@@ -238,23 +284,25 @@ export function fetchTaskPageData() {
 };
 
 export function initiateGK2Crawler() {
-	return (dispatch) => {
+	return (dispatch, getState) => {
 		let config = {
-			method: 'POST',
-			body: `mutation RootMutationType {
-			    initiateCrawler
-			}`,
-			headers: {
-				'Content-Type': 'application/graphql',
-				'x-access-token': localStorage.token
-			}
-		};
+				method: 'POST',
+				body: `mutation RootMutationType {
+				    initiateCrawler
+				}`,
+				headers: {
+					'Content-Type': 'application/graphql',
+					'x-access-token': localStorage.token
+				}
+			},
+		    currentSelectedUserID = getState().pto.toJS().currentSelectedUserID;
+
 		dispatch(setLoadingState(true));
 		return fetch(SERVER_API_URL, config)
 			.then((res) => res.json())
 			.then(() => {
 				dispatch(setLoadingState(false));
-				dispatch(fetchTaskPageData());
+				dispatch(fetchTaskPageData(currentSelectedUserID));
 			})
 			.catch((err) => {
 				dispatch(setLoadingState(false));
@@ -264,17 +312,19 @@ export function initiateGK2Crawler() {
 };
 
 export function deleteSelectedItems(ids) {
-	return (dispatch) => {
+	return (dispatch, getState) => {
 		let config = {
-			method: 'POST',
-			body: `mutation RootMutationType {
-			    deleteInternalFeatures(ids:"${ids}")
-			}`,
-			headers: {
-				'Content-Type': 'application/graphql',
-				'x-access-token': localStorage.token
-			}
-		};
+				method: 'POST',
+				body: `mutation RootMutationType {
+				    deleteInternalFeatures(ids:"${ids}")
+				}`,
+				headers: {
+					'Content-Type': 'application/graphql',
+					'x-access-token': localStorage.token
+				}
+			},
+			currentSelectedUserID = getState().pto.toJS().currentSelectedUserID;
+
 		dispatch(setDeleteWarningBoxState(false));
 		dispatch(setLoadingState(true));
 		return fetch(SERVER_API_URL, config)
@@ -282,7 +332,7 @@ export function deleteSelectedItems(ids) {
 			.then(() => {
 				dispatch(setLoadingState(false));
 				dispatch(resetSelectedItem());
-				dispatch(fetchTaskPageData());
+				dispatch(fetchTaskPageData(currentSelectedUserID));
 			})
 			.catch((err) => {
 				dispatch(setLoadingState(false));
@@ -293,17 +343,18 @@ export function deleteSelectedItems(ids) {
 };
 
 export function createFeature(data) {
-	return (dispatch) => {
+	return (dispatch, getState) => {
 		let config = {
-			method: 'POST',
-			body: `mutation RootMutationType {
-			    createInternalFeatures(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
-			}`,
-			headers: {
-				'Content-Type': 'application/graphql',
-				'x-access-token': localStorage.token
-			}
-		};
+				method: 'POST',
+				body: `mutation RootMutationType {
+				    createInternalFeatures(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+				}`,
+				headers: {
+					'Content-Type': 'application/graphql',
+					'x-access-token': localStorage.token
+				}
+			},
+			currentSelectedUserID = getState().pto.toJS().currentSelectedUserID;
 		dispatch(setFeatureModalState(false));
 		dispatch(setLoadingState(true));
 		return fetch(SERVER_API_URL, config)
@@ -311,7 +362,7 @@ export function createFeature(data) {
 			.then(() => {
 				dispatch(setLoadingState(false));
 				dispatch(resetSelectedItem());
-				dispatch(fetchTaskPageData());
+				dispatch(fetchTaskPageData(currentSelectedUserID));
 			})
 			.catch((err) => {
 				dispatch(setLoadingState(false));
@@ -322,17 +373,18 @@ export function createFeature(data) {
 };
 
 export function updateFeature(id, data) {
-	return (dispatch) => {
+	return (dispatch, getState) => {
 		let config = {
-			method: 'POST',
-			body: `mutation RootMutationType {
-			    updateInternalFeatures(id:"${id}", data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
-			}`,
-			headers: {
-				'Content-Type': 'application/graphql',
-				'x-access-token': localStorage.token
-			}
-		};
+				method: 'POST',
+				body: `mutation RootMutationType {
+				    updateInternalFeatures(id:"${id}", data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+				}`,
+				headers: {
+					'Content-Type': 'application/graphql',
+					'x-access-token': localStorage.token
+				}
+			},
+			currentSelectedUserID = getState().pto.toJS().currentSelectedUserID;
 		dispatch(setFeatureModalState(false));
 		dispatch(setLoadingState(true));
 		return fetch(SERVER_API_URL, config)
@@ -340,7 +392,7 @@ export function updateFeature(id, data) {
 			.then(() => {
 				dispatch(setLoadingState(false));
 				dispatch(resetSelectedItem());
-				dispatch(fetchTaskPageData());
+				dispatch(fetchTaskPageData(currentSelectedUserID));
 			})
 			.catch((err) => {
 				dispatch(setLoadingState(false));

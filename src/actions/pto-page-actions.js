@@ -7,7 +7,11 @@ import fetch from 'isomorphic-fetch';
 import * as actionTypes from '../constants/action-types';
 import { SERVER_API_URL } from '../constants/config';
 // Actions
-import { setLoadingState, apiFailure } from './main-actions';
+import {
+	setLoadingState,
+	apiFailure,
+	setCurrentSelectedUserId
+} from './main-actions';
 
 export function setPTOApplyModalState(state) {
     return {
@@ -51,10 +55,9 @@ export function setApplicantToFilter(applicant) {
 	};
 };
 
-export function setCurrentSelectedUserId(id) {
+export function resetPTOTable() {
 	return {
-		type: actionTypes.SET_CURRENT_SELECTED_USER_ID,
-		id
+		type: actionTypes.RESET_PTO_TABLE
 	};
 };
 
@@ -122,12 +125,14 @@ export function fetchUsersWithPTO() {
 export function fetchPTOPageData(userId) {
 	return (dispatch) => {
 		dispatch(setLoadingState(true));
-		dispatch(setCurrentSelectedUserId(userId));
 		Promise.all([
 			dispatch(fetchUsersWithPTO()),
 			dispatch(fetchPTOApplications(userId))
 		]).then(
-			() => { dispatch(setLoadingState(false)); },
+			() => {
+				dispatch(setCurrentSelectedUserId(userId));
+				dispatch(setLoadingState(false));
+			},
 			(err) => {
 				dispatch(setLoadingState(false));
 				dispatch(apiFailure(err));
