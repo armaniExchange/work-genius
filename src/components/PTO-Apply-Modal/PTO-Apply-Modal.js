@@ -145,7 +145,6 @@ class PTOApplyModal extends Component {
 						    <div className="col-xs-10">
 						        <DateTimeField
 						            dateTime={today}
-						            minDate={moment()}
 						            format="YYYY-MM-DD"
 						            inputFormat="YYYY-MM-DD"
 						            mode="date"

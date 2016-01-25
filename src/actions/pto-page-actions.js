@@ -61,12 +61,24 @@ export function resetPTOTable() {
 	};
 };
 
-export function fetchPTOApplications(userId) {
+export function decreaseYearRange() {
+	return {
+		type: actionTypes.DECREASE_YEAR
+	};
+};
+
+export function increaseYearRange() {
+	return {
+		type: actionTypes.INCREASE_YEAR
+	};
+};
+
+export function fetchPTOApplications(userId, timeRange) {
 	return (dispatch) => {
 		let config = {
 			method: 'POST',
 			body: `{
-			    ptoApplications(applicantId: "${userId}") {
+			    ptoApplications(applicantId: "${userId}", timeRange: ${timeRange}) {
 			    	id,
 			        start_date,
 			        end_date,
@@ -123,11 +135,12 @@ export function fetchUsersWithPTO() {
 };
 
 export function fetchPTOPageData(userId) {
-	return (dispatch) => {
+	return (dispatch, getState) => {
+		let timeRange = getState().pto.toJS().selectedYear;
 		dispatch(setLoadingState(true));
 		Promise.all([
 			dispatch(fetchUsersWithPTO()),
-			dispatch(fetchPTOApplications(userId))
+			dispatch(fetchPTOApplications(userId, timeRange))
 		]).then(
 			() => {
 				dispatch(setCurrentSelectedUserId(userId));
@@ -138,6 +151,22 @@ export function fetchPTOPageData(userId) {
 				dispatch(apiFailure(err));
 			}
 		);
+	};
+};
+
+export function goToPreviousYear() {
+	return (dispatch, getState) => {
+		let currentSelectedUserID = getState().pto.toJS().currentSelectedUserID;
+		dispatch(decreaseYearRange());
+		dispatch(fetchPTOPageData(currentSelectedUserID));
+	};
+};
+
+export function goToNextYear() {
+	return (dispatch, getState) => {
+		let currentSelectedUserID = getState().pto.toJS().currentSelectedUserID;
+		dispatch(increaseYearRange());
+		dispatch(fetchPTOPageData(currentSelectedUserID));
 	};
 };
 
