@@ -38,14 +38,21 @@ function filterOriginal(state) {
     let nextState = state;
     nextState = nextState.update(`applications`, () => {
         let keys = nextState.get(`ptoFilterConditions`).keySeq();
+        let isKeyDeprecated = true;
         let filteredResult = nextState.get(`applicationsOriginalData`).filter((item) => {
             return keys.reduce((acc, key) => {
+                if (nextState.getIn([`ptoFilterConditions`, key]) === item.get(key)) {
+                    isKeyDeprecated = false;
+                }
                 if (item.get(key) !== nextState.getIn([`ptoFilterConditions`, key]) && nextState.getIn([`ptoFilterConditions`, key]) !== '') {
                     return acc && false;
                 }
                 return acc && true;
             }, true);
         });
+        if (isKeyDeprecated && filteredResult.isEmpty()) {
+            return nextState.get(`applicationsOriginalData`);
+        }
         return filteredResult.isEmpty() ? List.of() : filteredResult;
     });
     return nextState;
@@ -171,6 +178,21 @@ function findClosestDateToToday(dates) {
     return result;
 }
 
+function resetTable(state) {
+    return state
+        .update(`applications`, () => {
+            return state.get(`applicationsOriginalData`);
+        })
+        .set(`sortPTOTableBy`, Map({
+            category: '',
+            status: 0
+        }))
+        .set(
+            `ptoFilterConditions`,
+            initialState.get(`ptoFilterConditions`)
+        );
+}
+
 export default function ptoReducer(state = initialState, action) {
     let nextState = state;
     switch (action.type) {
@@ -180,6 +202,8 @@ export default function ptoReducer(state = initialState, action) {
             return sortTable(state, action.category);
         case actionTypes.FILTER_PTO_TABLE:
             return filterTable(state, action.filterConditions);
+        case actionTypes.RESET_PTO_TABLE:
+            return resetTable(state);
         case actionTypes.FETCH_PTO_APPLICATION_SUCCESS:
             nextState = setTableData(state, action.data);
             if (!is(state.get('ptoFilterConditions'), initialPTOFilterConditions)) {

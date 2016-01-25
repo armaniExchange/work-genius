@@ -90,7 +90,11 @@ let TaskType = new GraphQLObjectType({
 		'qa_name': {
 			type: GraphQLString,
 			description: 'Feature QA name'
-		}
+		},
+		'dev_id': {
+			type: GraphQLString,
+			description: 'Feature developer id'
+		},
 	})
 });
 

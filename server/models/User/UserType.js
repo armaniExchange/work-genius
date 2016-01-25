@@ -6,6 +6,7 @@ import {
 	GraphQLList
 } from 'graphql';
 import PTOType from '../PTO/PTOType.js';
+import TaskType from '../Task/TaskType.js';
 
 let UserType = new GraphQLObjectType({
 	name: 'User',
@@ -70,6 +71,10 @@ let UserType = new GraphQLObjectType({
 		pto: {
 			type: new GraphQLList(PTOType),
 			description: 'User pto applications'
+		},
+		tasks: {
+			type: new GraphQLList(TaskType),
+			description: 'User tasks'
 		}
 	})
 });

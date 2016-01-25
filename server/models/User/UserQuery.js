@@ -34,7 +34,7 @@ let UserQuery = {
 	},
 	'allUserWithPto': {
 		type: new GraphQLList(UserType),
-		description: 'Get all users',
+		description: 'Get all users with pto data',
 		resolve: async () => {
 			let connection = null,
 				users = null,
@@ -55,6 +55,38 @@ let UserQuery = {
 						{},
 						user,
 						{ pto }
+					));
+				}
+				await connection.close();
+				return result;
+			} catch (err) {
+				return err;
+			}
+		}
+	},
+	'allUserWithTasks': {
+		type: new GraphQLList(UserType),
+		description: 'Get all users with task data',
+		resolve: async () => {
+			let connection = null,
+				users = null,
+			    result = [],
+			    query = null,
+			    tasks = null;
+
+			try {
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				query = r.db('work_genius').table('users').filter({}).coerceTo('array');
+				users = await query.run(connection);
+				for (let user of users) {
+					query = r.db('work_genius').table('tasks').filter({
+						dev_id: user.id
+					}).coerceTo('array');
+					tasks = await query.run(connection);
+					result.push(Object.assign(
+						{},
+						user,
+						{ tasks }
 					));
 				}
 				await connection.close();

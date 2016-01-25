@@ -25,10 +25,15 @@ class PTOPage extends Component {
         this._closePTOApplyModal = ::this._closePTOApplyModal;
         this._onPTORemoveClicked = ::this._onPTORemoveClicked;
         this._onApplicationStatusUpdate = ::this._onApplicationStatusUpdate;
+        this._onUserFilterClickedHandler = ::this._onUserFilterClickedHandler;
     }
     componentWillMount() {
         const { fetchPTOPageData, currentUser } = this.props;
         fetchPTOPageData(currentUser.id);
+    }
+    componentWillUnmount() {
+        const { resetPTOTable } = this.props;
+        resetPTOTable();
     }
     _onApplyButtonClicked() {
         const { setPTOApplyModalState } = this.props;
@@ -60,6 +65,14 @@ class PTOPage extends Component {
         const { setPTOApplicationStatus } = this.props;
         setPTOApplicationStatus(id, newState);
     }
+    _onUserFilterClickedHandler(id) {
+        const {
+            resetPTOTable,
+            fetchPTOPageData
+        } = this.props;
+        resetPTOTable();
+        fetchPTOPageData(id);
+    }
     render() {
         const {
             showPTOApplyModal,
@@ -70,7 +83,6 @@ class PTOPage extends Component {
             currentSelectedUserID,
             applicationsOriginalData,
             filterPTOTable,
-            fetchPTOPageData,
             sortPTOTableByCategory,
             sortPTOTableBy
         } = this.props;
@@ -80,10 +92,10 @@ class PTOPage extends Component {
                 <NameFilterGroup
                     users={allUsersWithClosestPTO}
                     currentSelectedUserID={currentSelectedUserID}
-                    onUserClickedHandler={fetchPTOPageData}/>
+                    onUserClickedHandler={this._onUserFilterClickedHandler} />
                 <FilterList
                     data={applicationsOriginalData}
-                    categories={Object.keys(ptoFilterConditions)}
+                    categories={ptoFilterConditions}
                     onFilterHandler={filterPTOTable} />
                 <PTOTable
                     data={applications}
@@ -126,7 +138,8 @@ PTOPage.propTypes = {
     sortPTOTableByCategory  : PropTypes.func,
     setPTOApplicationStatus : PropTypes.func,
     removePTOApplication    : PropTypes.func,
-    fetchPTOPageData        : PropTypes.func
+    fetchPTOPageData        : PropTypes.func,
+    resetPTOTable           : PropTypes.func
 };
 
 function mapStateToProps(state) {
@@ -141,14 +154,8 @@ function mapDispatchToProps(dispatch) {
     return Object.assign(
         {},
         bindActionCreators(PTOActions, dispatch),
-        {
-            setLoadingState: (loadingState) => {
-                dispatch(mainActions.setLoadingState(loadingState));
-            },
-            getCurrentUser: () => {
-                dispatch(appActions.getCurrentUser());
-            }
-        }
+        bindActionCreators(mainActions, dispatch),
+        bindActionCreators(appActions, dispatch)
     );
 }
 

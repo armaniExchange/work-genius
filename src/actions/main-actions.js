@@ -24,3 +24,10 @@ export function clearErrorMessage() {
 		type: actionTypes.CLEAR_ERROR_MESSAGE
 	};
 };
+
+export function setCurrentSelectedUserId(id) {
+	return {
+		type: actionTypes.SET_CURRENT_SELECTED_USER_ID,
+		id
+	};
+};
