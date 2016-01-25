@@ -17,6 +17,24 @@ import PTOApplyModal from '../../components/PTO-Apply-Modal/PTO-Apply-Modal';
 import PTOTable from '../../components/PTO-Table/PTO-Table.js';
 import NameFilterGroup from '../../components/Name-Filter-Group/Name-Filter-Group.js';
 
+let PTOYearFilter = ({ selectedYear, goToPreviousYear, goToNextYear }) => {
+    return (
+        <div className="pto-year-filter">
+            <button
+                className="btn btn-success"
+                onClick={goToPreviousYear}>
+                -
+            </button>
+            <span>{selectedYear}</span>
+            <button
+                className="btn btn-success"
+                onClick={goToNextYear}>
+                +
+            </button>
+        </div>
+    );
+};
+
 class PTOPage extends Component {
     constructor(props) {
         super(props);
@@ -28,8 +46,9 @@ class PTOPage extends Component {
         this._onUserFilterClickedHandler = ::this._onUserFilterClickedHandler;
     }
     componentWillMount() {
-        const { fetchPTOPageData, currentUser } = this.props;
-        fetchPTOPageData(currentUser.id);
+        const { fetchPTOPageData, currentUser, selectedYear } = this.props;
+        console.log(selectedYear);
+        fetchPTOPageData(currentUser.id, selectedYear);
     }
     componentWillUnmount() {
         const { resetPTOTable } = this.props;
@@ -89,6 +108,7 @@ class PTOPage extends Component {
 
         return (
             <section>
+                <PTOYearFilter {...this.props} />
                 <NameFilterGroup
                     users={allUsersWithClosestPTO}
                     currentSelectedUserID={currentSelectedUserID}
@@ -130,6 +150,7 @@ PTOPage.propTypes = {
     sortPTOTableBy          : PropTypes.object,
     currentUser             : PropTypes.object,
     currentSelectedUserID   : PropTypes.string,
+    selectedYear            : PropTypes.number,
     setPTOApplyModalState   : PropTypes.func,
     setLoadingState         : PropTypes.func,
     getCurrentUser          : PropTypes.func,
@@ -139,7 +160,9 @@ PTOPage.propTypes = {
     setPTOApplicationStatus : PropTypes.func,
     removePTOApplication    : PropTypes.func,
     fetchPTOPageData        : PropTypes.func,
-    resetPTOTable           : PropTypes.func
+    resetPTOTable           : PropTypes.func,
+    goToPreviousYear        : PropTypes.func,
+    goToNextYear            : PropTypes.func
 };
 
 function mapStateToProps(state) {

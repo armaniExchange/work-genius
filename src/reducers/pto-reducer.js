@@ -31,7 +31,8 @@ const initialState = Map({
     }),
     allUsersWithClosestPTO: List.of(),
     showPTOApplyModal: false,
-    currentSelectedUserID: ''
+    currentSelectedUserID: '',
+    selectedYear: moment().get('year')
 });
 
 function filterOriginal(state) {
@@ -190,6 +191,10 @@ function resetTable(state) {
         .set(
             `ptoFilterConditions`,
             initialState.get(`ptoFilterConditions`)
+        )
+        .set(
+            `selectedYear`,
+            moment().get('year')
         );
 }
 
@@ -226,6 +231,10 @@ export default function ptoReducer(state = initialState, action) {
             return nextState.set('currentSelectedUserID', action.user.id);
         case actionTypes.SET_CURRENT_SELECTED_USER_ID:
             return nextState.set('currentSelectedUserID', action.id);
+        case actionTypes.DECREASE_YEAR:
+            return nextState.update('selectedYear', year => year - 1);
+        case actionTypes.INCREASE_YEAR:
+            return nextState.update('selectedYear', year => year + 1);
         default:
             return state;
     }

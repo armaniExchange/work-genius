@@ -1,7 +1,8 @@
 // GraphQL
 import {
 	GraphQLString,
-	GraphQLList
+	GraphQLList,
+	GraphQLInt
 } from 'graphql';
 // Models
 import PTOType from './PTOType.js';
@@ -18,9 +19,13 @@ let TaskQuery = {
 			applicantId: {
 				type: GraphQLString,
 				description: 'The applicant id for filtering applications'
+			},
+			timeRange: {
+				type: GraphQLInt,
+				description: 'The time range for filtering applications'
 			}
 		},
-		resolve: async (root, { applicantId }) => {
+		resolve: async (root, { applicantId, timeRange }) => {
 			let connection = null,
 				filterCondition = !applicantId ? {} : {
 					'applicant_id': applicantId
@@ -33,6 +38,9 @@ let TaskQuery = {
 			try {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				result = await query.run(connection);
+				result = result.filter((application) => {
+					return parseInt(application.end_date.slice(0, 4), 10) === timeRange;
+				});
 				await connection.close();
 			} catch (err) {
 				return err;
