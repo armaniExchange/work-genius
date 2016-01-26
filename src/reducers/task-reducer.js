@@ -89,40 +89,7 @@ const initialState = Map({
     allUsersWithTaskCount: List.of(),
 	// Fake Form Options (Will be getting all these data from rethinkDB in the future!!)
 	formOptions: Map({
-		devs: List.of(
-			{
-				id: '00000',
-				name: 'Tester'
-			},
-			{
-				id: '00001',
-				name: 'Howard Chang'
-			},
-			{
-				id: '00002',
-				name: 'Vans Lai'
-			},
-			{
-				id: '00003',
-				name: 'Albert Huang'
-			},
-			{
-				id: '00004',
-				name: 'Roll Tsai'
-			},
-			{
-				id: '00005',
-				name: 'Shih-Ming Huang'
-			},
-			{
-				id: '00006',
-				name: 'Shau-Hua Ho'
-			},
-			{
-				id: '00007',
-				name: 'Kuang-Hui Fong'
-			}
-		),
+		devs: List.of(),
 		project: List.of('', 'Work Genius', '4.1.0', '3.2.0'),
 		pri: List.of('', 'P1', 'P2', 'P3'),
 		owner_name: List.of('', 'Roll Tsai', 'Craig Huang', 'Zuoping Li')
@@ -376,6 +343,16 @@ export default function taskReducer(state = initialState, action) {
         case actionTypes.SET_CURRENT_SELECTED_USER_ID:
             return nextState.set('currentSelectedUserID', action.id);
         case actionTypes.FETCH_USERS_WITH_TASKS_SUCCESS:
+        	nextState = nextState.setIn(
+        		['formOptions', 'devs'],
+        		List.of({
+        			id: undefined,
+        			name: ''
+        		}).concat(action.data.map((user) => ({
+	        		id: user.id,
+	        		name: user.name
+	        	})))
+	        );
             return countTasksNumberByType(nextState, action.data);
 		default:
 			return state;
