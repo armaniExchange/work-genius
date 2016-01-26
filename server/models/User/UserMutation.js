@@ -81,6 +81,13 @@ const fakeExtract = function(account) {
 				nickname: 'Kuang-Hui F.',
 				email: 'kfong@a10networks.com'
 			};
+		case 'zli':
+			return {
+				id: '00008',
+				name: 'Zuoping Li',
+				nickname: 'Zuoping L.',
+				email: 'zli@a10networks.com'
+			};
 		default:
 			return {
 				id: '00000',

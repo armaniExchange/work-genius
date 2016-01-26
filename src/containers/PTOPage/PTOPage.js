@@ -47,7 +47,6 @@ class PTOPage extends Component {
     }
     componentWillMount() {
         const { fetchPTOPageData, currentUser, selectedYear } = this.props;
-        console.log(selectedYear);
         fetchPTOPageData(currentUser.id, selectedYear);
     }
     componentWillUnmount() {
