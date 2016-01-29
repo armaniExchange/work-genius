@@ -8,7 +8,6 @@ import { bindActionCreators } from 'redux';
 import Spinner from '../../components/Spinner/Spinner';
 // Actions
 import * as AppActions from '../../actions/app-actions';
-import * as MainActions from '../../actions/main-actions';
 
 class App extends Component {
 	componentWillMount() {
@@ -18,7 +17,7 @@ class App extends Component {
 	render() {
 		const {
 			isLoading
-		} = this.props.mainState;
+		} = this.props.appState;
 		return (
 			<div>
 				<Spinner hide={!isLoading} />
@@ -30,22 +29,18 @@ class App extends Component {
 
 App.propTypes = {
 	appState  : PropTypes.object.isRequired,
-	mainState :PropTypes.object.isRequired,
-	appActions: PropTypes.object.isRequired,
-	mainActions: PropTypes.object.isRequired
+	appActions: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
 	return {
-		appState: state.app.toJS(),
-		mainState: state.main.toJS(),
+		appState: state.app.toJS()
 	};
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		appActions : bindActionCreators(AppActions, dispatch),
-		mainActions: bindActionCreators(MainActions, dispatch)
+		appActions : bindActionCreators(AppActions, dispatch)
 	};
 }
 

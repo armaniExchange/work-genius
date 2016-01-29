@@ -5,6 +5,7 @@ import createBrowserHistory from 'history/lib/createBrowserHistory';
 // Components
 import App from '../containers/App/App';
 import Main from '../containers/Main/Main';
+import AdminPage from '../containers/AdminPage/AdminPage';
 import DashboardPage from '../containers/DashboardPage/DashboardPage';
 import TaskPage from '../containers/TaskPage/TaskPage';
 import PTOPage from '../containers/PTOPage/PTOPage';
@@ -23,14 +24,15 @@ const appRoutes = () => (
 	<Router history={createBrowserHistory()}>
 	    <Route path="/" component={App}>
 			<IndexRoute component={Login} />
-			<Route path="/main" component={requireAuth(Main)}>
+			<Route path="main" component={requireAuth(Main)}>
 			    <IndexRoute component={requireAuth(DashboardPage)}/>
-			    <Route path="/main/task" component={requireAuth(TaskPage)} />
-			    <Route path="/main/pto" component={requireAuth(PTOPage)} />
-			    <Route path="/main/redux-demo" component={requireAuth(DemoPage)} />
-			    <Route path="/main/data-explorer" component={requireAuth(DataExplorerPage)}>
+			    <Route path="admin" component={requireAuth(AdminPage)} />
+			    <Route path="task" component={requireAuth(TaskPage)} />
+			    <Route path="pto" component={requireAuth(PTOPage)} />
+			    <Route path="redux-demo" component={requireAuth(DemoPage)} />
+			    <Route path="data-explorer" component={requireAuth(DataExplorerPage)}>
 			        <IndexRoute component={requireAuth(DataExplorerFolderView)}/>
-			        <Route path="/main/data-explorer/:folderName" component={requireAuth(DataExplorerFileView)} />
+			        <Route path="data-explorer/:folderName" component={requireAuth(DataExplorerFileView)} />
 			    </Route>
 		    </Route>
 		    <Route path="*" component={NotFoundPage} />

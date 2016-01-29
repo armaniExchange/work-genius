@@ -9,9 +9,9 @@ import { SERVER_API_URL } from '../constants/config';
 // Actions
 import {
 	setLoadingState,
-	apiFailure,
-	setCurrentSelectedUserId
-} from './main-actions';
+	apiFailure
+} from './app-actions';
+import { setCurrentSelectedUserId } from './main-actions';
 
 export function sortFeatureTableByCategory(category) {
 	return {

@@ -152,7 +152,6 @@ PTOPage.propTypes = {
     selectedYear            : PropTypes.number,
     setPTOApplyModalState   : PropTypes.func,
     setLoadingState         : PropTypes.func,
-    getCurrentUser          : PropTypes.func,
     createPTOApplication    : PropTypes.func,
     filterPTOTable          : PropTypes.func,
     sortPTOTableByCategory  : PropTypes.func,

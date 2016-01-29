@@ -3,8 +3,30 @@ import fetch from 'isomorphic-fetch';
 // Constants
 import * as actionTypes from '../constants/action-types';
 import { SERVER_API_URL, SERVER_LOGIN_URL } from '../constants/config';
-// Actions
-import { setLoadingState } from './main-actions';
+
+export function setLoadingState(state) {
+	return {
+		type: actionTypes.SET_LOADING_STATE,
+		state
+	};
+};
+
+export function apiFailure(err) {
+	let msg = err.message ? err.message : err;
+	return (dispatch) => {
+		dispatch(setLoadingState(false));
+		dispatch({
+			type: actionTypes.API_FAILURE,
+			err : msg
+		});
+	};
+};
+
+export function clearErrorMessage() {
+	return {
+		type: actionTypes.CLEAR_ERROR_MESSAGE
+	};
+};
 
 export function loginFailure(error) {
 	return {
@@ -74,7 +96,8 @@ export function getCurrentUser() {
 			    	name,
 			    	email,
 			    	nickname,
-			    	token
+			    	token,
+			    	privilege
 			    }
 			}`,
 			headers: {
@@ -82,7 +105,6 @@ export function getCurrentUser() {
 				'x-access-token': localStorage.token
 			}
 		};
-		dispatch(setLoadingState(true));
 		return fetch(SERVER_API_URL, config)
 			.then((res) => {
 				if (res.status >= 400) {
@@ -91,11 +113,9 @@ export function getCurrentUser() {
 				return res.json();
 			})
 			.then((body) => {
-				dispatch(setLoadingState(false));
 				dispatch(getCurrentUserSuccess(body.data.currentUser.token, body.data.currentUser, true));
 			})
 			.catch(() => {
-				dispatch(setLoadingState(false));
 				dispatch(loginFailure(''));
 			});
 	};
