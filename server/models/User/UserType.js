@@ -75,6 +75,10 @@ let UserType = new GraphQLObjectType({
 		tasks: {
 			type: new GraphQLList(TaskType),
 			description: 'User tasks'
+		},
+		privilege: {
+			type: GraphQLInt,
+			description: 'User privilege level'
 		}
 	})
 });

@@ -88,9 +88,17 @@ const fakeExtract = function(account) {
 				nickname: 'Zuoping L.',
 				email: 'zli@a10networks.com'
 			};
-		default:
+		case 'admin':
 			return {
 				id: '00000',
+				name: '',
+				nickname: '',
+				email: '',
+				privilege: 10
+			};
+		default:
+			return {
+				id: '99999',
 				name: 'Tester',
 				nickname: 'Tester',
 				email: 'tester@a10networks.com'

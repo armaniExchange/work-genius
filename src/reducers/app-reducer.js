@@ -1,10 +1,12 @@
 // Immutable
-import { Map } from 'immutable';
+import { Map, fromJS } from 'immutable';
 // Constants
 import * as actionTypes from '../constants/action-types';
 
 const initialState = Map({
 	token: '',
+	isLoading: false,
+	errorMessage: '',
 	currentUser: Map({}),
 	isAuthenticated: undefined,
 	loginError: ''
@@ -50,6 +52,12 @@ export default function appReducer(state = initialState, action) {
 		                .set('token', '')
 		                .set('isAuthenticated', false)
 		                .set('currentUser', Map({}));
+		case actionTypes.SET_LOADING_STATE:
+			return state.set('isLoading', action.state);
+		case actionTypes.API_FAILURE:
+			return state.set('errorMessage', fromJS(action.err));
+		case actionTypes.CLEAR_ERROR_MESSAGE:
+			return state.set('errorMessage', '');
 		default:
 			return state;
 	}

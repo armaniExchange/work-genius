@@ -36,7 +36,7 @@ class Main extends Component {
 			let titleFromItem = itemMatchResult ? itemMatchResult[1] : itemMatchResult;
 			return titleFromItem === titleFromPath;
 		});
-		return filteredItems[0].displayText;
+		return filteredItems.length === 0 ? '' : filteredItems[0].displayText;
 	}
 
 	_navItemsClickHandler() {
@@ -60,7 +60,6 @@ class Main extends Component {
 			hasLogo,
 			errorMessage
 		} = this.props.mainState;
-
 		const { logout } = this.props.appActions;
 
 		// Location props are coming from react router
