@@ -31,30 +31,29 @@ const initialState = Map({
 	hasLogo: true
 });
 
+const updateNavigationItem = (state, action) => {
+	return action.user.privilege >= PRIVILEGE.ADMIN ?
+		state.update('navItems', (items) => {
+			return items.filter(
+				item => item.get('displayText') !== 'Admin'
+			).unshift(
+			    Map({
+					displayText: 'Admin',
+					link: '/main/admin'
+				})
+			);
+		}) :
+		state.update('navItems', (items) => items.filter(
+			item => item.get('displayText') !== 'Admin'
+		));
+};
+
 export default function mainReducer(state = initialState, action) {
 	switch (action.type) {
 		case actionTypes.GET_CURRENT_USER_SUCCESS:
-			return action.user.privilege >= PRIVILEGE.ADMIN ?
-				state.update('navItems', (items) => items.unshift(
-					Map({
-						displayText: 'Admin',
-						link: '/main/admin'
-					})
-				)) :
-				state.update('navItems', (items) => items.filter(
-					item => item.get('displayText') !== 'Admin'
-				));
+			return updateNavigationItem(state, action);
 		case actionTypes.LOGIN_SUCCESS:
-			return action.user.privilege >= PRIVILEGE.ADMIN ?
-				state.update('navItems', (items) => items.unshift(
-					Map({
-						displayText: 'Admin',
-						link: '/main/admin'
-					})
-				)) :
-				state.update('navItems', (items) => items.filter(
-					item => item.get('displayText') !== 'Admin'
-				));
+			return updateNavigationItem(state, action);
 		default:
 			return state;
 	}

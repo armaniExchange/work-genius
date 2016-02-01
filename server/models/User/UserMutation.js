@@ -91,9 +91,9 @@ const fakeExtract = function(account) {
 		case 'admin':
 			return {
 				id: '00000',
-				name: '',
-				nickname: '',
-				email: '',
+				name: 'Admin',
+				nickname: 'Admin',
+				email: 'admin',
 				privilege: 10
 			};
 		default:

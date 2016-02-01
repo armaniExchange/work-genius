@@ -46,20 +46,22 @@ class Main extends Component {
 	_closeAlertBox() {
 		const {
 			errorMessage
-		} = this.props.mainState;
+		} = this.props.appState;
 		if (errorMessage.toLowerCase() === 'unauthorized') {
 			location.reload();
 		}
-		this.props.mainActions.clearErrorMessage();
+		this.props.appActions.clearErrorMessage();
 	}
 
 	render() {
 		const {
 			navHeaderTitle,
 			navItems,
-			hasLogo,
-			errorMessage
+			hasLogo
 		} = this.props.mainState;
+		const {
+			errorMessage
+		} = this.props.appState;
 		const { logout } = this.props.appActions;
 
 		// Location props are coming from react router
@@ -95,6 +97,7 @@ class Main extends Component {
 
 Main.propTypes = {
 	mainState  : PropTypes.object.isRequired,
+	appState   : PropTypes.object.isRequired,
 	appActions : PropTypes.object.isRequired,
 	mainActions: PropTypes.object.isRequired,
 	location   : PropTypes.object.isRequired
@@ -102,7 +105,8 @@ Main.propTypes = {
 
 function mapStateToProps(state) {
 	return {
-		mainState: state.main.toJS()
+		mainState: state.main.toJS(),
+		appState: state.app.toJS()
 	};
 }
 

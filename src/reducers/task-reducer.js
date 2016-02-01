@@ -6,6 +6,7 @@
 import { Map, List, OrderedMap, is } from 'immutable';
 // Constants
 import * as actionTypes from '../constants/action-types';
+import { ADMIN_ID } from '../../server/constants/configurations.js';
 
 const initialBugFilterConditions = Map({
 	'project': ''
@@ -338,10 +339,8 @@ export default function taskReducer(state = initialState, action) {
 				nextState = sortOriginal(nextState, 'internalFeature');
 			}
 			return nextState;
-        case actionTypes.GET_CURRENT_USER_SUCCESS:
-            return nextState.set('currentSelectedUserID', action.user.id);
         case actionTypes.SET_CURRENT_SELECTED_USER_ID:
-            return nextState.set('currentSelectedUserID', action.id);
+            return nextState.set('currentSelectedUserID', action.id === ADMIN_ID ? '' : action.id);
         case actionTypes.FETCH_USERS_WITH_TASKS_SUCCESS:
         	nextState = nextState.setIn(
         		['formOptions', 'devs'],
