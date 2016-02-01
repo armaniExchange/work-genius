@@ -8,7 +8,7 @@ import TaskType from './TaskType.js';
 // RethinkDB
 import r from 'rethinkdb';
 // Constants
-import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
+import { DB_HOST, DB_PORT, ADMIN_ID } from '../../constants/configurations.js';
 
 let TaskQuery = {
 	'tasks': {
@@ -51,7 +51,7 @@ let TaskQuery = {
 				if (taskType) {
 					filterCondition['type'] = taskType;
 				}
-				if (devId) {
+				if (devId && devId !== ADMIN_ID) {
 					filterCondition['dev_id'] = devId;
 				}
 				query = r.db('work_genius').table('tasks').filter(filterCondition).coerceTo('array');

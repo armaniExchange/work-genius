@@ -7,7 +7,7 @@ import UserType from './UserType.js';
 // RethinkDB
 import r from 'rethinkdb';
 // Constants
-import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
+import { DB_HOST, DB_PORT, ADMIN_ID } from '../../constants/configurations.js';
 
 let UserQuery = {
 	'currentUser': {
@@ -44,7 +44,7 @@ let UserQuery = {
 
 			try {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				query = r.db('work_genius').table('users').filter({}).coerceTo('array');
+				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID)).coerceTo('array');
 				users = await query.run(connection);
 				for (let user of users) {
 					query = r.db('work_genius').table('pto').filter({
@@ -76,7 +76,7 @@ let UserQuery = {
 
 			try {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				query = r.db('work_genius').table('users').filter({}).coerceTo('array');
+				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID)).coerceTo('array');
 				users = await query.run(connection);
 				for (let user of users) {
 					query = r.db('work_genius').table('tasks').filter({

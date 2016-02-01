@@ -6,6 +6,7 @@ import { Map, List, OrderedMap, is } from 'immutable';
 import moment from 'moment';
 // Constants
 import * as actionTypes from '../constants/action-types';
+import { ADMIN_ID } from '../../server/constants/configurations.js';
 
 const initialPTOFilterConditions = Map({
     'status': ''
@@ -227,10 +228,8 @@ export default function ptoReducer(state = initialState, action) {
                 };
             });
             return nextState.set('allUsersWithClosestPTO', newAllUsersWithClosestPTO);
-        case actionTypes.GET_CURRENT_USER_SUCCESS:
-            return nextState.set('currentSelectedUserID', action.user.id);
         case actionTypes.SET_CURRENT_SELECTED_USER_ID:
-            return nextState.set('currentSelectedUserID', action.id);
+            return nextState.set('currentSelectedUserID', action.id === ADMIN_ID ? '' : action.id);
         case actionTypes.DECREASE_YEAR:
             return nextState.update('selectedYear', year => year - 1);
         case actionTypes.INCREASE_YEAR:

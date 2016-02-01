@@ -9,7 +9,7 @@ import PTOType from './PTOType.js';
 // RethinkDB
 import r from 'rethinkdb';
 // Constants
-import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
+import { DB_HOST, DB_PORT, ADMIN_ID } from '../../constants/configurations.js';
 
 let TaskQuery = {
 	'ptoApplications': {
@@ -27,7 +27,7 @@ let TaskQuery = {
 		},
 		resolve: async (root, { applicantId, timeRange }) => {
 			let connection = null,
-				filterCondition = !applicantId ? {} : {
+				filterCondition = (!applicantId || applicantId === ADMIN_ID) ? {} : {
 					'applicant_id': applicantId
 				},
 			    result = null,
