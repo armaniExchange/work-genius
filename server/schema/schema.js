@@ -15,25 +15,26 @@ const schema = new GraphQLSchema({
 	query: new GraphQLObjectType({
 		name: 'RootQueryType',
 		fields: {
-			allUserWithPto: UserQuery.allUserWithPto,
-			allUserWithTasks: UserQuery.allUserWithTasks,
-			currentUser: UserQuery.currentUser,
-			tasks: TaskQuery.tasks,
-			ptoApplications: PTOQuery.ptoApplications
+			allUserWithPto      : UserQuery.allUserWithPto,
+			allUserWithTasks    : UserQuery.allUserWithTasks,
+			allUserWithPrivilege: UserQuery.allUserWithPrivilege,
+			currentUser         : UserQuery.currentUser,
+			tasks               : TaskQuery.tasks,
+			ptoApplications     : PTOQuery.ptoApplications
 		}
 	}),
 	mutation: new GraphQLObjectType({
 		name: 'RootMutationType',
 		fields: {
 			// Task Page
-			initiateCrawler: TaskMutation.initiateCrawler,
-			editTaskEta: TaskMutation.editTaskEta,
-			deleteInternalFeatures: TaskMutation.deleteInternalFeatures,
-			createInternalFeatures: TaskMutation.createInternalFeatures,
-			updateInternalFeatures: TaskMutation.updateInternalFeatures,
+			initiateCrawler           : TaskMutation.initiateCrawler,
+			editTaskEta               : TaskMutation.editTaskEta,
+			deleteInternalFeatures    : TaskMutation.deleteInternalFeatures,
+			createInternalFeatures    : TaskMutation.createInternalFeatures,
+			updateInternalFeatures    : TaskMutation.updateInternalFeatures,
 			// PTO Page
-			createPTOApplication: PTOMutation.createPTOApplication,
-			deletePTOApplication: PTOMutation.deletePTOApplication,
+			createPTOApplication      : PTOMutation.createPTOApplication,
+			deletePTOApplication      : PTOMutation.deletePTOApplication,
 			updatePTOApplicationStatus: PTOMutation.updatePTOApplicationStatus,
 		}
 	})

@@ -95,6 +95,40 @@ let UserQuery = {
 				return err;
 			}
 		}
+	},
+	'allUserWithPrivilege': {
+		type: new GraphQLList(UserType),
+		description: 'Get all users with privilege role',
+		resolve: async () => {
+			let connection = null,
+				users = null,
+			    result = [],
+			    query = null,
+			    privileges = null;
+
+			try {
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID)).coerceTo('array');
+				users = await query.run(connection);
+				query = r.db('work_genius').table('privilege').filter({}).coerceTo('array');
+				privileges = await query.run(connection);
+				result = users.map(
+					(user) => Object.assign(
+					    {},
+					    user,
+					    privileges
+					        .filter((privilege) => user.privilege === privilege.level)
+					        .map((privilege) => ({
+					        	privilege_display_name: privilege.display_name
+					        }))[0]
+					)
+				);
+				await connection.close();
+				return result;
+			} catch (err) {
+				return err;
+			}
+		}
 	}
 };
 

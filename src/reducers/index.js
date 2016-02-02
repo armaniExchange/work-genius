@@ -4,6 +4,7 @@ import main from './main-reducer';
 import demo from './demo-reducer';
 import task from './task-reducer';
 import pto from './pto-reducer';
+import admin from './admin-reducer';
 import dataExplorer from './data-explorer-reducer';
 
 const rootReducer = combineReducers({
@@ -12,7 +13,8 @@ const rootReducer = combineReducers({
 	demo,
 	task,
 	dataExplorer,
-	pto
+	pto,
+	admin
 });
 
 export default rootReducer;
