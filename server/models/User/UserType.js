@@ -79,6 +79,10 @@ let UserType = new GraphQLObjectType({
 		privilege: {
 			type: GraphQLInt,
 			description: 'User privilege level'
+		},
+		privilege_display_name: {
+			type: GraphQLString,
+			description: 'User privilege display name'
 		}
 	})
 });
