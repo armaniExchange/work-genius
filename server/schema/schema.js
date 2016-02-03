@@ -10,6 +10,7 @@ import TaskMutation from '../models/Task/TaskMutation.js';
 import UserQuery from '../models/User/UserQuery.js';
 import PTOQuery from '../models/PTO/PTOQuery.js';
 import PTOMutation from '../models/PTO/PTOMutation.js';
+import UserMutation from '../models/User/UserMutation.js';
 
 const schema = new GraphQLSchema({
 	query: new GraphQLObjectType({
@@ -36,6 +37,8 @@ const schema = new GraphQLSchema({
 			createPTOApplication      : PTOMutation.createPTOApplication,
 			deletePTOApplication      : PTOMutation.deletePTOApplication,
 			updatePTOApplicationStatus: PTOMutation.updatePTOApplicationStatus,
+			// User page
+			updateUserPrivilege: UserMutation.updateUserPrivilege
 		}
 	})
 });

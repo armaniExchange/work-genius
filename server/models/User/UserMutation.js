@@ -1,6 +1,11 @@
 // Libraries
 import ActiveDirectory from 'activedirectory';
 import jwt from 'jsonwebtoken';
+// GraphQL
+import {
+  GraphQLString
+} from 'graphql';
+
 // RethinkDB
 import r from 'rethinkdb';
 // Constants
@@ -28,7 +33,37 @@ function adPromise(account, password) {
     });
 };
 
-let UserMutation = {};
+let UserMutation = {
+	'updateUserPrivilege': {
+		type: GraphQLString,
+		description: 'Set user privilege',
+		args: {
+			id: {
+				type: GraphQLString,
+				description: 'User\'s id'
+			},
+			privilege: {
+				type: GraphQLString,
+				description: 'User\'s privilege'
+			}
+		},
+		resolve: async (root, { id, privilege }) => {
+			console.log('updateUserPrivilege');
+			let connection = null,
+				mutationQuery = null;
+			try {
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				mutationQuery = r.db('work_genius').table('users').get(id).update({privilege});
+				await mutationQuery.run(connection);
+				await connection.close();
+			} catch (err) {
+				return err;
+			}
+
+			return 'Update successfully!';
+		}
+	},
+};
 
 const fakeExtract = function(account) {
 	switch (account) {

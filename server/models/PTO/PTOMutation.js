@@ -62,7 +62,7 @@ let TaskMutation = {
 		args: {
 			id: {
 				type: GraphQLString,
-				description: 'pto application id to be deleted'
+				description: 'pto application id to be updated'
 			},
 			status: {
 				type: GraphQLString,
@@ -83,7 +83,7 @@ let TaskMutation = {
 				return err;
 			}
 
-			return 'Delete successfully!';
+			return 'Update successfully!';
 		}
 	}
 };

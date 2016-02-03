@@ -9,6 +9,8 @@ import * as adminActions from '../../actions/admin-page-actions';
 // Constants
 import { PRIVILEGE } from '../../constants/config.js';
 
+import PrivilegeTable from '../../components/Privilege-Table/Privilege-Table';
+
 class AdminPage extends Component {
 	componentDidMount() {
 		const { currentUser, fetchUsersWithPrivilege } = this.props;
@@ -20,10 +22,15 @@ class AdminPage extends Component {
 		fetchUsersWithPrivilege();
 	}
 	render() {
-		const { usersWithPrivilege } = this.props;
-		console.log(usersWithPrivilege);
+		const { usersWithPrivilege , updateUserPrivilege} = this.props;
 		return (
-			<section>Admin Page</section>
+		<section>
+            <h1>Admin Page</h1>
+            <PrivilegeTable
+                updateUserPrivilege={ updateUserPrivilege }
+                titleKeyMap={['privilege']}
+                data={usersWithPrivilege}/>
+          </section>
 		);
 	}
 }
@@ -31,7 +38,8 @@ class AdminPage extends Component {
 AdminPage.propTypes = {
     currentUser            : PropTypes.object,
     usersWithPrivilege     : PropTypes.array,
-    fetchUsersWithPrivilege: PropTypes.func
+    fetchUsersWithPrivilege: PropTypes.func,
+    updateUserPrivilege    : PropTypes.func
 };
 
 AdminPage.contextTypes = {
