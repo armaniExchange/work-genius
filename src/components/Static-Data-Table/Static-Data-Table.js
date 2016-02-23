@@ -5,6 +5,8 @@ import './Static-Data-Table.css';
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 
+import Table from '../A10UI/Table';
+
 let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort }) => {
 	let headerHtml = titleKeyMap.map((headerObj, index) => {
 		let header = headerObj.title;
@@ -101,7 +103,7 @@ class StaticDataTable extends Component {
 
 		return (
 			<div className="static-data-table">
-			    <table className="table table-bordered table-responsive">
+			    <Table>
 				    <TableHeaders
 				        titleKeyMap={titleKeyMap}
 				        onSortHandler={this._onSortHandler}
@@ -110,7 +112,7 @@ class StaticDataTable extends Component {
 				    <TableBody
 				        data={data}
 				        titleKeyMap={titleKeyMap} />
-				</table>
+				</Table>
 			</div>
 		);
 	}

@@ -4,6 +4,8 @@ import './Job-Table.css';
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 
+import Table from '../A10UI/Table';
+
 let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort }) => {
 	let headerHtml = titleKeyMap.map((headerObj, index) => {
 		let header = headerObj.title;
@@ -110,12 +112,12 @@ class JobTable extends Component {
 	render () {
 		return (
 			<div className="job-table">
-			    <table className="table table-bordered table-responsive">
+			    <Table>
 				    <TableHeaders
 				        {...this.props}
 				        onSortHandler={this._onSortHandler} />
 				    <TableBody {...this.props} />
-				</table>
+				</Table>
 			</div>
 		);
 	}
