@@ -1,0 +1,6 @@
+.mdl-data-table td[data-name="Action"], 
+.mdl-data-table th[data-name="Action"],
+.mdl-data-table td[data-name="Actions"], 
+.mdl-data-table th[data-name="Actions"]{
+    text-align: center;
+}

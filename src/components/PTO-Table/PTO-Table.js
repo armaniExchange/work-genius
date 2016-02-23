@@ -8,6 +8,8 @@ import * as PTOConstants from '../../constants/pto-constants';
 import Table from '../A10UI/Table';
 import Th from '../A10UI/Th';
 import Td from '../A10UI/Td';
+import ApproveButton from '../A10UI/ApproveButton';
+import DenyButton from '../A10UI/DenyButton';
 
 let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort }) => {
     let headerHtml = titleKeyMap.map((headerObj, index) => {
@@ -89,12 +91,8 @@ let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler, onDeleteHandler }) 
                     } else {
                         statusHTML = (
                             <Td key={cellIndex}>
-                                <button onClick={() => {onStatusUpdateHandler(task['id'], PTOConstants.APPROVED);}}>
-                                    <i className="glyphicon glyphicon-ok"></i>
-                                </button>
-                                <button onClick={() => {onStatusUpdateHandler(task['id'], PTOConstants.DENIED);}}>
-                                    <i className="glyphicon glyphicon-remove"></i>
-                                </button>
+                                <ApproveButton onClick={() => {onStatusUpdateHandler(task['id'], PTOConstants.APPROVED);}} />
+                                <DenyButton onClick={() => {onStatusUpdateHandler(task['id'], PTOConstants.DENIED);}} />
                             </Td>
                         );
                     }
