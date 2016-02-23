@@ -12,10 +12,13 @@ import * as mainActions from '../../actions/main-actions';
 // Constants
 import * as PTOConstants from '../../constants/pto-constants';
 // Components
-import FilterList from '../../components/Filter-List/Filter-List';
 import PTOApplyModal from '../../components/PTO-Apply-Modal/PTO-Apply-Modal';
 import PTOTable from '../../components/PTO-Table/PTO-Table.js';
+
 import NameFilterGroup from '../../components/Name-Filter-Group/Name-Filter-Group.js';
+import RadioGroup from '../../components/A10UI/RadioGroup.js';
+import Space from '../../components/A10UI/Space.js';
+
 
 let PTOYearFilter = ({ selectedYear, goToPreviousYear, goToNextYear }) => {
     return (
@@ -96,7 +99,7 @@ class PTOPage extends Component {
             showPTOApplyModal,
             applications,
             ptoTitleKeyMap,
-            ptoFilterConditions,
+            // ptoFilterConditions, --> need many <RadioGroup /> if have 2+ fields. So far, see `const KEY='status'` for currently
             allUsersWithClosestPTO,
             currentSelectedUserID,
             applicationsOriginalData,
@@ -105,17 +108,31 @@ class PTOPage extends Component {
             sortPTOTableBy
         } = this.props;
 
+        const KEY = 'status';
+        let aryRadioConfigValue = applicationsOriginalData.reduce((prev, cur) => {
+            return prev.indexOf(cur[KEY])>=0 ? prev : prev.concat(cur[KEY]);
+        }, []);
+        let aryRadioConfig = aryRadioConfigValue.map(val=>{
+            return {name:val, value:val};
+        });
+        console.log(aryRadioConfig,'aryRadioConfig');
         return (
             <section>
                 <PTOYearFilter {...this.props} />
+
                 <NameFilterGroup
                     users={allUsersWithClosestPTO}
                     currentSelectedUserID={currentSelectedUserID}
                     onUserClickedHandler={this._onUserFilterClickedHandler} />
-                <FilterList
-                    data={applicationsOriginalData}
-                    categories={ptoFilterConditions}
-                    onFilterHandler={filterPTOTable} />
+                    <Space h="20" />
+                    <RadioGroup
+                        title="Status"
+                        isNeedAll={true}
+                        aryRadioConfig={aryRadioConfig}
+                        onRadioChange={(curVal)=>{
+                            filterPTOTable({[KEY]:curVal});
+                        }} />
+                    <Space h="20" />
                 <PTOTable
                     data={applications}
                     titleKeyMap={ptoTitleKeyMap}
@@ -124,6 +141,7 @@ class PTOPage extends Component {
                     onSortHandler={sortPTOTableByCategory}
                     onStatusUpdateHandler={this._onApplicationStatusUpdate}
                     onDeleteHandler={this._onPTORemoveClicked} />
+                    <Space h="20" />
                 <button
                     className="btn btn-success"
                     onClick={this._onApplyButtonClicked}>

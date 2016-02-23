@@ -4,3 +4,11 @@
 .mdl-data-table th[data-name="Actions"]{
     text-align: center;
 }
+
+.a10-radio-group .mdl-radio{
+    margin-right: 20px;
+}
+
+.a10-radio-group .mdl-radio.is-upgraded{
+    padding-left: 19px;
+}
