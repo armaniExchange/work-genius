@@ -6,8 +6,8 @@ import classnames from 'classnames';
 
 import Table from '../A10UI/Table/Table';
 import Td from '../A10UI/Table/Td';
-import EditButton from '../A10UI/Button/EditButton';
-import DeleteButton from '../A10UI/Button/DeleteButton';
+import EditButton from '../A10UI/Button/Edit-Button';
+import DeleteButton from '../A10UI/Button/Delete-Button';
 
 let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort }) => {
 	let headerHtml = titleKeyMap.map((headerObj, index) => {
