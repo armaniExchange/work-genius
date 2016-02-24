@@ -16,9 +16,9 @@ import PTOApplyModal from '../../components/PTO-Apply-Modal/PTO-Apply-Modal';
 import PTOTable from '../../components/PTO-Table/PTO-Table.js';
 
 // import NameFilterGroup from '../../components/Name-Filter-Group/Name-Filter-Group.js';
-import RadioGroup from '../../components/A10UI/Input/Radio-Group.js';
-import DropDownList from '../../components/A10UI/Input/Drop-Down-List.js';
-import Space from '../../components/A10UI/Space.js';
+import RadioGroup from '../../components/A10-UI/Input/Radio-Group.js';
+import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
+import Space from '../../components/A10-UI/Space.js';
 
 
 let PTOYearFilter = ({ selectedYear, goToPreviousYear, goToNextYear }) => {

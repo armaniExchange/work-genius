@@ -6,7 +6,7 @@ import classnames from 'classnames';
 // Components
 import InlineTableInputDatePicker from '../Inline-Table-Input-DatePicker/Inline-Table-Input-DatePicker';
 
-import Table from '../A10UI/Table/Table';
+import Table from '../A10-UI/Table/Table';
 
 let FilterIcons = ({ sortBy, onSortHandler, header, enableSort }) => {
 	const buttonClassNames = classnames('mdl-button mdl-js-button mdl-button--icon', {

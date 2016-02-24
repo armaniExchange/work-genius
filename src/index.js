@@ -6,7 +6,7 @@ import '../node_modules/material-design-lite/material.css';
 import '../node_modules/material-design-lite/material.min.js';
 import '../node_modules/font-awesome/css/font-awesome.min.css';
 import 'react-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css';
-import './components/A10UI/a10-mdl.css'; //override getmdl.com css for our purpose
+import './components/A10-UI/a10-mdl.css'; //override getmdl.com css for our purpose
 // Libraries
 import React from 'react';
 import ReactDOM from 'react-dom';
