@@ -5,7 +5,7 @@ import './Static-Data-Table.css';
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 
-import Table from '../A10UI/Table';
+import Table from '../A10UI/Table/Table';
 
 let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort }) => {
 	let headerHtml = titleKeyMap.map((headerObj, index) => {

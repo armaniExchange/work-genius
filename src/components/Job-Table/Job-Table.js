@@ -4,10 +4,10 @@ import './Job-Table.css';
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 
-import Table from '../A10UI/Table';
-import Td from '../A10UI/Td';
-import EditButton from '../A10UI/EditButton';
-import DeleteButton from '../A10UI/DeleteButton';
+import Table from '../A10UI/Table/Table';
+import Td from '../A10UI/Table/Td';
+import EditButton from '../A10UI/Button/EditButton';
+import DeleteButton from '../A10UI/Button/DeleteButton';
 
 let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort }) => {
 	let headerHtml = titleKeyMap.map((headerObj, index) => {

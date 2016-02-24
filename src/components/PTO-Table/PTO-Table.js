@@ -5,12 +5,12 @@ import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 // Constants
 import * as PTOConstants from '../../constants/pto-constants';
-import Table from '../A10UI/Table';
-import Th from '../A10UI/Th';
-import Td from '../A10UI/Td';
-import DeleteButton from '../A10UI/DeleteButton';
-import ApproveButton from '../A10UI/ApproveButton';
-import DenyButton from '../A10UI/DenyButton';
+import Table from '../A10UI/Table/Table';
+import Th from '../A10UI/Table/Th';
+import Td from '../A10UI/Table/Td';
+import DeleteButton from '../A10UI/Button/DeleteButton';
+import ApproveButton from '../A10UI/Button/ApproveButton';
+import DenyButton from '../A10UI/Button/DenyButton';
 
 let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort }) => {
     let headerHtml = titleKeyMap.map((headerObj, index) => {

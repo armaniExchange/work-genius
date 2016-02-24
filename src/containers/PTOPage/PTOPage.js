@@ -16,8 +16,8 @@ import PTOApplyModal from '../../components/PTO-Apply-Modal/PTO-Apply-Modal';
 import PTOTable from '../../components/PTO-Table/PTO-Table.js';
 
 // import NameFilterGroup from '../../components/Name-Filter-Group/Name-Filter-Group.js';
-import RadioGroup from '../../components/A10UI/RadioGroup.js';
-import DropDownList from '../../components/A10UI/DropDownList.js';
+import RadioGroup from '../../components/A10UI/Input/RadioGroup.js';
+import DropDownList from '../../components/A10UI/Input/DropDownList.js';
 import Space from '../../components/A10UI/Space.js';
 
 
