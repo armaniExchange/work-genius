@@ -15,8 +15,9 @@ import * as PTOConstants from '../../constants/pto-constants';
 import PTOApplyModal from '../../components/PTO-Apply-Modal/PTO-Apply-Modal';
 import PTOTable from '../../components/PTO-Table/PTO-Table.js';
 
-import NameFilterGroup from '../../components/Name-Filter-Group/Name-Filter-Group.js';
+// import NameFilterGroup from '../../components/Name-Filter-Group/Name-Filter-Group.js';
 import RadioGroup from '../../components/A10UI/RadioGroup.js';
+import DropDownList from '../../components/A10UI/DropDownList.js';
 import Space from '../../components/A10UI/Space.js';
 
 
@@ -115,15 +116,31 @@ class PTOPage extends Component {
         let aryRadioConfig = aryRadioConfigValue.map(val=>{
             return {name:val, value:val};
         });
-        console.log(aryRadioConfig,'aryRadioConfig');
+
+        let curUser = allUsersWithClosestPTO.find(_user => {
+            if (_user.id===currentSelectedUserID) {
+                return _user;
+            }
+        });
+        let dropdownTitle = '';
+        if (curUser && curUser.name) {
+            dropdownTitle = curUser.name + (curUser.subtitle ? ' - ' + curUser.subtitle : '');
+        }
         return (
             <section>
                 <PTOYearFilter {...this.props} />
+                <Space h="20" />
+                <DropDownList 
+                onOptionClick={this._onUserFilterClickedHandler}
+                title={dropdownTitle} 
+                aryOptionConfig={allUsersWithClosestPTO.map((item) => {
+                    return {title: item.name, value: item.id, subtitle: item.subtitle};
+                })} />
 
-                <NameFilterGroup
+                {/*<NameFilterGroup
                     users={allUsersWithClosestPTO}
                     currentSelectedUserID={currentSelectedUserID}
-                    onUserClickedHandler={this._onUserFilterClickedHandler} />
+                    onUserClickedHandler={this._onUserFilterClickedHandler} />*/}
                     <Space h="20" />
                     <RadioGroup
                         title="Status"
