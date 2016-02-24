@@ -2,12 +2,12 @@ import React, { Component, PropTypes } from 'react';
 
 import { Button, BUTTON_TYPE } from './Button';
 
-export default class EditButton extends Component {
+export default class DeleteButton extends Component {
     render() {
         return (<Button {...this.props} type={BUTTON_TYPE.DELETE} />);
     }
 };
 
-EditButton.propTypes = {
+DeleteButton.propTypes = {
     type: PropTypes.string
 };
