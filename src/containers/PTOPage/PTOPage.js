@@ -122,7 +122,7 @@ class PTOPage extends Component {
                 return _user;
             }
         });
-        let dropdownTitle = '';
+        let dropdownTitle = 'All';
         if (curUser && curUser.name) {
             dropdownTitle = curUser.name + (curUser.subtitle ? ' - ' + curUser.subtitle : '');
         }
@@ -131,6 +131,7 @@ class PTOPage extends Component {
                 <PTOYearFilter {...this.props} />
                 <Space h="20" />
                 <DropDownList 
+                isNeedAll={true}
                 onOptionClick={this._onUserFilterClickedHandler}
                 title={dropdownTitle} 
                 aryOptionConfig={allUsersWithClosestPTO.map((item) => {
