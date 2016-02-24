@@ -5,6 +5,12 @@ import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 // Constants
 import * as PTOConstants from '../../constants/pto-constants';
+import Table from '../A10-UI/Table/Table';
+import Th from '../A10-UI/Table/Th';
+import Td from '../A10-UI/Table/Td';
+import DeleteButton from '../A10-UI/Button/Delete-Button';
+import ApproveButton from '../A10-UI/Button/Approve-Button';
+import DenyButton from '../A10-UI/Button/Deny-Button';
 
 let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort }) => {
     let headerHtml = titleKeyMap.map((headerObj, index) => {
@@ -32,14 +38,14 @@ let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort }) => {
         }
 
         return (
-            <th
+            <Th
                 key={index}
                 className="pto-table__header"
                 data-name={header}
                 onClick={onSortHandler}>
                 <span data-name={header}>{header}</span>
                 {filterIconHtml}
-            </th>
+            </Th>
         );
     });
     return (
@@ -54,11 +60,11 @@ let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort }) => {
 let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler, onDeleteHandler }) => {
     let bodyHtml = (
         <tr>
-            <td
+            <Td
                 colSpan={titleKeyMap.length}
                 className="pto-table__body--empty">
                 No Match Result!
-            </td>
+            </Td>
         </tr>
     );
 
@@ -68,37 +74,31 @@ let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler, onDeleteHandler }) 
                 let statusHTML;
                 if (header['key'] === 'id') {
                     return (
-                        <td key={cellIndex}>
-                            <button onClick={() => {onDeleteHandler(task[header['key']]);}}>
-                                <i className="glyphicon glyphicon-trash"></i>
-                            </button>
-                        </td>
+                        <Td key={cellIndex}>
+                            <DeleteButton onClick={() => {onDeleteHandler(task[header['key']]);}} />
+                        </Td>
                     );
                 } else if (header['key'] === 'status') {
                     if (task[header['key']] === PTOConstants.APPROVED) {
                         statusHTML = (
-                            <td key={cellIndex}>Approved</td>
+                            <Td key={cellIndex}>Approved</Td>
                         );
                     } else if (task[header['key']] === PTOConstants.DENIED) {
                         statusHTML = (
-                            <td key={cellIndex}>Denied</td>
+                            <Td key={cellIndex}>Denied</Td>
                         );
                     } else {
                         statusHTML = (
-                            <td key={cellIndex}>
-                                <button onClick={() => {onStatusUpdateHandler(task['id'], PTOConstants.APPROVED);}}>
-                                    <i className="glyphicon glyphicon-ok"></i>
-                                </button>
-                                <button onClick={() => {onStatusUpdateHandler(task['id'], PTOConstants.DENIED);}}>
-                                    <i className="glyphicon glyphicon-remove"></i>
-                                </button>
-                            </td>
+                            <Td key={cellIndex}>
+                                <ApproveButton onClick={() => {onStatusUpdateHandler(task['id'], PTOConstants.APPROVED);}} />
+                                <DenyButton onClick={() => {onStatusUpdateHandler(task['id'], PTOConstants.DENIED);}} />
+                            </Td>
                         );
                     }
                     return statusHTML;
                 }
                 return (
-                    <td key={cellIndex}>{task[header['key']]}</td>
+                    <Td key={cellIndex}>{task[header['key']]}</Td>
                 );
             });
 
@@ -129,12 +129,12 @@ class PTOTable extends Component {
     render() {
         return (
             <div className="pto-table">
-                <table className="table table-bordered table-responsive">
+                <Table>
                     <TableHeaders
                         {...this.props}
                         onSortHandler={this._onSortHandler} />
                     <TableBody {...this.props} />
-                </table>
+                </Table>
             </div>
         );
     }

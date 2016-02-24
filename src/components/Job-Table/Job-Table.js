@@ -4,6 +4,11 @@ import './Job-Table.css';
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 
+import Table from '../A10-UI/Table/Table';
+import Td from '../A10-UI/Table/Td';
+import EditButton from '../A10-UI/Button/Edit-Button';
+import DeleteButton from '../A10-UI/Button/Delete-Button';
+
 let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort }) => {
 	let headerHtml = titleKeyMap.map((headerObj, index) => {
 		let header = headerObj.title;
@@ -53,11 +58,11 @@ let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort }) => {
 let TableBody = ({ data, titleKeyMap, onEditHandler, onDeleteHandler }) => {
 	let bodyHtml = (
 		<tr>
-		    <td
+		    <Td
 			    colSpan={titleKeyMap.length}
 			    className="job-table__body--empty">
 			    No Match Result!
-			</td>
+			</Td>
 		</tr>
 	);
 
@@ -66,18 +71,14 @@ let TableBody = ({ data, titleKeyMap, onEditHandler, onDeleteHandler }) => {
 			const cellHtml = titleKeyMap.map((header, cellIndex) => {
 				if (header['key'] === 'id') {
 					return (
-						<td key={cellIndex}>
-							<button onClick={() => {onEditHandler(task[header['key']]);}}>
-							    <i className="glyphicon glyphicon-pencil"></i>
-							</button>
-							<button onClick={() => {onDeleteHandler(task[header['key']]);}}>
-							    <i className="glyphicon glyphicon-trash"></i>
-							</button>
-						</td>
+						<Td key={cellIndex}>
+							<EditButton onClick={() => {onEditHandler(task[header['key']]);}} />
+							<DeleteButton onClick={() => {onDeleteHandler(task[header['key']]);}} />
+						</Td>
 					);
 				}
 				return (
-					<td key={cellIndex}>{task[header['key']]}</td>
+					<Td key={cellIndex}>{task[header['key']]}</Td>
 				);
 			});
 
@@ -110,12 +111,12 @@ class JobTable extends Component {
 	render () {
 		return (
 			<div className="job-table">
-			    <table className="table table-bordered table-responsive">
+			    <Table>
 				    <TableHeaders
 				        {...this.props}
 				        onSortHandler={this._onSortHandler} />
 				    <TableBody {...this.props} />
-				</table>
+				</Table>
 			</div>
 		);
 	}
