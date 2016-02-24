@@ -11,7 +11,7 @@ class RadioGroup extends Component {
         this.props.onRadioChange(curVal);
     }*/
     render() {
-        let { title, aryRadioConfig, isNeedAll, onRadioChange } = this.props;
+        let { title, aryRadioConfig=[], isNeedAll, onRadioChange } = this.props;
 
         let ALL_DEFAULT_VALUE = '';
         if (isNeedAll) {
@@ -35,7 +35,7 @@ class RadioGroup extends Component {
 
 RadioGroup.propTypes = {
     title: PropTypes.string,
-    aryRadioConfig: PropTypes.array.isRequired,
+    aryRadioConfig: PropTypes.array,
     isNeedAll: PropTypes.bool,
     onRadioChange: PropTypes.func
 };
