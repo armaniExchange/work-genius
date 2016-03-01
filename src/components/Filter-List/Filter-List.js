@@ -1,5 +1,5 @@
 // Styles
-import './_Filter-List.scss';
+import './_Filter-List.css';
 // Libraries
 import React, { Component, PropTypes } from 'react';
 

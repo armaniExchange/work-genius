@@ -1,5 +1,5 @@
 // Styles
-import './_Task-Table.scss';
+import './_Task-Table.css';
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';

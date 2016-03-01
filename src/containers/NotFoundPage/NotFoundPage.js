@@ -1,5 +1,5 @@
 // Style
-import './_NotFoundPage';
+import './_NotFoundPage.css';
 // React & Redux
 import React, { Component } from 'react';
 

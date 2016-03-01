@@ -5,7 +5,7 @@
 import React, { Component, PropTypes } from 'react';
 import {Panel, Input, Col} from 'react-bootstrap';
 
-import './Privilege-Table.scss';
+import './Privilege-Table.css';
 import { PRIVILEGE } from '../../constants/config.js';
 
 class PrivilegeTable extends Component {

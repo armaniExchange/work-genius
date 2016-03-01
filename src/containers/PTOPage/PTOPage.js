@@ -1,5 +1,5 @@
 // Style
-import './_PTOPage';
+import './_PTOPage.css';
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
@@ -130,10 +130,10 @@ class PTOPage extends Component {
             <section>
                 <PTOYearFilter {...this.props} />
                 <Space h="20" />
-                <DropDownList 
+                <DropDownList
                 isNeedAll={true}
                 onOptionClick={this._onUserFilterClickedHandler}
-                title={dropdownTitle} 
+                title={dropdownTitle}
                 aryOptionConfig={allUsersWithClosestPTO.map((item) => {
                     return {title: item.name, value: item.id, subtitle: item.subtitle};
                 })} />

@@ -44,7 +44,7 @@ var config = {
             },
             {
                 test: /\.(css|scss)$/,
-                loaders: ['style', 'css', 'sass', 'postcss']
+                loaders: ['style', 'css', 'postcss']
             },
             {
                 test: /\.(png|jpg|jpeg|gif|svg)(\?v=\d\.\d\.\d)?$/,
@@ -62,7 +62,7 @@ var config = {
         new Webpack.NoErrorsPlugin()
     ],
     resolve: {
-        extensions: ['', '.js', '.jsx', '.css', '.scss']
+        extensions: ['', '.js', '.jsx', '.css']
     },
     eslint: {
         configFile: eslintrcPath
