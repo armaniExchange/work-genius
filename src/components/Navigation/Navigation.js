@@ -1,5 +1,5 @@
 // Styles
-import './_Navigation.scss';
+import './_Navigation.css';
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';

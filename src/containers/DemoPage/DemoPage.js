@@ -1,5 +1,5 @@
 // Styles
-import './_Demo.scss';
+import './_Demo.css';
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';

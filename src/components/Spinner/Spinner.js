@@ -1,5 +1,5 @@
 // Style
-import './_Spinner.scss';
+import './_Spinner.css';
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';

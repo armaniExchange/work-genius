@@ -1,5 +1,5 @@
 // Styles
-import './_App.scss';
+import './_App.css';
 // React & Redux
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';

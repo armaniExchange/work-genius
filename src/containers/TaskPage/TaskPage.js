@@ -2,7 +2,7 @@
  * @author Howard Chang
  */
 // Style
-import './_TaskPage';
+import './_TaskPage.css';
 // React & Redux
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';

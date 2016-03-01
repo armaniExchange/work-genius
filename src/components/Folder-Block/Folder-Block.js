@@ -3,7 +3,7 @@
  */
 
 // Styles
-import './_Folder-Block';
+import './_Folder-Block.css';
 // Libraries
 import React, { Component, PropTypes } from 'react';
 // Components

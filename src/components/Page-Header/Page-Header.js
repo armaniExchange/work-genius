@@ -1,5 +1,5 @@
 // Styles
-import './_Page-Header.scss';
+import './_Page-Header.css';
 
 // Libraries
 import React, { Component, PropTypes } from 'react';

@@ -32,7 +32,7 @@ var config = {
             },
             {
                 test: /\.(css|scss)$/,
-                loader: ExtractTextPlugin.extract('css?sourceMap!sass?sourceMap')
+                loader: ExtractTextPlugin.extract('css?sourceMap!postcss')
             },
             {
                 test: /\.(png|jpg|jpeg|gif)$/,
@@ -65,7 +65,7 @@ var config = {
         })
     ],
     resolve: {
-        extensions: ['', '.js', '.jsx', '.css', '.scss']
+        extensions: ['', '.js', '.jsx', '.css']
     }
 };
 

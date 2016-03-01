@@ -2,7 +2,7 @@
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 // Styles
-import './_Login.scss';
+import './_Login.css';
 
 class LoginForm extends Component {
 	constructor(props) {
