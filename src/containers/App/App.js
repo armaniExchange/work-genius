@@ -14,6 +14,14 @@ class App extends Component {
 		const {	getCurrentUser } = this.props.appActions;
 		getCurrentUser();
 	}
+	componentDidUpdate() {
+		/* eslint-disable */
+		/* component handler is used by Material Design Lite, every react component
+		   needs to upgrade its DOM in order to maintain the effect.
+		*/
+		componentHandler.upgradeDom();
+		/* eslint-enable */
+	}
 	render() {
 		const {
 			isLoading
