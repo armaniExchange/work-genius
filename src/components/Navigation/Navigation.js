@@ -36,19 +36,21 @@ class Navigation extends Component {
 
 	render() {
 		const { headerTitle, navItems, hasLogo } = this.props;
-		let headerLogoHtml = hasLogo ? <HeaderLogo /> : null;
-		let navItemsHtml = navItems.map((item, index) => {
-			return (
-				<Link
-				    className="mdl-navigation__link"
-				    to={item.link}
-				    key={`navItem${index}`}
-				    name={`${item.displayText}-${index}`}
-				    onClick={this._onNavItemsClick.bind(this)}>
-				    {item.displayText}
-				</Link>
-			);
-		});
+		let headerLogoHtml = hasLogo ? <HeaderLogo /> : null,
+		    navItemsHtml = navItems.map((item, index) => {
+				return (
+					<Link
+					    className="mdl-navigation__link"
+					    to={item.link}
+						onlyActiveOnIndex={item.link === '/main'}
+						activeClassName="navigation__link--active"
+					    key={`navItem${index}`}
+					    name={`${item.displayText}-${index}`}
+					    onClick={this._onNavItemsClick.bind(this)}>
+					    {item.displayText}
+					</Link>
+				);
+			});
 
 		return (
 			<div className="mdl-layout__drawer">

@@ -19,23 +19,19 @@ class Main extends Component {
 	}
 
 	componentDidUpdate() {
-		/* eslint-disable */
-		/* component handler is used by Material Design Lite, every react component
-		   needs to upgrade its DOM in order to maintain the effect.
-		*/
-		componentHandler.upgradeDom();
-		/* eslint-enable */
+		this._navItemsClickHandler = ::this._navItemsClickHandler;
+		this._mapPathNameToDisplayName = ::this._mapPathNameToDisplayName;
 	}
 
 	_mapPathNameToDisplayName(pathName, navItems) {
 		var re = /main\/([a-zA-Z0-9-_]*)\/?/i;
-		let titleMatchResult = pathName.match(re);
-		let titleFromPath = titleMatchResult ? titleMatchResult[1] : titleMatchResult;
-		let filteredItems = navItems.filter((item) => {
-			let itemMatchResult = item.link.match(re);
-			let titleFromItem = itemMatchResult ? itemMatchResult[1] : itemMatchResult;
-			return titleFromItem === titleFromPath;
-		});
+		let titleMatchResult = pathName.match(re),
+		    titleFromPath = titleMatchResult ? titleMatchResult[1] : titleMatchResult,
+			filteredItems = navItems.filter((item) => {
+				let itemMatchResult = item.link.match(re),
+					titleFromItem = itemMatchResult ? itemMatchResult[1] : itemMatchResult;
+				return titleFromItem === titleFromPath;
+			});
 		return filteredItems.length === 0 ? '' : filteredItems[0].displayText;
 	}
 
@@ -68,29 +64,26 @@ class Main extends Component {
 		const { pathname } = this.props.location;
 
 		return (
-			// The outer-most <div> is used by Material Design Lite to prevent DOM clash with React
-			<div>
-				<section className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
-					<AlertBox
-						type="error"
-					    show={!!errorMessage}
-					    message={errorMessage}
-					    onHideHandler={this._closeAlertBox}
-					    onConfirmHandler={this._closeAlertBox} />
-					<Navigation
-					    headerTitle={navHeaderTitle}
-					    navItems={navItems}
-					    hasLogo={hasLogo}
-					    onNavItemsClick={this._navItemsClickHandler.bind(this)}
-					    onLogoutHandler={logout} />
-					<PageHeader headerTitle={this._mapPathNameToDisplayName(pathname, navItems)} />
-					<main className="mdl-layout__content">
-					    <div className="page-content">
-							{this.props.children}
-					    </div>
-					</main>
-				</section>
-			</div>
+			<section className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+				<AlertBox
+					type="error"
+				    show={!!errorMessage}
+				    message={errorMessage}
+				    onHideHandler={this._closeAlertBox}
+				    onConfirmHandler={this._closeAlertBox} />
+				<Navigation
+				    headerTitle={navHeaderTitle}
+				    navItems={navItems}
+				    hasLogo={hasLogo}
+				    onNavItemsClick={this._navItemsClickHandler}
+				    onLogoutHandler={logout} />
+				<PageHeader headerTitle={this._mapPathNameToDisplayName(pathname, navItems)} />
+				<main className="mdl-layout__content">
+				    <div className="page-content">
+						{this.props.children}
+				    </div>
+				</main>
+			</section>
 		);
 	}
 }

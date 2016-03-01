@@ -10,4 +10,7 @@
 	&__header-title {
 		vertical-align: middle;
 	}
+	&__link--active {
+		font-weight: bold;
+	}
 }
