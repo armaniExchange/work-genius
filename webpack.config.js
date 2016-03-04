@@ -38,6 +38,10 @@ var config = {
         ],
         loaders: [
             {
+                test: /\.json$/,
+                loader: 'json'
+            },
+            {
                 test: /\.js(x)?$/,
                 loader: 'babel',
                 exclude: nodeModulesPath

@@ -26,7 +26,15 @@ const initialState = Map({
 		Map({
 			displayText: 'Redux Demo',
 			link: '/main/redux-demo'
-		})
+		}),
+    Map({
+      displayText: 'Article List',
+      link: '/main/article-list'
+    }),
+    Map({
+      displayText: 'Article',
+      link: '/main/article'
+    }),
 	),
 	hasLogo: true
 });
