@@ -64,7 +64,7 @@ class Main extends Component {
 		const { pathname } = this.props.location;
 
 		return (
-			<section className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+			<section className="mdl-layout mdl-js-layout">
 				<AlertBox
 					type="error"
 				    show={!!errorMessage}

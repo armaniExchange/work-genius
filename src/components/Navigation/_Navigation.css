@@ -4,7 +4,7 @@
 		margin-right: 5px;
 		width: 82px;
 		height: 54px;
-		background: url('../../assets/images/logo.png') no-repeat 0 0;
+		background: url('../../assets/images/logo-white.png') no-repeat 0 0;
 		vertical-align: middle;
 	}
 	&__header-title {
@@ -13,4 +13,14 @@
 	&__link--active {
 		font-weight: bold;
 	}
+}
+
+.mdl-layout__header-1st {
+	background: #0078C3;
+	color: #fff;
+}
+
+.mdl-layout__header-2nd {
+	background: #eee;
+	color: #666;
 }

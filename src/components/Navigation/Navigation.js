@@ -53,7 +53,8 @@ class Navigation extends Component {
 			});
 
 		return (
-			<div className="mdl-layout__drawer">
+			<header className="mdl-layout__header is-casting-shadow mdl-layout__header-1st">
+			<div className="mdl-layout__header-row">
 			    <span className="mdl-layout-title">
 				    { headerLogoHtml }
 				    <span className="navigation__header-title">{ headerTitle }</span>
@@ -63,6 +64,7 @@ class Navigation extends Component {
 				</nav>
 				<LogoutButton onClickHandler={this._onLogoutHandler} />
 			</div>
+			</header>
 		);
 	}
 }
