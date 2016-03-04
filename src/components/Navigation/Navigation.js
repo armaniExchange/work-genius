@@ -53,7 +53,7 @@ class Navigation extends Component {
 			});
 
 		return (
-			<header className="mdl-layout__header is-casting-shadow mdl-layout__header-1st">
+			<header className="mdl-layout__header is-casting-shadow mdl-layout__header--level1">
 			<div className="mdl-layout__header-row">
 			    <span className="mdl-layout-title">
 				    { headerLogoHtml }

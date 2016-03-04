@@ -15,12 +15,12 @@
 	}
 }
 
-.mdl-layout__header-1st {
+.mdl-layout__header--level1 {
 	background: #0078C3;
 	color: #fff;
 }
 
-.mdl-layout__header-2nd {
+.mdl-layout__header--level2 {
 	background: #eee;
 	color: #666;
 }
