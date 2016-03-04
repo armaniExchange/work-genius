@@ -9,7 +9,7 @@ class PageHeader extends Component {
 		const { headerTitle } = this.props;
 
 		return (
-			<header className="mdl-layout__header">
+			<header className="mdl-layout__header mdl-layout__header-2nd">
 			    <div className="mdl-layout__header-row">
 			        <span className="mdl-layout-title">{headerTitle}</span>
 				    <div className="mdl-layout-spacer"></div>
