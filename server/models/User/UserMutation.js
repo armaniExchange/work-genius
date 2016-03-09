@@ -17,11 +17,11 @@ import {
     DB_PORT
 } from '../../constants/configurations.js';
 
-var loginPromise = function(username, password) {
+let loginPromise = function(username, password) {
 
-    var user = 'corp\\' + username;
-    var config = JSON.parse(JSON.stringify(LDAP));
-    var ad;
+    let user = 'corp\\' + username;
+    let config = JSON.parse(JSON.stringify(LDAP));
+    let ad;
 
     config['username'] = user;
     config['password'] = password;
@@ -47,7 +47,7 @@ var loginPromise = function(username, password) {
 
 };
 
-var authenticatePromise = function(ad, user, password) {
+let authenticatePromise = function(ad, user, password) {
 
     return new Promise((resolve, reject) => {
         ad.authenticate(user, password, function(err, auth) {
@@ -67,10 +67,10 @@ var authenticatePromise = function(ad, user, password) {
 
 };
 
-var findUserPromise = function(ad, username) {
+let findUserPromise = function(ad, username) {
 
     return new Promise((resolve, reject) => {
-        var query = {
+        let query = {
             filter: '(sAMAccountName=' + username + ')',
             attributes: ['displayName', 'mail', 'title', 'sAMAccountName', 'uSNCreated', 'givenName']
         };
