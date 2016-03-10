@@ -155,7 +155,6 @@ export const loginHandler = async (req, res) => {
         } else {
             query = r.db('work_genius').table('users').get(user.id).update(user);
         }
-        result = await query.run(connection);
         await connection.close();
         res.json({
             success: true,
