@@ -81,7 +81,7 @@ export function login(user) {
 			})
 			.catch((err) => {
 				dispatch(setLoadingState(false));
-				dispatch(loginFailure(err));
+				dispatch(loginFailure(err.message));
 			});
 	};
 };
