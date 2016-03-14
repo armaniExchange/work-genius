@@ -14,8 +14,8 @@ import DataExplorerFolderView from '../containers/DataExplorerFolderView/DataExp
 import DataExplorerFileView from '../containers/DataExplorerFileView/DataExplorerFileView';
 import Login from '../containers/Login/Login';
 import NotFoundPage from '../containers/NotFoundPage/NotFoundPage';
-import ArticlePage from '../containers/ArticlePage/ArticlePage';
-import ArticleListPage from '../containers/ArticleListPage/ArticleListPage';
+import DocumentPage from '../containers/DocumentPage/DocumentPage';
+import EditArticlePage from '../containers/EditArticlePage/EditArticlePage';
 // Utilities
 import requireAuth from '../containers/Require-Auth/Require-Auth';
 
@@ -32,8 +32,8 @@ const appRoutes = () => (
 			    <Route path="task" component={requireAuth(TaskPage)} />
 			    <Route path="pto" component={requireAuth(PTOPage)} />
 			    <Route path="redux-demo" component={requireAuth(DemoPage)} />
-          <Route path="article" component={requireAuth(ArticlePage)} />
-          <Route path="article-list" component={requireAuth(ArticleListPage)} />
+          <Route path="article/edit/:articleId" component={requireAuth(EditArticlePage)} />
+          <Route path="document" component={requireAuth(DocumentPage)} />
 			    <Route path="data-explorer" component={requireAuth(DataExplorerPage)}>
 			        <IndexRoute component={requireAuth(DataExplorerFolderView)}/>
 			        <Route path="data-explorer/:folderName" component={requireAuth(DataExplorerFileView)} />

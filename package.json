@@ -87,6 +87,7 @@
     "extract-text-webpack-plugin": "^0.8.2",
     "file-loader": "^0.8.5",
     "json-loader": "^0.5.4",
+    "lodash": "^4.6.1",
     "node-sass": "^3.4.1",
     "nodemon": "^1.7.1",
     "opn": "^3.0.2",
