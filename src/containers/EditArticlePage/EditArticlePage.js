@@ -5,13 +5,11 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Markdown from 'react-markdown';
-import Codemirror from 'react-codemirror';
+
+import ArticleEditor from '../../components/ArticleEditor/ArticleEditor';
 
 import * as EditArticleAction from '../../actions/edit-article-page-actions';
 
-import 'codemirror/mode/gfm/gfm';
-import 'codemirror/lib/codemirror.css';
-import 'react-tag-input/example/reactTags.css';
 
 class EditArticlePage extends Component {
 
@@ -31,11 +29,13 @@ class EditArticlePage extends Component {
   }
 
   componentWillMount() {
-    // const {
-    //   id,
-    //   editArticleActions
-    // } = this.props;
-    // editArticleActions.fetchArticle(id);
+    const {
+      params,
+      editArticleActions
+    } = this.props;
+    if ( params.articleId !== 'new' ) {
+      editArticleActions.fetchArticle(params.articleId);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -51,39 +51,13 @@ class EditArticlePage extends Component {
     });
   }
 
-  handleTagDelete(i) {
-    let editingTags = this.state.editingTags;
-    editingTags.splice(i, 1);
-    this.setState({editingTags});
-  }
-
-  updateContent(newContent) {
-    console.log('updateContent');
+  onContentChange(newContent) {
     this.setState({ editingContent: newContent});
   }
 
-  handleTagAddition(tag) {
-    let editingTags = this.state.editingTags;
-    editingTags.push({
-      id: editingTags.length + 1,
-      text: tag
-    });
-    this.setState({editingTags});
-  }
-  handleTagDrag(tag, currPos, newPos) {
-    let editingTags = this.state.editingTags;
-
-    // mutate array
-    editingTags.splice(currPos, 1);
-    editingTags.splice(newPos, 0, tag);
-
-    // re-render
-    this.setState({ editingTags });
-  }
-
-  onEditingTitleChange(newValue){
+  onTitleChange(event){
     this.setState({
-      editingTitle: newValue
+      editingTitle: event.target.value
     });
   }
 
@@ -110,36 +84,25 @@ class EditArticlePage extends Component {
 
     const {
       editingContent,
-      editingTitle
+      editingTitle,
+      editingTags
     } = this.state;
 
     return (
       <section>
         <div>
-          <div className="mdl-textfield mdl-js-textfield">
-            <input className="mdl-textfield__input"
-              type="text"
-              id="articleTitle"
-              value={editingTitle}
-              onChange={::this.onEditingTitleChange}/>
-            <label className="mdl-textfield__label" htmlFor="articleTitle">Title</label>
+          <div style={editorContentStyle}>
+            <ArticleEditor
+              title={editingTitle}
+              tags={editingTags}
+              content={editingContent}
+              onTitleChange={::this.onTitleChange}
+              onContentChange={::this.onContentChange} />
           </div>
-          <div style={{float: 'right'}}>
-            <button className="mdl-button mdl-js-button mdl-button--icon">
-              <i className="fa fa-paperclip" />
-            </button>
+          <div style={previewStyle}>
+            <Markdown source={editingContent} />
           </div>
-          <div>
-            <div style={editorContentStyle}>
-              <Codemirror
-                value={editingContent}
-                onChange={::this.updateContent}
-                options={{mode: 'gfm'}}/>
-            </div>
-            <div style={previewStyle}>
-              <Markdown source={editingContent} />
-            </div>
-          </div>
+
           <div style={{clear: 'both'}}/>
           <br />
           <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
@@ -161,6 +124,7 @@ EditArticlePage.propTypes = {
   content: PropTypes.string,
   createdAt: PropTypes.number,
   updatedAt: PropTypes.number,
+  params: PropTypes.object,
   editArticleActions: PropTypes.object.isRequired
 };
 
