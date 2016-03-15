@@ -6,6 +6,7 @@ import createBrowserHistory from 'history/lib/createBrowserHistory';
 import App from '../containers/App/App';
 import Main from '../containers/Main/Main';
 import AdminPage from '../containers/AdminPage/AdminPage';
+import ValidDemoPage from '../containers/ValidDemoPage/ValidDemoPage';
 import DashboardPage from '../containers/DashboardPage/DashboardPage';
 import TaskPage from '../containers/TaskPage/TaskPage';
 import PTOPage from '../containers/PTOPage/PTOPage';
@@ -41,6 +42,7 @@ const appRoutes = () => (
 			        <IndexRoute component={requireAuth(DataExplorerFolderView)}/>
 			        <Route path="data-explorer/:folderName" component={requireAuth(DataExplorerFileView)} />
 			    </Route>
+          <Route path="valid-demo" component={ValidDemoPage} />
 		    </Route>
 		    <Route path="*" component={NotFoundPage} />
 		</Route>
