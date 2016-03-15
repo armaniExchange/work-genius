@@ -1,6 +1,10 @@
 export const DB_HOST = '192.168.95.155';
 export const DB_PORT = 28015;
-export const LDAP = {};
+export const LDAP = {
+    // url: 'ldap://corp.a10networks.com:389',
+    url: 'ldap://192.168.99.64:389',
+    baseDN: 'dc=corp,dc=a10networks,dc=com'
+};
 export const ADMIN = ['zli', 'stsai'];
 export const LDAP_AUTH_PREFIX = 'corp\\';
 export const SECURE_KEY = '77de68daecd823babbb58edb1c8e14d7106e83bb';
