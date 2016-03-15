@@ -16,7 +16,10 @@ import StaticDataTable from '../../components/Static-Data-Table/Static-Data-Tabl
 import JobTable from '../../components/Job-Table/Job-Table.js';
 import AlertBox from '../../components/AlertBox/AlertBox';
 import EditFeatureModal from '../../components/EditFeatureModal/EditFeatureModal';
-import NameFilterGroup from '../../components/Name-Filter-Group/Name-Filter-Group.js';
+
+import Space from '../../components/A10-UI/Space.js';
+import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
+import RaisedButton from 'material-ui/lib/raised-button';
 
 let FeatureTable = ({
 	featureTableTitle,
@@ -197,18 +200,34 @@ class TaskPage extends Component {
 			currentSelectedUserID,
 			allUsersWithTaskCount
 		} = this.props;
+
+		let curUser = allUsersWithTaskCount.find(_user => {
+            if (_user.id===currentSelectedUserID) {
+                return _user;
+            }
+        });
+		let dropdownTitle = 'All';
+		if (curUser && curUser.name) {
+			dropdownTitle = curUser.name + (curUser.subtitle ? ' - ' + curUser.subtitle : '');
+		}
 		return (
 			<section className="task-page">
-			    <button
-			    	className="btn btn-success"
-			        onClick={this._onCrawlerButtonClicked}>
-			        Crawl GK2
-			    </button>
+				<RaisedButton style={{marginRight:'30px'}} label="Crawl GK2" primary={true} onClick={this._onCrawlerButtonClicked} />
+				<DropDownList
+                isNeedAll={true}
+                onOptionClick={this._onUserFilterClickedHandler}
+                title={dropdownTitle}
+                aryOptionConfig={allUsersWithTaskCount.map((item) => {
+                    return {title: item.name, value: item.id, subtitle: item.subtitle};
+                })} />
+				{/*
 			    <NameFilterGroup
                     users={allUsersWithTaskCount}
                     currentSelectedUserID={currentSelectedUserID}
                     onUserClickedHandler={this._onUserFilterClickedHandler} />
-			    <BugTable {...this.props} />
+                */}
+				<hr />
+				<BugTable {...this.props} />
 			    <FeatureTable {...this.props} />
 			    <InternalFeatureTable
 			    	onEditClicked={this._onEditClicked}
@@ -217,11 +236,9 @@ class TaskPage extends Component {
 			    <DeleteWarningBox
 			    	onConfirmDeleteClicked={this._onConfirmDeleteClicked}
 			        {...this.props} />
-			    <button
-			    	className="btn btn-success"
-			        onClick={this._onCreateButtonClicked}>
-			        Create Feature
-			    </button>
+			    <Space h="20" />
+			    <RaisedButton label="Create Feature" secondary={true}
+			    	onClick={this._onCreateButtonClicked} />
 			    <EditFeatureModal
 			        show={showFeatureModal}
 			        data={selectedItem}
