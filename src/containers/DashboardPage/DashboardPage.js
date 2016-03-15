@@ -1,5 +1,5 @@
 // Style
-import './_DashboardPage.scss';
+import './_DashboardPage.css';
 // React & Redux
 import React, { Component } from 'react';
 

@@ -1,5 +1,5 @@
 // Styles
-import './_Inline-Table-Input.scss';
+import './_Inline-Table-Input.css';
 
 // Libraries
 import React, { Component, PropTypes } from 'react';

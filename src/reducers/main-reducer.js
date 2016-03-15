@@ -1,12 +1,11 @@
 // Immutable
-import { Map, List, fromJS } from 'immutable';
+import { Map, List } from 'immutable';
 // Constants
 import * as actionTypes from '../constants/action-types';
+import { PRIVILEGE } from '../constants/config.js';
 
 const initialState = Map({
 	navHeaderTitle: 'WG',
-	isLoading: false,
-	errorMessage: '',
 	navItems: List.of(
 		Map({
 			displayText: 'Dashboard',
@@ -27,19 +26,38 @@ const initialState = Map({
 		Map({
 			displayText: 'Redux Demo',
 			link: '/main/redux-demo'
-		})
+		}),
+    Map({
+      displayText: 'Document',
+      link: '/main/document'
+    })
 	),
 	hasLogo: true
 });
 
+const updateNavigationItem = (state, action) => {
+	return action.user.privilege >= PRIVILEGE.ADMIN ?
+		state.update('navItems', (items) => {
+			return items.filter(
+				item => item.get('displayText') !== 'Admin'
+			).unshift(
+			    Map({
+					displayText: 'Admin',
+					link: '/main/admin'
+				})
+			);
+		}) :
+		state.update('navItems', (items) => items.filter(
+			item => item.get('displayText') !== 'Admin'
+		));
+};
+
 export default function mainReducer(state = initialState, action) {
 	switch (action.type) {
-		case actionTypes.SET_LOADING_STATE:
-			return state.set('isLoading', action.state);
-		case actionTypes.API_FAILURE:
-			return state.set('errorMessage', fromJS(action.err));
-		case actionTypes.CLEAR_ERROR_MESSAGE:
-			return state.set('errorMessage', '');
+		case actionTypes.GET_CURRENT_USER_SUCCESS:
+			return updateNavigationItem(state, action);
+		case actionTypes.LOGIN_SUCCESS:
+			return updateNavigationItem(state, action);
 		default:
 			return state;
 	}

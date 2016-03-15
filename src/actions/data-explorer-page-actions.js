@@ -1,7 +1,7 @@
 // Constant
 import * as actionTypes from '../constants/action-types';
 // Actions
-import * as mainActions from './main-actions';
+import { setLoadingState } from './app-actions';
 
 // Folder View Actions
 export function toggleAddFolderModal() {
@@ -54,7 +54,7 @@ export function clearUploadCache() {
 export function uploadFile(file) {
 	console.log(file);
 	return (dispatch) => {
-		dispatch(mainActions.setLoadingState(true));
-		dispatch(mainActions.setLoadingState(false));
+		dispatch(setLoadingState(true));
+		dispatch(setLoadingState(false));
 	};
 };

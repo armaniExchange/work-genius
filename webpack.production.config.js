@@ -32,7 +32,7 @@ var config = {
             },
             {
                 test: /\.(css|scss)$/,
-                loader: ExtractTextPlugin.extract('css?sourceMap!sass?sourceMap')
+                loader: ExtractTextPlugin.extract('css?sourceMap!postcss')
             },
             {
                 test: /\.(png|jpg|jpeg|gif)$/,
@@ -59,10 +59,13 @@ var config = {
             compress: {
                 warnings: false
             }
+        }),
+        new Webpack.ProvidePlugin({
+            'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
         })
     ],
     resolve: {
-        extensions: ['', '.js', '.jsx', '.css', '.scss']
+        extensions: ['', '.js', '.jsx', '.css']
     }
 };
 

@@ -1,9 +1,8 @@
 /**
  * @author Howard Chang
  */
-
 // Style
-import './_TaskPage';
+import './_TaskPage.css';
 // React & Redux
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
@@ -17,6 +16,7 @@ import StaticDataTable from '../../components/Static-Data-Table/Static-Data-Tabl
 import JobTable from '../../components/Job-Table/Job-Table.js';
 import AlertBox from '../../components/AlertBox/AlertBox';
 import EditFeatureModal from '../../components/EditFeatureModal/EditFeatureModal';
+import NameFilterGroup from '../../components/Name-Filter-Group/Name-Filter-Group.js';
 
 let FeatureTable = ({
 	featureTableTitle,
@@ -33,7 +33,7 @@ let FeatureTable = ({
 		    <h5>{featureTableTitle}</h5>
 		    <FilterList
 		        data={featureTableOriginalData}
-		        categories={Object.keys(featureFilterConditions)}
+		        categories={featureFilterConditions}
 		        onFilterHandler={filterFeatureTable} />
 		    <StaticDataTable
 		        data={featureTableData}
@@ -60,7 +60,7 @@ let BugTable = ({
 			<h5>{bugTableTitle}</h5>
 		    <FilterList
 		        data={bugTableOriginalData}
-		        categories={Object.keys(bugFilterConditions)}
+		        categories={bugFilterConditions}
 		        onFilterHandler={filterBugTable} />
 		    <StaticDataTable
 		        data={bugTableData}
@@ -89,7 +89,7 @@ let InternalFeatureTable = ({
 			<h5>{internalFeatureTableTitle}</h5>
 			<FilterList
 		        data={internalFeatureTableOriginalData}
-		        categories={Object.keys(internalFeatureFilterConditions)}
+		        categories={internalFeatureFilterConditions}
 		        onFilterHandler={filterInternalFeatureTable} />
 		    <JobTable
 		        data={internalFeatureTableData}
@@ -130,13 +130,11 @@ class TaskPage extends Component {
 		this._onCreateButtonClicked = ::this._onCreateButtonClicked;
 		this._onFeatureSubmitClicked = ::this._onFeatureSubmitClicked;
 		this._closeFeatureModal = ::this._closeFeatureModal;
+		this._onUserFilterClickedHandler = ::this._onUserFilterClickedHandler;
 	}
 	componentWillMount() {
-		const { fetchTaskPageData, setLoadingState } = this.props;
-		setLoadingState(true);
-		fetchTaskPageData(
-			() => setLoadingState(false)
-		);
+		const { fetchTaskPageData, currentUser } = this.props;
+		fetchTaskPageData(currentUser.id);
 	}
 	componentWillUnmount() {
 		const { resetFeatureTable, resetBugTable, resetInternalFeatureTable } = this.props;
@@ -145,11 +143,8 @@ class TaskPage extends Component {
 		resetInternalFeatureTable();
 	}
 	_onCrawlerButtonClicked() {
-		const { initiateGK2Crawler, setLoadingState } = this.props;
-		setLoadingState(true);
-		initiateGK2Crawler(
-			() => setLoadingState(false)
-		);
+		const { initiateGK2Crawler } = this.props;
+		initiateGK2Crawler();
 	}
 	_onDeleteClicked(id) {
 		const { setDeleteWarningBoxState, setSelectedItem } = this.props;
@@ -166,38 +161,15 @@ class TaskPage extends Component {
 		setFeatureModalState(true);
 	}
 	_onConfirmDeleteClicked() {
-		const { setLoadingState, selectedID, setDeleteWarningBoxState, deleteSelectedItems } = this.props;
-		setDeleteWarningBoxState(false);
-		setLoadingState(true);
-		deleteSelectedItems(
-			selectedID,
-			() => {
-				setLoadingState(false);
-				this._closeFeatureModal();
-			}
-		);
+		const { selectedID, deleteSelectedItems } = this.props;
+		deleteSelectedItems(selectedID);
 	}
 	_onFeatureSubmitClicked(data) {
-		const { setLoadingState, setFeatureModalState, createFeature, updateFeature, selectedItem } = this.props;
-		setFeatureModalState(false);
-		setLoadingState(true);
+		const { createFeature, updateFeature, selectedItem } = this.props;
 		if (selectedItem.id) {
-			updateFeature(
-				selectedItem.id,
-				data,
-				() => {
-					setLoadingState(false);
-					this._closeFeatureModal();
-				}
-			);
+			updateFeature(selectedItem.id, data);
 		} else {
-			createFeature(
-				data,
-				() => {
-					setLoadingState(false);
-					this._closeFeatureModal();
-				}
-			);
+			createFeature(data);
 		}
 	}
 	_closeFeatureModal() {
@@ -205,8 +177,26 @@ class TaskPage extends Component {
 		setFeatureModalState(false);
 		resetSelectedItem();
 	}
+	_onUserFilterClickedHandler(id) {
+		const {
+			resetFeatureTable,
+			resetBugTable,
+			resetInternalFeatureTable,
+			fetchTaskPageData
+		} = this.props;
+		resetFeatureTable();
+		resetBugTable();
+		resetInternalFeatureTable();
+		fetchTaskPageData(id);
+	}
 	render() {
-		const { formOptions, showFeatureModal, selectedItem } = this.props;
+		const {
+			formOptions,
+			showFeatureModal,
+			selectedItem,
+			currentSelectedUserID,
+			allUsersWithTaskCount
+		} = this.props;
 		return (
 			<section className="task-page">
 			    <button
@@ -214,6 +204,10 @@ class TaskPage extends Component {
 			        onClick={this._onCrawlerButtonClicked}>
 			        Crawl GK2
 			    </button>
+			    <NameFilterGroup
+                    users={allUsersWithTaskCount}
+                    currentSelectedUserID={currentSelectedUserID}
+                    onUserClickedHandler={this._onUserFilterClickedHandler} />
 			    <BugTable {...this.props} />
 			    <FeatureTable {...this.props} />
 			    <InternalFeatureTable
@@ -241,7 +235,11 @@ class TaskPage extends Component {
 }
 
 function mapStateToProps(state) {
-	return state.task.toJS();
+	return Object.assign(
+		{},
+		state.task.toJS(),
+		state.app.toJS()
+	);
 }
 
 function mapDispatchToProps(dispatch) {
@@ -271,11 +269,14 @@ TaskPage.propTypes = {
 	featureFilterConditions   : PropTypes.object,
 	internalFeatureTableTitle : PropTypes.string,
 	deleteFeatureWarning      : PropTypes.string,
+	currentSelectedUserID     : PropTypes.string,
 	selectedID                : PropTypes.array,
 	formOptions               : PropTypes.object,
 	selectedItem              : PropTypes.object,
+    currentUser               : PropTypes.object,
 	showDeleteWarning         : PropTypes.bool,
 	showFeatureModal          : PropTypes.bool,
+	allUsersWithTaskCount     : PropTypes.array,
 	sortFeatureTableByCategory: PropTypes.func,
 	filterFeatureTable        : PropTypes.func,
 	sortBugTableByCategory    : PropTypes.func,

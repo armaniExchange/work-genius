@@ -1,5 +1,5 @@
 // Styles
-import './_Navigation.scss';
+import './_Navigation.css';
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
@@ -31,29 +31,30 @@ class Navigation extends Component {
 
 	_onLogoutHandler() {
 		const { onLogoutHandler } = this.props;
-		onLogoutHandler(() => {
-			location.reload();
-		});
+		onLogoutHandler();
 	}
 
 	render() {
 		const { headerTitle, navItems, hasLogo } = this.props;
-		let headerLogoHtml = hasLogo ? <HeaderLogo /> : null;
-		let navItemsHtml = navItems.map((item, index) => {
-			return (
-				<Link
-				    className="mdl-navigation__link"
-				    to={item.link}
-				    key={`navItem${index}`}
-				    name={`${item.displayText}-${index}`}
-				    onClick={this._onNavItemsClick.bind(this)}>
-				    {item.displayText}
-				</Link>
-			);
-		});
+		let headerLogoHtml = hasLogo ? <HeaderLogo /> : null,
+		    navItemsHtml = navItems.map((item, index) => {
+				return (
+					<Link
+					    className="mdl-navigation__link"
+					    to={item.link}
+						onlyActiveOnIndex={item.link === '/main'}
+						activeClassName="navigation__link--active"
+					    key={`navItem${index}`}
+					    name={`${item.displayText}-${index}`}
+					    onClick={this._onNavItemsClick.bind(this)}>
+					    {item.displayText}
+					</Link>
+				);
+			});
 
 		return (
-			<div className="mdl-layout__drawer">
+			<header className="mdl-layout__header is-casting-shadow mdl-layout__header--level1">
+			<div className="mdl-layout__header-row">
 			    <span className="mdl-layout-title">
 				    { headerLogoHtml }
 				    <span className="navigation__header-title">{ headerTitle }</span>
@@ -63,6 +64,7 @@ class Navigation extends Component {
 				</nav>
 				<LogoutButton onClickHandler={this._onLogoutHandler} />
 			</div>
+			</header>
 		);
 	}
 }

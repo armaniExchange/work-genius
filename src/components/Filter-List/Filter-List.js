@@ -1,5 +1,5 @@
 // Styles
-import './_Filter-List.scss';
+import './_Filter-List.css';
 // Libraries
 import React, { Component, PropTypes } from 'react';
 
@@ -17,7 +17,7 @@ class FilterList extends Component {
 		} = this.props;
 		let filterConditions = {};
 
-		categories.forEach((name) => {
+		Object.keys(categories).forEach((name) => {
 			filterConditions[name] = this.refs[`${name.toLowerCase()}Filter`].value;
 		});
 
@@ -25,14 +25,18 @@ class FilterList extends Component {
 	}
 
 	_renderFilterByCategory(category, keyName) {
-		const { data } = this.props;
+		const { data, categories } = this.props;
 		let lowerCaseCategory = category.toLowerCase();
 		let options = [];
 		let optionsHtml = data.map((cell, i) => {
 			if (cell[category] !== '' && options.indexOf(cell[category]) < 0) {
 				options.push(cell[category]);
 				return (
-					<option value={cell[category]} key={i}>{cell[category]}</option>
+					<option
+					    key={i}
+					    value={cell[category]}>
+					    {cell[category]}
+					</option>
 				);
 			}
 			return null;
@@ -41,7 +45,7 @@ class FilterList extends Component {
 		return (
 			<span className="task-table-filters__filter" key={keyName}>
 				<span>{category}: </span>
-				<select ref={`${lowerCaseCategory}Filter`} onChange={this._onFilterHandler}>
+				<select ref={`${lowerCaseCategory}Filter`} onChange={this._onFilterHandler} value={categories[category]}>
 					<option value={''}>All</option>
 					{optionsHtml}
 				</select>
@@ -51,7 +55,7 @@ class FilterList extends Component {
 
 	render() {
 		const { categories } = this.props;
-		let filters = categories.map((category, i) => {
+		let filters = Object.keys(categories).map((category, i) => {
 			return this._renderFilterByCategory(category, i);
 		});
 		return (
@@ -64,7 +68,7 @@ class FilterList extends Component {
 
 FilterList.propTypes = {
 	data           : PropTypes.array.isRequired,
-	categories     : PropTypes.array,
+	categories     : PropTypes.object,
 	onFilterHandler: PropTypes.func
 };
 

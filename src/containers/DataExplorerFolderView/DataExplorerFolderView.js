@@ -3,7 +3,7 @@
  */
 
 // Style
-import './_DataExplorerFolderView';
+import './_DataExplorerFolderView.css';
 // React & Redux
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';

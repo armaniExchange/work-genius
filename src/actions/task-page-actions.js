@@ -1,14 +1,17 @@
 /**
  * @author Howard Chang
  */
-
 // Libraries
-import request from 'superagent';
+import fetch from 'isomorphic-fetch';
 // Constants
 import * as actionTypes from '../constants/action-types';
 import { SERVER_API_URL } from '../constants/config';
 // Actions
-import * as mainActions from './main-actions';
+import {
+	setLoadingState,
+	apiFailure
+} from './app-actions';
+import { setCurrentSelectedUserId } from './main-actions';
 
 export function sortFeatureTableByCategory(category) {
 	return {
@@ -118,13 +121,19 @@ export function setFeatureModalState(state) {
 	};
 };
 
-export function fetchBug(callback = () => {}) {
+export function fetchUsersWithTasksSuccess(data) {
+	return {
+		type: actionTypes.FETCH_USERS_WITH_TASKS_SUCCESS,
+		data
+	};
+};
+
+export function fetchBug(userId) {
 	return (dispatch) => {
-		return request
-			.post(SERVER_API_URL)
-			.set('Content-Type', 'application/graphql')
-			.send(`{
-			    tasks(taskType: "bug") {
+		let config = {
+			method: 'POST',
+			body: `{
+			    tasks(taskType: "bug", devId: "${userId}") {
 			    	id,
 			        title,
 			        eta,
@@ -137,26 +146,29 @@ export function fetchBug(callback = () => {}) {
 			        must_fix,
 			        project
 			    }
-			}`)
-			.end((err, res) => {
-				if (err) {
-                    dispatch(mainActions.apiFailure(err));
-	            } else {
-	            	let data = JSON.parse(res.text).data.tasks;
-	                dispatch(fetchBugSuccess(data));
-	            }
-	            callback();
+			}`,
+			headers: {
+				'Content-Type': 'application/graphql',
+				'x-access-token': localStorage.token
+			}
+		};
+		return fetch(SERVER_API_URL, config)
+			.then((res) => res.json())
+			.then((body) => {
+				dispatch(fetchBugSuccess(body.data.tasks));
+			})
+			.catch((err) => {
+				Promise.reject(err);
 			});
 	};
 };
 
-export function fetchFeature(callback = () => {}) {
+export function fetchFeature(userId) {
 	return (dispatch) => {
-		return request
-			.post(SERVER_API_URL)
-			.set('Content-Type', 'application/graphql')
-			.send(`{
-			    tasks(taskType: "feature") {
+		let config = {
+			method: 'POST',
+			body: `{
+			    tasks(taskType: "feature", devId: "${userId}") {
 			    	id,
 			        title,
 			        status,
@@ -170,173 +182,222 @@ export function fetchFeature(callback = () => {}) {
 			        qa_name,
 			        project
 			    }
-			}`)
-			.end((err, res) => {
-				if (err) {
-                    dispatch(mainActions.apiFailure(err));
-	            } else {
-	            	let data = JSON.parse(res.text).data.tasks;
-	                dispatch(fetchFeatureSuccess(data));
-	            }
-	            callback();
+			}`,
+			headers: {
+				'Content-Type': 'application/graphql',
+				'x-access-token': localStorage.token
+			}
+		};
+		return fetch(SERVER_API_URL, config)
+			.then((res) => res.json())
+			.then((body) => {
+				dispatch(fetchFeatureSuccess(body.data.tasks));
+			})
+			.catch((err) => {
+				Promise.reject(err);
 			});
 	};
 };
 
-export function fetchInternalFeature(callback = () => {}) {
+export function fetchInternalFeature(userId) {
 	return (dispatch) => {
-		return request
-			.post(SERVER_API_URL)
-			.set('Content-Type', 'application/graphql')
-			.send(`{
-			    tasks(taskType: "internal") {
+		let config = {
+			method: 'POST',
+			body: `{
+			    tasks(taskType: "internal", devId: "${userId}") {
 			        title,
 			        pri,
 			        dev_percent,
+			        dev_id,
 			        dev_name,
 			        owner_name,
 			        project,
 			        eta,
 			        id
 			    }
-			}`)
-			.end((err, res) => {
-				if (err) {
-                    dispatch(mainActions.apiFailure(err));
-	            } else {
-	            	let data = JSON.parse(res.text).data.tasks;
-	                dispatch(fetchInternalFeatureSuccess(data));
-	            }
-	            callback();
+			}`,
+			headers: {
+				'Content-Type': 'application/graphql',
+				'x-access-token': localStorage.token
+			}
+		};
+		return fetch(SERVER_API_URL, config)
+			.then((res) => res.json())
+			.then((body) => {
+				dispatch(fetchInternalFeatureSuccess(body.data.tasks));
+			})
+			.catch((err) => {
+				Promise.reject(err);
 			});
 	};
 };
 
-export function fetchTaskPageData(callback = () => {}) {
-	let tasks = [
-		fetchBug,
-		fetchFeature,
-		fetchInternalFeature
-	];
-	let counter = 0;
-	let checkAllTasksDone = () => {
-		counter++;
-		if (counter === tasks.length) {
-			callback();
-		}
-	};
-
+export function fetchUsersWithTasks() {
 	return (dispatch) => {
-		tasks.forEach((task) => {
-			dispatch(task(checkAllTasksDone));
-		});
-	};
-};
-
-export function editETA(id, eta) {
-	return (dispatch) => {
-		dispatch(mainActions.setLoadingState(true));
-		return request
-			.post(SERVER_API_URL)
-			.set('Content-Type', 'application/graphql')
-			.send(`mutation RootMutationType {
-			    editTaskEta(id:"${id}", eta:"${eta}") {
-			        eta
+		let config = {
+			method: 'POST',
+			body: `{
+			    allUserWithTasks {
+			    	id,
+			    	name,
+			    	tasks {
+			    		dev_id,
+			    		type
+			    	}
 			    }
-			}`)
-			.end((err, res) => {
-				if (err || !res) {
-					let error = err || 'No response';
-					dispatch(mainActions.apiFailure(error));
-				} else if (res && JSON.parse(res.text).errors) {
-                    dispatch(mainActions.apiFailure(JSON.parse(res.text).errors[0].message));
-	            } else {
-	                dispatch(fetchBug());
-	            }
+			}`,
+			headers: {
+				'Content-Type': 'application/graphql',
+				'x-access-token': localStorage.token
+			}
+		};
+		return fetch(SERVER_API_URL, config)
+			.then((res) => res.json())
+			.then((body) => {
+				dispatch(fetchUsersWithTasksSuccess(body.data.allUserWithTasks));
+			})
+			.catch((err) => {
+				throw new Error(err);
 			});
 	};
 };
 
-export function initiateGK2Crawler(callback = () => {}) {
+export function fetchTaskPageData(userId) {
 	return (dispatch) => {
-		return request
-			.post(SERVER_API_URL)
-			.set('Content-Type', 'application/graphql')
-			.send(`mutation RootMutationType {
-			    initiateCrawler
-			}`)
-			.end((err, res) => {
-				if (err || !res) {
-					let error = err || 'No response';
-					dispatch(mainActions.apiFailure(error));
-				} else if (res && JSON.parse(res.text).errors) {
-                    dispatch(mainActions.apiFailure(JSON.parse(res.text).errors[0].message));
-	            } else {
-	                dispatch(fetchTaskPageData(callback));
-	            }
+		dispatch(setLoadingState(true));
+		Promise.all([
+			dispatch(fetchUsersWithTasks()),
+			dispatch(fetchBug(userId)),
+			dispatch(fetchFeature(userId)),
+			dispatch(fetchInternalFeature(userId))
+		]).then(
+			() => {
+				dispatch(setCurrentSelectedUserId(userId));
+				dispatch(setLoadingState(false));
+			},
+			(err) => {
+				dispatch(setLoadingState(false));
+				dispatch(apiFailure(err));
+			}
+		);
+	};
+};
+
+export function initiateGK2Crawler() {
+	return (dispatch, getState) => {
+		let config = {
+				method: 'POST',
+				body: `mutation RootMutationType {
+				    initiateCrawler
+				}`,
+				headers: {
+					'Content-Type': 'application/graphql',
+					'x-access-token': localStorage.token
+				}
+			},
+		    currentSelectedUserID = getState().pto.toJS().currentSelectedUserID;
+
+		dispatch(setLoadingState(true));
+		return fetch(SERVER_API_URL, config)
+			.then((res) => res.json())
+			.then(() => {
+				dispatch(setLoadingState(false));
+				dispatch(fetchTaskPageData(currentSelectedUserID));
+			})
+			.catch((err) => {
+				dispatch(setLoadingState(false));
+				dispatch(apiFailure(err));
 			});
 	};
 };
 
-export function deleteSelectedItems(ids, callback = () => {}) {
-	return (dispatch) => {
-		return request
-			.post(SERVER_API_URL)
-			.set('Content-Type', 'application/graphql')
-			.send(`mutation RootMutationType {
-			    deleteInternalFeatures(ids:"${ids}")
-			}`)
-			.end((err, res) => {
-				if (err || !res) {
-					let error = err || 'No response';
-					dispatch(mainActions.apiFailure(error));
-				} else if (res && JSON.parse(res.text).errors) {
-                    dispatch(mainActions.apiFailure(JSON.parse(res.text).errors[0].message));
-	            } else {
-	                dispatch(fetchInternalFeature(callback));
-	            }
+export function deleteSelectedItems(ids) {
+	return (dispatch, getState) => {
+		let config = {
+				method: 'POST',
+				body: `mutation RootMutationType {
+				    deleteInternalFeatures(ids:"${ids}")
+				}`,
+				headers: {
+					'Content-Type': 'application/graphql',
+					'x-access-token': localStorage.token
+				}
+			},
+			currentSelectedUserID = getState().pto.toJS().currentSelectedUserID;
+
+		dispatch(setDeleteWarningBoxState(false));
+		dispatch(setLoadingState(true));
+		return fetch(SERVER_API_URL, config)
+			.then((res) => res.json())
+			.then(() => {
+				dispatch(setLoadingState(false));
+				dispatch(resetSelectedItem());
+				dispatch(fetchTaskPageData(currentSelectedUserID));
+			})
+			.catch((err) => {
+				dispatch(setLoadingState(false));
+				dispatch(resetSelectedItem());
+				dispatch(apiFailure(err));
 			});
 	};
 };
 
-export function createFeature(data, callback = () => {}) {
-	return (dispatch) => {
-		return request
-			.post(SERVER_API_URL)
-			.set('Content-Type', 'application/graphql')
-			.send(`mutation RootMutationType {
-			    createInternalFeatures(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
-			}`)
-			.end((err, res) => {
-				if (err || !res) {
-					let error = err || 'No response';
-					dispatch(mainActions.apiFailure(error));
-				} else if (res && JSON.parse(res.text).errors) {
-                    dispatch(mainActions.apiFailure(JSON.parse(res.text).errors[0].message));
-	            } else {
-	                dispatch(fetchInternalFeature(callback));
-	            }
+export function createFeature(data) {
+	return (dispatch, getState) => {
+		let config = {
+				method: 'POST',
+				body: `mutation RootMutationType {
+				    createInternalFeatures(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+				}`,
+				headers: {
+					'Content-Type': 'application/graphql',
+					'x-access-token': localStorage.token
+				}
+			},
+			currentSelectedUserID = getState().pto.toJS().currentSelectedUserID;
+		dispatch(setFeatureModalState(false));
+		dispatch(setLoadingState(true));
+		return fetch(SERVER_API_URL, config)
+			.then((res) => res.json())
+			.then(() => {
+				dispatch(setLoadingState(false));
+				dispatch(resetSelectedItem());
+				dispatch(fetchTaskPageData(currentSelectedUserID));
+			})
+			.catch((err) => {
+				dispatch(setLoadingState(false));
+				dispatch(resetSelectedItem());
+				dispatch(apiFailure(err));
 			});
 	};
 };
 
-export function updateFeature(id, data, callback = () => {}) {
-	return (dispatch) => {
-		return request
-			.post(SERVER_API_URL)
-			.set('Content-Type', 'application/graphql')
-			.send(`mutation RootMutationType {
-			    updateInternalFeatures(id:"${id}", data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
-			}`)
-			.end((err, res) => {
-				if (err || !res) {
-					let error = err || 'No response';
-					dispatch(mainActions.apiFailure(error));
-				} else if (res && JSON.parse(res.text).errors) {
-                    dispatch(mainActions.apiFailure(JSON.parse(res.text).errors[0].message));
-	            } else {
-	                dispatch(fetchInternalFeature(callback));
-	            }
+export function updateFeature(id, data) {
+	return (dispatch, getState) => {
+		let config = {
+				method: 'POST',
+				body: `mutation RootMutationType {
+				    updateInternalFeatures(id:"${id}", data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+				}`,
+				headers: {
+					'Content-Type': 'application/graphql',
+					'x-access-token': localStorage.token
+				}
+			},
+			currentSelectedUserID = getState().pto.toJS().currentSelectedUserID;
+		dispatch(setFeatureModalState(false));
+		dispatch(setLoadingState(true));
+		return fetch(SERVER_API_URL, config)
+			.then((res) => res.json())
+			.then(() => {
+				dispatch(setLoadingState(false));
+				dispatch(resetSelectedItem());
+				dispatch(fetchTaskPageData(currentSelectedUserID));
+			})
+			.catch((err) => {
+				dispatch(setLoadingState(false));
+				dispatch(resetSelectedItem());
+				dispatch(apiFailure(err));
 			});
 	};
 };

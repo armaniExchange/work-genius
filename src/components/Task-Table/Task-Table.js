@@ -1,12 +1,12 @@
 // Styles
-import './_Task-Table.scss';
-
+import './_Task-Table.css';
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
-
 // Components
 import InlineTableInputDatePicker from '../Inline-Table-Input-DatePicker/Inline-Table-Input-DatePicker';
+
+import Table from '../A10-UI/Table/Table';
 
 let FilterIcons = ({ sortBy, onSortHandler, header, enableSort }) => {
 	const buttonClassNames = classnames('mdl-button mdl-js-button mdl-button--icon', {
@@ -123,7 +123,7 @@ class TaskTable extends Component {
 
 		return (
 			<div className="task-table">
-			    <table className="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+			    <Table className="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
 				    <TableHeaders
 				        data={data[0]}
 				        onSortHandler={this._onSortHandler}
@@ -132,7 +132,7 @@ class TaskTable extends Component {
 				    <TableBody
 				        data={data}
 				        onETASubmitHandler={onETASubmitHandler} />
-				</table>
+				</Table>
 			</div>
 		);
 	}

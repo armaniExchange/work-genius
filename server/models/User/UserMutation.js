@@ -1,19 +1,20 @@
-// GraphQL
-import {
-	GraphQLString,
-	GraphQLNonNull
-} from 'graphql';
 // Libraries
 import ActiveDirectory from 'activedirectory';
 import jwt from 'jsonwebtoken';
+// GraphQL
+import {
+  GraphQLString
+} from 'graphql';
+
+// RethinkDB
 import r from 'rethinkdb';
 // Constants
 import {
-	DB_HOST,
-	DB_PORT,
 	LDAP,
 	LDAP_AUTH_PREFIX,
-	SECURE_KEY
+	SECURE_KEY,
+	DB_HOST,
+	DB_PORT
 } from '../../constants/configurations.js';
 
 function adPromise(account, password) {
@@ -22,77 +23,161 @@ function adPromise(account, password) {
 		let	ad = new ActiveDirectory(LDAP);
 		ad.authenticate(account, password, function(err, auth) {
 			if (err || !auth) {
+				console.log('Login Failed');
                 reject(new Error('Account or Password Incorrect!'));
             } else {
+            	console.log('Login successfully');
                 resolve(auth);
             }
 		});
     });
 };
 
-/*
-// query example
-mutation RootMutationType {
-    login(account:"zli", password:"xxxxxx") {
-        title
-    }
-}
-*/
-
 let UserMutation = {
-	'userLogin': {
+	'updateUserPrivilege': {
 		type: GraphQLString,
-		description: 'Login User',
+		description: 'Set user privilege',
 		args: {
-			account: {
-				type: new GraphQLNonNull(GraphQLString),
-				description: 'Login account'
+			id: {
+				type: GraphQLString,
+				description: 'User\'s id'
 			},
-			password: {
-				type: new GraphQLNonNull(GraphQLString),
-				description: 'Login password'
+			privilege: {
+				type: GraphQLString,
+				description: 'User\'s privilege'
 			}
 		},
-		resolve: async (root, { account, password }) => {
-			let session = root.request.session;
-			let token = jwt.sign({
-				account: account,
-				isLoggedIn: true
-			}, SECURE_KEY, {
-				expiresIn: '30 days'
-			});
-
-			if (!(account.includes('@') || account.includes('\\'))) {
-				account = LDAP_AUTH_PREFIX + account;
+		resolve: async (root, { id, privilege }) => {
+			console.log('updateUserPrivilege');
+			let connection = null,
+				mutationQuery = null;
+			try {
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				mutationQuery = r.db('work_genius').table('users').get(id).update({privilege});
+				await mutationQuery.run(connection);
+				await connection.close();
+			} catch (err) {
+				return err;
 			}
-		    try {
-		        //await adPromise(account, password);
-		        let connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-		        let insertion = r.db('work_genius').table('users').insert({
-						id: account
-					}, {
-						conflict: 'update'
-					});
 
-				await insertion.run(connection);
-				session.token = token;
-		        return token;
-		    } catch (err) {
-		        return err;
-		    }
+			return 'Update successfully!';
 		}
 	},
-	'userLogout': {
-		type: GraphQLString,
-		description: 'Logout User',
-		resolve: async (root) => {
-			let session = root.request.session;
-		    session.destroy((err) => {
-		    	return err;
-		    });
-		    return 'Log out successfully';
-		}
+};
+
+const fakeExtract = function(account) {
+	switch (account) {
+		case 'howardc':
+			return {
+				id: '00001',
+				name: 'Howard Chang',
+				nickname: 'Howard C.',
+				email: 'howardc@a10networks.com'
+			};
+		case 'vlai':
+			return {
+				id: '00002',
+				name: 'Vans Lai',
+				nickname: 'Chia Wei L.',
+				email: 'vlai@a10networks.com'
+			};
+		case 'ahuang':
+			return {
+				id: '00003',
+				name: 'Albert Huang',
+				nickname: 'Albert H.',
+				email: 'ahuang@a10networks.com'
+			};
+		case 'stsai':
+			return {
+				id: '00004',
+				name: 'Roll Tsai',
+				nickname: 'Roll T.',
+				email: 'stsai@a10networks.com'
+			};
+		case 'shuang':
+			return {
+				id: '00005',
+				name: 'Shih-Ming Huang',
+				nickname: 'Shih-Ming H.',
+				email: 'shuang@a10networks.com'
+			};
+		case 'sho':
+			return {
+				id: '00006',
+				name: 'Shau-Hua Ho',
+				nickname: 'Shau-Hua H.',
+				email: 'sho@a10networks.com'
+			};
+		case 'kfong':
+			return {
+				id: '00007',
+				name: 'Kuang-Hui Fong',
+				nickname: 'Kuang-Hui F.',
+				email: 'kfong@a10networks.com'
+			};
+		case 'zli':
+			return {
+				id: '00008',
+				name: 'Zuoping Li',
+				nickname: 'Zuoping L.',
+				email: 'zli@a10networks.com'
+			};
+		case 'admin':
+			return {
+				id: '00000',
+				name: 'Admin',
+				nickname: 'Admin',
+				email: 'admin',
+				privilege: 10
+			};
+		default:
+			return {
+				id: '99999',
+				name: 'Tester',
+				nickname: 'Tester',
+				email: 'tester@a10networks.com'
+			};
 	}
 };
+
+export const loginHandler = async (req, res) => {
+	let { account, password } = req.body;
+
+	// if (!(account.includes('@') || account.includes('\\'))) {
+ //        account = LDAP_AUTH_PREFIX + account;
+ //    }
+	try {
+        // let auth = await adPromise(account, password);
+        let user = fakeExtract(account);
+        let token = jwt.sign(user, SECURE_KEY, {
+            expiresIn: '30 days'
+        });
+        let connection = null,
+			result = null,
+			query = null;
+		connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+		query = r.db('work_genius').table('users').get(user.id);
+		result = await query.run(connection);
+		if (!result) {
+			query = r.db('work_genius').table('users').insert(user);
+		} else {
+			query = r.db('work_genius').table('users').get(user.id).update(user);
+		}
+		result = await query.run(connection);
+		await connection.close();
+        res.json({
+            success: true,
+            token: token,
+            user: user
+        });
+    } catch (err) {
+        res.status(401).send({
+            success: false,
+            message: 'Not authorized'
+        });
+    }
+};
+
 
 export default UserMutation;
