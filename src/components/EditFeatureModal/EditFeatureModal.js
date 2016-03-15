@@ -8,7 +8,6 @@ import moment from 'moment';
 import {
 	Modal
 } from 'react-bootstrap';
-// import DateTimeField from 'react-bootstrap-datetimepicker';
 
 import util from '../../libraries/util';
 import RaisedButton from 'material-ui/lib/raised-button';
@@ -119,30 +118,6 @@ class EditFeatureModal extends Component {
   }
 	render() {
     const { show, data, onHideHandler, formOptions } = this.props;
-		/*let developerOptionsHtml = formOptions['devs'].map((developer, i) => {
-			return (
-				<option value={developer.id} key={i}>{developer.name}</option>
-			);
-		});
-		let projectOptionsHtml = formOptions['project'].map((project, i) => {
-			return (
-				<option value={project} key={i}>{project}</option>
-			);
-		});
-		let priorityOptionsHtml = formOptions['pri'].map((priority, i) => {
-			return (
-				<option value={priority} key={i}>{priority}</option>
-			);
-		});
-		let assigneeOptionsHtml = formOptions['owner_name'].map((assignee, i) => {
-			return (
-				<option value={assignee} key={i}>{assignee}</option>
-			);
-		});
-		let etaClassName = classnames({
-			'form-group': true,
-			'has-error': this.state.isEtaInvalid
-		});*/
 
 		let today = moment().format('YYYY-MM-DD');
     let etaValue = data.eta || today;
@@ -158,14 +133,6 @@ class EditFeatureModal extends Component {
 				<ModalHeader {...this.props} />
 				<Modal.Body>
 					<form className="form-horizontal">
-              {/*
-					    <Input
-					        type="text"
-					        label="Title"
-					        labelClassName="col-xs-2"
-					        wrapperClassName="col-xs-10"
-					        defaultValue={data.title ? data.title : ''}
-					        ref="title"/>*/}
 					    <div>
 							  <label className="col-xs-2 control-label">Title</label>
                 <input type="hidden" ref="title" defaultValue={data.title || ''} />
@@ -175,15 +142,6 @@ class EditFeatureModal extends Component {
                   }} defaultValue={data.title || ''} />
 					    	</div>
 						  </div>
-					    {/*<Input
-					        type="select"
-					        label="Developer"
-					        labelClassName="col-xs-2"
-					        wrapperClassName="col-xs-10"
-					        defaultValue={data.dev_id ? data.dev_id : ''}
-					        ref="dev_id">
-					        {developerOptionsHtml}
-					    </Input>*/}
 					    <div>
 					    	<input type="hidden" ref="dev_id" defaultValue={data.dev_id || ''} />
 							  <label className="col-xs-2 control-label">Developer</label>
@@ -198,15 +156,6 @@ class EditFeatureModal extends Component {
 		                })} />
 					    	</div>
 						  </div>
-					    {/*<Input
-					        type="select"
-					        label="Project"
-					        labelClassName="col-xs-2"
-					        wrapperClassName="col-xs-10"
-					        defaultValue={data.project ? data.project : ''}
-					        ref="project">
-					        {projectOptionsHtml}
-					    </Input>*/}
 					    <div>
 					      <input type="hidden" ref="project" defaultValue={data.project || ''} />
 							  <label className="col-xs-2 control-label">Project</label>
@@ -221,15 +170,6 @@ class EditFeatureModal extends Component {
 		                })} />
 					    	</div>
 						  </div>
-					    {/*<Input
-					        type="select"
-					        label="Priority"
-					        labelClassName="col-xs-2"
-					        wrapperClassName="col-xs-10"
-					        defaultValue={data.pri ? data.pri : ''}
-					        ref="pri">
-					        {priorityOptionsHtml}
-					    </Input>*/}
 					    <div>
 					      <input type="hidden" ref="pri" defaultValue={data.pri || ''} />
 							  <label className="col-xs-2 control-label">Priority</label>
@@ -246,17 +186,6 @@ class EditFeatureModal extends Component {
 		                })} />
 					      </div>
 						  </div>
-					    {/*<Input
-					        type="number"
-					        min={0}
-					        max={100}
-					        label="Progress"
-					        labelClassName="col-xs-2"
-					        wrapperClassName="col-xs-10"
-					        defaultValue={data.dev_percent ? parseInt(data.dev_percent, 10) : 0}
-					        bsStyle={this.state.isDevPercentInvalid ? 'error' : undefined}
-					        onChange={this._validateInput}
-					        ref="dev_percent" />*/}
 					    <div>
                 <input type="hidden" ref="dev_percent" defaultValue={
                   this._isValidPercent(data.dev_percent) ? data.dev_percent : ''
@@ -276,21 +205,7 @@ class EditFeatureModal extends Component {
 					        defaultValue={etaValue}
 					        onChange={this._validateInput}
 					        ref="eta" />
-              {/*
-					    <div className={etaClassName}>
-						    <label className="col-xs-2 control-label">ETA</label>
-						    <div className="col-xs-10">
-						        <DateTimeField
-						            dateTime={etaValue}
-						            format="YYYY-MM-DD"
-						            inputFormat="YYYY-MM-DD"
-						            mode="date"
-						            showToday
-						            onChange={this._onDateChange} />
-						    </div>
-						  </div>
-              */}
-						  <div>
+              <div>
 						    <label className="col-xs-2 control-label">ETA</label>
 						    <div className="col-xs-9">
 						        <DatePicker defaultDate={etaValue} placeholder="ETA" onChange={(val)=>{
@@ -298,16 +213,6 @@ class EditFeatureModal extends Component {
 						    	}} />
 						    </div>
 						  </div>
-
-					    {/*<Input
-					        type="select"
-					        label="Assignee"
-					        labelClassName="col-xs-2"
-					        wrapperClassName="col-xs-10"
-					        defaultValue={data.owner_name ? data.owner_name : ''}
-					        ref="owner_name">
-					        {assigneeOptionsHtml}
-					    </Input>*/}
 					    <div>
 					      <input type="hidden" ref="owner_name" defaultValue={data.owner_name || ''} />
 							  <label className="col-xs-2 control-label">Assignee</label>
