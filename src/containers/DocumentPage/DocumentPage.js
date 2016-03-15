@@ -37,6 +37,7 @@ class DocumentPage extends Component {
             onClick={::this._onCreateNewArticle}>
             + Create a Document
           </button>
+          <br />
           <div className="mdl-textfield mdl-js-textfield">
              <input className="mdl-textfield__input" type="text" id="sample1" />
              <label className="mdl-textfield__label" htmlFor="sample1">Search...</label>
