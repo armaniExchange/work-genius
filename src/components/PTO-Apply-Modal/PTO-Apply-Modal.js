@@ -6,11 +6,14 @@ import classnames from 'classnames';
 import moment from 'moment';
 // Components
 import {
-	Button,
-	Modal,
-	Input
+	Modal
 } from 'react-bootstrap';
-import DateTimeField from 'react-bootstrap-datetimepicker';
+
+// Material-UI
+import injectTapEventPlugin from 'react-tap-event-plugin';injectTapEventPlugin();//<---move to application-level
+import DatePicker from '../../components/A10-UI/Input/Date-Picker.js';
+import RaisedButton from 'material-ui/lib/raised-button';
+import TextField from 'material-ui/lib/text-field';
 
 let ModalHeader = () => {
 	return (
@@ -23,8 +26,8 @@ let ModalHeader = () => {
 let ModalFooter = ({ onSubmit, onCancelHandler }) => {
 	return (
 		<Modal.Footer>
-            <Button onClick={onSubmit}>Apply</Button>
-            <Button onClick={onCancelHandler}>Cancel</Button>
+            <RaisedButton label="Apply" secondary={true} onClick={onSubmit} />
+            <RaisedButton label="Cancel" onClick={onCancelHandler} />
         </Modal.Footer>
 	);
 };
@@ -37,10 +40,6 @@ class PTOApplyModal extends Component {
 		this._onEndDateChange = ::this._onEndDateChange;
 		this._validateInput = ::this._validateInput;
 		this._validateDateFormat = ::this._validateDateFormat;
-		this.state = {
-			isStartDateInvalid: false,
-			isEndDateInvalid: false
-		};
 	}
 
 	_validateDateFormat(date) {
@@ -52,7 +51,6 @@ class PTOApplyModal extends Component {
 		    endDate = this.refs.endDate.value,
 		    isStartDateValid = this._validateDateFormat(startDate),
 		    isEndDateValid = this._validateDateFormat(endDate);
-
 		return isStartDateValid && isEndDateValid;
 	}
 
@@ -79,42 +77,22 @@ class PTOApplyModal extends Component {
 	}
 	_onStartDateChange(newDate) {
 		this.refs.startDate.value = newDate;
-		if (this._validateDateFormat(newDate)) {
-			this.setState({
-				isStartDateInvalid: false
-			});
-		} else {
-			this.setState({
-				isStartDateInvalid: true
-			});
-		}
 	}
 	_onEndDateChange(newDate) {
 		this.refs.endDate.value = newDate;
-		if (this._validateDateFormat(newDate)) {
-			this.setState({
-				isEndDateInvalid: false
-			});
-		} else {
-			this.setState({
-				isEndDateInvalid: true
-			});
-		}
 	}
 
 	render() {
 		const { show, onHideHandler } = this.props;
 		let startDateClassName = classnames({
-				'form-group': true,
-				'has-error': this.state.isStartDateInvalid
+				'form-group': true
 			}),
 			endDateClassName = classnames({
-				'form-group': true,
-				'has-error': this.state.isEndDateInvalid
+				'form-group': true
 			}),
 			today = moment().format('YYYY-MM-DD');
 		return (
-			<Modal show={show} onHide={onHideHandler}>
+			<Modal ref="modal" show={show} onHide={onHideHandler}>
 				<ModalHeader {...this.props} />
 				<Modal.Body>
 					<form className="form-horizontal">
@@ -124,15 +102,11 @@ class PTOApplyModal extends Component {
 					        onChange={this._validateInput}
 					        ref="startDate" />
 					    <div className={startDateClassName}>
-						    <label className="col-xs-2 control-label">Start Date</label>
-						    <div className="col-xs-10">
-						        <DateTimeField
-						            dateTime={today}
-						            format="YYYY-MM-DD"
-						            inputFormat="YYYY-MM-DD"
-						            mode="date"
-						            showToday
-						            onChange={this._onStartDateChange} />
+						    <label className="col-xs-3 control-label">Start Date</label>
+						    <div className="col-xs-9">
+						    	<DatePicker defaultDate={today} placeholder="Start Date" onChange={(val)=>{
+						    		this._onStartDateChange(val);
+						    	}} />
 						    </div>
 						</div>
 						<input
@@ -141,30 +115,26 @@ class PTOApplyModal extends Component {
 					        onChange={this._validateInput}
 					        ref="endDate" />
 					    <div className={endDateClassName}>
-						    <label className="col-xs-2 control-label">End Date</label>
-						    <div className="col-xs-10">
-						        <DateTimeField
-						            dateTime={today}
-						            format="YYYY-MM-DD"
-						            inputFormat="YYYY-MM-DD"
-						            mode="date"
-						            showToday
-						            onChange={this._onEndDateChange} />
+						    <label className="col-xs-3 control-label">End Date</label>
+						    <div className="col-xs-9">
+						        <DatePicker defaultDate={today} placeholder="End Date" onChange={(val)=>{
+						    		this._onEndDateChange(val);
+						    	}} />
 						    </div>
 						</div>
-						<Input
-						    type="number"
-					        label="Total Hours"
-					        labelClassName="col-xs-2"
-					        wrapperClassName="col-xs-10"
-					        ref="hours" />
-						<Input
-						    type="textarea"
-					        label="Memo"
-					        labelClassName="col-xs-2"
-					        wrapperClassName="col-xs-10"
-					        placeholder="Enter memo here"
-					        ref="memo" />
+						<div>
+							<label className="col-xs-3 control-label">Total Hours</label>
+					    	<div className="col-xs-9">
+					    		<TextField hintText="hour(s)" ref="hours" type="number" />
+					    	</div>
+						</div>
+						<div>
+							<label className="col-xs-3 control-label">Memo</label>
+					    	<div className="col-xs-9">
+					    		<TextField hintText="Memo" ref="memo" multiLine={true} rows={2} rowsMax={4} />
+					    	</div>
+						</div>
+						<div style={{clear:'both'}}></div>
 					</form>
 		        </Modal.Body>
 		        <ModalFooter

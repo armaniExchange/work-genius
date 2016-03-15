@@ -20,21 +20,15 @@ import RadioGroup from '../../components/A10-UI/Input/Radio-Group.js';
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 import Space from '../../components/A10-UI/Space.js';
 
+import RaisedButton from 'material-ui/lib/raised-button';
 
 let PTOYearFilter = ({ selectedYear, goToPreviousYear, goToNextYear }) => {
+    let style = {'minWidth':'25px', 'minHeight':'25px', height:'25px', 'lineHeight':1};
     return (
         <div className="pto-year-filter">
-            <button
-                className="btn btn-success"
-                onClick={goToPreviousYear}>
-                -
-            </button>
-            <span>{selectedYear}</span>
-            <button
-                className="btn btn-success"
-                onClick={goToNextYear}>
-                +
-            </button>
+            <RaisedButton label="<" style={style} onClick={goToPreviousYear} />
+            <span style={{margin:'0 6px', display:'inline-block'}}>{selectedYear}</span>
+            <RaisedButton label=">" style={style} onClick={goToNextYear} />
         </div>
     );
 };
@@ -160,11 +154,7 @@ class PTOPage extends Component {
                     onStatusUpdateHandler={this._onApplicationStatusUpdate}
                     onDeleteHandler={this._onPTORemoveClicked} />
                     <Space h="20" />
-                <button
-                    className="btn btn-success"
-                    onClick={this._onApplyButtonClicked}>
-                    PTO Application
-                </button>
+                <RaisedButton label="PTO Application" onClick={this._onApplyButtonClicked} labelStyle={{'textTransform':'none'}} secondary={true} />
                 <PTOApplyModal
                     show={showPTOApplyModal}
                     onHideHandler={this._closePTOApplyModal}
