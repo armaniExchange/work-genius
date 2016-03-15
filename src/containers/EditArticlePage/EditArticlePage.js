@@ -8,7 +8,7 @@ import Markdown from 'react-markdown';
 
 import ArticleEditor from '../../components/ArticleEditor/ArticleEditor';
 
-import * as EditArticleAction from '../../actions/edit-article-page-actions';
+import * as ArticleActions from '../../actions/article-page-actions';
 
 class EditArticlePage extends Component {
 
@@ -30,10 +30,10 @@ class EditArticlePage extends Component {
   componentWillMount() {
     const {
       params,
-      editArticleActions
+      articleActions
     } = this.props;
     if ( params.articleId !== 'new' ) {
-      editArticleActions.fetchArticle(params.articleId);
+      articleActions.fetchArticle(params.articleId);
     }
   }
 
@@ -115,7 +115,7 @@ EditArticlePage.propTypes = {
   createdAt           : PropTypes.number,
   updatedAt           : PropTypes.number,
   params              : PropTypes.object,
-  editArticleActions  : PropTypes.object.isRequired
+  articleActions      : PropTypes.object.isRequired
 };
 
 EditArticlePage.defaultProps = {
@@ -131,12 +131,12 @@ EditArticlePage.defaultProps = {
 };
 
 function mapStateToProps(state) {
-  return state.editArticle.toJS();
+  return state.article.toJS();
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    editArticleActions: bindActionCreators(EditArticleAction, dispatch)
+    articleActions: bindActionCreators(ArticleActions, dispatch)
   };
 }
 

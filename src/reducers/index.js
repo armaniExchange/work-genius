@@ -7,7 +7,7 @@ import pto from './pto-reducer';
 import admin from './admin-reducer';
 import dataExplorer from './data-explorer-reducer';
 import documentation from './document-reducer';
-import editArticle from './edit-article-reducer';
+import article from './article-reducer';
 
 const rootReducer = combineReducers({
 	app,
@@ -18,7 +18,7 @@ const rootReducer = combineReducers({
 	pto,
 	admin,
   documentation,
-  editArticle
+  article
 });
 
 export default rootReducer;

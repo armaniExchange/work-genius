@@ -16,7 +16,7 @@ class DocumentPage extends Component {
   }
 
   _onCreateNewArticle() {
-    location.href = '/main/article/edit/new';
+    location.href = '/main/articles/edit/new';
   }
 
 	render() {

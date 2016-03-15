@@ -16,6 +16,8 @@ import Login from '../containers/Login/Login';
 import NotFoundPage from '../containers/NotFoundPage/NotFoundPage';
 import DocumentPage from '../containers/DocumentPage/DocumentPage';
 import EditArticlePage from '../containers/EditArticlePage/EditArticlePage';
+import ViewArticlePage from '../containers/ViewArticlePage/ViewArticlePage';
+
 // Utilities
 import requireAuth from '../containers/Require-Auth/Require-Auth';
 
@@ -32,7 +34,8 @@ const appRoutes = () => (
 			    <Route path="task" component={requireAuth(TaskPage)} />
 			    <Route path="pto" component={requireAuth(PTOPage)} />
 			    <Route path="redux-demo" component={requireAuth(DemoPage)} />
-          <Route path="article/edit/:articleId" component={requireAuth(EditArticlePage)} />
+          <Route path="articles/edit/:articleId" component={requireAuth(EditArticlePage)} />
+          <Route path="articles/:articleId" component={requireAuth(ViewArticlePage)} />
           <Route path="document" component={requireAuth(DocumentPage)} />
 			    <Route path="data-explorer" component={requireAuth(DataExplorerPage)}>
 			        <IndexRoute component={requireAuth(DataExplorerFolderView)}/>
