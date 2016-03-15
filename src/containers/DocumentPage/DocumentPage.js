@@ -7,9 +7,14 @@ import { bindActionCreators } from 'redux';
 
 // import ArticleListItem from '../../components/ArticleListItem/ArticleListItem';
 
-import * as ArticleListAction from '../../actions/document-page-actions';
+import * as DocumentActions from '../../actions/document-page-actions';
 
 class DocumentPage extends Component {
+
+  componentWillMount() {
+    this.props.documentActions.fetchArticles();
+  }
+
   _onCreateNewArticle() {
     location.href = '/main/article/edit/new';
   }
@@ -63,7 +68,8 @@ class DocumentPage extends Component {
 }
 
 DocumentPage.propTypes = {
-  articleList: PropTypes.array
+  articleList: PropTypes.array,
+  documentActions: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
@@ -72,7 +78,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    articleActions: bindActionCreators(ArticleListAction, dispatch)
+    documentActions: bindActionCreators(DocumentActions, dispatch)
   };
 }
 
