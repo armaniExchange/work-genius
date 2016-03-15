@@ -10,7 +10,6 @@ import ArticleEditor from '../../components/ArticleEditor/ArticleEditor';
 
 import * as EditArticleAction from '../../actions/edit-article-page-actions';
 
-
 class EditArticlePage extends Component {
 
   constructor(props) {
@@ -73,14 +72,6 @@ class EditArticlePage extends Component {
       width: '49%',
       float: 'left'
     };
-    const {
-      // id,
-      // title,
-      // content,
-      // tags,
-      // author,
-      // attachments,
-    } = this.props;
 
     const {
       editingContent,
@@ -102,7 +93,6 @@ class EditArticlePage extends Component {
           <div style={previewStyle}>
             <Markdown source={editingContent} />
           </div>
-
           <div style={{clear: 'both'}}/>
           <br />
           <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
@@ -115,32 +105,29 @@ class EditArticlePage extends Component {
 }
 
 EditArticlePage.propTypes = {
-  id: PropTypes.string,
-  title: PropTypes.string,
-  author: PropTypes.object,
-  tags: PropTypes.array,
-  attachments: PropTypes.array,
-  comments: PropTypes.array,
-  content: PropTypes.string,
-  createdAt: PropTypes.number,
-  updatedAt: PropTypes.number,
-  params: PropTypes.object,
-  editArticleActions: PropTypes.object.isRequired
+  id                  : PropTypes.string,
+  title               : PropTypes.string,
+  author              : PropTypes.shape({id: PropTypes.string, name: PropTypes.string}),
+  tags                : PropTypes.arrayOf(PropTypes.string),
+  files               : PropTypes.array,
+  comments            : PropTypes.array,
+  content             : PropTypes.string,
+  createdAt           : PropTypes.number,
+  updatedAt           : PropTypes.number,
+  params              : PropTypes.object,
+  editArticleActions  : PropTypes.object.isRequired
 };
 
 EditArticlePage.defaultProps = {
-  id: '',
-  content: '',
-  author: {
-    id: '',
-    name: '',
-  },
-  tags: [],
-  attachments: [],
-  comments: [],
-  content: '',
-  createdAt: 0,
-  updatedAt: 0
+  id                  : '',
+  content             : '',
+  author              : { id: '', name: ''},
+  tags                : [],
+  files               : [],
+  comments            : [],
+  content             : '',
+  createdAt           : 0,
+  updatedAt           : 0
 };
 
 function mapStateToProps(state) {

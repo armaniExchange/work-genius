@@ -36,17 +36,18 @@ class ArticleEditor extends Component {
 }
 
 ArticleEditor.propTypes = {
-  title             : PropTypes.string,
-  content           : PropTypes.string,
-  tags              : PropTypes.array,
-  onContentChange   : PropTypes.func.isRequired,
-  onTitleChange     : PropTypes.func.isRequired
+  id                  : PropTypes.string,
+  title               : PropTypes.string,
+  content             : PropTypes.string,
+  tags                : PropTypes.arrayOf(PropTypes.string),
+  onContentChange     : PropTypes.func.isRequired,
+  onTitleChange       : PropTypes.func.isRequired
 };
 
 ArticleEditor.defaultProps = {
-  title             : '',
+  title               : '',
   content             : '',
-  tags              : []
+  tags                : []
 };
 
 export default ArticleEditor;

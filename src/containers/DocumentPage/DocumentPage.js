@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-// import ArticleListItem from '../../components/ArticleListItem/ArticleListItem';
+import ArticleListItem from '../../components/ArticleListItem/ArticleListItem';
 
 import * as DocumentActions from '../../actions/document-page-actions';
 
@@ -55,10 +55,8 @@ class DocumentPage extends Component {
           {
             articleList.map((article, id) => {
               return (
-                <div key={id}>
-                  <h1>{article.title}</h1>
-                  <p>{article.content}</p>
-                </div>
+                <ArticleListItem key={id}
+                  {...article}/>
               );
             })
           }

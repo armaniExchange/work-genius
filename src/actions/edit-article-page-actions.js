@@ -11,11 +11,8 @@ const fakeData = [
         id: '0',
         name: 'fong'
       },
-      tags: [
-        {id: 1, value: 'tag1'},
-        {id: 2, value: 'tag2'}
-      ],
-      attachments: [],
+      tags: [ 'tagA', 'tagB' ],
+      files: [],
       comments: [],
       content: '# this is a test \n * 1 \n * 2 \n ```js \nfunction(){\n  console.log("test"); \n}\n ```\n[google link](http://www.google.com)\n<iframe width="560" height="315" src="https://www.youtube.com/embed/Mqr-kjvXsk8" frameborder="0" allowfullscreen></iframe>',
       createdAt: 1457085436639,

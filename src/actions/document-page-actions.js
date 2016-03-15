@@ -9,11 +9,8 @@ const fakeArticleList = [
       id: '0',
       name: 'fong'
     },
-    tags: [
-      {id: 1, value: 'tag1'},
-      {id: 2, value: 'tag2'}
-    ],
-    attachments: [],
+    tags: [ 'tagA', 'tagB' ],
+    fiels: [],
     comments: [],
     content: '```js\nfunction(){}\n```\n* item 1\n * item 2',
     createdAt: 1457085436639,
@@ -26,11 +23,8 @@ const fakeArticleList = [
       id: '1',
       name: 'fong'
     },
-    tags: [
-      {id: 1, value: 'tag1'},
-      {id: 2, value: 'tag2'}
-    ],
-    attachments: [],
+    tags: [ 'tagC', 'tagD' ],
+    fiels: [],
     comments: [],
     content: '```js\nfunction(){}\n```\n* item 1\n * item 2',
     createdAt: 1457085436639,

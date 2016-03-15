@@ -10,11 +10,11 @@ const initialState = OrderedMap({
     id: '',
     title: '',
     author: OrderedMap({
-      id: '0',
-      name: 'fong'
+      id: '',
+      name: ''
     }),
     tags: List.of(),
-    attachments: List.of(),
+    files: List.of(),
     comments: List.of(),
     content: '',
     createdAt: 0,
@@ -28,7 +28,7 @@ export default function editArticleReducer(state = initialState, action) {
               .set('title', action.title)
               .set('author', action.author)
               .set('tags', action.tags)
-              .set('attachments', action.attachments)
+              .set('files', action.files)
               .set('comments', action.comments)
               .set('content', action.content)
               .set('createdAt', action.createdAt)
