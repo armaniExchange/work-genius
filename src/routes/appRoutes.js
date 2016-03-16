@@ -35,6 +35,7 @@ const appRoutes = () => (
 			    <Route path="task" component={requireAuth(TaskPage)} />
 			    <Route path="pto" component={requireAuth(PTOPage)} />
 			    <Route path="redux-demo" component={requireAuth(DemoPage)} />
+          <Route path="valid-demo" component={requireAuth(ValidDemoPage)} />
           <Route path="articles/edit/:articleId" component={requireAuth(EditArticlePage)} />
           <Route path="articles/:articleId" component={requireAuth(ViewArticlePage)} />
           <Route path="document" component={requireAuth(DocumentPage)} />
@@ -42,7 +43,6 @@ const appRoutes = () => (
 			        <IndexRoute component={requireAuth(DataExplorerFolderView)}/>
 			        <Route path="data-explorer/:folderName" component={requireAuth(DataExplorerFileView)} />
 			    </Route>
-          <Route path="valid-demo" component={ValidDemoPage} />
 		    </Route>
 		    <Route path="*" component={NotFoundPage} />
 		</Route>

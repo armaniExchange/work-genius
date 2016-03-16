@@ -30,7 +30,18 @@ const initialState = Map({
     Map({
       displayText: 'Document',
       link: '/main/document'
-    })
+    }),
+      displayText: 'Valid Demo',
+      link: '/main/valid-demo'
+    }),
+    Map({
+      displayText: 'Article List',
+      link: '/main/article-list'
+    }),
+    Map({
+      displayText: 'Article',
+      link: '/main/article'
+    }),
 	),
 	hasLogo: true
 });
