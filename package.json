@@ -46,6 +46,7 @@
     "imports-loader": "^0.6.5",
     "isomorphic-fetch": "^2.2.1",
     "jsonwebtoken": "^5.4.1",
+    "lodash": "^4.6.1",
     "material-design-lite": "^1.1.1",
     "material-ui": "^0.14.4",
     "moment": "^2.10.6",
@@ -58,6 +59,7 @@
     "react-datepicker": "^0.15.2",
     "react-dom": "^0.14.7",
     "react-dropzone": "^3.2.2",
+    "react-highlight": "^0.7.0",
     "react-markdown": "^2.0.1",
     "react-redux": "^4.0.0",
     "react-router": "^1.0.0-rc3",
@@ -68,8 +70,7 @@
     "rethinkdb": "^2.1.1",
     "session-rethinkdb": "^1.0.7",
     "superagent": "^1.4.0",
-    "whatwg-fetch": "^0.10.1",
-    "lodash": "^4.6.1"
+    "whatwg-fetch": "^0.10.1"
   },
   "devDependencies": {
     "autoprefixer": "^6.0.3",

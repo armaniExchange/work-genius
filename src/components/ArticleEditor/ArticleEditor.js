@@ -6,6 +6,13 @@ import TextField from 'material-ui/lib/text-field';
 // Styles
 import './_ArticleEditor.css';
 import 'codemirror/mode/gfm/gfm';
+import 'codemirror/mode/markdown/markdown';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/css/css';
+import 'codemirror/mode/xml/xml';
+import 'codemirror/mode/htmlembedded/htmlembedded';
+import 'codemirror/mode/sass/sass';
+import 'codemirror/mode/python/python';
 import 'codemirror/lib/codemirror.css';
 
 class ArticleEditor extends Component {
