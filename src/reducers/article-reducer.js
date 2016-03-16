@@ -23,6 +23,7 @@ const initialState = OrderedMap({
 
 export default function editArticleReducer(state = initialState, action) {
     switch (action.type) {
+        case actionTypes.UPDATE_ARTICLE_SUCCESS:
         case actionTypes.FETCH_ARTICLE_SUCCESS:
             return state.set('id', action.id)
               .set('title', action.title)
@@ -33,6 +34,7 @@ export default function editArticleReducer(state = initialState, action) {
               .set('content', action.content)
               .set('createdAt', action.createdAt)
               .set('updatedAt', action.updatedAt);
+            break;
         default:
             return state;
     }

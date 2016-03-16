@@ -2,6 +2,7 @@
 import React, { Component, PropTypes } from 'react';
 import Markdown from 'react-markdown';
 import moment from 'moment';
+import FlatButton from 'material-ui/lib/flat-button';
 
 // Styles
 import './_ArticleListItem.css';
@@ -13,7 +14,8 @@ class ArticleListItem extends Component {
       title,
       author,
       tags,
-      // files,
+      files,
+      comments,
       content,
       // createdAt,
       updatedAt
@@ -23,18 +25,27 @@ class ArticleListItem extends Component {
       padding: 15,
       margin: '15px 0',
       border: 3,
-      boxShadow: '0 2px lightgray'
+      boxShadow: '0 2px lightgray',
+      position: 'relative'
     };
     return (
       <div style={style}>
         <a href={`/main/articles/${id}`}>
           <h3 style={{margin: 0}}>{title}</h3>
         </a>
-        <span style={{color: 'gray'}}>
-          {moment(updatedAt).format('MMM Do YY')}
-        </span>
-        <span>&nbsp;|&nbsp;</span>
-        <span>{author.name}</span>
+        <div style={{
+          position: 'absolute',
+          top: 5,
+          right: 5
+        }}>
+          <FlatButton
+            label="Edit"
+            primary={true}
+            linkButton={true}
+            href={`/main/articles/edit/${id}`} />
+          <FlatButton
+            label="Delete"/>
+        </div>
         <br/>
         <Markdown source={content} />
         {
@@ -46,14 +57,44 @@ class ArticleListItem extends Component {
             );
           })
         }
-        <a href={`/main/articles/edit/${id}`}>
-          <i className="fa fa-pencil" />
-          Edit
-        </a>
+
         <br />
-        <a href="#">
-          >>&nbsp;Read More
-        </a>
+        <br />
+        <hr />
+        <div>
+          <span>Author: {author.name}&nbsp;</span>
+          &nbsp;&nbsp;
+          <span style={{color: 'gray'}}>
+            {moment(updatedAt).format('YYYY-MM-DD')}&nbsp;
+          </span>
+          &nbsp;&nbsp;
+          <span>
+            <i className="fa fa-comments"/>&nbsp;
+            Comments: {comments.length}&nbsp;
+          </span>
+          &nbsp;&nbsp;
+          <span>
+            <span>{`attachments(${files.length}):`}&nbsp;</span>
+            {
+              files.map((file, index) => {
+                const MimeTypeIcon = {
+                  'image/jpeg': 'fa-file-picture-o',
+                  'video/mp4': 'fa-file-video-o'
+                };
+
+                return (
+                  <span key={index}>
+                    &nbsp;
+                    <i className={`fa ${MimeTypeIcon[file.type]}`} />
+                    &nbsp;
+                    <a href="#" >{file.name}</a>
+                  </span>
+                );
+              })
+            }
+          </span>
+        </div>
+        <br/>
       </div>
     );
   }
