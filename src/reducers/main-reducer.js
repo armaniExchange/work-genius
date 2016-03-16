@@ -31,6 +31,7 @@ const initialState = Map({
       displayText: 'Document',
       link: '/main/document'
     }),
+    Map({
       displayText: 'Valid Demo',
       link: '/main/valid-demo'
     }),
