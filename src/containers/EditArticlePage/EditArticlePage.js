@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Markdown from 'react-markdown';
+import RaisedButton from 'material-ui/lib/raised-button';
 
 import ArticleEditor from '../../components/ArticleEditor/ArticleEditor';
 
@@ -14,17 +15,7 @@ class EditArticlePage extends Component {
 
   constructor(props) {
     super(props);
-    const {
-      title,
-      content,
-      tags
-    } = this.props;
-
-    this.state = {
-      editingTitle: title,
-      editingContent: content,
-      editingTags: tags,
-    };
+    this.state = this.getEditingStateFromProps(props);
   }
 
   componentWillMount() {
@@ -38,16 +29,23 @@ class EditArticlePage extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    const newState = this.getEditingStateFromProps(nextProps);
+    this.setState(newState);
+  }
+
+  getEditingStateFromProps(props) {
     const {
       title,
       content,
       tags,
-    } = nextProps;
-    this.setState({
+      category
+    } = props;
+    return {
       editingTitle: title,
       editingContent: content,
-      editingTags: tags
-    });
+      editingTags: tags,
+      editingCategory: category
+    };
   }
 
   onContentChange(newContent) {
@@ -57,6 +55,38 @@ class EditArticlePage extends Component {
   onTitleChange(event){
     this.setState({
       editingTitle: event.target.value
+    });
+  }
+
+  onTagsChange(event) {
+    this.setState({
+      editingTags: event.target.value.replace(' ','').split(',')
+    });
+  }
+
+  onCategoryChange(event) {
+    this.setState({
+      editingCategory: event.target.value
+    });
+  }
+
+  onFileUpload(dataUri) {
+    this.props.articleActions.uploadArticleFile(dataUri);
+  }
+
+  onSubmit() {
+    const {
+      editingTitle,
+      editingTags,
+      editingCategory,
+      editingContent
+    } = this.state;
+
+    this.props.articleActions.updateArticle({
+      title: editingTitle,
+      tags: editingTags,
+      category: editingCategory,
+      content: editingContent
     });
   }
 
@@ -76,28 +106,43 @@ class EditArticlePage extends Component {
     const {
       editingContent,
       editingTitle,
-      editingTags
+      editingTags,
+      editingCategory
     } = this.state;
+
+    const pageTitle = this.props.params.articleId === 'new' ?
+      'Create Document' : 'Update Document';
 
     return (
       <section>
         <div>
+          <h3>{pageTitle}</h3>
           <div style={editorContentStyle}>
             <ArticleEditor
               title={editingTitle}
               tags={editingTags}
               content={editingContent}
+              category={editingCategory}
+              onTagsChange={::this.onTagsChange}
               onTitleChange={::this.onTitleChange}
-              onContentChange={::this.onContentChange} />
+              onCategoryChange={::this.onCategoryChange}
+              onContentChange={::this.onContentChange}
+              onFileUpload={::this.onFileUpload}/>
           </div>
           <div style={previewStyle}>
+            <h3>Preview</h3>
             <Markdown source={editingContent} />
           </div>
           <div style={{clear: 'both'}}/>
           <br />
-          <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
-            Submit
-          </button>
+          <RaisedButton
+            label="Submit"
+            primary={true}
+            onClick={::this.onSubmit}
+            style={{margin: 10}} />
+          <RaisedButton
+            label="Preview"
+            style={{margin: 10}} />
         </div>
       </section>
     );

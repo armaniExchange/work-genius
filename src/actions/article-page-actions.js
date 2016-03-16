@@ -1,5 +1,4 @@
 import * as actionTypes from '../constants/action-types';
-// import _ from 'lodash';
 
 // for development use, delete when database ready
 // --- start ---
@@ -38,7 +37,6 @@ export function fetchArticle(id) {
       id
     });
     // fetch from server
-    // const article = _.findWhere(fakeData, {id});
     const article = fakeData[0];
     dispatch(fetchArticleSucess(article));
   };
@@ -62,7 +60,7 @@ export function createArticle(article) {
   };
 }
 
-export function updateArticleSuccess(article){
+export function updateArticleSuccess(article) {
   return {
     type: actionTypes.UPDATE_ARTICLE_SUCCESS,
     ...article
@@ -74,10 +72,25 @@ export function updateArticle(newArticle) {
     dispatch({
       type: actionTypes.UPDATE_ARTICLE
     });
-
+    let article = fakeData[0];
     // update to server
-    let article = _.findWhere(fakeData, {id: newArticle.id});
     Object.assign(article, newArticle);
     dispatch(updateArticleSuccess(article));
+  };
+}
+
+export function uploadArticleFileSuccess(file) {
+  return {
+    type: actionTypes.UPLOAD_ARTICLE_FILE_SUCCESS,
+    file
+  };
+}
+
+export function uploadArticleFile(file) {
+  return dispatch => {
+    dispatch({
+      type: actionTypes
+    });
+    dispatch(uploadArticleFileSuccess(file));
   };
 }

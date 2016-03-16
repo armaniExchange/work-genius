@@ -4,6 +4,8 @@ import './_DocumentPage.scss';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import TextField from 'material-ui/lib/text-field';
+import RaisedButton from 'material-ui/lib/raised-button';
 
 import ArticleListItem from '../../components/ArticleListItem/ArticleListItem';
 
@@ -12,11 +14,28 @@ import * as DocumentActions from '../../actions/document-page-actions';
 class DocumentPage extends Component {
 
   componentWillMount() {
-    this.props.documentActions.fetchArticles();
+    const {
+      fetchArticles,
+      fetchCategories,
+      fetchAllTags
+    } = this.props.documentActions;
+    fetchArticles();
+    fetchCategories();
+    fetchAllTags();
   }
 
-  _onCreateNewArticle() {
+  onCreateNewArticle() {
     location.href = '/main/articles/edit/new';
+  }
+
+  queryWithTag(tag) {
+    this.props.documentActions.fetchArticles({tag: tag});
+  }
+
+  onSearchChange(event) {
+    this.props.documentActions.fetchArticles({
+      q: event.target.value
+    });
   }
 
 	render() {
@@ -28,27 +47,52 @@ class DocumentPage extends Component {
       width: '70%',
       float: 'left'
     };
-    const {articleList} = this.props;
+    const {
+      articleList,
+      tags,
+      categories
+    } = this.props;
+
 		return (
 			<section>
         <div style={leftPanelStyle}>
-          <button
-            className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
-            onClick={::this._onCreateNewArticle}>
-            + Create a Document
-          </button>
+          <RaisedButton
+            label="+ Create a Document"
+            secondary={true}
+            onClick={::this.onCreateNewArticle} />
           <br />
-          <div className="mdl-textfield mdl-js-textfield">
-             <input className="mdl-textfield__input" type="text" id="sample1" />
-             <label className="mdl-textfield__label" htmlFor="sample1">Search...</label>
-           </div>
+          <TextField
+            hintText="Search..."
+            onChange={::this.onSearchChange} />
           <div>
-            <label>tag1</label>
-            <label>tag2</label>
-            <label>tag3</label>
+            {
+              tags.map((tag, index) => {
+                return (
+                  <div
+                    style={{
+                      margin: 2,
+                      padding: '2px 6px',
+                      background: 'darkblue',
+                      color: 'white',
+                      borderRadius: 3,
+                      display: 'inline-block',
+                      cursor: 'pointer'
+                    }}
+                    onClick={this.queryWithTag.bind(this, tag)}
+                    key={index}>
+                    {tag}
+                  </div>
+                );
+              })
+            }
           </div>
           <div>
-            Tree structure here
+            <h5>Tree</h5>
+            {
+              categories.map((category, index) => {
+                return (<label key={index}>{category.name}</label>);
+              })
+            }
           </div>
         </div>
         <div style={rightPanelStyle}>
@@ -67,8 +111,10 @@ class DocumentPage extends Component {
 }
 
 DocumentPage.propTypes = {
-  articleList: PropTypes.array,
-  documentActions: PropTypes.object.isRequired
+  articleList            : PropTypes.array,
+  categories             : PropTypes.array,
+  tags                   : PropTypes.array,
+  documentActions        : PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
@@ -77,7 +123,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    documentActions: bindActionCreators(DocumentActions, dispatch)
+    documentActions     : bindActionCreators(DocumentActions, dispatch)
   };
 }
 
