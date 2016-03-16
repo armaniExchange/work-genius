@@ -1,8 +1,7 @@
 // Libraries
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import TextField from 'material-ui/lib/text-field';
 import { ValidNumber } from '../../components/A10-UI/Valid/';
 
 class ValidDemoPage extends Component {
