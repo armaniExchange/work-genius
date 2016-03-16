@@ -4,9 +4,9 @@ import './_EditArticlePage.scss';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Markdown from 'react-markdown';
 import RaisedButton from 'material-ui/lib/raised-button';
 
+import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
 import ArticleEditor from '../../components/ArticleEditor/ArticleEditor';
 
 import * as ArticleActions from '../../actions/article-page-actions';
@@ -131,7 +131,7 @@ class EditArticlePage extends Component {
           </div>
           <div style={previewStyle}>
             <h3>Preview</h3>
-            <Markdown source={editingContent} />
+            <HighlightMarkdown source={editingContent} />
           </div>
           <div style={{clear: 'both'}}/>
           <br />
