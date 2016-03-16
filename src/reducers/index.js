@@ -6,6 +6,8 @@ import task from './task-reducer';
 import pto from './pto-reducer';
 import admin from './admin-reducer';
 import dataExplorer from './data-explorer-reducer';
+import documentation from './document-reducer';
+import article from './article-reducer';
 
 const rootReducer = combineReducers({
 	app,
@@ -14,7 +16,9 @@ const rootReducer = combineReducers({
 	task,
 	dataExplorer,
 	pto,
-	admin
+	admin,
+  documentation,
+  article
 });
 
 export default rootReducer;
