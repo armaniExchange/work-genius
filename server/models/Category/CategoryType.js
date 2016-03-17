@@ -3,7 +3,8 @@ import {
 	GraphQLObjectType,
 	GraphQLString,
 	GraphQLID,
-    GraphQLInt
+    GraphQLInt,
+	GraphQLList
 } from 'graphql';
 
 const ARTICLE_TYPE = new GraphQLObjectType({
@@ -25,7 +26,11 @@ const ARTICLE_TYPE = new GraphQLObjectType({
         'articlesCount': {
             type: GraphQLInt,
             description: 'Category\'s articles count'
-        }
+        },
+		'subCategories': {
+			type: new GraphQLList(ARTICLE_TYPE),
+			description: 'Category\'s subcategory'			
+		}
     })
 });
 

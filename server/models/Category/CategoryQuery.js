@@ -8,6 +8,8 @@ import CategoryType from './CategoryType.js';
 import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
+// Utils
+import { transformToTree } from './utils.js';
 
 let CategoryQuery = {
 	'getAllCategories': {
@@ -28,7 +30,27 @@ let CategoryQuery = {
 			}
 			return result;
 		}
-	}
+	},
+    'getCategoryTree': {
+		type: CategoryType,
+		description: 'Get all documentation categories in tree form',
+		resolve: async () => {
+			let connection = null,
+			    result = null,
+				query = null;
+
+			try {
+				query = r.db('work_genius').table('categories').coerceTo('array');
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				result = await query.run(connection);
+                result = transformToTree(result);
+				await connection.close();
+			} catch (err) {
+				return err;
+			}
+			return result;
+		}
+	},
 };
 
 export default CategoryQuery;

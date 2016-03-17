@@ -23,7 +23,8 @@ const schema = new GraphQLSchema({
 			currentUser         : UserQuery.currentUser,
 			tasks               : TaskQuery.tasks,
 			ptoApplications     : PTOQuery.ptoApplications,
-			allCategories       : CategoryQuery.getAllCategories
+			allCategories       : CategoryQuery.getAllCategories,
+			categoryTree        : CategoryQuery.getCategoryTree
 		}
 	}),
 	mutation: new GraphQLObjectType({
