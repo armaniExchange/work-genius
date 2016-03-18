@@ -36,16 +36,17 @@ const fakeArticleList = [
 ];
 
 const fakeCategories = [
-  {id: '1', name: 'slb'},
+  {id: '1', name: 'slb', leaf: []},
   {id: '2', parentId: '1', name: 'WAF'},
   {id: '3', parentId: '1', name: 'GSLB'},
   {id: '4', parentId: '3', name: 'Lorem ipsum dolor sit amet'},
   {id: '5', parentId: '3', name: 'Lorem ipsum dolor sit amet'},
   {id: '6', parentId: '3', name: 'Lorem ipsum dolor sit amet'},
   {id: '7', parentId: '3', name: 'Lorem ipsum dolor sit amet'},
-  {id: '8', parentId: '3', name: 'Lorem ipsum dolor sit amet'},
+  {id: '8', parentId: '9', name: 'Lorem ipsum dolor sit amet'},
   {id: '9', name: 'DDos'},
-  {id: '10', name: 'GSLB'}
+  {id: '10', name: 'System'},
+  {id: '11', parentId: '7', name: 'Lorem ipsum dolor sit amet'}
 ];
 
 const fakeAllTags = [
