@@ -82,7 +82,7 @@ class ArticleEditor extends Component {
                 <MenuItem
                   key={index}
                   value={item.id}
-                  primaryText={item.path}
+                  primaryText={item.name}
                 />
               );
             })
@@ -134,7 +134,7 @@ ArticleEditor.defaultProps = {
   content             : '',
   tags                : [],
   files               : [],
-  allCategories       : []
+  allCategorie        : []
 };
 
 export default ArticleEditor;

@@ -14,17 +14,15 @@ const initialState = OrderedMap({
     id: '',
     name: ''
   }),
+  category: {
+    id: ''
+  },
   tags: List.of(),
   files: List.of(),
   comments: List.of(),
   content: '',
   createdAt: 0,
   updatedAt: 0,
-  category: {
-    id: '1'
-  },
-  // data for edit
-  allCategories: List.of()
 });
 
 export default function editArticleReducer(state = initialState, action) {
@@ -34,15 +32,13 @@ export default function editArticleReducer(state = initialState, action) {
       return state.set('id', action.id)
         .set('title', action.title)
         .set('author', action.author)
+        .set('category', action.category)
         .set('tags', action.tags)
         .set('files', action.files)
         .set('comments', action.comments)
         .set('content', action.content)
         .set('createdAt', action.createdAt)
         .set('updatedAt', action.updatedAt);
-      break;
-    case actionTypes.FETCH_ALL_CATEGORIES_WITH_PATH_SUCCESS:
-      return state.set('allCategories', action.allCategories);
       break;
     default:
       return state;

@@ -8,8 +8,8 @@ import * as actionTypes from '../constants/action-types';
 
 const initialState = Map({
   articleList: List.of(),
-  categories: List.of(),
-  tags: List.of()
+  allCategories: List.of(),
+  allTags: List.of()
 });
 
 export default function documentReducer(state = initialState, action) {
@@ -17,11 +17,11 @@ export default function documentReducer(state = initialState, action) {
     case actionTypes.FETCH_ARTICLES_SUCCESS:
       return state.set('articleList', action.articleList);
       break;
-    case actionTypes.FETCH_CATEGORIES_SUCCESS:
-      return state.set('categories', action.categories);
+    case actionTypes.FETCH_ALL_CATEGORIES_SUCCESS:
+      return state.set('allCategories', action.allCategories);
       break;
     case actionTypes.FETCH_ALL_TAGS_SUCCESS:
-      return state.set('tags', action.tags);
+      return state.set('allTags', action.allTags);
       break;
     default:
         return state;

@@ -41,7 +41,7 @@ const fakeArticleList = [
   }
 ];
 
-const fakeCategories = [
+const fakeAllCategories = [
     {
       articlesCount: 20,
       id: 'ef4f3b7b-209c-45fb-ab66-eca6dedc5d10',
@@ -121,27 +121,27 @@ export function fetchArticles(query) {
   };
 }
 
-export function fetchCategoriesSuccess(categories) {
+export function fetchAllCategoriesSuccess(allCategories) {
   return {
-    type: actionTypes.FETCH_CATEGORIES_SUCCESS,
-    categories
+    type: actionTypes.FETCH_ALL_CATEGORIES_SUCCESS,
+    allCategories
   };
 }
 
-export function fetchCategories() {
+export function fetchAllCategories() {
   return dispatch => {
     dispatch({
-      type: actionTypes.FETCH_CATEGORIES
+      type: actionTypes.FETCH_ALL_CATEGORIES
     });
     // fetch categoreis from server
-    dispatch(fetchCategoriesSuccess(fakeCategories));
+    dispatch(fetchAllCategoriesSuccess(fakeAllCategories));
   };
 }
 
-export function fetchAllTagsSuccess(tags) {
+export function fetchAllTagsSuccess(allTags) {
   return {
     type: actionTypes.FETCH_ALL_TAGS_SUCCESS,
-    tags
+    allTags
   };
 }
 

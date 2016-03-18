@@ -10,6 +10,7 @@ import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkd
 import ArticleEditor from '../../components/ArticleEditor/ArticleEditor';
 
 import * as ArticleActions from '../../actions/article-page-actions';
+import * as DocumentActions from '../../actions/document-page-actions';
 
 class EditArticlePage extends Component {
 
@@ -22,12 +23,13 @@ class EditArticlePage extends Component {
   componentWillMount() {
     const {
       params,
-      articleActions
+      articleActions,
+      documentActions
     } = this.props;
     if ( params.articleId !== 'new' ) {
       articleActions.fetchArticle(params.articleId);
     }
-    articleActions.fetchAllCategoriesWithPath();
+    documentActions.fetchAllCategories();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -42,6 +44,7 @@ class EditArticlePage extends Component {
       tags,
       category
     } = props;
+
     return {
       editingTitle: title,
       editingContent: content,
@@ -184,7 +187,8 @@ EditArticlePage.propTypes = {
   updatedAt           : PropTypes.number,
   params              : PropTypes.object,
   allCategories       : PropTypes.array,
-  articleActions      : PropTypes.object.isRequired
+  articleActions      : PropTypes.object.isRequired,
+  documentActions     : PropTypes.object.isRequired
 };
 
 EditArticlePage.defaultProps = {
@@ -201,12 +205,15 @@ EditArticlePage.defaultProps = {
 };
 
 function mapStateToProps(state) {
-  return state.article.toJS();
+  return Object.assign({}, state.article.toJS(), {
+    allCategories: state.documentation.toJS().allCategories
+  });
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    articleActions: bindActionCreators(ArticleActions, dispatch)
+    articleActions      : bindActionCreators(ArticleActions, dispatch),
+    documentActions     : bindActionCreators(DocumentActions, dispatch)
   };
 }
 

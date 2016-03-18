@@ -18,11 +18,11 @@ class DocumentPage extends Component {
   componentWillMount() {
     const {
       fetchArticles,
-      fetchCategories,
+      fetchAllCategories,
       fetchAllTags
     } = this.props.documentActions;
     fetchArticles();
-    fetchCategories();
+    fetchAllCategories();
     fetchAllTags();
   }
 
@@ -51,8 +51,8 @@ class DocumentPage extends Component {
     };
     const {
       articleList,
-      tags,
-      categories
+      allTags,
+      allCategories
     } = this.props;
 
 		return (
@@ -67,10 +67,10 @@ class DocumentPage extends Component {
             hintText="Search..."
             onChange={::this.onSearchChange} />
           <br/>
-          <ArticleTagList tags={tags} onClick={::this.queryWithTag} />
+          <ArticleTagList tags={allTags} onClick={::this.queryWithTag} />
           <div>
             <h5>Tree</h5>
-            <CategoryTree categories={categories} />
+            <CategoryTree categories={allCategories} />
           </div>
         </div>
         <div style={rightPanelStyle}>
@@ -90,8 +90,8 @@ class DocumentPage extends Component {
 
 DocumentPage.propTypes = {
   articleList            : PropTypes.array,
-  categories             : PropTypes.array,
-  tags                   : PropTypes.array,
+  allCategories          : PropTypes.array,
+  allTags                : PropTypes.array,
   documentActions        : PropTypes.object.isRequired
 };
 
