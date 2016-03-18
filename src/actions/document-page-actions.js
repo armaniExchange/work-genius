@@ -36,17 +36,41 @@ const fakeArticleList = [
 ];
 
 const fakeCategories = [
-  {id: '1', name: 'slb', leaf: []},
-  {id: '2', parentId: '1', name: 'WAF'},
-  {id: '3', parentId: '1', name: 'GSLB'},
-  {id: '4', parentId: '3', name: 'Lorem ipsum dolor sit amet'},
-  {id: '5', parentId: '3', name: 'Lorem ipsum dolor sit amet'},
-  {id: '6', parentId: '3', name: 'Lorem ipsum dolor sit amet'},
-  {id: '7', parentId: '3', name: 'Lorem ipsum dolor sit amet'},
-  {id: '8', parentId: '9', name: 'Lorem ipsum dolor sit amet'},
-  {id: '9', name: 'DDos'},
-  {id: '10', name: 'System'},
-  {id: '11', parentId: '7', name: 'Lorem ipsum dolor sit amet'}
+    {
+      articlesCount: 20,
+      id: 'ef4f3b7b-209c-45fb-ab66-eca6dedc5d10',
+      name: 'GSLB',
+      parentId: '0d3051ed-c260-4d77-a790-57bc0f7a2013'
+    },
+    {
+      articlesCount: 10,
+      id: '5706fecf-7915-48c4-aa60-0dd0fb709c9b',
+      name: 'GSLB-2',
+      parentId: 'ef4f3b7b-209c-45fb-ab66-eca6dedc5d10'
+    },
+    {
+      articlesCount: 10,
+      id: 'a302678e-3792-44bd-9b76-4deb1c93d0fa',
+      name: 'GSLB-2-1',
+      parentId: '5706fecf-7915-48c4-aa60-0dd0fb709c9b'
+    },
+    {
+      articlesCount: 5,
+      id: 'c8b642c5-1067-4f7e-897c-a8837bf62ac8',
+      name: 'DDOS',
+      parentId: '0d3051ed-c260-4d77-a790-57bc0f7a2013'
+    },
+    {
+      id: '0d3051ed-c260-4d77-a790-57bc0f7a2013',
+      name: 'root',
+      parentId: null
+    },
+    {
+      articlesCount: 10,
+      id: '35be062c-8f18-49ab-8e9a-feeed4875ff5',
+      name: 'GSLB-1',
+      parentId: 'ef4f3b7b-209c-45fb-ab66-eca6dedc5d10'
+    }
 ];
 
 const fakeAllTags = [

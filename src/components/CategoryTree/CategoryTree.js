@@ -12,7 +12,7 @@ class CategoryTree extends Component {
 
     let legacyCategories = categories.filter(category => {
       
-      if (category.hasOwnProperty('parentId')) {
+      if (category.hasOwnProperty('parentId') && category['parentId']) {
         let isFound = this.traversalCategoryTree(root, category);
         return ! isFound;
       } else {
@@ -51,15 +51,16 @@ class CategoryTree extends Component {
     return isFound;
   }
 
-  renderTree(node) {
+  renderTree(node, level) {
     let leaves = node['leaves'] || [];
+    level = level || 1;
 
     return (
-      <ul>
-        <li>{node['name']}</li>
+      <ul key={node['id']}>
+        <li><a href="#">{node['name']}</a></li>
         {
           leaves.map(leaf => {
-            return this.renderTree(leaf);
+            return this.renderTree(leaf, (level + 1));
           })
         }
       </ul>
@@ -78,7 +79,7 @@ class CategoryTree extends Component {
 }
 
 CategoryTree.propTypes = {
-  categories: PropTypes.arrayOf(PropTypes.string)
+  categories: PropTypes.arrayOf(PropTypes.object)
 };
 
 CategoryTree.defaultProps = {
