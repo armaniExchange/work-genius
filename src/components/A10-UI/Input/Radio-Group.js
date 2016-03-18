@@ -25,9 +25,12 @@ class RadioGroup extends Component {
                 name={item.name}
                 onChange={onRadioChange}/>
         ));
+        if (title) {
+            title += ': ';
+        }
         return (
             <div className="a10-radio-group">
-                {title}: {radios}
+                {title}{radios}
             </div>
         );
     }

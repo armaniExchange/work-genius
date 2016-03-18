@@ -5,17 +5,15 @@ import moment from 'moment';
 
 // Styles
 import './_ArticleListItem.css';
-import 'codemirror/mode/gfm/gfm';
-import 'codemirror/lib/codemirror.css';
 
 class ArticleListItem extends Component {
   render() {
     const {
+      id,
       title,
       author,
       tags,
-      category,
-      // attachments,
+      // files,
       content,
       // createdAt,
       updatedAt
@@ -29,7 +27,9 @@ class ArticleListItem extends Component {
     };
     return (
       <div style={style}>
-        <h3 style={{margin: 0}}>{title}</h3>
+        <a href={`/main/articles/${id}`}>
+          <h3 style={{margin: 0}}>{title}</h3>
+        </a>
         <span style={{color: 'gray'}}>
           {moment(updatedAt).format('MMM Do YY')}
         </span>
@@ -46,7 +46,11 @@ class ArticleListItem extends Component {
             );
           })
         }
-        <p>{category.toString()}</p>
+        <a href={`/main/articles/edit/${id}`}>
+          <i className="fa fa-pencil" />
+          Edit
+        </a>
+        <br />
         <a href="#">
           >>&nbsp;Read More
         </a>
@@ -61,8 +65,7 @@ ArticleListItem.propTypes = {
   title           : PropTypes.string,
   author          : PropTypes.shape({id: PropTypes.string, name: PropTypes.string}),
   tags            : PropTypes.arrayOf(PropTypes.string),
-  category        : PropTypes.array,
-  attachments     : PropTypes.array,
+  files           : PropTypes.array,
   comments        : PropTypes.array,
   content         : PropTypes.string,
   createdAt       : PropTypes.number,
@@ -75,8 +78,7 @@ ArticleListItem.defaultProps = {
   title           : '',
   author          : {id: '', name: ''},
   tags            : [],
-  category        : [],
-  attachments     : [],
+  files           : [],
   comments        : [],
   content         : '',
   createdAt       : 0,
