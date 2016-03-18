@@ -1,7 +1,11 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
-import Markdown from 'react-markdown';
 import moment from 'moment';
+import FlatButton from 'material-ui/lib/flat-button';
+
+import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
+import ArticleFileList from '../../components/ArticleFileList/ArticleFileList';
+import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
 
 // Styles
 import './_ArticleListItem.css';
@@ -13,47 +17,63 @@ class ArticleListItem extends Component {
       title,
       author,
       tags,
-      // files,
+      files,
+      comments,
       content,
       // createdAt,
       updatedAt
     } = this.props;
+
     const style = {
       background: 'white',
       padding: 15,
       margin: '15px 0',
       border: 3,
-      boxShadow: '0 2px lightgray'
+      boxShadow: '0 2px lightgray',
+      position: 'relative'
     };
+
     return (
       <div style={style}>
         <a href={`/main/articles/${id}`}>
           <h3 style={{margin: 0}}>{title}</h3>
         </a>
-        <span style={{color: 'gray'}}>
-          {moment(updatedAt).format('MMM Do YY')}
-        </span>
-        <span>&nbsp;|&nbsp;</span>
-        <span>{author.name}</span>
+        <div style={{
+          position: 'absolute',
+          top: 5,
+          right: 5
+        }}>
+          <FlatButton
+            label="Edit"
+            primary={true}
+            linkButton={true}
+            href={`/main/articles/edit/${id}`} />
+          <FlatButton
+            label="Delete"/>
+        </div>
         <br/>
-        <Markdown source={content} />
-        {
-          tags.map((tag, index) => {
-            return (
-              <span key={index}>
-                <i className="fa fa-tag"/>&nbsp;{tag}&nbsp;
-              </span>
-            );
-          })
-        }
-        <a href={`/main/articles/edit/${id}`}>
-          <i className="fa fa-pencil" />
-          Edit
-        </a>
+        <HighlightMarkdown source={content} />
         <br />
-        <a href="#">
-          >>&nbsp;Read More
-        </a>
+        <hr />
+        <ArticleTagList tags={tags} />
+        <div>
+          <span>Author: {author.name}&nbsp;</span>
+          &nbsp;&nbsp;
+          <span style={{color: 'gray'}}>
+            {moment(updatedAt).format('YYYY-MM-DD')}&nbsp;
+          </span>
+          &nbsp;&nbsp;
+          <span>
+            <i className="fa fa-comments"/>&nbsp;
+            Comments: {comments.length}&nbsp;
+          </span>
+          &nbsp;&nbsp;
+          <span>
+            <span>{`attachments(${files.length}):`}&nbsp;</span>
+            <ArticleFileList files={files} />
+          </span>
+        </div>
+        <br/>
       </div>
     );
   }
