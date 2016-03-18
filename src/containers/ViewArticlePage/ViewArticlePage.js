@@ -4,7 +4,7 @@ import './_ViewArticlePage.scss';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Markdown from 'react-markdown';
+import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
 
 import * as ArticleActions from '../../actions/article-page-actions';
 
@@ -30,7 +30,7 @@ class ViewArticlePage extends Component {
     return (
       <section>
         <h1>{title}</h1>
-        <Markdown source={content} />
+        <HighlightMarkdown source={content} />
       </section>
     );
   }

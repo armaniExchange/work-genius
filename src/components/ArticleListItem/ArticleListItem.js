@@ -1,8 +1,9 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
-import Markdown from 'react-markdown';
 import moment from 'moment';
 import FlatButton from 'material-ui/lib/flat-button';
+
+import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
 
 // Styles
 import './_ArticleListItem.css';
@@ -47,7 +48,7 @@ class ArticleListItem extends Component {
             label="Delete"/>
         </div>
         <br/>
-        <Markdown source={content} />
+        <HighlightMarkdown source={content} />
         {
           tags.map((tag, index) => {
             return (

@@ -15,7 +15,7 @@ const fakeArticleList = [
       {id: '123', name: 'someimage', type: 'image/jpeg', data: ''},
     ],
     comments: [],
-    content: '```js\nfunction(){}\n```\n* item 1\n * item 2',
+    content: '```js\nfunction(){\n  var test = 123;\n  console.log(test)\n}\n```\n* item 1\n * item 2',
     createdAt: 1457085436639,
     updatedAt: 1457085446639,
   },
