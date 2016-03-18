@@ -29,7 +29,11 @@ const ARTICLE_TYPE = new GraphQLObjectType({
         },
 		'subCategories': {
 			type: new GraphQLList(ARTICLE_TYPE),
-			description: 'Category\'s subcategory'			
+			description: 'Category\'s subcategory'
+		},
+		'path': {
+			type: GraphQLString,
+            description: 'Category\'s path'
 		}
     })
 });

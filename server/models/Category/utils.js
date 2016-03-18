@@ -31,4 +31,17 @@ function transformToTree(dataArr) {
     return generateTree(rest, root);
 }
 
-export { transformToTree };
+function generatePath(dataArr, targetId) {
+    let target;
+
+    if (!targetId || !dataArr.length) {
+        return '';
+    }
+    target = dataArr.filter((node) => { return node.id === targetId; })[0];
+    if (!target.parentId) {
+        return `/${target.name}`;
+    }
+    return `${generatePath(dataArr, target.parentId)}/${target.name}`;
+}
+
+export { transformToTree, generatePath };
