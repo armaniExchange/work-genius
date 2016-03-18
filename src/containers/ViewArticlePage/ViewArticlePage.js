@@ -4,7 +4,11 @@ import './_ViewArticlePage.scss';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import moment from 'moment';
+
 import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
+import ArticleFileList from '../../components/ArticleFileList/ArticleFileList';
+import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
 
 import * as ArticleActions from '../../actions/article-page-actions';
 
@@ -23,14 +27,34 @@ class ViewArticlePage extends Component {
 
   render() {
     const {
+      author,
+      files,
       title,
       content,
+      tags,
+      updatedAt
     } = this.props;
 
     return (
       <section>
-        <h1>{title}</h1>
+        <h3>{title}</h3>
+        <hr />
+        <ArticleTagList tags={tags} />
         <HighlightMarkdown source={content} />
+        <hr />
+        <ArticleTagList tags={tags} />
+        <div>
+          <span>Author: {author.name}&nbsp;</span>
+          &nbsp;&nbsp;
+          <span style={{color: 'gray'}}>
+            {moment(updatedAt).format('YYYY-MM-DD')}&nbsp;
+          </span>
+          &nbsp;&nbsp;
+          <span>
+            <span>{`attachments(${files.length}):`}&nbsp;</span>
+            <ArticleFileList files={files} />
+          </span>
+        </div>
       </section>
     );
   }
@@ -47,7 +71,7 @@ ViewArticlePage.propTypes = {
   createdAt           : PropTypes.number,
   updatedAt           : PropTypes.number,
   params              : PropTypes.object,
-  articleActions  : PropTypes.object.isRequired
+  articleActions      : PropTypes.object.isRequired
 };
 
 ViewArticlePage.defaultProps = {

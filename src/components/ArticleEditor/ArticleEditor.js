@@ -2,6 +2,10 @@
 import React, { Component, PropTypes } from 'react';
 import Codemirror from 'react-codemirror';
 import TextField from 'material-ui/lib/text-field';
+import DropDownMenu from 'material-ui/lib/DropDownMenu';
+import MenuItem from 'material-ui/lib/menus/menu-item';
+
+import ArticleFileList from '../../components/ArticleFileList/ArticleFileList';
 
 // Styles
 import './_ArticleEditor.css';
@@ -16,11 +20,9 @@ import 'codemirror/mode/python/python';
 import 'codemirror/lib/codemirror.css';
 
 class ArticleEditor extends Component {
-
   onFileChange(event) {
     const reader = new FileReader();
     const file = event.target.files[0];
-
     reader.onload = uploadEvent => {
       this.props.onFileUpload({
         name: file.name,
@@ -28,45 +30,83 @@ class ArticleEditor extends Component {
         data: uploadEvent.target.result
       });
     };
-
     reader.readAsDataURL(file);
   }
 
   render() {
+    const allCategoriesMaxHeight = 300;
     const {
       title,
       content,
       tags,
       category,
+      files,
+      allCategories,
       onContentChange,
       onTitleChange,
       onTagsChange,
-      onCategoryChange
+      onCategoryChange,
+      style
     } = this.props;
 
+    const wrapperStyle = Object.assign({}, {
+      background: 'white',
+      borderRadius: 5,
+      border: '1px solid lightgray',
+      padding: 15,
+    }, style);
+
+    const codemirrorStyle = {
+      borderRadius: 5,
+      border: '1px solid lightgray',
+      background: 'none',
+      overflow: 'hidden'
+    };
+
     return (
-      <div>
+      <div {...this.props} style={wrapperStyle}>
         <TextField
            hintText="Title"
            value={title}
            onChange={onTitleChange} />
         <br />
-        <TextField
-           hintText="Knowledge Category"
-           value={category}
-           onChange={onCategoryChange} />
+        <DropDownMenu
+          style={{marginLeft: -20, width: 300}}
+          autoWidth={false}
+          maxHeight={allCategoriesMaxHeight}
+          value={category.id}
+          onChange={onCategoryChange} >
+          {
+            allCategories.map((item, index) => {
+              return (
+                <MenuItem
+                  key={index}
+                  value={item.id}
+                  primaryText={item.path}
+                />
+              );
+            })
+          }
+        </DropDownMenu>
+        <br />
         <br />
         <label>Content</label>
-        <Codemirror
-          value={content}
-          onChange={onContentChange}
-          options={{mode: 'gfm'}} />
+        <div style={codemirrorStyle}>
+          <Codemirror
+            value={content}
+            onChange={onContentChange}
+            options={{mode: 'gfm'}} />
+        </div>
+        <br />
         <TextField
            hintText="Important Tags"
            value={tags.join(',')}
            onChange={onTagsChange} />
         <br />
-        <label>File Input</label>
+        <h5>File Input</h5>
+        <ArticleFileList files={files} />
+        <br />
+        <br />
         <input type="file" onChange={::this.onFileChange}/>
       </div>
     );
@@ -78,7 +118,10 @@ ArticleEditor.propTypes = {
   title               : PropTypes.string,
   content             : PropTypes.string,
   tags                : PropTypes.arrayOf(PropTypes.string),
-  category            : PropTypes.string,
+  category            : PropTypes.object,
+  files               : PropTypes.array,
+  allCategories       : PropTypes.array,
+  style               : PropTypes.object,
   onContentChange     : PropTypes.func.isRequired,
   onTitleChange       : PropTypes.func.isRequired,
   onTagsChange        : PropTypes.func.isRequired,
@@ -89,7 +132,9 @@ ArticleEditor.propTypes = {
 ArticleEditor.defaultProps = {
   title               : '',
   content             : '',
-  tags                : []
+  tags                : [],
+  files               : [],
+  allCategories       : []
 };
 
 export default ArticleEditor;

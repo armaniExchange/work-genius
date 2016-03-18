@@ -3,7 +3,7 @@ import * as actionTypes from '../constants/action-types';
 
 const fakeArticleList = [
   {
-    id: '0',
+    id: '1',
     title: 'first article',
     author: {
       id: '0',
@@ -11,22 +11,28 @@ const fakeArticleList = [
     },
     tags: [ 'tagA', 'tagB' ],
     files: [
-      {id: '123', name: 'video', type: 'video/mp4', data: ''},
-      {id: '123', name: 'someimage', type: 'image/jpeg', data: ''},
+      {id: '1', name: 'video', type: 'video/mp4', data: ''},
+      {id: '2', name: 'someimage', type: 'image/jpeg', data: ''},
     ],
+    category: {
+      id: '1'
+    },
     comments: [],
     content: '```js\nfunction(){\n  var test = 123;\n  console.log(test)\n}\n```\n* item 1\n * item 2',
     createdAt: 1457085436639,
     updatedAt: 1457085446639,
   },
   {
-    id: '0',
+    id: '2',
     title: 'second article',
     author:{
       id: '1',
       name: 'fong'
     },
     tags: [ 'tagC', 'tagD' ],
+    category: {
+      id: '2'
+    },
     files: [],
     comments: [],
     content: '```js\nfunction(){}\n```\n* item 1\n * item 2',
@@ -36,16 +42,16 @@ const fakeArticleList = [
 ];
 
 const fakeCategories = [
-  {id: '1', name: 'slb'},
-  {id: '2', parentId: '1', name: 'WAF'},
-  {id: '3', parentId: '1', name: 'GSLB'},
-  {id: '4', parentId: '3', name: 'Lorem ipsum dolor sit amet'},
-  {id: '5', parentId: '3', name: 'Lorem ipsum dolor sit amet'},
-  {id: '6', parentId: '3', name: 'Lorem ipsum dolor sit amet'},
-  {id: '7', parentId: '3', name: 'Lorem ipsum dolor sit amet'},
-  {id: '8', parentId: '3', name: 'Lorem ipsum dolor sit amet'},
-  {id: '9', name: 'DDos'},
-  {id: '10', name: 'GSLB'}
+  {id: '1', name: 'slb', articlesCount: 3},
+  {id: '2', parentId: '1', name: 'WAF', articlesCount: 30},
+  {id: '3', parentId: '1', name: 'GSLB', articlesCount: 10},
+  {id: '4', parentId: '3', name: 'Lorem ipsum dolor sit amet', articlesCount: 20},
+  {id: '5', parentId: '3', name: 'Lorem ipsum dolor sit amet', articlesCount: 10},
+  {id: '6', parentId: '3', name: 'Lorem ipsum dolor sit amet', articlesCount: 30},
+  {id: '7', parentId: '3', name: 'Lorem ipsum dolor sit amet', articlesCount: 40},
+  {id: '8', parentId: '3', name: 'Lorem ipsum dolor sit amet', articlesCount: 10},
+  {id: '9', name: 'DDos', articlesCount: 10},
+  {id: '10', name: 'GSLB', articlesCount: 10}
 ];
 
 const fakeAllTags = [

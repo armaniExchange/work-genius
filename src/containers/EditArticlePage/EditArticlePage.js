@@ -16,6 +16,7 @@ class EditArticlePage extends Component {
   constructor(props) {
     super(props);
     this.state = this.getEditingStateFromProps(props);
+    this.state.isPreviewVisible = false;
   }
 
   componentWillMount() {
@@ -26,6 +27,7 @@ class EditArticlePage extends Component {
     if ( params.articleId !== 'new' ) {
       articleActions.fetchArticle(params.articleId);
     }
+    articleActions.fetchAllCategoriesWithPath();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -48,6 +50,12 @@ class EditArticlePage extends Component {
     };
   }
 
+  togglePreviewVisible() {
+    this.setState({
+      isPreviewVisible: !this.state.isPreviewVisible
+    });
+  }
+
   onContentChange(newContent) {
     this.setState({ editingContent: newContent});
   }
@@ -64,9 +72,9 @@ class EditArticlePage extends Component {
     });
   }
 
-  onCategoryChange(event) {
+  onCategoryChange(event, index, value) {
     this.setState({
-      editingCategory: event.target.value
+      editingCategory: {id: value}
     });
   }
 
@@ -91,59 +99,73 @@ class EditArticlePage extends Component {
   }
 
   render() {
-    const previewStyle = {
-      width: '49%',
-      float: 'left',
-      padding: '0 10px',
-      borderLeft: '1px solid gray'
-    };
-    const editorContentStyle = {
-      padding: '0 10px',
-      width: '49%',
-      float: 'left'
-    };
-
     const {
       editingContent,
       editingTitle,
       editingTags,
-      editingCategory
+      editingCategory,
+      isPreviewVisible
     } = this.state;
+
+    const {
+      files,
+      allCategories
+    } = this.props;
+
+    const editorStyle = {
+      width: isPreviewVisible ? '50%' : '100%',
+      float: 'left',
+      paddingRight: 10
+    };
+
+    const previewStyle = {
+      width: '50%',
+      float: 'left',
+      borderRadius: 5,
+      border: '1px solid lightgray',
+      background: 'white',
+      padding: 15,
+      overflowX: 'scroll'
+    };
 
     const pageTitle = this.props.params.articleId === 'new' ?
       'Create Document' : 'Update Document';
 
     return (
       <section>
-        <div>
-          <h3>{pageTitle}</h3>
-          <div style={editorContentStyle}>
-            <ArticleEditor
-              title={editingTitle}
-              tags={editingTags}
-              content={editingContent}
-              category={editingCategory}
-              onTagsChange={::this.onTagsChange}
-              onTitleChange={::this.onTitleChange}
-              onCategoryChange={::this.onCategoryChange}
-              onContentChange={::this.onContentChange}
-              onFileUpload={::this.onFileUpload}/>
-          </div>
-          <div style={previewStyle}>
-            <h3>Preview</h3>
-            <HighlightMarkdown source={editingContent} />
-          </div>
-          <div style={{clear: 'both'}}/>
-          <br />
-          <RaisedButton
-            label="Submit"
-            primary={true}
-            onClick={::this.onSubmit}
-            style={{margin: 10}} />
-          <RaisedButton
-            label="Preview"
-            style={{margin: 10}} />
+        <h3>{pageTitle}</h3>
+        <div style={editorStyle}>
+          <ArticleEditor
+            title={editingTitle}
+            tags={editingTags}
+            content={editingContent}
+            category={editingCategory}
+            files={files}
+            allCategories={allCategories}
+            onTagsChange={::this.onTagsChange}
+            onTitleChange={::this.onTitleChange}
+            onCategoryChange={::this.onCategoryChange}
+            onContentChange={::this.onContentChange}
+            onFileUpload={::this.onFileUpload} />
         </div>
+        {
+          isPreviewVisible ? (
+            <div style={previewStyle}>
+              <HighlightMarkdown source={editingContent} />
+            </div>
+          ) : null
+        }
+        <div style={{clear: 'both'}}/>
+        <br />
+        <RaisedButton
+          label="Submit"
+          primary={true}
+          onClick={::this.onSubmit}
+          style={{margin: 10}} />
+        <RaisedButton
+          label="Preview"
+          onClick={::this.togglePreviewVisible}
+          style={{margin: 10}} />
       </section>
     );
   }
@@ -155,11 +177,13 @@ EditArticlePage.propTypes = {
   author              : PropTypes.shape({id: PropTypes.string, name: PropTypes.string}),
   tags                : PropTypes.arrayOf(PropTypes.string),
   files               : PropTypes.array,
+  category            : PropTypes.object,
   comments            : PropTypes.array,
   content             : PropTypes.string,
   createdAt           : PropTypes.number,
   updatedAt           : PropTypes.number,
   params              : PropTypes.object,
+  allCategories       : PropTypes.array,
   articleActions      : PropTypes.object.isRequired
 };
 
@@ -172,7 +196,8 @@ EditArticlePage.defaultProps = {
   comments            : [],
   content             : '',
   createdAt           : 0,
-  updatedAt           : 0
+  updatedAt           : 0,
+  allCategories       : []
 };
 
 function mapStateToProps(state) {

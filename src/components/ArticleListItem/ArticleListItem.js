@@ -4,6 +4,8 @@ import moment from 'moment';
 import FlatButton from 'material-ui/lib/flat-button';
 
 import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
+import ArticleFileList from '../../components/ArticleFileList/ArticleFileList';
+import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
 
 // Styles
 import './_ArticleListItem.css';
@@ -21,6 +23,7 @@ class ArticleListItem extends Component {
       // createdAt,
       updatedAt
     } = this.props;
+
     const style = {
       background: 'white',
       padding: 15,
@@ -29,6 +32,7 @@ class ArticleListItem extends Component {
       boxShadow: '0 2px lightgray',
       position: 'relative'
     };
+
     return (
       <div style={style}>
         <a href={`/main/articles/${id}`}>
@@ -49,19 +53,9 @@ class ArticleListItem extends Component {
         </div>
         <br/>
         <HighlightMarkdown source={content} />
-        {
-          tags.map((tag, index) => {
-            return (
-              <span key={index}>
-                <i className="fa fa-tag"/>&nbsp;{tag}&nbsp;
-              </span>
-            );
-          })
-        }
-
-        <br />
         <br />
         <hr />
+        <ArticleTagList tags={tags} />
         <div>
           <span>Author: {author.name}&nbsp;</span>
           &nbsp;&nbsp;
@@ -76,23 +70,7 @@ class ArticleListItem extends Component {
           &nbsp;&nbsp;
           <span>
             <span>{`attachments(${files.length}):`}&nbsp;</span>
-            {
-              files.map((file, index) => {
-                const MimeTypeIcon = {
-                  'image/jpeg': 'fa-file-picture-o',
-                  'video/mp4': 'fa-file-video-o'
-                };
-
-                return (
-                  <span key={index}>
-                    &nbsp;
-                    <i className={`fa ${MimeTypeIcon[file.type]}`} />
-                    &nbsp;
-                    <a href="#" >{file.name}</a>
-                  </span>
-                );
-              })
-            }
+            <ArticleFileList files={files} />
           </span>
         </div>
         <br/>

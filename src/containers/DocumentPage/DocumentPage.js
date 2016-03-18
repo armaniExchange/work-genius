@@ -8,6 +8,7 @@ import TextField from 'material-ui/lib/text-field';
 import RaisedButton from 'material-ui/lib/raised-button';
 
 import ArticleListItem from '../../components/ArticleListItem/ArticleListItem';
+import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
 
 import * as DocumentActions from '../../actions/document-page-actions';
 
@@ -64,28 +65,8 @@ class DocumentPage extends Component {
           <TextField
             hintText="Search..."
             onChange={::this.onSearchChange} />
-          <div>
-            {
-              tags.map((tag, index) => {
-                return (
-                  <div
-                    style={{
-                      margin: 2,
-                      padding: '2px 6px',
-                      background: 'darkblue',
-                      color: 'white',
-                      borderRadius: 3,
-                      display: 'inline-block',
-                      cursor: 'pointer'
-                    }}
-                    onClick={this.queryWithTag.bind(this, tag)}
-                    key={index}>
-                    {tag}
-                  </div>
-                );
-              })
-            }
-          </div>
+          <br/>
+          <ArticleTagList tags={tags} onClick={::this.queryWithTag} />
           <div>
             <h5>Tree</h5>
             {
