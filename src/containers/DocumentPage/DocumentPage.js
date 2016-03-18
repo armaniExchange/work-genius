@@ -9,6 +9,7 @@ import RaisedButton from 'material-ui/lib/raised-button';
 
 import ArticleListItem from '../../components/ArticleListItem/ArticleListItem';
 import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
+import CategoryTree from '../../components/CategoryTree/CategoryTree';
 
 import * as DocumentActions from '../../actions/document-page-actions';
 
@@ -69,11 +70,7 @@ class DocumentPage extends Component {
           <ArticleTagList tags={tags} onClick={::this.queryWithTag} />
           <div>
             <h5>Tree</h5>
-            {
-              categories.map((category, index) => {
-                return (<label key={index}>{category.name}</label>);
-              })
-            }
+            <CategoryTree categories={categories} />
           </div>
         </div>
         <div style={rightPanelStyle}>
