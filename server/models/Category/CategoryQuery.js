@@ -9,7 +9,7 @@ import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 // Utils
-import { transformToTree } from './utils.js';
+import { transformToTree, generatePath } from './utils.js';
 
 let CategoryQuery = {
 	'getAllCategories': {
@@ -24,6 +24,12 @@ let CategoryQuery = {
 				query = r.db('work_genius').table('categories').coerceTo('array');
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				result = await query.run(connection);
+				result = result.map((category, index, arr) => {
+					return {
+						...category,
+						path: generatePath(arr, category.id)
+					};
+				});
 				await connection.close();
 			} catch (err) {
 				return err;
