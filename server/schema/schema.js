@@ -12,6 +12,7 @@ import PTOQuery from '../models/PTO/PTOQuery.js';
 import PTOMutation from '../models/PTO/PTOMutation.js';
 import UserMutation from '../models/User/UserMutation.js';
 import CategoryQuery from '../models/Category/CategoryQuery.js';
+import CommentQuery from '../models/Comment/CommentQuery.js';
 
 const schema = new GraphQLSchema({
 	query: new GraphQLObjectType({
@@ -24,7 +25,8 @@ const schema = new GraphQLSchema({
 			tasks               : TaskQuery.tasks,
 			ptoApplications     : PTOQuery.ptoApplications,
 			allCategories       : CategoryQuery.getAllCategories,
-			categoryTree        : CategoryQuery.getCategoryTree
+			categoryTree        : CategoryQuery.getCategoryTree,
+			commentById         : CommentQuery.getCommentById
 		}
 	}),
 	mutation: new GraphQLObjectType({
