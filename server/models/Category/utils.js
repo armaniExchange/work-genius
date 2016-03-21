@@ -44,4 +44,14 @@ function generatePath(dataArr, targetId) {
     return `${generatePath(dataArr, target.parentId)}/${target.name}`;
 }
 
-export { transformToTree, generatePath };
+function dedupe(list) {
+    let result = [];
+    list.forEach((element) => {
+        if (result.indexOf(element) === -1) {
+            result.push(element);
+        }
+    });
+    return result;
+}
+
+export { transformToTree, generatePath, dedupe };
