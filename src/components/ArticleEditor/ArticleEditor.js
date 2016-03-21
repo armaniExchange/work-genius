@@ -7,6 +7,8 @@ import MenuItem from 'material-ui/lib/menus/menu-item';
 
 import ArticleFileList from '../../components/ArticleFileList/ArticleFileList';
 import TagsInput from '../../components/TagsInput/TagsInput';
+import ConfirmDeleteDialog from '../../components/ConfirmDeleteDialog/ConfirmDeleteDialog';
+
 // Styles
 import './_ArticleEditor.css';
 import 'codemirror/mode/gfm/gfm';
@@ -21,6 +23,14 @@ import 'codemirror/lib/codemirror.css';
 
 class ArticleEditor extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      isConfirmDeleteFileDialogVisible: false,
+      editingFile: null
+    };
+  }
+
   onFileChange(event) {
     const reader = new FileReader();
     const file = event.target.files[0];
@@ -34,6 +44,28 @@ class ArticleEditor extends Component {
     reader.readAsDataURL(file);
   }
 
+  onFileRemove(file) {
+    this.setState({
+      isConfirmDeleteFileDialogVisible: true,
+      editingFile: file
+    });
+  }
+
+  onConfirmDeleteFile(file) {
+    this.props.onFileRemove(file);
+  }
+
+  onCancelDeleteFile() {
+
+  }
+
+  onConfirmDeleteFileDialogRequestHide() {
+    this.setState({
+      isConfirmDeleteFileDialogVisible: false,
+      editingFile:  null
+    });
+  }
+
   render() {
     const allCategoriesMaxHeight = 300;
     const {
@@ -43,13 +75,17 @@ class ArticleEditor extends Component {
       category,
       files,
       allCategories,
-      onFileRemove,
       onContentChange,
       onTitleChange,
       onTagsChange,
       onCategoryChange,
       style
     } = this.props;
+
+    const {
+      isConfirmDeleteFileDialogVisible,
+      editingFile
+    } = this.state;
 
     const wrapperStyle = Object.assign({}, {
       background: 'white',
@@ -109,10 +145,16 @@ class ArticleEditor extends Component {
         <ArticleFileList
           files={files}
           enableRemove={true}
-          onRemove={onFileRemove}/>
+          onRemove={::this.onFileRemove} />
         <br />
         <br />
         <input type="file" onChange={::this.onFileChange}/>
+        <ConfirmDeleteDialog
+          open={isConfirmDeleteFileDialogVisible}
+          data={editingFile}
+          onConfirm={::this.onConfirmDeleteFile}
+          onCancel={::this.onCancelDeleteFile}
+          onRequestClose={::this.onConfirmDeleteFileDialogRequestHide} />
       </div>
     );
   }

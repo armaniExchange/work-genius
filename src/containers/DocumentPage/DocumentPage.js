@@ -40,7 +40,8 @@ class DocumentPage extends Component {
 
   onConfirmDeleteArticleDialogRequestHide() {
     this.setState({
-      isConfirmDeleteArticleDialogVisible: false
+      isConfirmDeleteArticleDialogVisible: false,
+      editingArticle: null
     });
   }
 
