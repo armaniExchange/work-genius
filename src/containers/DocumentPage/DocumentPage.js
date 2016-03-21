@@ -3,6 +3,7 @@ import './_DocumentPage.scss';
 // React & Redux
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router';
 import { bindActionCreators } from 'redux';
 import TextField from 'material-ui/lib/text-field';
 import RaisedButton from 'material-ui/lib/raised-button';
@@ -26,10 +27,6 @@ class DocumentPage extends Component {
     fetchAllTags();
   }
 
-  onCreateNewArticle() {
-    location.href = '/main/articles/edit/new';
-  }
-
   queryWithTag(tag) {
     this.props.documentActions.fetchArticles({tag: tag});
   }
@@ -40,7 +37,11 @@ class DocumentPage extends Component {
     });
   }
 
-	render() {
+  onArticleDelete(id, index) {
+    console.log(`delete article id:${id} index:${index}`);
+  }
+
+  render() {
     const leftPanelStyle = {
       width: '30%',
       float: 'left'
@@ -55,19 +56,22 @@ class DocumentPage extends Component {
       allCategories
     } = this.props;
 
-		return (
-			<section>
+    return (
+      <section>
         <div style={leftPanelStyle}>
-          <RaisedButton
-            label="+ Create a Document"
-            secondary={true}
-            onClick={::this.onCreateNewArticle} />
+          <Link to="/main/articles/edit/new">
+            <RaisedButton
+              label="+ Create a Document"
+              secondary={true} />
+          </Link>
           <br />
           <TextField
             hintText="Search..."
             onChange={::this.onSearchChange} />
           <br/>
-          <ArticleTagList tags={allTags} onClick={::this.queryWithTag} />
+          <ArticleTagList
+            tags={allTags}
+            onClick={::this.queryWithTag} />
           <div>
             <h5>Tree</h5>
             <CategoryTree categories={allCategories} />
@@ -75,17 +79,20 @@ class DocumentPage extends Component {
         </div>
         <div style={rightPanelStyle}>
           {
-            articleList.map((article, id) => {
+            articleList.map((article, index) => {
               return (
-                <ArticleListItem key={id}
+                <ArticleListItem
+                  key={index}
+                  index={index}
+                  onDelete={::this.onArticleDelete}
                   {...article}/>
               );
             })
           }
         </div>
       </section>
-		);
-	}
+    );
+  }
 }
 
 DocumentPage.propTypes = {
