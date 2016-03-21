@@ -11,10 +11,20 @@ import RaisedButton from 'material-ui/lib/raised-button';
 import ArticleListItem from '../../components/ArticleListItem/ArticleListItem';
 import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
 import CategoryTree from '../../components/CategoryTree/CategoryTree';
+import ConfirmDeleteDialog from '../../components/ConfirmDeleteDialog/ConfirmDeleteDialog';
 
 import * as DocumentActions from '../../actions/document-page-actions';
+import * as ArticleActions from '../../actions/article-page-actions';
 
 class DocumentPage extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      isConfirmDeleteArticleDialogVisible: false,
+      editingArticle: null
+    };
+  }
 
   componentWillMount() {
     const {
@@ -27,8 +37,15 @@ class DocumentPage extends Component {
     fetchAllTags();
   }
 
+
+  onConfirmDeleteArticleDialogRequestHide() {
+    this.setState({
+      isConfirmDeleteArticleDialogVisible: false
+    });
+  }
+
   queryWithTag(tag) {
-    this.props.documentActions.fetchArticles({tag: tag});
+    this.props.documentActions.fetchArticles({tag});
   }
 
   onSearchChange(event) {
@@ -37,8 +54,24 @@ class DocumentPage extends Component {
     });
   }
 
+
+  onConfirmDeleteArticle(deletingArticle) {
+    console.log(`delete article id:${deletingArticle.id} index:${deletingArticle.index}`);
+    this.props.articleActions.deleteArticle(deletingArticle.id);
+  }
+
+  onCancelDeleteArticle() {
+
+  }
+
   onArticleDelete(id, index) {
-    console.log(`delete article id:${id} index:${index}`);
+    this.setState({
+      isConfirmDeleteArticleDialogVisible: true,
+      editingArticle: {
+        id,
+        index
+      }
+    });
   }
 
   render() {
@@ -55,6 +88,10 @@ class DocumentPage extends Component {
       allTags,
       allCategories
     } = this.props;
+    const {
+      isConfirmDeleteArticleDialogVisible,
+      editingArticle
+    } = this.state;
 
     return (
       <section>
@@ -90,6 +127,13 @@ class DocumentPage extends Component {
             })
           }
         </div>
+        <ConfirmDeleteDialog
+          open={isConfirmDeleteArticleDialogVisible}
+          data={editingArticle}
+          onConfirm={::this.onConfirmDeleteArticle}
+          onCancel={::this.onCancelDeleteArticle}
+          onRequestClose={::this.onConfirmDeleteArticleDialogRequestHide}
+        />
       </section>
     );
   }
@@ -99,7 +143,8 @@ DocumentPage.propTypes = {
   articleList            : PropTypes.array,
   allCategories          : PropTypes.array,
   allTags                : PropTypes.array,
-  documentActions        : PropTypes.object.isRequired
+  documentActions        : PropTypes.object.isRequired,
+  articleActions         : PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
@@ -108,7 +153,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    documentActions     : bindActionCreators(DocumentActions, dispatch)
+    documentActions     : bindActionCreators(DocumentActions, dispatch),
+    articleActions      : bindActionCreators(ArticleActions, dispatch)
   };
 }
 

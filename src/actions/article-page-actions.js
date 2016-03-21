@@ -83,6 +83,23 @@ export function updateArticle(newArticle) {
   };
 }
 
+export function deleteArticleSuccess(articleId) {
+  return {
+    type: actionTypes.DELETE_ARTICLE_SUCCESS,
+    id: articleId
+  };
+}
+
+export function deleteArticle(articleId) {
+  return dispatch => {
+    dispatch({
+      type: actionTypes.DELETE_ARTICLE
+    });
+    // update to server
+    dispatch(deleteArticleSuccess(articleId));
+  };
+}
+
 export function uploadArticleFileSuccess(file) {
   return {
     type: actionTypes.UPLOAD_ARTICLE_FILE_SUCCESS,

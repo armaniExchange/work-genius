@@ -54,7 +54,7 @@ class ArticleListItem extends Component {
           </Link>
           <FlatButton
             label="Delete"
-            onDeleteClick={onDelete.bind(this, id, index)} />
+            onClick={onDelete.bind(this, id, index)} />
         </div>
         <br/>
         <HighlightMarkdown source={content} />

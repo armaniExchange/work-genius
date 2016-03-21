@@ -16,13 +16,14 @@ export default function documentReducer(state = initialState, action) {
   switch (action.type) {
     case actionTypes.FETCH_ARTICLES_SUCCESS:
       return state.set('articleList', action.articleList);
-      break;
     case actionTypes.FETCH_ALL_CATEGORIES_SUCCESS:
       return state.set('allCategories', action.allCategories);
-      break;
     case actionTypes.FETCH_ALL_TAGS_SUCCESS:
       return state.set('allTags', action.allTags);
-      break;
+    case actionTypes.DELETE_ARTICLE_SUCCESS:
+      return state.set('articleList', state.get('articleList').filter(article => {
+        return article.id !== action.id;
+      }));
     default:
         return state;
   }
