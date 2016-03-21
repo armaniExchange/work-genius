@@ -22,7 +22,7 @@ import ViewArticlePage from '../containers/ViewArticlePage/ViewArticlePage';
 import requireAuth from '../containers/Require-Auth/Require-Auth';
 
 // Demo Component (To be removed)
-import DemoPage from '../containers/DemoPage/DemoPage';
+import DemoPage from '../containers/DemoPage/DemoP';
 
 const appRoutes = () => (
 	<Router history={createBrowserHistory()}>
