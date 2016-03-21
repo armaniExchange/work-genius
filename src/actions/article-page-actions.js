@@ -93,8 +93,25 @@ export function uploadArticleFileSuccess(file) {
 export function uploadArticleFile(file) {
   return dispatch => {
     dispatch({
-      type: actionTypes
+      type: actionTypes.UPLOAD_ARTICLE_FILE
     });
     dispatch(uploadArticleFileSuccess(file));
+  };
+}
+
+export function removeArticleFileSuccess(fileId) {
+  return {
+    type: actionTypes.REMOVE_ARTICLE_FILE_SUCCESS,
+    id: fileId
+  };
+}
+
+export function removeArticleFile(fileId) {
+  return dispatch => {
+    dispatch({
+      type: actionTypes.REMOVE_ARTICLE_FILE,
+      id: fileId
+    });
+    dispatch(removeArticleFileSuccess(fileId));
   };
 }

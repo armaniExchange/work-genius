@@ -85,6 +85,12 @@ class EditArticlePage extends Component {
     this.props.articleActions.uploadArticleFile(dataUri);
   }
 
+  onFileRemove(file, index) {
+    console.log(`file id ${file.id}, index: ${index}`);
+    // const answer = confirm('Are you sure you want to remove the file?');
+    this.props.articleActions.removeArticleFile(file.id);
+  }
+
   onSubmit() {
     const {
       editingTitle,
@@ -149,7 +155,8 @@ class EditArticlePage extends Component {
             onTitleChange={::this.onTitleChange}
             onCategoryChange={::this.onCategoryChange}
             onContentChange={::this.onContentChange}
-            onFileUpload={::this.onFileUpload} />
+            onFileUpload={::this.onFileUpload}
+            onFileRemove={::this.onFileRemove}/>
         </div>
         {
           isPreviewVisible ? (

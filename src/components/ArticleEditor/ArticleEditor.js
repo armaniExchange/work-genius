@@ -20,6 +20,7 @@ import 'codemirror/mode/python/python';
 import 'codemirror/lib/codemirror.css';
 
 class ArticleEditor extends Component {
+
   onFileChange(event) {
     const reader = new FileReader();
     const file = event.target.files[0];
@@ -42,6 +43,7 @@ class ArticleEditor extends Component {
       category,
       files,
       allCategories,
+      onFileRemove,
       onContentChange,
       onTitleChange,
       onTagsChange,
@@ -104,7 +106,10 @@ class ArticleEditor extends Component {
            onChange={onTagsChange} />
         <br />
         <h5>File Input</h5>
-        <ArticleFileList files={files} />
+        <ArticleFileList
+          files={files}
+          enableRemove={true}
+          onRemove={onFileRemove}/>
         <br />
         <br />
         <input type="file" onChange={::this.onFileChange}/>
@@ -126,7 +131,8 @@ ArticleEditor.propTypes = {
   onTitleChange       : PropTypes.func.isRequired,
   onTagsChange        : PropTypes.func.isRequired,
   onCategoryChange    : PropTypes.func.isRequired,
-  onFileUpload        : PropTypes.func.isRequired
+  onFileUpload        : PropTypes.func.isRequired,
+  onFileRemove        : PropTypes.func.isRequired
 };
 
 ArticleEditor.defaultProps = {

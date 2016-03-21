@@ -39,7 +39,11 @@ export default function editArticleReducer(state = initialState, action) {
         .set('content', action.content)
         .set('createdAt', action.createdAt)
         .set('updatedAt', action.updatedAt);
-      break;
+    case actionTypes.REMOVE_ARTICLE_FILE_SUCCESS:
+      const files = state.get('files').filter(removedFile => {
+        return removedFile.id !== action.id;
+      });
+      return state.set('files', files);
     default:
       return state;
   }
