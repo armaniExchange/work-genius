@@ -69,9 +69,9 @@ class EditArticlePage extends Component {
     });
   }
 
-  onTagsChange(event) {
+  onTagsChange(tags) {
     this.setState({
-      editingTags: event.target.value.replace(' ','').split(',')
+      editingTags: tags
     });
   }
 
@@ -117,6 +117,7 @@ class EditArticlePage extends Component {
     } = this.state;
 
     const {
+      params,
       files,
       allCategories
     } = this.props;
@@ -137,7 +138,7 @@ class EditArticlePage extends Component {
       overflowX: 'scroll'
     };
 
-    const pageTitle = this.props.params.articleId === 'new' ?
+    const pageTitle = params.articleId === 'new' ?
       'Create Document' : 'Update Document';
 
     return (

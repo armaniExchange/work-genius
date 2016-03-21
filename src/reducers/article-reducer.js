@@ -25,7 +25,7 @@ const initialState = OrderedMap({
   updatedAt: 0,
 });
 
-export default function editArticleReducer(state = initialState, action) {
+export default function articleReducer(state = initialState, action) {
   switch (action.type) {
     case actionTypes.UPDATE_ARTICLE_SUCCESS:
     case actionTypes.FETCH_ARTICLE_SUCCESS:
@@ -39,11 +39,12 @@ export default function editArticleReducer(state = initialState, action) {
         .set('content', action.content)
         .set('createdAt', action.createdAt)
         .set('updatedAt', action.updatedAt);
+    case actionTypes.UPLOAD_ARTICLE_FILE_SUCCESS:
+      return state.set('files', [...state.get('files'), action.file]);
     case actionTypes.REMOVE_ARTICLE_FILE_SUCCESS:
-      const files = state.get('files').filter(removedFile => {
+      return state.set('files', state.get('files').filter(removedFile => {
         return removedFile.id !== action.id;
-      });
-      return state.set('files', files);
+      }));
     default:
       return state;
   }

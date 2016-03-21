@@ -6,7 +6,7 @@ import DropDownMenu from 'material-ui/lib/DropDownMenu';
 import MenuItem from 'material-ui/lib/menus/menu-item';
 
 import ArticleFileList from '../../components/ArticleFileList/ArticleFileList';
-
+import TagsInput from '../../components/TagsInput/TagsInput';
 // Styles
 import './_ArticleEditor.css';
 import 'codemirror/mode/gfm/gfm';
@@ -100,12 +100,12 @@ class ArticleEditor extends Component {
             options={{mode: 'gfm'}} />
         </div>
         <br />
-        <TextField
-           hintText="Important Tags"
-           value={tags.join(',')}
-           onChange={onTagsChange} />
+        <TagsInput
+          tags={tags}
+          onTagsChange={onTagsChange} />
         <br />
         <h5>File Input</h5>
+        <hr />
         <ArticleFileList
           files={files}
           enableRemove={true}

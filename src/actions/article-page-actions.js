@@ -95,7 +95,8 @@ export function uploadArticleFile(file) {
     dispatch({
       type: actionTypes.UPLOAD_ARTICLE_FILE
     });
-    dispatch(uploadArticleFileSuccess(file));
+    // server response with true id and file detailed without data
+    dispatch(uploadArticleFileSuccess(Object.assign({}, file, {id: file.name})));
   };
 }
 

@@ -63,6 +63,7 @@
     "react-markdown": "^2.0.1",
     "react-redux": "^4.0.0",
     "react-router": "^1.0.0-rc3",
+    "react-tag-input": "^2.2.4",
     "react-tap-event-plugin": "^0.2.2",
     "redux": "^3.0.2",
     "redux-thunk": "^1.0.0",
