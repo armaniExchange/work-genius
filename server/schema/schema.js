@@ -31,7 +31,8 @@ const schema = new GraphQLSchema({
 			// Document page
 			allCategories       : CategoryQuery.getAllCategories,
 			categoryTree        : CategoryQuery.getCategoryTree,
-			commentById         : CommentQuery.getCommentById
+			commentById         : CommentQuery.getCommentById,
+			tags          : CategoryQuery.getAllTags
 		}
 	}),
 	mutation: new GraphQLObjectType({
