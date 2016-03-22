@@ -78,8 +78,7 @@ class ArticleEditor extends Component {
       onContentChange,
       onTitleChange,
       onTagsChange,
-      onCategoryChange,
-      style
+      onCategoryChange
     } = this.props;
 
     const {
@@ -87,29 +86,17 @@ class ArticleEditor extends Component {
       editingFile
     } = this.state;
 
-    const wrapperStyle = Object.assign({}, {
-      background: 'white',
-      borderRadius: 5,
-      border: '1px solid lightgray',
-      padding: 15,
-    }, style);
-
-    const codemirrorStyle = {
-      borderRadius: 5,
-      border: '1px solid lightgray',
-      background: 'none',
-      overflow: 'hidden'
-    };
 
     return (
-      <div {...this.props} style={wrapperStyle}>
+      <div className="article-editor"
+        {...this.props} >
         <TextField
            hintText="Title"
            value={title}
            onChange={onTitleChange} />
         <br />
         <DropDownMenu
-          style={{marginLeft: -20, width: 300}}
+          className="drop-down-menu"
           autoWidth={false}
           maxHeight={allCategoriesMaxHeight}
           value={category.id}
@@ -129,7 +116,7 @@ class ArticleEditor extends Component {
         <br />
         <br />
         <label>Content</label>
-        <div style={codemirrorStyle}>
+        <div className="codemirror-wrapper">
           <Codemirror
             value={content}
             onChange={onContentChange}
