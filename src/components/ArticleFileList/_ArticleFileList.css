@@ -1,0 +1,12 @@
+.file-list {
+  & > span {
+    margin-right: 10px;
+    .remove-button {
+      cursor: pointer;
+      color: gray;
+      &:hover {
+        color: black;
+      }
+    }
+  }
+}
