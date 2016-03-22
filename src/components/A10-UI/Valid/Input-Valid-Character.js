@@ -67,7 +67,7 @@ export default class InputValidCharacter extends Component {
 
     if (isValid1) {
       switch (this.characterType) {
-        case CHARACTER_TYPE.ONLY_LETTER_NUMBER_SPACE: 
+        case CHARACTER_TYPE.ONLY_LETTER_NUMBER_SPACE:
             isValid2 = /^[a-zA-Z0-9\s]+$/.test(val);
             break;
         case CHARACTER_TYPE.ONLY_LETTER_NUMBER:
@@ -85,7 +85,7 @@ export default class InputValidCharacter extends Component {
         case CHARACTER_TYPE.ALLOW_SLASH:
             isValid2 = !/\?|\r|\t|\n|\\/.test(val);
             break;
-        case CHARACTER_TYPE.ONLY_LETTER_NUMBER_SPECIALCHARACTERS:      //for vrrp-a vrid lead name 
+        case CHARACTER_TYPE.ONLY_LETTER_NUMBER_SPECIALCHARACTERS:      //for vrrp-a vrid lead name
             isValid2 = /^[a-zA-Z0-9\.\:\-\_]+$/.test(val);
             break;
         case CHARACTER_TYPE.INCIDENT_NOTE: //for incident Note <textarae />
