@@ -88,11 +88,11 @@ let ArticleQuery = {
 						for(let comment_id of article.comment_ids){
 							query = r.db('work_genius').table('comments').get(comment_id);
 							let comment = await query.run(connection);
-							if(comment.created_at){
-								comment.created_at = new Date(comment.created_at).getTime();
+							if(comment.created_time){
+								comment.created_at = new Date(comment.created_time).getTime();
 							}
-							if(comment.updated_at){
-								comment.updated_at = new Date(comment.updated_at).getTime();
+							if(comment.updated_time){
+								comment.updated_at = new Date(comment.updated_time).getTime();
 							}
 							article.comments.push(comment);
 						}
@@ -155,11 +155,11 @@ let ArticleQuery = {
 					for(let comment_id of result.comment_ids){
 						query = r.db('work_genius').table('comments').get(comment_id);
 						let comment = await query.run(connection);
-						if(comment.created_at){
-							comment.created_at = new Date(comment.created_at).getTime();
+						if(comment.created_time){
+							comment.created_at = new Date(comment.created_time).getTime();
 						}
-						if(comment.updated_at){
-							comment.updated_at = new Date(comment.updated_at).getTime();
+						if(comment.updated_time){
+							comment.updated_at = new Date(comment.updated_time).getTime();
 						}
 						result.comments.push(comment);
 					}
