@@ -1,5 +1,5 @@
-import ValidNumber from './Valid-Number';
-import ValidCharacter from './Valid-Character';
+import InputValidNumber from './Input-Valid-Number';
+import InputValidCharacter from './Input-Valid-Character';
 
-export { ValidNumber };
-export { ValidCharacter };
+export { InputValidNumber };
+export { InputValidCharacter };
