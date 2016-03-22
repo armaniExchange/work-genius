@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { InputValidNumber, InputValidCharacter } from '../../components/A10-UI/Valid/';
+import { InputValidNumber, InputValidCharacter, InputValidPrimarykey } from '../../components/A10-UI/Valid/';
 
 let DemoBox = ({title, children}) => {
   return (<dl>
@@ -37,13 +37,13 @@ class ValidDemoPage extends Component {
         <InputValidCharacter max={9} defaultValue={this.state.character4} />
         <InputValidCharacter max={9} characterType="onlyLetterSp" defaultValue={this.state.character4} />
       </DemoBox>
-      {/*
+      <DemoBox title="InputValidPrimarykey">
       <InputValidPrimarykey defaultValue={this.state.pkvalue1} />
       <InputValidPrimarykey min={3} max={9} defaultValue={this.state.pkvalue2} />
       <InputValidPrimarykey min={3} defaultValue={this.state.pkvalue3} />
       <InputValidPrimarykey max={9} defaultValue={this.state.pkvalue4} />
       <InputValidPrimarykey max={9} defaultValue={this.state.pkvalue4} />
-      */}
+      </DemoBox>
     </section>
     );
   }
