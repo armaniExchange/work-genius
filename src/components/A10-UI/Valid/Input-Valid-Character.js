@@ -17,8 +17,8 @@ export default class InputValidCharacter extends Component {
     this.characterType = characterType;
     this.min = min; // default is 1
     this.max = max || undefined;
-    this.hasMin = true;
-    this.hasMax = max<=Infinity;
+    this.hasMin = min>=0;
+    this.hasMax = max<=Infinity && max>=1 && max>=min;
 
     let hint, err;
     if (this.hasMin && this.hasMax) {

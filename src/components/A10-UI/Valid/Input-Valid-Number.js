@@ -9,11 +9,29 @@ export default class InputValidNumber extends Component {
     super(props);
     const {min, max, defaultValue} = this.props;
     const value = defaultValue;
-
+    
     this.min = min || undefined;
     this.max = max || undefined;
     this.hasMin = min>=-Infinity;
     this.hasMax = max<=Infinity;
+
+    let hint, 
+        err;
+    if (this.hasMin && this.hasMax) {
+      hint = `${this.min} - ${this.max} number`;
+      err = `Number should be ${this.min} - ${this.max}`;
+    } else if (this.hasMin) {
+      hint = `More than or equal to ${this.min}`;
+      err = `Number should be equal to or more than ${this.min}`;
+    } else if (this.hasMax) {
+      hint = `Less than or equal to ${this.max}`;
+      err = `Number should be equal to or less than ${this.max}`;
+    } else {
+      hint = err = `Please enter a number`;
+    }
+    this.hint = hint;
+    this.err = err;
+
     this.state = {
       showErr: this.getShowErr(value),
       value: value
@@ -42,21 +60,8 @@ export default class InputValidNumber extends Component {
   render() {
     const {onChange, onValid, onInValid, defaultValue} = this.props;
     const value = defaultValue;
-    let hint = '',
-        err = '';
-
-    if (this.hasMin && this.hasMax) {
-      hint = `${this.min} - ${this.max} number`;
-      err = `Number should be ${this.min} - ${this.max}`;
-    } else if (this.hasMin) {
-      hint = `More than or equal to ${this.min}`;
-      err = `Number should be equal to or more than ${this.min}`;
-    } else if (this.hasMax) {
-      hint = `Less than or equal to ${this.max}`;
-      err = `Number should be equal to or less than ${this.max}`;
-    } else {
-      hint = err = `Please enter a number`;
-    }
+    let hint = this.hint,
+        err = this.err;
 
     return (<ValidWrap>
       <TextField defaultValue={value} hintText={hint} onChange={evt=>{
