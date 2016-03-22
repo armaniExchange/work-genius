@@ -2,15 +2,7 @@ import React, { PropTypes, Component } from 'react';
 
 import TextField from 'material-ui/lib/text-field';
 import InValidErrMsg from './In-Valid-Err-Msg';
-
-const ValidWrap = ({children}) => {
-  return (<div style={{position:'relative'}}>{children}</div>);
-};
-let getIsValidPharse1 = (val) => {
-  const isEmpty = (''+val)==='';
-  const isUndefined = typeof val==='undefined';
-  return isEmpty || isUndefined;
-};
+import {ValidWrap, getIsValidPharse1} from './Base';
 
 export default class ValidNumber extends Component {
   constructor(props) {
@@ -63,7 +55,7 @@ export default class ValidNumber extends Component {
       hint = `Less than or equal to ${this.max}`;
       err = `Number should be equal to or less than ${this.max}`;
     } else {
-      hint = err = 'Please enter a number';
+      hint = err = `Please enter a number`;
     }
 
     return (<ValidWrap>
@@ -72,9 +64,9 @@ export default class ValidNumber extends Component {
         const bool = this.getIsValid(VALUE);
         onChange && onChange(VALUE);
         if (bool) {
-          onValid && onValid();
+          onValid();
         } else {
-          onInValid && onInValid();
+          onInValid();
         }
         this.setState({showErr: this.getShowErr(VALUE)});
       }} />
@@ -92,4 +84,8 @@ ValidNumber.propTypes = {
   onValid: PropTypes.func,
   onInValid: PropTypes.func,
   onChange: PropTypes.func
+};
+ValidNumber.defaultProps = {
+  onValid: () => {},
+  onInValid: () => {}
 };
