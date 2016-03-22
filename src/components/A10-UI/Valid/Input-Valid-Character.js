@@ -116,9 +116,9 @@ export default class InputValidCharacter extends Component {
         const bool = this.getIsValid(VALUE);
         onChange && onChange(VALUE);
         if (bool) {
-          onValid && onValid();
+          onValid();
         } else {
-          onInValid && onInValid();
+          onInValid();
         }
         this.setState({showErr: this.getShowErr(VALUE)});
       }} />
