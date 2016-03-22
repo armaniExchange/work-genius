@@ -65,7 +65,8 @@ var config = {
         })
     ],
     resolve: {
-        extensions: ['', '.js', '.jsx', '.css']
+        extensions: ['', '.js', '.jsx', '.css'],
+        modulesDirectories: ['node_modules']
     }
 };
 

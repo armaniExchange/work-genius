@@ -2,9 +2,9 @@
 import {
 	GraphQLObjectType,
 	GraphQLString,
-	GraphQLID,
-    GraphQLList
+	GraphQLID
 } from 'graphql';
+import UserType from '../User/UserType.js';
 
 const COMMENT_TYPE = new GraphQLObjectType({
     name: 'Comment',
@@ -14,9 +14,9 @@ const COMMENT_TYPE = new GraphQLObjectType({
             type: GraphQLID,
             description: 'Comment ID'
         },
-        'author_id': {
-            type: GraphQLID,
-            description: 'Comment\'s author ID'
+        'author': {
+            type: UserType,
+            description: 'Comment\'s author'
         },
         'content': {
             type: GraphQLString,

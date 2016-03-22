@@ -66,7 +66,8 @@ var config = {
         new Webpack.NoErrorsPlugin()
     ],
     resolve: {
-        extensions: ['', '.js', '.jsx', '.css']
+        extensions: ['', '.js', '.jsx', '.css'],
+        modulesDirectories: ['node_modules']
     },
     eslint: {
         configFile: eslintrcPath
