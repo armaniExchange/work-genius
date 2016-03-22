@@ -15,24 +15,15 @@ class ArticleTagList extends Component {
 
   render() {
     const {tags} = this.props;
-    const labelStyle = {
-      margin: 2,
-      padding: '2px 6px',
-      background: 'darkblue',
-      color: 'white',
-      borderRadius: 3,
-      display: 'inline-block',
-      cursor: 'pointer'
-    };
 
     return (
-      <span>
+      <span className="component-article-tag-list">
         {
           tags.map((tag, index) => {
             return (
               <span
+                className="tag"
                 key={index}
-                style={labelStyle}
                 onClick={this.onClick.bind(this, tag)}>
                 {tag}
               </span>

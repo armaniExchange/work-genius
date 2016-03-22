@@ -2,9 +2,12 @@
 import './_ViewArticlePage.scss';
 // React & Redux
 import React, { Component, PropTypes } from 'react';
+import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import FlatButton from 'material-ui/lib/flat-button';
 import moment from 'moment';
+import Paper from 'material-ui/lib/paper';
 
 import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
 import ArticleFileList from '../../components/ArticleFileList/ArticleFileList';
@@ -25,36 +28,70 @@ class ViewArticlePage extends Component {
     }
   }
 
+  onDelete() {
+
+  }
+
   render() {
     const {
+      id,
       author,
       files,
       title,
       content,
       tags,
+      comments,
       updatedAt
     } = this.props;
+    const paperStyle = {
+      position: 'relative',
+      padding: 15,
+      marginBottom: 20,
+    };
 
     return (
       <section>
-        <h3>{title}</h3>
-        <hr />
-        <ArticleTagList tags={tags} />
-        <HighlightMarkdown source={content} />
-        <hr />
-        <ArticleTagList tags={tags} />
-        <div>
-          <span>Author: {author.name}&nbsp;</span>
-          &nbsp;&nbsp;
-          <span style={{color: 'gray'}}>
-            {moment(updatedAt).format('YYYY-MM-DD')}&nbsp;
-          </span>
-          &nbsp;&nbsp;
-          <span>
-            <span>{`attachments(${files.length}):`}&nbsp;</span>
-            <ArticleFileList files={files} />
-          </span>
-        </div>
+        <Paper style={paperStyle} zDepth={1}>
+          <h3>{title}</h3>
+          <div style={{
+            position: 'absolute',
+            top: 5,
+            right: 5
+          }}>
+            <Link to={`/main/articles/edit/${id}`}>
+              <FlatButton
+                label="Edit"
+                primary={true} />
+            </Link>
+            <FlatButton
+              label="Delete"
+              onClick={::this.onDelete} />
+          </div>
+          <hr />
+          <div>
+            <span>Author: {author.name}&nbsp;</span>
+            &nbsp;&nbsp;
+            <span style={{color: 'gray'}}>
+              {moment(updatedAt).format('YYYY-MM-DD')}&nbsp;
+            </span>
+            &nbsp;&nbsp;
+            <span>
+              <i className="fa fa-comments"/>&nbsp;
+              Comments: {comments.length}&nbsp;
+            </span>
+            &nbsp;&nbsp;
+            <span>
+              <i className="fa fa-paperclip"/>&nbsp;
+              <span>{`attachments(${files.length}):`}&nbsp;</span>
+              <ArticleFileList files={files} />
+            </span>
+          </div>
+          <br />
+          <ArticleTagList tags={tags} />
+        </Paper>
+        <Paper style={paperStyle} zDepth={1}>
+          <HighlightMarkdown source={content} />
+        </Paper>
       </section>
     );
   }

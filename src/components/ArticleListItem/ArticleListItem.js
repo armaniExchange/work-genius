@@ -2,9 +2,9 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import moment from 'moment';
+import Paper from 'material-ui/lib/paper';
 import FlatButton from 'material-ui/lib/flat-button';
 
-import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
 import ArticleFileList from '../../components/ArticleFileList/ArticleFileList';
 import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
 
@@ -21,27 +21,23 @@ class ArticleListItem extends Component {
       tags,
       files,
       comments,
-      content,
       // createdAt,
       updatedAt,
       onDelete,
       index
     } = this.props;
 
-    const style = {
-      background: 'white',
+    const paperStyle = {
+      position: 'relative',
       padding: 15,
-      margin: '15px 0',
-      border: 3,
-      boxShadow: '0 2px lightgray',
-      position: 'relative'
+      marginBottom: 20,
     };
 
     return (
-      <div style={style}>
-        <a href={`/main/articles/${id}`}>
+      <Paper style={paperStyle}>
+        <Link to={`/main/articles/${id}`}>
           <h3 style={{margin: 0}}>{title}</h3>
-        </a>
+        </Link>
         <div style={{
           position: 'absolute',
           top: 5,
@@ -56,11 +52,7 @@ class ArticleListItem extends Component {
             label="Delete"
             onClick={onDelete.bind(this, id, index)} />
         </div>
-        <br/>
-        <HighlightMarkdown source={content} />
-        <br />
         <hr />
-        <ArticleTagList tags={tags} />
         <div>
           <span>Author: {author.name}&nbsp;</span>
           &nbsp;&nbsp;
@@ -74,12 +66,15 @@ class ArticleListItem extends Component {
           </span>
           &nbsp;&nbsp;
           <span>
+            <i className="fa fa-paperclip"/>&nbsp;
             <span>{`attachments(${files.length}):`}&nbsp;</span>
             <ArticleFileList files={files} />
           </span>
         </div>
+        <br />
+        <ArticleTagList tags={tags} />
         <br/>
-      </div>
+      </Paper>
     );
   }
 }
