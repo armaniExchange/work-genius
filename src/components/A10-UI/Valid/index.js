@@ -1,5 +1,5 @@
 import ValidNumber from './Valid-Number';
-// import ValidCharacter from './ValidCharacter'; //TODO
+import ValidCharacter from './Valid-Character';
 
 export { ValidNumber };
-// export { ValidCharacter };
+export { ValidCharacter };
