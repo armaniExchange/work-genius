@@ -15,6 +15,7 @@ import CategoryQuery from '../models/Category/CategoryQuery.js';
 import CommentQuery from '../models/Comment/CommentQuery.js';
 import CommentMutation from '../models/Comment/CommentMutation.js';
 import ArticleQuery from '../models/Article/ArticleQuery.js';
+import ArticleMutation from '../models/Article/ArticleMutation.js';
 
 const schema = new GraphQLSchema({
 	query: new GraphQLObjectType({
@@ -55,7 +56,10 @@ const schema = new GraphQLSchema({
 			updateUserPrivilege       : UserMutation.updateUserPrivilege,
 			// Document page
 			createComment             : CommentMutation.createComment,
-			deleteComment             : CommentMutation.deleteCommentById
+			deleteComment             : CommentMutation.deleteCommentById,
+			createArticle			  : ArticleMutation.createArticle,
+			editArticle				  : ArticleMutation.editArticle,
+			deleteArticle			  : ArticleMutation.deleteArticle
 		}
 	})
 });
