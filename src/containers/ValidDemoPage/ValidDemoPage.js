@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { ValidNumber, ValidCharacter } from '../../components/A10-UI/Valid/';
+import { InputValidNumber, InputValidCharacter } from '../../components/A10-UI/Valid/';
 
 class ValidDemoPage extends Component {
   constructor(props) {
@@ -16,24 +16,24 @@ class ValidDemoPage extends Component {
   render() {
     return (<section>
       <h1>Valid Demo Page</h1>
-      <ValidNumber defaultValue={this.state.num1} />
-      <ValidNumber min={3} max={9} defaultValue={this.state.num2} />
-      <ValidNumber min={3} defaultValue={this.state.num3} />
-      <ValidNumber max={9} defaultValue={this.state.num4} />
-      <ValidNumber max={9} defaultValue={this.state.num4} />
+      <InputValidNumber defaultValue={this.state.num1} />
+      <InputValidNumber min={3} max={9} defaultValue={this.state.num2} />
+      <InputValidNumber min={3} defaultValue={this.state.num3} />
+      <InputValidNumber max={9} defaultValue={this.state.num4} />
+      <InputValidNumber max={9} defaultValue={this.state.num4} />
       <hr />
-      <ValidCharacter defaultValue={this.state.character1} />
-      <ValidCharacter min={3} max={9} defaultValue={this.state.character2} />
-      <ValidCharacter min={3} defaultValue={this.state.character3} />
-      <ValidCharacter max={9} defaultValue={this.state.character4} />
-      <ValidCharacter max={9} defaultValue={this.state.character4} />
+      <InputValidCharacter defaultValue={this.state.character1} />
+      <InputValidCharacter min={3} max={9} defaultValue={this.state.character2} />
+      <InputValidCharacter min={3} defaultValue={this.state.character3} />
+      <InputValidCharacter max={9} defaultValue={this.state.character4} />
+      <InputValidCharacter max={9} defaultValue={this.state.character4} />
       <hr />
       {/*
-      <ValidPrimarykey defaultValue={this.state.pkvalue1} />
-      <ValidPrimarykey min={3} max={9} defaultValue={this.state.pkvalue2} />
-      <ValidPrimarykey min={3} defaultValue={this.state.pkvalue3} />
-      <ValidPrimarykey max={9} defaultValue={this.state.pkvalue4} />
-      <ValidPrimarykey max={9} defaultValue={this.state.pkvalue4} />
+      <InputValidPrimarykey defaultValue={this.state.pkvalue1} />
+      <InputValidPrimarykey min={3} max={9} defaultValue={this.state.pkvalue2} />
+      <InputValidPrimarykey min={3} defaultValue={this.state.pkvalue3} />
+      <InputValidPrimarykey max={9} defaultValue={this.state.pkvalue4} />
+      <InputValidPrimarykey max={9} defaultValue={this.state.pkvalue4} />
       */}
     </section>
     );
