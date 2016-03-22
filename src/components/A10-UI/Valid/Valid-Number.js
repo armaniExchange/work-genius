@@ -4,7 +4,7 @@ import TextField from 'material-ui/lib/text-field';
 import InValidErrMsg from './In-Valid-Err-Msg';
 import {ValidWrap, getIsValidPharse1} from './Base';
 
-export default class ValidNumber extends Component {
+export default class InputValidNumber extends Component {
   constructor(props) {
     super(props);
     const {min, max, defaultValue} = this.props;
@@ -70,12 +70,12 @@ export default class ValidNumber extends Component {
         }
         this.setState({showErr: this.getShowErr(VALUE)});
       }} />
-      <InValidErrMsg msg={err} show={this.state.showErr} validType="ValidNumber" />
+      <InValidErrMsg msg={err} show={this.state.showErr} validType="InputValidNumber" />
       </ValidWrap>
     );
   }
 };
-ValidNumber.propTypes = {
+InputValidNumber.propTypes = {
   min: PropTypes.number,
   max: PropTypes.number,
   defaultValue: PropTypes.oneOfType([ //<--force only number?
@@ -85,7 +85,7 @@ ValidNumber.propTypes = {
   onInValid: PropTypes.func,
   onChange: PropTypes.func
 };
-ValidNumber.defaultProps = {
+InputValidNumber.defaultProps = {
   onValid: () => {},
   onInValid: () => {}
 };

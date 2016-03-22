@@ -8,7 +8,7 @@ import {
   // aryEnabled //<--TODO: need?
 } from './Base';
 
-export default class ValidCharacter extends Component {
+export default class InputValidCharacter extends Component {
   constructor(props) {
     super(props);
     const {min, max, defaultValue} = this.props;
@@ -64,12 +64,12 @@ export default class ValidCharacter extends Component {
         }
         this.setState({showErr: this.getShowErr(VALUE)});
       }} />
-      <InValidErrMsg msg={err} show={this.state.showErr} validType="ValidCharacter" />
+      <InValidErrMsg msg={err} show={this.state.showErr} validType="InputValidCharacter" />
       </ValidWrap>
     );
   }
 };
-ValidCharacter.propTypes = {
+InputValidCharacter.propTypes = {
   min: PropTypes.number,
   max: PropTypes.number,
   defaultValue: PropTypes.oneOfType([ //<--force only number?
@@ -79,7 +79,7 @@ ValidCharacter.propTypes = {
   onInValid: PropTypes.func,
   onChange: PropTypes.func
 };
-ValidCharacter.defaultProps = {
+InputValidCharacter.defaultProps = {
   min: 1,
   onValid: () => {},
   onInValid: () => {}

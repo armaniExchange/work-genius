@@ -21,10 +21,9 @@ const STYLE_FOR_INVALID_ERR_MSG = {
   borderRadius: '.25em'
 };
 const STYLE_FOR_INVALID_CUSTOM_ERR_MSG = {
-  ValidNumber: {},
-  ValidCharacter: {}
+  InputValidNumber: {},
+  InputValidCharacter: {}
 };
-
 
 /*class InValidErrMsg extends Component {
   render() {
