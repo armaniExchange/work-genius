@@ -9,7 +9,7 @@ export default class InputValidNumber extends Component {
     super(props);
     const {min, max, defaultValue} = this.props;
     const value = defaultValue;
-    
+
     this.min = min || undefined;
     this.max = max || undefined;
     this.hasMin = min>=-Infinity;
