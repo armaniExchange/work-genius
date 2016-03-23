@@ -5,7 +5,6 @@ import {WithContext as ReactTags }from 'react-tag-input';;
 // Styles
 import './_TagsInput.css';
 
-
 class TagsInput extends Component {
 
   handleTagDelete(i) {
@@ -22,18 +21,25 @@ class TagsInput extends Component {
       if (sameNameTags.length > 0) {
         return;
       }
-      this.props.onTagsChange({tags: [...tags, tag]});
+      this.props.onTagsChange([...tags, tag]);
   }
 
   handleTagDrag() {}
 
   render() {
     const {
-      tags
+      tags,
+      suggestions
     } = this.props;
+    const filteredSuggestions = suggestions.filter(suggestion => {
+      return tags.indexOf(suggestion) === -1;
+    });
 
     return (
-     <ReactTags tags={tags.map(tag => {
+     <ReactTags
+      {...this.props}
+      suggestions={filteredSuggestions}
+      tags={tags.map(tag => {
         return {
           id: tag,
           text: tag
@@ -48,6 +54,7 @@ class TagsInput extends Component {
 
 TagsInput.propTypes = {
   tags            : PropTypes.array,
+  suggestions     : PropTypes.arrayOf(PropTypes.string),
   onTagsChange    : PropTypes.func.isRequired
 };
 

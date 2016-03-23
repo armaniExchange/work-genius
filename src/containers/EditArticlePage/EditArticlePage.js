@@ -30,6 +30,7 @@ class EditArticlePage extends Component {
       articleActions.fetchArticle(params.articleId);
     }
     documentActions.fetchAllCategories();
+    documentActions.fetchAllTags();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -119,7 +120,8 @@ class EditArticlePage extends Component {
     const {
       params,
       files,
-      allCategories
+      allCategories,
+      allTags
     } = this.props;
 
     const editorStyle = {
@@ -151,6 +153,7 @@ class EditArticlePage extends Component {
             content={editingContent}
             category={editingCategory}
             files={files}
+            tagSuggestions={allTags}
             allCategories={allCategories}
             onTagsChange={::this.onTagsChange}
             onTitleChange={::this.onTitleChange}
@@ -195,6 +198,7 @@ EditArticlePage.propTypes = {
   updatedAt           : PropTypes.number,
   params              : PropTypes.object,
   allCategories       : PropTypes.array,
+  allTags             : PropTypes.arrayOf(PropTypes.string),
   articleActions      : PropTypes.object.isRequired,
   documentActions     : PropTypes.object.isRequired
 };
@@ -213,8 +217,14 @@ EditArticlePage.defaultProps = {
 };
 
 function mapStateToProps(state) {
+  const {
+    allCategories,
+    allTags
+  } = state.documentation.toJS();
+
   return Object.assign({}, state.article.toJS(), {
-    allCategories: state.documentation.toJS().allCategories
+    allCategories,
+    allTags
   });
 }
 

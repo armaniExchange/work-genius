@@ -75,6 +75,7 @@ class ArticleEditor extends Component {
       category,
       files,
       allCategories,
+      tagSuggestions,
       onContentChange,
       onTitleChange,
       onTagsChange,
@@ -125,6 +126,7 @@ class ArticleEditor extends Component {
         <br />
         <TagsInput
           tags={tags}
+          suggestions={tagSuggestions}
           onTagsChange={onTagsChange} />
         <br />
         <h5>File Input</h5>
@@ -156,6 +158,7 @@ ArticleEditor.propTypes = {
   files               : PropTypes.array,
   allCategories       : PropTypes.array,
   style               : PropTypes.object,
+  tagSuggestions      : PropTypes.arrayOf(PropTypes.string),
   onContentChange     : PropTypes.func.isRequired,
   onTitleChange       : PropTypes.func.isRequired,
   onTagsChange        : PropTypes.func.isRequired,
