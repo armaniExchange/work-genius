@@ -3,7 +3,7 @@ import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import moment from 'moment';
 import Paper from 'material-ui/lib/paper';
-import FlatButton from 'material-ui/lib/flat-button';
+import RaisedButton from 'material-ui/lib/raised-button';
 
 import ArticleFileList from '../../components/ArticleFileList/ArticleFileList';
 import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
@@ -44,11 +44,13 @@ class ArticleListItem extends Component {
           right: 5
         }}>
           <Link to={`/main/articles/edit/${id}`}>
-            <FlatButton
+            <RaisedButton
+              style={{margin: 10}}
               label="Edit"
               primary={true} />
           </Link>
-          <FlatButton
+          <RaisedButton
+            style={{margin: 10}}
             label="Delete"
             onClick={onDelete.bind(this, id, index)} />
         </div>

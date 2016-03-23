@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import FlatButton from 'material-ui/lib/flat-button';
+import RaisedButton from 'material-ui/lib/raised-button';
 import moment from 'moment';
 import Paper from 'material-ui/lib/paper';
 
@@ -59,11 +59,13 @@ class ViewArticlePage extends Component {
             right: 5
           }}>
             <Link to={`/main/articles/edit/${id}`}>
-              <FlatButton
+              <RaisedButton
+                style={{margin: 10}}
                 label="Edit"
                 primary={true} />
             </Link>
-            <FlatButton
+            <RaisedButton
+              style={{margin: 10}}
               label="Delete"
               onClick={::this.onDelete} />
           </div>
