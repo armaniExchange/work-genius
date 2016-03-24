@@ -114,7 +114,7 @@ export default class InputValidCharacter extends Component {
       <TextField defaultValue={value} hintText={hint} onChange={evt=>{
         const VALUE = evt.target.value;
         const bool = this.getIsValid(VALUE);
-        onChange && onChange(VALUE);
+        onChange(VALUE);
         if (bool) {
           onValid();
         } else {
@@ -140,6 +140,7 @@ InputValidCharacter.propTypes = {
 };
 InputValidCharacter.defaultProps = {
   min: 1,
+  onChange: () => {},
   onValid: () => {},
   onInValid: () => {}
 };
