@@ -87,6 +87,19 @@ class ArticleEditor extends Component {
       editingFile
     } = this.state;
 
+    const allCategoryItems = allCategories
+      .filter(item => {
+        return item.name !== 'root';
+      })
+      .map((item, index) => {
+        return (
+          <MenuItem
+            key={index}
+            value={item.id}
+            primaryText={item.name}
+          />
+        );
+      });
 
     return (
       <div className="article-editor"
@@ -102,17 +115,7 @@ class ArticleEditor extends Component {
           maxHeight={allCategoriesMaxHeight}
           value={category.id}
           onChange={onCategoryChange} >
-          {
-            allCategories.map((item, index) => {
-              return (
-                <MenuItem
-                  key={index}
-                  value={item.id}
-                  primaryText={item.name}
-                />
-              );
-            })
-          }
+          {allCategoryItems}
         </DropDownMenu>
         <br />
         <br />

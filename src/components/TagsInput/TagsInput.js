@@ -32,7 +32,7 @@ class TagsInput extends Component {
       suggestions
     } = this.props;
     const filteredSuggestions = suggestions.filter(suggestion => {
-      return tags.indexOf(suggestion) === -1;
+      return suggestion && tags.indexOf(suggestion) === -1;
     });
 
     return (

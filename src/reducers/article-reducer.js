@@ -45,6 +45,8 @@ export default function articleReducer(state = initialState, action) {
       return state.set('files', state.get('files').filter(removedFile => {
         return removedFile.id !== action.id;
       }));
+    case actionTypes.CLEAR_ARTICLE:
+      return initialState;
     default:
       return state;
   }

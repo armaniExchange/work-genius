@@ -26,7 +26,8 @@ class EditArticlePage extends Component {
       articleActions,
       documentActions
     } = this.props;
-    if ( params.articleId !== 'new' ) {
+    articleActions.clearArticle();
+    if (!this.isCreate()) {
       articleActions.fetchArticle(params.articleId);
     }
     documentActions.fetchAllCategories();
@@ -36,6 +37,10 @@ class EditArticlePage extends Component {
   componentWillReceiveProps(nextProps) {
     const newState = this.getEditingStateFromProps(nextProps);
     this.setState(newState);
+  }
+
+  isCreate() {
+    return this.props.params.articleId === 'new';
   }
 
   getEditingStateFromProps(props) {
@@ -94,18 +99,29 @@ class EditArticlePage extends Component {
 
   onSubmit() {
     const {
+      files,
+      params,
+      articleActions
+    } = this.props;
+    const {
       editingTitle,
       editingTags,
       editingCategory,
       editingContent
     } = this.state;
-
-    this.props.articleActions.updateArticle({
+    const {
+      createArticle,
+      updateArticle
+    } = articleActions;
+    const postArticle = this.isCreate() ? createArticle : updateArticle;
+    const idField = this.isCreate() ? null : {id: params.id};
+    postArticle(Object.assign({
       title: editingTitle,
       tags: editingTags,
       category: editingCategory,
-      content: editingContent
-    });
+      content: editingContent,
+      files
+    }, idField));
   }
 
   render() {
