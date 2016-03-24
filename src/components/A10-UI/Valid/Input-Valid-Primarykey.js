@@ -68,7 +68,6 @@ export default class InputValidPrimarykey extends Component {
     }
 
     isValid = isValid1 && isValid2;
-    console.log('isValid2', isValid, isValid1, isValid2);
     return isValid;
   }
   render() {
