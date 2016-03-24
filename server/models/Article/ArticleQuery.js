@@ -77,37 +77,44 @@ let ArticleQuery = {
 							article.updated_at = new Date(article.updated_time).getTime();
 						}
 						//get author object
-						query = r.db('work_genius').table('users')
-							.get(article.author_id).pluck('id','name');
-						let authorObj = await query.run(connection);
-						if(authorObj){
-							article.author = authorObj;
+						if(article.author_id){
+							query = r.db('work_genius').table('users')
+								.get(article.author_id).pluck('id','name');
+							let authorObj = await query.run(connection);
+							if(authorObj){
+								article.author = authorObj;
+							}
 						}
+						
 						//get comment list
 						article.comments = [];
-						for(let comment_id of article.comment_ids){
-							query = r.db('work_genius').table('comments').get(comment_id);
-							let comment = await query.run(connection);
-							if(comment.created_time){
-								comment.created_at = new Date(comment.created_time).getTime();
+						if(article.comment_ids){
+							for(let comment_id of article.comment_ids){
+								query = r.db('work_genius').table('comments').get(comment_id);
+								let comment = await query.run(connection);
+								if(comment.created_time){
+									comment.created_at = new Date(comment.created_time).getTime();
+								}
+								if(comment.updated_time){
+									comment.updated_at = new Date(comment.updated_time).getTime();
+								}
+								article.comments.push(comment);
 							}
-							if(comment.updated_time){
-								comment.updated_at = new Date(comment.updated_time).getTime();
-							}
-							article.comments.push(comment);
 						}
+						
 
 						//get file list
 						article.files = [];
-						for(let file_id of article.file_ids){
-							query = r.db('work_genius').table('files').get(file_id);
-							let file = await query.run(connection);
-							if(file && file.created_at){
-							file.created_at = new Date(file.created_at).getTime();
-						}
-							article.files.push(file);
-						}
-						
+						if(article.file_ids){
+							for(let file_id of article.file_ids){
+								query = r.db('work_genius').table('files').get(file_id);
+								let file = await query.run(connection);
+								if(file && file.created_at){
+									file.created_at = new Date(file.created_at).getTime();
+								}
+								article.files.push(file);
+							}
+						}	
 					}
 				}
 				
@@ -144,34 +151,42 @@ let ArticleQuery = {
 						result.updated_at = new Date(result.updated_time).getTime();
 					}
 					//get author object
-					query = r.db('work_genius').table('users')
-						.get(result.author_id).pluck('id','name');
-					let authorObj = await query.run(connection);
-					if(authorObj){
-						result.author = authorObj;
+					if(result.author_id){
+						query = r.db('work_genius').table('users')
+							.get(result.author_id).pluck('id','name');
+						let authorObj = await query.run(connection);
+						if(authorObj){
+							result.author = authorObj;
+						}
 					}
+					
 					//get comment list
 					result.comments = [];
-					for(let comment_id of result.comment_ids){
-						query = r.db('work_genius').table('comments').get(comment_id);
-						let comment = await query.run(connection);
-						if(comment.created_time){
-							comment.created_at = new Date(comment.created_time).getTime();
+					if(result.comment_ids){
+						for(let comment_id of result.comment_ids){
+							query = r.db('work_genius').table('comments').get(comment_id);
+							let comment = await query.run(connection);
+							if(comment.created_time){
+								comment.created_at = new Date(comment.created_time).getTime();
+							}
+							if(comment.updated_time){
+								comment.updated_at = new Date(comment.updated_time).getTime();
+							}
+							result.comments.push(comment);
 						}
-						if(comment.updated_time){
-							comment.updated_at = new Date(comment.updated_time).getTime();
-						}
-						result.comments.push(comment);
 					}
+					
 					//get file list
 					result.files = [];
-					for(let file_id of result.file_ids){
-						query = r.db('work_genius').table('files').get(file_id);
-						let file = await query.run(connection);
-						if(file && file.created_at){
-							file.created_at = new Date(file.created_at).getTime();
+					if(result.file_ids){
+						for(let file_id of result.file_ids){
+							query = r.db('work_genius').table('files').get(file_id);
+							let file = await query.run(connection);
+							if(file && file.created_at){
+								file.created_at = new Date(file.created_at).getTime();
+							}
+							result.files.push(file);
 						}
-						result.files.push(file);
 					}
 				}
 				
