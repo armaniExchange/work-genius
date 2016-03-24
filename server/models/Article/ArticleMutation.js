@@ -49,12 +49,16 @@ let ArticleMutation = {
 			try {
 				query = r.db('work_genius').table('articles').insert(JSON.parse(data));
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				await query.run(connection);
+				let result = await query.run(connection);
 				await connection.close();
+				let id = '';
+				if(result && result.generated_keys && result.generated_keys.length > 0){
+					id = result.generated_keys[0];
+				}
+				return id;
 			} catch (err) {
 				return err;
 			}
-			return 'Created successfully!';
 		}
 	},
 	'editArticle': {
