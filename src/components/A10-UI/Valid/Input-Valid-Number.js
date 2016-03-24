@@ -67,7 +67,7 @@ export default class InputValidNumber extends Component {
       <TextField defaultValue={value} hintText={hint} onChange={evt=>{
         const VALUE = evt.target.value;
         const bool = this.getIsValid(VALUE);
-        onChange && onChange(VALUE);
+        onChange(VALUE);
         if (bool) {
           onValid();
         } else {
@@ -91,6 +91,7 @@ InputValidNumber.propTypes = {
   onChange: PropTypes.func
 };
 InputValidNumber.defaultProps = {
+  onChange: () => {},
   onValid: () => {},
   onInValid: () => {}
 };
