@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import { InputValidNumber, InputValidCharacter, InputValidPrimarykey } from '../../components/A10-UI/Valid/';
 
 let DemoBox = ({title, children}) => {
-  return (<dl>
-      <dt>{title}</dt>
+  return (<dl style={{margin:'0 0 10px'}}>
+      <dt style={{cursor:'pointer',padding:'3px 12px',borderRadius:'5px',background:'#ddd'}}>{title}</dt>
       <dd style={{padding:'0 0 0 50px'}}>{children}</dd>
     </dl>);
 };

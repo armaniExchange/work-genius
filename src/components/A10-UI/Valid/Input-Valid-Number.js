@@ -80,18 +80,10 @@ export default class InputValidNumber extends Component {
     );
   }
 };
-InputValidNumber.propTypes = {
-  min: PropTypes.number,
-  max: PropTypes.number,
-  defaultValue: PropTypes.oneOfType([ //<--force only number?
-      PropTypes.string,
-      PropTypes.number]),
-  onValid: PropTypes.func,
-  onInValid: PropTypes.func,
-  onChange: PropTypes.func
-};
-InputValidNumber.defaultProps = {
-  onChange: () => {},
-  onValid: () => {},
-  onInValid: () => {}
-};
+InputValidNumber.propTypes = Object.assign({}, InputValidPropTypes, 
+  { min: PropTypes.number,
+    max: PropTypes.number,
+    defaultValue: PropTypes.oneOfType([ //<--force only number?
+        PropTypes.string,
+        PropTypes.number])});
+InputValidNumber.defaultProps = Object.assign({}, InputValidDefaultProps);
