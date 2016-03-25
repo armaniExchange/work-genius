@@ -5,6 +5,7 @@ import InputValidGreKey from './Input-Valid-Gre-Key';
 import InputValidHexKey from './Input-Valid-Hex-Key';
 import InputValidMac from './Input-Valid-Mac';
 import InputValidIpv4Mask from './Input-Valid-Ipv4-Mask';
+import InputValidIpv6Mask from './Input-Valid-Ipv6-Mask';
 
 export { InputValidNumber };
 export { InputValidCharacter };
@@ -13,13 +14,13 @@ export { InputValidGreKey };
 export { InputValidHexKey };
 export { InputValidMac };
 export { InputValidIpv4Mask };
+export { InputValidIpv6Mask };
 
 // export { InputValidWrap };
 // export { InputValidSame };
 // export { InputValidFilterRegex };
 
 
-// export { InputValidIpv6Mask };
 // export { InputValidIp };
 // export { InputValidPort };
 // export { InputValidIpWithMask };
