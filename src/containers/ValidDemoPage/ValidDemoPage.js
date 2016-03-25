@@ -8,14 +8,18 @@ import {
   InputValidPrimarykey, 
   InputValidGreKey,
   InputValidHexKey,
-  InputValidMac
+  InputValidMac,
+  InputValidIpv4Mask
 } from '../../components/A10-UI/Valid/';
 
 let DemoBox = ({title, children}) => {
   return (<dl style={{margin:'0 0 10px', display: 'inline-block', width:'32%', margin:'0 0 20px'}}>
-      <dt style={{cursor:'pointer',padding:'3px 12px',borderRadius:'5px',background:'#ddd'}}>{title}</dt>
+      <dt style={{padding:'3px 12px',borderRadius:'5px',background:'#ddd'}}>{title}</dt>
       <dd style={{padding:'0 0 0 20px'}}>{children}</dd>
     </dl>);
+};
+let DemoBoxDesc = ({children}) => {
+  return (<div style={{background:'#ccc',padding:'3px 9px'}}>{children}</div>);
 };
 
 class ValidDemoPage extends Component {
@@ -30,7 +34,7 @@ class ValidDemoPage extends Component {
   render() {
     return (<section>
       <h4 style={{margin:0,padding:0}}>Valid Demo Page</h4>
-      <div style={{display:'flex', flexDirection:'column', flexWrap:'wrap', columnCount:3, columnGap: 0, height:'600px', background:'#efefef'}}>
+      <div style={{display:'flex', flexDirection:'column', flexWrap:'wrap', columnCount:3, columnGap: 0, height:'', background:'#efefef'}}>
       <DemoBox title="InputValidNumber">
         <InputValidNumber defaultValue={this.state.num1} />
         <InputValidNumber min={3} max={9} defaultValue={this.state.num2} />
@@ -64,12 +68,21 @@ class ValidDemoPage extends Component {
         <InputValidHexKey defaultValue="abc5bc" min={3} max={6} />
       </DemoBox>
       <DemoBox title="InputValidMac">
-        <div style={{background:'#eee'}}>
-        (w incorrect value, try 0017:f297:af99 )
-        (w correct value, try 3D:F2:C9:A6:B3:4F ...or... 3D:F2:C9:A6:B3:4f)
-        </div>
+        <DemoBoxDesc>
+        valid = Try 3D:F2:C9:A6:B3:4F ...or... 3D:F2:C9:A6:B3:4f)<br />
+        invalid = Try 0017:f297:af99
+        </DemoBoxDesc>
         <InputValidMac defaultValue="0017:f297:af99" />
         <InputValidMac defaultValue="3D:F2:C9:A6:B3:4f" />
+      </DemoBox>
+      <DemoBox title="InputValidIpv4Mask">
+        <DemoBoxDesc>
+        valid = Try 255.255.128.0 255.255.255.0 255.255.0.0 /0~/32<br />
+        invalid = Try 255.255.128.1
+        </DemoBoxDesc>
+        <InputValidIpv4Mask defaultValue="255.255.128.0" />
+        <InputValidIpv4Mask defaultValue="255.255.128.0" slashmaskonly={true} />
+        <InputValidIpv4Mask defaultValue="255.255.128.0" ipaddronly={true} />
       </DemoBox>
       </div>
     </section>
