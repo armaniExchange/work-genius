@@ -19,7 +19,7 @@ class ArticleTagList extends Component {
     return (
       <span className="component-article-tag-list">
         {
-          tags.map((tag, index) => {
+          (tags || []).map((tag, index) => {
             return (
               <span
                 className="tag"

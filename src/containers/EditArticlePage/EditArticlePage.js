@@ -35,6 +35,10 @@ class EditArticlePage extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+
+    if (this.props.isEditing && !nextProps.isEditing) {
+      this.props.history.replace(`/main/articles/${nextProps.id}`);
+    }
     const newState = this.getEditingStateFromProps(nextProps);
     this.setState(newState);
   }
@@ -114,7 +118,7 @@ class EditArticlePage extends Component {
       updateArticle
     } = articleActions;
     const postArticle = this.isCreate() ? createArticle : updateArticle;
-    const idField = this.isCreate() ? null : {id: params.id};
+    const idField = this.isCreate() ? null : {id: params.articleId};
     postArticle(Object.assign({
       title: editingTitle,
       tags: editingTags,
@@ -215,8 +219,10 @@ EditArticlePage.propTypes = {
   params              : PropTypes.object,
   allCategories       : PropTypes.array,
   allTags             : PropTypes.arrayOf(PropTypes.string),
+  isEditing           : PropTypes.bool,
   articleActions      : PropTypes.object.isRequired,
-  documentActions     : PropTypes.object.isRequired
+  documentActions     : PropTypes.object.isRequired,
+  history             : PropTypes.object
 };
 
 EditArticlePage.defaultProps = {

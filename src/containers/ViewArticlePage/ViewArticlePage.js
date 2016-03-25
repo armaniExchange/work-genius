@@ -71,7 +71,7 @@ class ViewArticlePage extends Component {
           </div>
           <hr />
           <div>
-            <span>Author: {author.name}&nbsp;</span>
+            <span>Author: {author && author.name}&nbsp;</span>
             &nbsp;&nbsp;
             <span style={{color: 'gray'}}>
               {moment(updatedAt).format('YYYY-MM-DD')}&nbsp;

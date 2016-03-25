@@ -113,7 +113,7 @@ class ArticleEditor extends Component {
           className="drop-down-menu"
           autoWidth={false}
           maxHeight={allCategoriesMaxHeight}
-          value={category.id}
+          value={category && category.id}
           onChange={onCategoryChange} >
           {allCategoryItems}
         </DropDownMenu>
