@@ -9,7 +9,8 @@ import {
   InputValidGreKey,
   InputValidHexKey,
   InputValidMac,
-  InputValidIpv4Mask
+  InputValidIpv4Mask,
+  InputValidIpv6Mask,
 } from '../../components/A10-UI/Valid/';
 
 let DemoBox = ({title, children}) => {
@@ -83,6 +84,10 @@ class ValidDemoPage extends Component {
         <InputValidIpv4Mask defaultValue="255.255.128.0" />
         <InputValidIpv4Mask defaultValue="255.255.128.0" slashmaskonly={true} />
         <InputValidIpv4Mask defaultValue="255.255.128.0" ipaddronly={true} />
+      </DemoBox>
+      <DemoBox title="InputValidIpv6Mask">
+        <DemoBoxDesc>/0 ~ /128</DemoBoxDesc>
+        <InputValidIpv6Mask defaultValue="/128" />
       </DemoBox>
       </div>
     </section>
