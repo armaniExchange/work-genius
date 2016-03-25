@@ -8,6 +8,7 @@ import InputValidIpv4Mask from './Input-Valid-Ipv4-Mask';
 import InputValidIpv6Mask from './Input-Valid-Ipv6-Mask';
 import InputValidIp from './Input-Valid-Ip';
 import InputValidPort from './Input-Valid-Port';
+import InputValidIpWithMask from './Input-Valid-Ip-With-Mask';
 
 export { InputValidNumber };
 export { InputValidCharacter };
@@ -19,6 +20,7 @@ export { InputValidIpv4Mask };
 export { InputValidIpv6Mask };
 export { InputValidIp };
 export { InputValidPort };
+export { InputValidIpWithMask };
 
 // export { InputValidWrap };
 // export { InputValidSame };
