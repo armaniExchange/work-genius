@@ -12,7 +12,8 @@ import {
   InputValidIpv4Mask,
   InputValidIpv6Mask,
   InputValidIp,
-  InputValidPort
+  InputValidPort,
+  InputValidIpWithMask
 } from '../../components/A10-UI/Valid/';
 
 let DemoBox = ({title, children}) => {
@@ -22,7 +23,7 @@ let DemoBox = ({title, children}) => {
     </dl>);
 };
 let DemoBoxDesc = ({children}) => {
-  return (<div style={{background:'#ccc',padding:'3px 9px'}}>{children}</div>);
+  return (<div style={{background:'#ffc',padding:'3px 9px'}}>{children}</div>);
 };
 
 class ValidDemoPage extends Component {
@@ -105,6 +106,15 @@ class ValidDemoPage extends Component {
         <InputValidPort defaultValue="other" allowOther={true} />
         <InputValidPort defaultValue={65535} />
         <InputValidPort defaultValue={65535} allow65535={false} />
+      </DemoBox>
+      <DemoBox title="InputValidIpWithMask">
+        <DemoBoxDesc>MUST be "IPvalue/prefix"</DemoBoxDesc>
+        <InputValidIpWithMask defaultValue="1000::eeee/128" />
+        <InputValidIpWithMask defaultValue="1000::eeee/129" />
+        <InputValidIpWithMask defaultValue="1000::eeee" />
+        <InputValidIpWithMask defaultValue="3.6.7.2/32" />
+        <InputValidIpWithMask defaultValue="3.6.7.2/33" />
+        <InputValidIpWithMask defaultValue="/33" />
       </DemoBox>
       </div>
     </section>
