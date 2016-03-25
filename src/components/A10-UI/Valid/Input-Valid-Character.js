@@ -1,10 +1,7 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
 
-import TextField from 'material-ui/lib/text-field';
-import InValidErrMsg from './In-Valid-Err-Msg';
 import {
   CHARACTER_TYPE,
-  ValidWrap, 
   InputValidCharacterLikePropTypes, 
   InputValidCharacterLikeDefaultProps
 } from './Base';

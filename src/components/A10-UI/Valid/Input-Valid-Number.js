@@ -1,8 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 
-import TextField from 'material-ui/lib/text-field';
-import InValidErrMsg from './In-Valid-Err-Msg';
-import {ValidWrap, InputValidPropTypes, InputValidDefaultProps} from './Base';
+import {InputValidPropTypes, InputValidDefaultProps} from './Base';
 import InputValid from './Input-Valid';
 
 export default class InputValidNumber extends Component {
@@ -64,5 +62,6 @@ InputValidNumber.propTypes = Object.assign({}, InputValidPropTypes,
     max: PropTypes.number,
     defaultValue: PropTypes.oneOfType([ //<--force only number?
         PropTypes.string,
-        PropTypes.number])});
+        PropTypes.number])
+  });
 InputValidNumber.defaultProps = Object.assign({}, InputValidDefaultProps);

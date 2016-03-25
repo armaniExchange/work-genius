@@ -1,9 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 
-import TextField from 'material-ui/lib/text-field';
-import InValidErrMsg from './In-Valid-Err-Msg';
 import {
-  ValidWrap, InputValidPropTypes, InputValidDefaultProps,
+  InputValidPropTypes, InputValidDefaultProps,
   MIN_HEX_KEY_LENGTH, MAX_HEX_KEY_LENGTH
 } from './Base'; 
 import InputValid from './Input-Valid'; 
