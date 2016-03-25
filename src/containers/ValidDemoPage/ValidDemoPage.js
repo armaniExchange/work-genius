@@ -12,9 +12,9 @@ import {
 } from '../../components/A10-UI/Valid/';
 
 let DemoBox = ({title, children}) => {
-  return (<dl style={{margin:'0 0 10px'}}>
+  return (<dl style={{margin:'0 0 10px', display: 'inline-block', width:'32%', margin:'0 0 20px'}}>
       <dt style={{cursor:'pointer',padding:'3px 12px',borderRadius:'5px',background:'#ddd'}}>{title}</dt>
-      <dd style={{padding:'0 0 0 50px'}}>{children}</dd>
+      <dd style={{padding:'0 0 0 20px'}}>{children}</dd>
     </dl>);
 };
 
@@ -29,7 +29,8 @@ class ValidDemoPage extends Component {
   }
   render() {
     return (<section>
-      <h4>Valid Demo Page</h4>
+      <h4 style={{margin:0,padding:0}}>Valid Demo Page</h4>
+      <div style={{display:'flex', flexDirection:'column', flexWrap:'wrap', columnCount:3, columnGap: 0, height:'600px', background:'#efefef'}}>
       <DemoBox title="InputValidNumber">
         <InputValidNumber defaultValue={this.state.num1} />
         <InputValidNumber min={3} max={9} defaultValue={this.state.num2} />
@@ -70,6 +71,7 @@ class ValidDemoPage extends Component {
         <InputValidMac defaultValue="0017:f297:af99" />
         <InputValidMac defaultValue="3D:F2:C9:A6:B3:4f" />
       </DemoBox>
+      </div>
     </section>
     );
   }
