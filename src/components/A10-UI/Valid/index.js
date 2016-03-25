@@ -9,6 +9,8 @@ import InputValidIpv6Mask from './Input-Valid-Ipv6-Mask';
 import InputValidIp from './Input-Valid-Ip';
 import InputValidPort from './Input-Valid-Port';
 import InputValidIpWithMask from './Input-Valid-Ip-With-Mask';
+import InputValidIpv4OrMask from './Input-Valid-Ipv4-Or-Mask';
+import InputValidIpv6OrMask from './Input-Valid-Ipv6-Or-Mask';
 
 export { InputValidNumber };
 export { InputValidCharacter };
@@ -21,6 +23,8 @@ export { InputValidIpv6Mask };
 export { InputValidIp };
 export { InputValidPort };
 export { InputValidIpWithMask };
+export { InputValidIpv4OrMask };
+export { InputValidIpv6OrMask };
 
 // export { InputValidWrap };
 // export { InputValidSame };
@@ -35,9 +39,8 @@ export { InputValidIpWithMask };
 // export { InputValidIpOrMask };
 // export { InputValidIpv4WithMask };
 // export { InputValidIpv6WithMask };
-// export { InputValidIpv4OrMask };
+
 // export { InputValidIpv4WithMaskOrIpv6 };
-// export { InputValidIpv6OrMask };
 // export { InputValidIpv6WithMaskLinkLocal };
 // export { InputValidHost };
 // export { InputValidIpv4oripv6orhost };

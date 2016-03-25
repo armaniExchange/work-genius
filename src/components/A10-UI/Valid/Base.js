@@ -26,6 +26,10 @@ export const MAX_GRE_KEY_LENGTH = 8;
 export const MIN_HEX_KEY_LENGTH = 21;
 export const MAX_HEX_KEY_LENGTH = 40;
 
+export const SUBNET_MIN_PREFIX = 0;
+export const IPV4_SUBNET_MAX_PREFIX = 32;
+export const IPV6_SUBNET_MAX_PREFIX = 128;
+
 export const isValidMask = (val, ipType) => {
   var b = false,
       MAX_VAL = +ipType===6 ? 128 : 32; //32 is for ipType=4
@@ -37,6 +41,7 @@ export const isIPv4 = (ip) => {
   return (/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/.test(ip)) && (RegExp.$1 < 256 && RegExp.$2 < 256 && RegExp.$3 < 256 && RegExp.$4 < 256);
 };
 export const isIPv6 = (ip) => {
+  ip = ip || '';
   var patrn = /^([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$/i,
       r = patrn.exec(ip),
       cLength = function(str) {

@@ -13,7 +13,9 @@ import {
   InputValidIpv6Mask,
   InputValidIp,
   InputValidPort,
-  InputValidIpWithMask
+  InputValidIpWithMask,
+  InputValidIpv4OrMask,
+  InputValidIpv6OrMask
 } from '../../components/A10-UI/Valid/';
 
 let DemoBox = ({title, children}) => {
@@ -41,7 +43,7 @@ class ValidDemoPage extends Component {
   render() {
     return (<section>
       <h4 style={{margin:0,padding:0}}>Valid Demo Page</h4>
-      <div style={{display:'flex', flexDirection:'column', flexWrap:'wrap', columnCount:3, columnGap: 0, height:'', background:'#efefef'}}>
+      <div style={{display:'flex', flexDirection:'column', flexWrap:'wrap', columnCount:3, columnGap: 0, height:'1500px', background:'#efefef'}}>
       <DemoBox title="InputValidNumber">
         <InputValidNumber defaultValue={this.state.num1} />
         <InputValidNumber min={3} max={9} defaultValue={this.state.num2} />
@@ -132,6 +134,12 @@ class ValidDemoPage extends Component {
         <InputValidIpWithMask ipv6only={true} defaultValue="3.6.7.2/32" />
         <InputValidIpWithMask ipv6only={true} defaultValue="3.6.7.2/33" />
         <InputValidIpWithMask ipv6only={true} defaultValue="/33" />
+      </DemoBox>
+      <DemoBox title="InputValidIpv4OrMask">
+        <InputValidIpv4OrMask />
+      </DemoBox>
+      <DemoBox title="InputValidIpv6OrMask">
+        <InputValidIpv6OrMask />
       </DemoBox>
       </div>
     </section>
