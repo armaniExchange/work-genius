@@ -69,7 +69,10 @@ InputValid.propTypes = Object.assign({}, InputValidPropTypes, {
   validType: PropTypes.string.isRequired,
   err: PropTypes.string.isRequired,
   hint: PropTypes.string.isRequired,
-  inputType: PropTypes.string
+  inputType: PropTypes.string,
+  defaultValue: PropTypes.oneOfType([ //InputValidPort InputValidNumber
+        PropTypes.string,
+        PropTypes.number])
 });
 InputValid.defaultProps = Object.assign({}, InputValidDefaultProps, {
   inputType: 'text'
