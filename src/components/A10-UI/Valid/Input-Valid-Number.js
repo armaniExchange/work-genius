@@ -1,19 +1,14 @@
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 
 import TextField from 'material-ui/lib/text-field';
 import InValidErrMsg from './In-Valid-Err-Msg';
-import {
-  ValidWrap, 
-  getIsValidPharse1, 
-  InputValidPropTypes,
-  InputValidDefaultProps
-} from './Base';
-import InputValidComponent from './Input-Valid'; 
+import {ValidWrap, getIsValidPharse1} from './Base';
 
-export default class InputValidNumber extends InputValidComponent {
+export default class InputValidNumber extends Component {
   constructor(props) {
     super(props);
-    const {min, max} = this.props;
+    const {min, max, defaultValue} = this.props;
+    const value = defaultValue;
 
     this.min = min || undefined;
     this.max = max || undefined;
@@ -37,7 +32,13 @@ export default class InputValidNumber extends InputValidComponent {
     this.hint = hint;
     this.err = err;
 
-    this.validType = 'InputValidNumber';
+    this.state = {
+      showErr: this.getShowErr(value),
+      value: value
+    };
+  }
+  getShowErr(val) {
+    return !this.getIsValid(val);
   }
   getIsValid(val) {
     if (getIsValidPharse1(val)) {
@@ -56,7 +57,7 @@ export default class InputValidNumber extends InputValidComponent {
     }
     return isValid;
   }
-  renderBase() {
+  render() {
     const {onChange, onValid, onInValid, defaultValue} = this.props;
     const value = defaultValue;
     let hint = this.hint,
@@ -77,9 +78,6 @@ export default class InputValidNumber extends InputValidComponent {
       <InValidErrMsg msg={err} show={this.state.showErr} validType="InputValidNumber" />
       </ValidWrap>
     );
-  }
-  render() {
-    this.renderBase();
   }
 };
 InputValidNumber.propTypes = Object.assign({}, InputValidPropTypes, 
