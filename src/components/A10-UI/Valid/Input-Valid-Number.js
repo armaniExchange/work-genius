@@ -2,14 +2,14 @@ import React, { PropTypes, Component } from 'react';
 
 import TextField from 'material-ui/lib/text-field';
 import InValidErrMsg from './In-Valid-Err-Msg';
-import {ValidWrap, getIsValidPharse1} from './Base';
+import {ValidWrap, InputValidPropTypes, InputValidDefaultProps} from './Base';
+import InputValid from './Input-Valid';
 
 export default class InputValidNumber extends Component {
   constructor(props) {
     super(props);
-    const {min, max, defaultValue} = this.props;
-    const value = defaultValue;
-
+    const {min, max} = this.props;
+    
     this.min = min || undefined;
     this.max = max || undefined;
     this.hasMin = min>=-Infinity;
@@ -32,18 +32,8 @@ export default class InputValidNumber extends Component {
     this.hint = hint;
     this.err = err;
 
-    this.state = {
-      showErr: this.getShowErr(value),
-      value: value
-    };
-  }
-  getShowErr(val) {
-    return !this.getIsValid(val);
   }
   getIsValid(val) {
-    if (getIsValidPharse1(val)) {
-      return true;
-    }
     let int_val = +val;
     let isValid = false;
     if (this.hasMin && this.hasMax) {
@@ -58,28 +48,17 @@ export default class InputValidNumber extends Component {
     return isValid;
   }
   render() {
-    const {onChange, onValid, onInValid, defaultValue} = this.props;
-    const value = defaultValue;
-    let hint = this.hint,
-        err = this.err;
-
-    return (<ValidWrap>
-      <TextField defaultValue={value} hintText={hint} onChange={evt=>{
-        const VALUE = evt.target.value;
-        const bool = this.getIsValid(VALUE);
-        onChange(VALUE);
-        if (bool) {
-          onValid();
-        } else {
-          onInValid();
-        }
-        this.setState({showErr: this.getShowErr(VALUE)});
-      }} />
-      <InValidErrMsg msg={err} show={this.state.showErr} validType="InputValidNumber" />
-      </ValidWrap>
-    );
+    return (
+      <InputValid {...this.props} 
+        getIsValid={this.getIsValid.bind(this)}
+        validType="InputValidNumber"
+        hint={this.hint}
+        err={this.err}
+      />
+      );
   }
 };
+
 InputValidNumber.propTypes = Object.assign({}, InputValidPropTypes, 
   { min: PropTypes.number,
     max: PropTypes.number,
