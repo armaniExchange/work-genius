@@ -5,14 +5,15 @@ import InValidErrMsg from './In-Valid-Err-Msg';
 import {
   CHARACTER_TYPE,
   ValidWrap, 
-  getIsValidPharse1
+  InputValidCharacterLikePropTypes, 
+  InputValidCharacterLikeDefaultProps
 } from './Base';
+import InputValid from './Input-Valid'; 
 
 export default class InputValidCharacter extends Component {
   constructor(props) {
     super(props);
-    const {min, max, characterType, defaultValue} = this.props;
-    const value = defaultValue;
+    const {min, max, characterType} = this.props;
 
     this.characterType = characterType;
     this.min = min; // default is 1
@@ -37,19 +38,8 @@ export default class InputValidCharacter extends Component {
 
     this.hint = hint;
     this.err = err;
-
-    this.state = {
-      showErr: this.getShowErr(value),
-      value: value
-    };
-  }
-  getShowErr(val) {
-    return !this.getIsValid(val);
   }
   getIsValid(val) {
-    if (getIsValidPharse1(val)) {
-      return true;
-    }
     let isValid = false,
         isValid1 = true,
         isValid2 = true,
@@ -105,42 +95,13 @@ export default class InputValidCharacter extends Component {
     return isValid;
   }
   render() {
-    const {onChange, onValid, onInValid, defaultValue} = this.props;
-    const value = defaultValue;
-    let hint = this.hint,
-        err = this.err;
-
-    return (<ValidWrap>
-      <TextField defaultValue={value} hintText={hint} onChange={evt=>{
-        const VALUE = evt.target.value;
-        const bool = this.getIsValid(VALUE);
-        onChange(VALUE);
-        if (bool) {
-          onValid();
-        } else {
-          onInValid();
-        }
-        this.setState({showErr: this.getShowErr(VALUE)});
-      }} />
-      <InValidErrMsg msg={err} show={this.state.showErr} validType="InputValidCharacter" />
-      </ValidWrap>
-    );
+    return (<InputValid {...this.props}  
+        getIsValid={this.getIsValid.bind(this)} 
+        validType="InputValidPrimarykey" 
+        hint={this.hint} 
+        err={this.err} 
+      />);
   }
 };
-InputValidCharacter.propTypes = {
-  min: PropTypes.number,
-  max: PropTypes.number,
-  characterType: PropTypes.string,
-  defaultValue: PropTypes.oneOfType([ //<--force only number?
-      PropTypes.string,
-      PropTypes.number]),
-  onValid: PropTypes.func,
-  onInValid: PropTypes.func,
-  onChange: PropTypes.func
-};
-InputValidCharacter.defaultProps = {
-  min: 1,
-  onChange: () => {},
-  onValid: () => {},
-  onInValid: () => {}
-};
+InputValidCharacter.propTypes = Object.assign({}, InputValidCharacterLikePropTypes); 
+InputValidCharacter.defaultProps = Object.assign({}, InputValidCharacterLikeDefaultProps);

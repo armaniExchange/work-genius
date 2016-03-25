@@ -2,15 +2,18 @@ import React, { PropTypes, Component } from 'react';
 
 import TextField from 'material-ui/lib/text-field';
 import InValidErrMsg from './In-Valid-Err-Msg';
-import {ValidWrap, getIsValidPharse1, aryEnabled} from './Base';
+import {
+  ValidWrap, InputValidCharacterLikePropTypes, InputValidCharacterLikeDefaultProps, 
+  aryEnabled
+} from './Base'; 
+import InputValid from './Input-Valid'; 
 
 let strEnabled = aryEnabled.join(' ');
 
 export default class InputValidPrimarykey extends Component {
   constructor(props) {
     super(props);
-    const {min, max, defaultValue} = this.props;
-    const value = defaultValue;
+    const {min, max} = this.props;
 
     this.min = min; // default is 1
     this.max = max || undefined;
@@ -34,19 +37,8 @@ export default class InputValidPrimarykey extends Component {
 
     this.hint = hint;
     this.err = err;
-
-    this.state = {
-      showErr: this.getShowErr(value),
-      value: value
-    };
-  }
-  getShowErr(val) {
-    return !this.getIsValid(val);
   }
   getIsValid(val) {
-    if (getIsValidPharse1(val)) {
-      return true;
-    }
     let isValid = false,
         isValid1 = true,
         isValid2 = true,
@@ -71,41 +63,13 @@ export default class InputValidPrimarykey extends Component {
     return isValid;
   }
   render() {
-    const {onChange, onValid, onInValid, defaultValue} = this.props;
-    const value = defaultValue;
-    let hint = this.hint,
-        err = this.err;
-
-    return (<ValidWrap>
-      <TextField defaultValue={value} hintText={hint} onChange={evt=>{
-        const VALUE = evt.target.value;
-        const bool = this.getIsValid(VALUE);
-        onChange(VALUE);
-        if (bool) {
-          onValid();
-        } else {
-          onInValid();
-        }
-        this.setState({showErr: this.getShowErr(VALUE)});
-      }} />
-      <InValidErrMsg msg={err} show={this.state.showErr} validType="InputValidPrimarykey" />
-      </ValidWrap>
-    );
+    return (<InputValid {...this.props}  
+        getIsValid={this.getIsValid.bind(this)} 
+        validType="InputValidPrimarykey" 
+        hint={this.hint} 
+        err={this.err} 
+      />);
   }
 };
-InputValidPrimarykey.propTypes = {
-  min: PropTypes.number,
-  max: PropTypes.number,
-  defaultValue: PropTypes.oneOfType([ //<--force only number?
-      PropTypes.string,
-      PropTypes.number]),
-  onValid: PropTypes.func,
-  onInValid: PropTypes.func,
-  onChange: PropTypes.func
-};
-InputValidPrimarykey.defaultProps = {
-  min: 1,
-  onChange: () => {},
-  onValid: () => {},
-  onInValid: () => {}
-};
+InputValidPrimarykey.propTypes = Object.assign({}, InputValidCharacterLikePropTypes);
+InputValidPrimarykey.defaultProps = Object.assign({}, InputValidCharacterLikeDefaultProps);
