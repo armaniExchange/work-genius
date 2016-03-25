@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react';
 export const ValidWrap = ({children}) => {
   return (<div style={{position:'relative'}}>{children}</div>);
 };
-export const getIsValidPharse1 = (val) => {
+export const getIsValidPharse1 = (val) => { //deprecated
   const isEmpty = (''+val)==='';
   const isUndefined = typeof val==='undefined';
   return isEmpty || isUndefined;
