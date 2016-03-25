@@ -11,6 +11,7 @@ import {
   InputValidMac,
   InputValidIpv4Mask,
   InputValidIpv6Mask,
+  InputValidIp
 } from '../../components/A10-UI/Valid/';
 
 let DemoBox = ({title, children}) => {
@@ -75,6 +76,13 @@ class ValidDemoPage extends Component {
         </DemoBoxDesc>
         <InputValidMac defaultValue="0017:f297:af99" />
         <InputValidMac defaultValue="3D:F2:C9:A6:B3:4f" />
+      </DemoBox>
+      <DemoBox title="InputValidIp">
+        <InputValidIp defaultValue="2.4.5.7" />
+        <InputValidIp defaultValue="1000::ffff" />
+        <InputValidIp defaultValue="0.0.0.0" ipv4only={true} />
+        <InputValidIp defaultValue="0.0.0.0" ipv4only={true} ipno0={true} />
+        <InputValidIp defaultValue="1000::eeee" ipv6only={true} />
       </DemoBox>
       <DemoBox title="InputValidIpv4Mask">
         <DemoBoxDesc>
