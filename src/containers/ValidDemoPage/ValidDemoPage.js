@@ -7,7 +7,8 @@ import {
   InputValidCharacter, 
   InputValidPrimarykey, 
   InputValidGreKey,
-  InputValidHexKey
+  InputValidHexKey,
+  InputValidMac
 } from '../../components/A10-UI/Valid/';
 
 let DemoBox = ({title, children}) => {
@@ -60,6 +61,14 @@ class ValidDemoPage extends Component {
         <InputValidHexKey defaultValue="abcdabcdabcdABCDABCD99" />
         <InputValidHexKey inputType="password" doNotCareValuesForDisplayingPassword={['^!key%show$^!key%show$^']} defaultValue="^!key%show$^!key%show$^" />
         <InputValidHexKey defaultValue="abc5bc" min={3} max={6} />
+      </DemoBox>
+      <DemoBox title="InputValidMac">
+        <div style={{background:'#eee'}}>
+        (w incorrect value, try 0017:f297:af99 )
+        (w correct value, try 3D:F2:C9:A6:B3:4F ...or... 3D:F2:C9:A6:B3:4f)
+        </div>
+        <InputValidMac defaultValue="0017:f297:af99" />
+        <InputValidMac defaultValue="3D:F2:C9:A6:B3:4f" />
       </DemoBox>
     </section>
     );
