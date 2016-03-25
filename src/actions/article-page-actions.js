@@ -5,7 +5,7 @@ import * as actionTypes from '../constants/action-types';
 const fakeArticles = [
   {
       id: '0',
-      title: 'first article',
+      title: 'third article',
       author: {
         id: '0',
         name: 'fong'
@@ -16,24 +16,11 @@ const fakeArticles = [
         {id: '2', name: 'someimage', type: 'image/jpeg', data: ''},
       ],
       comments: [],
-      category: {id: '1'},
+      category: {id: '5706fecf-7915-48c4-aa60-0dd0fb709c9b'},
       content: '# this is a test123 \n * 1 \n * 2 \n ```js \nfunction(){\n  console.log("test"); \n}\n ```\n[github link](http://www.github.com)\n## iframe\n<iframe width="560" height="315" src="http://www.w3schools.com/" frameborder="0" ></iframe>',
       createdAt: 1457085436639,
       updatedAt: 1457085446639,
   }
-];
-
-const fakeAllCategories = [
-  {id: '1', name: 'slb', articlesCount: 3, path: 'slb'},
-  {id: '2', parentId: '1', name: 'WAF', articlesCount: 30, path: 'slb/WAF'},
-  {id: '3', parentId: '1', name: 'GSLB', articlesCount: 10, path: 'slb/GSLB'},
-  {id: '4', parentId: '3', name: 'itemA', articlesCount: 20, path: 'slb/GSLB/itemA'},
-  {id: '5', parentId: '3', name: 'itemB', articlesCount: 10, path: 'slb/GSLB/itemB'},
-  {id: '6', parentId: '3', name: 'itemC', articlesCount: 30, path: 'slb/GSLB/itemC'},
-  {id: '7', parentId: '3', name: 'itemD', articlesCount: 40, path: 'slb/GSLB/itemD'},
-  {id: '8', parentId: '3', name: 'itemE', articlesCount: 10, path: 'slb/GSLB/itemE'},
-  {id: '9', name: 'DDos', articlesCount: 10, path: 'DDos'},
-  {id: '10', name: 'GSLB', articlesCount: 10, path: 'GSLB'}
 ];
 
 
@@ -96,6 +83,23 @@ export function updateArticle(newArticle) {
   };
 }
 
+export function deleteArticleSuccess(articleId) {
+  return {
+    type: actionTypes.DELETE_ARTICLE_SUCCESS,
+    id: articleId
+  };
+}
+
+export function deleteArticle(articleId) {
+  return dispatch => {
+    dispatch({
+      type: actionTypes.DELETE_ARTICLE
+    });
+    // update to server
+    dispatch(deleteArticleSuccess(articleId));
+  };
+}
+
 export function uploadArticleFileSuccess(file) {
   return {
     type: actionTypes.UPLOAD_ARTICLE_FILE_SUCCESS,
@@ -106,25 +110,26 @@ export function uploadArticleFileSuccess(file) {
 export function uploadArticleFile(file) {
   return dispatch => {
     dispatch({
-      type: actionTypes
+      type: actionTypes.UPLOAD_ARTICLE_FILE
     });
-    dispatch(uploadArticleFileSuccess(file));
+    // server response with true id and file detailed without data
+    dispatch(uploadArticleFileSuccess(Object.assign({}, file, {id: file.name})));
   };
 }
 
-export function fetchAllCategoriesWithPathSuccess(allCategories) {
+export function removeArticleFileSuccess(fileId) {
   return {
-    type: actionTypes.FETCH_ALL_CATEGORIES_WITH_PATH_SUCCESS,
-    allCategories
+    type: actionTypes.REMOVE_ARTICLE_FILE_SUCCESS,
+    id: fileId
   };
 }
 
-export function fetchAllCategoriesWithPath() {
+export function removeArticleFile(fileId) {
   return dispatch => {
     dispatch({
-      type: actionTypes.FETCH_ALL_CATEGORIES_WITH_PATH
+      type: actionTypes.REMOVE_ARTICLE_FILE,
+      id: fileId
     });
-    // fetch from server
-    dispatch(fetchAllCategoriesWithPathSuccess(fakeAllCategories));
+    dispatch(removeArticleFileSuccess(fileId));
   };
 }

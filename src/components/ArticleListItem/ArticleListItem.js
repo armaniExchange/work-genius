@@ -1,5 +1,6 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
+import { Link } from 'react-router';
 import moment from 'moment';
 import FlatButton from 'material-ui/lib/flat-button';
 
@@ -11,6 +12,7 @@ import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
 import './_ArticleListItem.css';
 
 class ArticleListItem extends Component {
+
   render() {
     const {
       id,
@@ -21,7 +23,9 @@ class ArticleListItem extends Component {
       comments,
       content,
       // createdAt,
-      updatedAt
+      updatedAt,
+      onDelete,
+      index
     } = this.props;
 
     const style = {
@@ -43,13 +47,14 @@ class ArticleListItem extends Component {
           top: 5,
           right: 5
         }}>
+          <Link to={`/main/articles/edit/${id}`}>
+            <FlatButton
+              label="Edit"
+              primary={true} />
+          </Link>
           <FlatButton
-            label="Edit"
-            primary={true}
-            linkButton={true}
-            href={`/main/articles/edit/${id}`} />
-          <FlatButton
-            label="Delete"/>
+            label="Delete"
+            onClick={onDelete.bind(this, id, index)} />
         </div>
         <br/>
         <HighlightMarkdown source={content} />
@@ -89,7 +94,9 @@ ArticleListItem.propTypes = {
   comments        : PropTypes.array,
   content         : PropTypes.string,
   createdAt       : PropTypes.number,
-  updatedAt       : PropTypes.number
+  updatedAt       : PropTypes.number,
+  index           : PropTypes.number,
+  onDelete        : PropTypes.func.isRequired
 };
 
 

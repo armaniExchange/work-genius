@@ -6,6 +6,7 @@ import createBrowserHistory from 'history/lib/createBrowserHistory';
 import App from '../containers/App/App';
 import Main from '../containers/Main/Main';
 import AdminPage from '../containers/AdminPage/AdminPage';
+import ValidDemoPage from '../containers/ValidDemoPage/ValidDemoPage';
 import DashboardPage from '../containers/DashboardPage/DashboardPage';
 import TaskPage from '../containers/TaskPage/TaskPage';
 import PTOPage from '../containers/PTOPage/PTOPage';
@@ -34,6 +35,7 @@ const appRoutes = () => (
 			    <Route path="task" component={requireAuth(TaskPage)} />
 			    <Route path="pto" component={requireAuth(PTOPage)} />
 			    <Route path="redux-demo" component={requireAuth(DemoPage)} />
+          <Route path="valid-demo" component={requireAuth(ValidDemoPage)} />
           <Route path="articles/edit/:articleId" component={requireAuth(EditArticlePage)} />
           <Route path="articles/:articleId" component={requireAuth(ViewArticlePage)} />
           <Route path="document" component={requireAuth(DocumentPage)} />

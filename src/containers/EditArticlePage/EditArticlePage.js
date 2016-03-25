@@ -10,6 +10,7 @@ import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkd
 import ArticleEditor from '../../components/ArticleEditor/ArticleEditor';
 
 import * as ArticleActions from '../../actions/article-page-actions';
+import * as DocumentActions from '../../actions/document-page-actions';
 
 class EditArticlePage extends Component {
 
@@ -22,12 +23,13 @@ class EditArticlePage extends Component {
   componentWillMount() {
     const {
       params,
-      articleActions
+      articleActions,
+      documentActions
     } = this.props;
     if ( params.articleId !== 'new' ) {
       articleActions.fetchArticle(params.articleId);
     }
-    articleActions.fetchAllCategoriesWithPath();
+    documentActions.fetchAllCategories();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -42,6 +44,7 @@ class EditArticlePage extends Component {
       tags,
       category
     } = props;
+
     return {
       editingTitle: title,
       editingContent: content,
@@ -66,9 +69,9 @@ class EditArticlePage extends Component {
     });
   }
 
-  onTagsChange(event) {
+  onTagsChange(tags) {
     this.setState({
-      editingTags: event.target.value.replace(' ','').split(',')
+      editingTags: tags
     });
   }
 
@@ -80,6 +83,12 @@ class EditArticlePage extends Component {
 
   onFileUpload(dataUri) {
     this.props.articleActions.uploadArticleFile(dataUri);
+  }
+
+  onFileRemove(file, index) {
+    console.log(`file id ${file.id}, index: ${index}`);
+    // const answer = confirm('Are you sure you want to remove the file?');
+    this.props.articleActions.removeArticleFile(file.id);
   }
 
   onSubmit() {
@@ -108,6 +117,7 @@ class EditArticlePage extends Component {
     } = this.state;
 
     const {
+      params,
       files,
       allCategories
     } = this.props;
@@ -128,7 +138,7 @@ class EditArticlePage extends Component {
       overflowX: 'scroll'
     };
 
-    const pageTitle = this.props.params.articleId === 'new' ?
+    const pageTitle = params.articleId === 'new' ?
       'Create Document' : 'Update Document';
 
     return (
@@ -146,7 +156,8 @@ class EditArticlePage extends Component {
             onTitleChange={::this.onTitleChange}
             onCategoryChange={::this.onCategoryChange}
             onContentChange={::this.onContentChange}
-            onFileUpload={::this.onFileUpload} />
+            onFileUpload={::this.onFileUpload}
+            onFileRemove={::this.onFileRemove}/>
         </div>
         {
           isPreviewVisible ? (
@@ -184,7 +195,8 @@ EditArticlePage.propTypes = {
   updatedAt           : PropTypes.number,
   params              : PropTypes.object,
   allCategories       : PropTypes.array,
-  articleActions      : PropTypes.object.isRequired
+  articleActions      : PropTypes.object.isRequired,
+  documentActions     : PropTypes.object.isRequired
 };
 
 EditArticlePage.defaultProps = {
@@ -201,12 +213,15 @@ EditArticlePage.defaultProps = {
 };
 
 function mapStateToProps(state) {
-  return state.article.toJS();
+  return Object.assign({}, state.article.toJS(), {
+    allCategories: state.documentation.toJS().allCategories
+  });
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    articleActions: bindActionCreators(ArticleActions, dispatch)
+    articleActions      : bindActionCreators(ArticleActions, dispatch),
+    documentActions     : bindActionCreators(DocumentActions, dispatch)
   };
 }
 

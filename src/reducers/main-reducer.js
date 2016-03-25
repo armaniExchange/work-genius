@@ -23,14 +23,18 @@ const initialState = Map({
 			displayText: 'Data Explorer',
 			link: '/main/data-explorer'
 		}),
+    Map({
+      displayText: 'Document',
+      link: '/main/document'
+    }),
 		Map({
 			displayText: 'Redux Demo',
 			link: '/main/redux-demo'
 		}),
     Map({
-      displayText: 'Document',
-      link: '/main/document'
-    })
+      displayText: 'Valid Demo',
+      link: '/main/valid-demo'
+    }),
 	),
 	hasLogo: true
 });

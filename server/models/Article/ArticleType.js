@@ -5,6 +5,9 @@ import {
 	GraphQLID,
     GraphQLList
 } from 'graphql';
+import UserType from '../User/UserType.js';
+import COMMENT_TYPE from '../Comment/CommentType.js';
+import FILE_TYPE from '../File/FileType.js';
 
 const ARTICLE_TYPE = new GraphQLObjectType({
     name: 'Article',
@@ -49,6 +52,29 @@ const ARTICLE_TYPE = new GraphQLObjectType({
         'title': {
             type: GraphQLString,
             description: 'Article\'s title'
+        },
+        'comments':{
+            type: new GraphQLList(COMMENT_TYPE),
+            description: 'Comment List'
+        },
+        'author':{
+            type: new GraphQLObjectType({
+                name:'AuthorType',
+                fields:{
+                    'id': {
+                        type: GraphQLString,
+                        description: 'Author ID'
+                    },
+                    'name': {
+                        type: GraphQLString,
+                        description: 'Author Name'
+                    }
+                }
+            })
+        },
+        'files':{
+            type: new GraphQLList(FILE_TYPE),
+            description: 'File List'
         }
     })
 });
