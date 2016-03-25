@@ -3,18 +3,19 @@ import InputValidCharacter from './Input-Valid-Character';
 import InputValidPrimarykey from './Input-Valid-Primarykey';
 import InputValidGreKey from './Input-Valid-Gre-Key';
 import InputValidHexKey from './Input-Valid-Hex-Key';
+import InputValidMac from './Input-Valid-Mac';
 
 export { InputValidNumber };
 export { InputValidCharacter };
 export { InputValidPrimarykey };
 export { InputValidGreKey };
 export { InputValidHexKey };
+export { InputValidMac };
 
 // export { InputValidWrap };
 // export { InputValidSame };
 // export { InputValidFilterRegex };
 
-  // export { InputValidMac };
 
 // export { InputValidIpv4Mask };
 // export { InputValidIpv6Mask };
