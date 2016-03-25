@@ -37,22 +37,27 @@ export default class InputValid extends Component {
       getIsValid,
       validType,
       err,
-      hint
+      hint,
+      inputType
     } = this.props;
     const value = defaultValue;
 
     return (<ValidWrap>
-      <TextField defaultValue={value} hintText={hint} onChange={evt=>{
-        const VALUE = evt.target.value;
-        const bool = getIsValid(VALUE);
-        onChange(VALUE);
-        if (bool) {
-          onValid();
-        } else {
-          onInValid();
-        }
-        this.setState({showErr: this.getShowErr(VALUE)});
-      }} />
+      <TextField 
+        type={inputType}
+        defaultValue={value} 
+        hintText={hint} 
+        onChange={evt=>{
+          const VALUE = evt.target.value;
+          const bool = getIsValid(VALUE);
+          onChange(VALUE);
+          if (bool) {
+            onValid();
+          } else {
+            onInValid();
+          }
+          this.setState({showErr: this.getShowErr(VALUE)});
+        }} />
       <InValidErrMsg msg={err} show={this.state.showErr} validType={validType} />
       </ValidWrap>
     );
@@ -63,6 +68,9 @@ InputValid.propTypes = Object.assign({}, InputValidPropTypes, {
   getIsValid: PropTypes.func.isRequired,
   validType: PropTypes.string.isRequired,
   err: PropTypes.string.isRequired,
-  hint: PropTypes.string.isRequired
+  hint: PropTypes.string.isRequired,
+  inputType: PropTypes.string
 });
-InputValid.defaultProps = Object.assign({}, InputValidDefaultProps);
+InputValid.defaultProps = Object.assign({}, InputValidDefaultProps, {
+  inputType: 'text'
+});

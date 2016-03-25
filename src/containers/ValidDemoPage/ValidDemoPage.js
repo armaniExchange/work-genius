@@ -2,7 +2,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { InputValidNumber, InputValidCharacter, InputValidPrimarykey, InputValidGreKey } from '../../components/A10-UI/Valid/';
+import { 
+  InputValidNumber, 
+  InputValidCharacter, 
+  InputValidPrimarykey, 
+  InputValidGreKey,
+  InputValidHexKey
+} from '../../components/A10-UI/Valid/';
 
 let DemoBox = ({title, children}) => {
   return (<dl style={{margin:'0 0 10px'}}>
@@ -48,6 +54,12 @@ class ValidDemoPage extends Component {
         <InputValidGreKey defaultValue="xyz" />
         <InputValidGreKey defaultValue="abc" />
         <InputValidGreKey defaultValue="abcdabcdabcd" />
+      </DemoBox>
+      <DemoBox title="InputValidHexKey">
+        <InputValidHexKey defaultValue="abcdabcdabcdABCDABCDXY" />
+        <InputValidHexKey defaultValue="abcdabcdabcdABCDABCD99" />
+        <InputValidHexKey inputType="password" doNotCareValuesForDisplayingPassword={['^!key%show$^!key%show$^']} defaultValue="^!key%show$^!key%show$^" />
+        <InputValidHexKey defaultValue="abc5bc" min={3} max={6} />
       </DemoBox>
     </section>
     );
