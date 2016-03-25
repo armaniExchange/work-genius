@@ -28,6 +28,8 @@ export const MAX_PORT_NUM = 65534;
 export const MIN_GRE_KEY_LENGTH = 1;
 export const MAX_GRE_KEY_LENGTH = 8;
 
+export const MIN_HEX_KEY_LENGTH = 21;
+export const MAX_HEX_KEY_LENGTH = 40;
 
 
 // initial for every <InputValid* />
