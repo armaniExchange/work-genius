@@ -4,6 +4,8 @@ import bodyParser from 'body-parser';
 import graphqlHTTP from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
+import multer from 'multer';
+import fs from 'fs';
 // GraphQL and schema
 import schema from './schema/schema.js';
 import { loginHandler } from './models/User/UserMutation.js';
@@ -15,6 +17,7 @@ import {
 
 const PORT = 3000;
 let app = express();
+let upload = multer({dest: UPLOAD_FILE_LOCATION});
 
 app.use(bodyParser.text({
 	type: 'application/graphql'
@@ -39,6 +42,10 @@ app.use((req, res, next) => {
 });
 
 app.post('/login', loginHandler);
+
+app.post('/files', upload.single('myFile'), function (req, res, next) {
+  fs.rename(req.file.path, 'uploads\\' + Date.now() + '-' + req.file.originalname);
+});
 
 app.use((req, res, next) => {
     let token = req.body.token || req.query.token || req.headers['x-access-token'];
