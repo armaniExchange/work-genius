@@ -22,8 +22,11 @@ let DemoBox = ({title, children}) => {
       <dd style={{padding:'0 0 0 20px'}}>{children}</dd>
     </dl>);
 };
-let DemoBoxDesc = ({children}) => {
-  return (<div style={{background:'#ffc',padding:'3px 9px'}}>{children}</div>);
+let DemoBoxDesc = ({children, style}) => {
+  return (<div style={Object.assign({}, {
+      background:'#ffc',
+      padding:'3px 9px'
+    }, style)}>{children}</div>);
 };
 
 class ValidDemoPage extends Component {
@@ -115,6 +118,20 @@ class ValidDemoPage extends Component {
         <InputValidIpWithMask defaultValue="3.6.7.2/32" />
         <InputValidIpWithMask defaultValue="3.6.7.2/33" />
         <InputValidIpWithMask defaultValue="/33" />
+        <DemoBoxDesc style={{margin:'30px 0 0'}}>ipv4only</DemoBoxDesc>
+        <InputValidIpWithMask ipv4only={true} defaultValue="1000::eeee/128" />
+        <InputValidIpWithMask ipv4only={true} defaultValue="1000::eeee/129" />
+        <InputValidIpWithMask ipv4only={true} defaultValue="1000::eeee" />
+        <InputValidIpWithMask ipv4only={true} defaultValue="3.6.7.2/32" />
+        <InputValidIpWithMask ipv4only={true} defaultValue="3.6.7.2/33" />
+        <InputValidIpWithMask ipv4only={true} defaultValue="/33" />
+        <DemoBoxDesc style={{margin:'30px 0 0'}}>ipv6only</DemoBoxDesc>
+        <InputValidIpWithMask ipv6only={true} defaultValue="1000::eeee/128" />
+        <InputValidIpWithMask ipv6only={true} defaultValue="1000::eeee/129" />
+        <InputValidIpWithMask ipv6only={true} defaultValue="1000::eeee" />
+        <InputValidIpWithMask ipv6only={true} defaultValue="3.6.7.2/32" />
+        <InputValidIpWithMask ipv6only={true} defaultValue="3.6.7.2/33" />
+        <InputValidIpWithMask ipv6only={true} defaultValue="/33" />
       </DemoBox>
       </div>
     </section>
