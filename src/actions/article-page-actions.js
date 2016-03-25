@@ -1,5 +1,7 @@
 import actionTypes from '../constants/action-types';
 import { SERVER_API_URL } from '../constants/config';
+import {SERVER_FILE_URL} from '../constants/config';
+import sendFile from '../libraries/sendFile';
 
 
 export function fetchArticleSucess(article) {
@@ -256,7 +258,17 @@ export function uploadArticleFile(file) {
       type: actionTypes.UPLOAD_ARTICLE_FILE
     });
     // server response with true id and file detailed without data
-    dispatch(uploadArticleFileSuccess(Object.assign({}, file, {id: file.name})));
+    sendFile({
+      file,
+      url: SERVER_FILE_URL,
+      headers: {
+        'x-access-token': localStorage.token
+      }
+    })
+    .then((xhr)=> {
+      const data = JSON.parse(xhr.responseText);
+      dispatch(uploadArticleFileSuccess(data));
+    });
   };
 }
 

@@ -4,6 +4,7 @@ import Codemirror from 'react-codemirror';
 import TextField from 'material-ui/lib/text-field';
 import DropDownMenu from 'material-ui/lib/DropDownMenu';
 import MenuItem from 'material-ui/lib/menus/menu-item';
+import Dropzone from 'react-dropzone';
 
 import ArticleFileList from '../../components/ArticleFileList/ArticleFileList';
 import TagsInput from '../../components/TagsInput/TagsInput';
@@ -31,15 +32,11 @@ class ArticleEditor extends Component {
     };
   }
 
-  onFileChange(event) {
+  onFileChange(files) {
+    const file = files[0];
     const reader = new FileReader();
-    const file = event.target.files[0];
-    reader.onload = uploadEvent => {
-      this.props.onFileUpload({
-        name: file.name,
-        type: file.type,
-        data: uploadEvent.target.result
-      });
+    reader.onload = () => {
+      this.props.onFileUpload(file);
     };
     reader.readAsDataURL(file);
   }
@@ -141,7 +138,9 @@ class ArticleEditor extends Component {
           onRemove={::this.onFileRemove} />
         <br />
         <br />
-        <input type="file" onChange={::this.onFileChange}/>
+        <Dropzone onDrop={::this.onFileChange}>
+          <div>Try dropping some files here, or click to select files to upload.</div>
+        </Dropzone>
         <ConfirmDeleteDialog
           open={isConfirmDeleteFileDialogVisible}
           data={editingFile}

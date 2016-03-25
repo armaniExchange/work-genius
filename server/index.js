@@ -4,11 +4,10 @@ import bodyParser from 'body-parser';
 import graphqlHTTP from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
-import multer from 'multer';
-import fs from 'fs';
 // GraphQL and schema
 import schema from './schema/schema.js';
-import { loginHandler } from './models/User/UserMutation.js';
+import { loginHandler } from './models/User/UserMutation';
+import { fileUploadHandler } from './models/File/FileMutation';
 // Constants
 import {
     SECURE_KEY,
@@ -17,55 +16,50 @@ import {
 
 const PORT = 3000;
 let app = express();
-let upload = multer({dest: UPLOAD_FILE_LOCATION});
 
 app.use(bodyParser.text({
-	type: 'application/graphql'
+  type: 'application/graphql'
 }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
-	res.header('Access-Control-Allow-Origin', req.headers.origin);
-	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, x-access-token');
-    res.header('Access-Control-Allow-Credentials', true);
-    res.header('Access-Control-Allow-Methods','PUT,POST,GET,DELETE');
-	next();
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, x-access-token');
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Methods','PUT,POST,GET,DELETE');
+  next();
 });
 
 app.use((req, res, next) => {
-    if (req.method === 'OPTIONS') {
-        res.send();
-    } else {
-        next();
-    }
+  if (req.method === 'OPTIONS') {
+    res.send();
+  } else {
+    next();
+  }
 });
 
 app.post('/login', loginHandler);
 
-app.post('/files', upload.single('myFile'), function (req, res, next) {
-  fs.rename(req.file.path, 'uploads\\' + Date.now() + '-' + req.file.originalname);
-});
-
 app.use((req, res, next) => {
-    let token = req.body.token || req.query.token || req.headers['x-access-token'];
-    if (token) {
-        jwt.verify(token, SECURE_KEY, (err, decoded) => {
-            if (err) {
-                return res.status(401).send({ success: false, message: 'Failed to authenticate token.' });
-            } else {
-                // if everything is good, save to request for use in other routes
-                req.decoded = decoded;
-                req.token = token;
-                next();
-            }
-        });
-    } else {
-        res.status(401).send({
-            success: false,
-            message: 'No token provided'
-        });
-    }
+  let token = req.body.token || req.query.token || req.headers['x-access-token'];
+  if (token) {
+    jwt.verify(token, SECURE_KEY, (err, decoded) => {
+      if (err) {
+        return res.status(401).send({ success: false, message: 'Failed to authenticate token.' });
+      } else {
+        // if everything is good, save to request for use in other routes
+        req.decoded = decoded;
+        req.token = token;
+        next();
+      }
+    });
+  } else {
+    res.status(401).send({
+      success: false,
+      message: 'No token provided'
+    });
+  }
 });
 
 let transporter = nodemailer.createTransport(MAIL_TRANSPORTER_CONFIG);
@@ -77,6 +71,8 @@ app.use('/graphql', graphqlHTTP(request => ({
     graphiql: true
 })));
 
+app.post('/files', fileUploadHandler);
+
 app.listen(PORT, () => {
-	console.log(`Server is listening at port: ${PORT}`);
+  console.log(`Server is listening at port: ${PORT}`);
 });

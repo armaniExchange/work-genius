@@ -4,10 +4,41 @@ import React, { Component, PropTypes } from 'react';
 // Styles
 import './_ArticleFileList.css';
 
-const MimeTypeIcon = {
-  'image/jpeg': 'fa-file-picture-o',
-  'video/mp4': 'fa-file-video-o'
-};
+
+const MimeTypeMap = [
+  {
+    type: 'image',
+    icon: 'fa-file-picture-o'
+  },
+  {
+    type: 'audio',
+    icon: 'fa-file-audio-o'
+  },
+  {
+    type: 'video',
+    icon: 'fa-file-video-o'
+  },
+  {
+    type: 'pdf',
+    icon: 'fa-file-pdf-o'
+  },
+  {
+    type: 'msword',
+    icon: 'fa-file-word-o'
+  },
+  {
+    type: 'excel',
+    icon: 'fa-file-excel-o'
+  },
+  {
+    type: 'zip',
+    icon: 'fa-file-archive-o'
+  },
+  {
+    type: 'compressed',
+    icon: 'fa-file-archive-o'
+  }
+];
 
 class ArticleFileList extends Component {
 
@@ -16,6 +47,18 @@ class ArticleFileList extends Component {
     if (onRemove) {
       onRemove(file, index);
     }
+  }
+
+  getMimeTypeIcon(mimeType) {
+    // default icon
+    let icon = 'fa-file-code-o';
+
+    MimeTypeMap.forEach( item => {
+      if (mimeType.search(item.type) !== -1) {
+        icon = item.icon;
+      }
+    });
+    return icon;
   }
 
   render() {
@@ -30,7 +73,7 @@ class ArticleFileList extends Component {
             return (
               <span key={index}>
                 &nbsp;
-                <i className={`fa ${MimeTypeIcon[file.type]}`} />
+                <i className={`fa ${this.getMimeTypeIcon(file.type)}`} />
                 &nbsp;
                 <a href="#" >{file.name}</a>
                 &nbsp;
@@ -40,7 +83,6 @@ class ArticleFileList extends Component {
                       onClick={this.onRemoveClick.bind(this, file, index)} />
                   ) : null
                 }
-
               </span>
             );
           })
