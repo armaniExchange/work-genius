@@ -42,3 +42,12 @@ export const InputValidDefaultProps = {
   onValid: () => {},
   onInValid: () => {}
 };
+
+export const InputValidCharacterLikePropTypes = Object.assign({}, InputValidPropTypes, {
+  min: PropTypes.number,
+  max: PropTypes.number
+});
+export const InputValidCharacterLikeDefaultProps = Object.assign({}, 
+  InputValidDefaultProps, {
+  min: 1
+});
