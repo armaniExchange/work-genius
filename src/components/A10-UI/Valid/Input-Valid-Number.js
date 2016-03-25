@@ -60,8 +60,11 @@ export default class InputValidNumber extends Component {
 InputValidNumber.propTypes = Object.assign({}, InputValidPropTypes, 
   { min: PropTypes.number,
     max: PropTypes.number,
+    inputType: PropTypes.string, // 'number' or 'text'
     defaultValue: PropTypes.oneOfType([ //<--force only number?
         PropTypes.string,
         PropTypes.number])
   });
-InputValidNumber.defaultProps = Object.assign({}, InputValidDefaultProps);
+InputValidNumber.defaultProps = Object.assign({}, InputValidDefaultProps, {
+  inputType: 'text' //<--- Using text for displaying invalid number; Otherwise, it displays NOTHING.
+});
