@@ -1,11 +1,9 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
 
-import TextField from 'material-ui/lib/text-field';
-import InValidErrMsg from './In-Valid-Err-Msg';
 import {
-  ValidWrap, InputValidCharacterLikePropTypes, InputValidCharacterLikeDefaultProps, 
+  InputValidCharacterLikePropTypes, InputValidCharacterLikeDefaultProps, 
   aryEnabled
-} from './Base'; 
+} from './Base';
 import InputValid from './Input-Valid'; 
 
 let strEnabled = aryEnabled.join(' ');
