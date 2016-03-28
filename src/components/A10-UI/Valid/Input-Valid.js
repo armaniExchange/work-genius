@@ -29,12 +29,10 @@ export default class InputValid extends Component {
     return getIsValid(val);
   }
   getShowErr(val) {
-    const {getIsValid} = this.props;
-    return !getIsValid(val);
+    return !this.getIsValid(val);
   }
   render() {
     const {onChange, onValid, onInValid, defaultValue,
-      getIsValid,
       validType,
       err,
       hint,
@@ -49,7 +47,7 @@ export default class InputValid extends Component {
         hintText={hint} 
         onChange={evt=>{
           const VALUE = evt.target.value;
-          const bool = getIsValid(VALUE);
+          const bool = this.getIsValid(VALUE);
           onChange(VALUE);
           if (bool) {
             onValid();
