@@ -13,6 +13,7 @@ import InputValidIpv4OrMask from './Input-Valid-Ipv4-Or-Mask';
 import InputValidIpv6OrMask from './Input-Valid-Ipv6-Or-Mask';
 import InputValidIpv4oripv6orhost from './Input-Valid-Ipv4oripv6orhost';
 import InputValidIpv4oripv6ordns from './Input-Valid-Ipv4oripv6ordns';
+import InputValidEmail from './Input-Valid-Email';
 
 export { InputValidNumber };
 export { InputValidCharacter };
@@ -29,6 +30,7 @@ export { InputValidIpv4OrMask };
 export { InputValidIpv6OrMask };
 export { InputValidIpv4oripv6orhost };
 export { InputValidIpv4oripv6ordns };
+export { InputValidEmail };
 
 // export { InputValidWrap };
 // export { InputValidSame };
