@@ -16,7 +16,8 @@ import {
   InputValidIpWithMask,
   InputValidIpv4OrMask,
   InputValidIpv6OrMask,
-  InputValidIpv4oripv6orhost
+  InputValidIpv4oripv6orhost,
+  InputValidIpv4oripv6ordns
 } from '../../components/A10-UI/Valid/';
 
 let DemoBox = ({title, children, showContent}) => {
@@ -148,6 +149,9 @@ class ValidDemoPage extends Component {
       </DemoBox>
       <DemoBox title="InputValidIpv4oripv6orhost" showContent={this.state.showAllDemoBoxContent}>
         <InputValidIpv4oripv6orhost />
+      </DemoBox>
+      <DemoBox title="InputValidIpv4oripv6ordns" showContent={this.state.showAllDemoBoxContent}>
+        <InputValidIpv4oripv6ordns />
       </DemoBox>
       </div>
     </section>

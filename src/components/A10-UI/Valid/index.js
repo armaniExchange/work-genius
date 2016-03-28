@@ -12,6 +12,7 @@ import InputValidIpWithMask from './Input-Valid-Ip-With-Mask';
 import InputValidIpv4OrMask from './Input-Valid-Ipv4-Or-Mask';
 import InputValidIpv6OrMask from './Input-Valid-Ipv6-Or-Mask';
 import InputValidIpv4oripv6orhost from './Input-Valid-Ipv4oripv6orhost';
+import InputValidIpv4oripv6ordns from './Input-Valid-Ipv4oripv6ordns';
 
 export { InputValidNumber };
 export { InputValidCharacter };
@@ -27,6 +28,7 @@ export { InputValidIpWithMask };
 export { InputValidIpv4OrMask };
 export { InputValidIpv6OrMask };
 export { InputValidIpv4oripv6orhost };
+export { InputValidIpv4oripv6ordns };
 
 // export { InputValidWrap };
 // export { InputValidSame };
