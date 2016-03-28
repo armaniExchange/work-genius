@@ -30,6 +30,8 @@ export const SUBNET_MIN_PREFIX = 0;
 export const IPV4_SUBNET_MAX_PREFIX = 32;
 export const IPV6_SUBNET_MAX_PREFIX = 128;
 
+export const REGEXP_HOST = /^([a-zA-Z0-9\_]|[a-zA-Z0-9\_][a-zA-Z0-9\-\_]{0,29}[a-zA-Z0-9\_])(\.([a-zA-Z0-9\_]|[a-zA-Z0-9\_][a-zA-Z0-9\-\_]{0,29}[a-zA-Z0-9\_]))*$/; // see libraries/directives/forms/_validations.js for more information.
+
 export const isValidMask = (val, ipType) => {
   var b = false,
       MAX_VAL = +ipType===6 ? 128 : 32; //32 is for ipType=4

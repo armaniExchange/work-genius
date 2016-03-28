@@ -141,6 +141,9 @@ class ValidDemoPage extends Component {
       <DemoBox title="InputValidIpv6OrMask">
         <InputValidIpv6OrMask />
       </DemoBox>
+      <DemoBox title="InputValidIpv4oripv6orhost" showContent={this.state.showAllDemoBoxContent}>
+        <InputValidIpv4oripv6orhost />
+      </DemoBox>
       </div>
     </section>
     );

@@ -11,6 +11,7 @@ import InputValidPort from './Input-Valid-Port';
 import InputValidIpWithMask from './Input-Valid-Ip-With-Mask';
 import InputValidIpv4OrMask from './Input-Valid-Ipv4-Or-Mask';
 import InputValidIpv6OrMask from './Input-Valid-Ipv6-Or-Mask';
+import InputValidIpv4oripv6orhost from './Input-Valid-Ipv4oripv6orhost';
 
 export { InputValidNumber };
 export { InputValidCharacter };
@@ -25,6 +26,7 @@ export { InputValidPort };
 export { InputValidIpWithMask };
 export { InputValidIpv4OrMask };
 export { InputValidIpv6OrMask };
+export { InputValidIpv4oripv6orhost };
 
 // export { InputValidWrap };
 // export { InputValidSame };
