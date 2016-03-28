@@ -18,7 +18,9 @@ import {
   InputValidIpv6OrMask,
   InputValidIpv4oripv6orhost,
   InputValidIpv4oripv6ordns,
-  InputValidEmail
+  InputValidEmail,
+  InputValidFilepath,
+  InputValidTime,
 } from '../../components/A10-UI/Valid/';
 
 let DemoBox = ({title, children, showContent}) => {
@@ -156,6 +158,13 @@ class ValidDemoPage extends Component {
       </DemoBox>
       <DemoBox title="InputValidEmail" showContent={this.state.showAllDemoBoxContent}>
         <InputValidEmail />
+      </DemoBox>
+      <DemoBox title="InputValidFilepath" showContent={this.state.showAllDemoBoxContent}>
+        <InputValidFilepath />
+      </DemoBox>
+      <DemoBox title="InputValidTime" showContent={this.state.showAllDemoBoxContent}>
+        <InputValidTime defaultValue="24:00:00" />
+        <InputValidTime allow240000={true} defaultValue="24:00:00" />
       </DemoBox>
       </div>
     </section>

@@ -32,7 +32,9 @@ export const IPV6_SUBNET_MAX_PREFIX = 128;
 
 export const REGEXP_HOST = /^([a-zA-Z0-9\_]|[a-zA-Z0-9\_][a-zA-Z0-9\-\_]{0,29}[a-zA-Z0-9\_])(\.([a-zA-Z0-9\_]|[a-zA-Z0-9\_][a-zA-Z0-9\-\_]{0,29}[a-zA-Z0-9\_]))*$/; // see libraries/directives/forms/_validations.js for more information.
 
-export const REGEXP_EMAIL = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{1,6}(?:\.[a-z]{1})?)$/i;
+export const REGEXP_EMAIL = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{1,6}(?:\.[a-z]{1})?)$/i; // see libraries/directives/forms/_validations.js for more information.
+
+export const REGEXP_LINUX_ABS_FILEPATH = new RegExp('^(/[^/ ]*)+/?$');
 
 export const isDNSAscii = (val) => {
   return ! /'|"|<|>|&|\?|\r|\t|\n|\\|\//.test(val);

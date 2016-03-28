@@ -14,6 +14,8 @@ import InputValidIpv6OrMask from './Input-Valid-Ipv6-Or-Mask';
 import InputValidIpv4oripv6orhost from './Input-Valid-Ipv4oripv6orhost';
 import InputValidIpv4oripv6ordns from './Input-Valid-Ipv4oripv6ordns';
 import InputValidEmail from './Input-Valid-Email';
+import InputValidFilepath from './Input-Valid-Filepath';
+import InputValidTime from './Input-Valid-Time';
 
 export { InputValidNumber };
 export { InputValidCharacter };
@@ -31,6 +33,8 @@ export { InputValidIpv6OrMask };
 export { InputValidIpv4oripv6orhost };
 export { InputValidIpv4oripv6ordns };
 export { InputValidEmail };
+export { InputValidFilepath };
+export { InputValidTime };
 
 // export { InputValidWrap };
 // export { InputValidSame };
