@@ -16,6 +16,9 @@ import CommentQuery from '../models/Comment/CommentQuery.js';
 import CommentMutation from '../models/Comment/CommentMutation.js';
 import ArticleQuery from '../models/Article/ArticleQuery.js';
 import ArticleMutation from '../models/Article/ArticleMutation.js';
+import BugQuery from '../models/Bug/BugQuery.js';
+import BugMutation from '../models/Bug/BugMutation.js';
+import BugTagQuery from '../models/BugTag/BugTagQuery.js';
 
 const schema = new GraphQLSchema({
 	query: new GraphQLObjectType({
@@ -34,9 +37,11 @@ const schema = new GraphQLSchema({
 			allCategories       : CategoryQuery.getAllCategories,
 			categoryTree        : CategoryQuery.getCategoryTree,
 			commentById         : CommentQuery.getCommentById,
-			tags          : CategoryQuery.getAllTags,
+			tags          		: CategoryQuery.getAllTags,
 			getArticle 			: ArticleQuery.getArticle,
-			getAllArticles 		: ArticleQuery.getAllArticles
+			getAllArticles 		: ArticleQuery.getAllArticles,
+			getAllBugs			: BugQuery.getAllBugs,
+			getAllBugTags	  	: BugTagQuery.getAllBugTags
 		}
 	}),
 	mutation: new GraphQLObjectType({
@@ -58,8 +63,9 @@ const schema = new GraphQLSchema({
 			createComment             : CommentMutation.createComment,
 			deleteComment             : CommentMutation.deleteCommentById,
 			createArticle			  : ArticleMutation.createArticle,
-			editArticle				  : ArticleMutation.editArticle,
-			deleteArticle			  : ArticleMutation.deleteArticle
+			deleteArticle			  : ArticleMutation.deleteArticle,
+			//Bug page
+			updateBug				  : BugMutation.updateBug
 		}
 	})
 });
