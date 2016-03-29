@@ -38,7 +38,11 @@ class BugReviewPage extends Component {
             applications,
             bugReviewTitleKeyMap,
             resolvedReasonTypes,
-            resolvedReasonTypeChange
+            resolvedReasonTypeChange,
+            optionsReviewTags,
+            changeResolvedTagOptions,
+            optionsMenus,
+            changeMenuTagOptions
         } = this.props;
         // const dropdownTitle = 'Project';
         return (
@@ -47,6 +51,10 @@ class BugReviewPage extends Component {
                     data={applications}
                     resolvedReasonTypes={resolvedReasonTypes}
                     resolvedReasonTypeChange={resolvedReasonTypeChange}
+                    optionsReviewTags={optionsReviewTags}
+                    changeResolvedTagOptions={changeResolvedTagOptions}
+                    optionsMenus={optionsMenus}
+                    changeMenuTagOptions={changeMenuTagOptions}
                     titleKeyMap={bugReviewTitleKeyMap}
                 />
 
@@ -60,8 +68,12 @@ BugReviewPage.propTypes = {
     bugReviewTitleKeyMap:      PropTypes.array,
     allProjectVersions:        PropTypes.array,
     resolvedReasonTypes:       PropTypes.array,
+    optionsReviewTags:         PropTypes.array,
+    optionsMenus:              PropTypes.array,
     fetchBugReviewPageData:    PropTypes.func,
-    resolvedReasonTypeChange:  PropTypes.func
+    resolvedReasonTypeChange:  PropTypes.func,
+    changeResolvedTagOptions:  PropTypes.func,
+    changeMenuTagOptions:      PropTypes.func
 };
 
 function mapStateToProps(state) {

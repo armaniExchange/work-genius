@@ -16,8 +16,8 @@ const initialState = Map({
         Map({ title: 'Bug ID', key: 'id', colspan: '1'}),
         Map({ title: 'Title', key: 'title', colspan: '2'}),
         Map({ title: 'Resovled Reason Type', key: 'resolved_type', colspan: '2'}),
-        Map({ title: 'Review Tags', key: 'tags', colspan: '1'}),
-        Map({ title: 'Menu Tag', key: 'menu_tag', colspan: '1'}),
+        Map({ title: 'Review Tags', key: 'tags', colspan: '2'}),
+        Map({ title: 'Menu', key: 'menu', colspan: '1'}),
         Map({ title: 'Owner', key: 'assigned_to', colspan: '1'}),
         Map({ title: 'Review', key: 'review', colspan: '1'})
     ),
@@ -28,6 +28,19 @@ const initialState = Map({
         Map({ name: 'Requirement change', value: 'requirement_change' }),
         Map({ name: 'Look and feel', value: 'look_and_feel' }),
         Map({ name: 'Code issue', value: 'code_issue' })
+    ),
+    optionsReviewTags: List.of(
+        Map({ value: 'test_more', label: 'Test More'}),
+        Map({ value: 'deep_test', label: 'Deep Test'})
+    ),
+    optionsMenus: List.of(
+         Map({ value: 'slb', label: 'SLB'}),
+         Map({ value: 'gslb', label: 'GSLB'}),
+         Map({ value: 'system', label: 'System'}),
+         Map({ value: 'network', label: 'Network'}),
+         Map({ value: 'adc', label: 'ADC'}),
+         Map({ value: 'ssli', label: 'SSLi'}),
+         Map({ value: 'security', label: 'Security'})
     )
 });
 
@@ -75,7 +88,7 @@ export default function bugReviewReducer(state = initialState, action) {
             //     nextState = sortOriginal(nextState);
             // }
             return nextState;
-        case actionTypes.FETCH_BUG_REVIEW_CHANGE_RESOLVE_REASON_TYPE:
+        case actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS:
             return nextState;
         default:
             return state;

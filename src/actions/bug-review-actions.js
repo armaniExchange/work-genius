@@ -24,16 +24,32 @@ export function resolvedReasonTypeChange(review, reasonType){
     console.log('==========> Bug Review Action: Resolved Reason Type Change;');
     console.log(review, reasonType);
     return {
-        type: actionTypes.FETCH_BUG_REVIEW_CHANGE_RESOLVE_REASON_TYPE
+        type: actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS
     };
-}
+};
+
+export function changeResolvedTagOptions(review, option){
+    console.log('==========> Bug Review Action: Resolved Tag Change;');
+    console.log(review, option);
+    return {
+        type: actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS
+    };
+};
+
+export function changeMenuTagOptions(review, option){
+    console.log('==========> Bug Review Action: Menu Tag Change;');
+    console.log(review, option);
+    return {
+        type: actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS
+    };
+};
 
 export function fetchBugReviewApplications() {
     return (dispatch) => {
         let config = {
             method: 'POST',
             body: `{
-                    getAllBugs(label:"4.1.0",assignedTo:"yhou",pageSize:25,pageIndex:1){
+                    getAllBugs(label:"4.1.0",assignedTo:"yhou",pageSize:0,pageIndex:1){
                         id,
                         assigned_to,
                         bug_severity,

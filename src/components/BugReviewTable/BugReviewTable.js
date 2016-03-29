@@ -1,5 +1,6 @@
 // Styles
 import './BugReviewTable.css';
+import 'react-select/dist/react-select.css';
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
@@ -8,6 +9,7 @@ import Table from '../A10-UI/Table/Table';
 import Th from '../A10-UI/Table/Th';
 import Td from '../A10-UI/Table/Td';
 import RadioGroup from '../A10-UI/Input/Radio-Group';
+import Select from 'react-select';
 
 let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort}) => {
     let headerHtml = titleKeyMap.map((headerObj, index) => {
@@ -57,13 +59,7 @@ let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort}) => {
     );
 };
 
-
-// var resolvedReasonTypeChange = function (data, e){
-//     console.log(data);
-//     console.log(e);
-// };
-
-let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, resolvedReasonTypeChange}) => {
+let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, optionsMenus, resolvedReasonTypeChange, changeResolvedTagOptions, changeMenuTagOptions}) => {
     let bodyHtml = (
         <tr>
             <Td
@@ -82,6 +78,12 @@ let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, resolvedReasonTypeCha
                 var resolvedReasonChange = function (type) {
                     resolvedReasonTypeChange(review, type);
                 };
+                var resolvedTagChange = function (type){
+                    changeResolvedTagOptions(review, type);
+                };
+                var menuChange = function (type) {
+                    changeMenuTagOptions(review, type);
+                };
 
                 if ( header['key'] === 'resolved_type' ){
                     return (
@@ -91,10 +93,38 @@ let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, resolvedReasonTypeCha
                             <RadioGroup aryRadioConfig={resolvedReasonTypes} checkRadio="axapi" onRadioChange={resolvedReasonChange}/>
                         </Td>
                     );
+                } else
+                if ( header['key'] === 'tags' ){
+                    return (
+                        <Td isAlignLeft="true"
+                            colSpan={header['colspan']}
+                        >
+                            <Select
+                                multi={true}
+                                name="resolved_tags"
+                                value={review[header['key']]}
+                                options={optionsReviewTags}
+                                onChange={resolvedTagChange}
+                            />
+                        </Td>
+                    );
+                } else
+                if ( header['key'] === 'menu' ) {
+                    return (
+                        <Td isAlignLeft="true" colSpan={header['colspan']}>
+                            <Select
+                                name="menu_tag"
+                                value={review[header['key']]}
+                                options={optionsMenus}
+                                onChange={menuChange}
+                            />
+                        </Td>
+                    );
                 }
 
                 return (
                     <Td key={cellIndex}
+                    isAlignLeft={isAlignLeft}
                     className={className}
                     colSpan={header['colspan']}>{review[header['key']]}</Td>
                 );
@@ -140,12 +170,16 @@ BugReviewTable.propTypes = {
     data                 : PropTypes.array.isRequired,
     titleKeyMap          : PropTypes.array.isRequired,
     resolvedReasonTypes  : PropTypes.array.isRequired,
+    optionsReviewTags    : PropTypes.array.isRequired,
+    optionsMenus         : PropTypes.array.isRequired,
     enableSort           : PropTypes.bool,
     sortBy               : PropTypes.object,
     onSortHandler        : PropTypes.func,
     onStatusUpdateHandler: PropTypes.func,
     onDeleteHandler      : PropTypes.func,
-    resolvedReasonTypeChange: PropTypes.func
+    resolvedReasonTypeChange: PropTypes.func,
+    changeResolvedTagOptions: PropTypes.func,
+    changeMenuTagOptions: PropTypes.func
 };
 
 BugReviewTable.defaultProps = {
