@@ -29,6 +29,7 @@ var config = {
         publicPath: '/build/'
     },
     module: {
+        noParse: [/autoit\.js$/],
         preLoaders: [
             {
                 test: /\.js(x)?$/,
