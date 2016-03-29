@@ -11,20 +11,24 @@ class RadioGroup extends Component {
         this.props.onRadioChange(curVal);
     }*/
     render() {
-        let { title, aryRadioConfig=[], isNeedAll, onRadioChange } = this.props;
+        let { title, checkRadio, aryRadioConfig=[], isNeedAll, onRadioChange } = this.props;
 
         let ALL_DEFAULT_VALUE = '';
         if (isNeedAll) {
             aryRadioConfig = [{val:ALL_DEFAULT_VALUE, name:'All'}].concat(aryRadioConfig);
         }
 
-        let radios = aryRadioConfig.map((item, index) => (
+        let radios = aryRadioConfig.map((item, index) => {
+            let checked = checkRadio === item.value;
+            return (
             <Radio
                 key={index}
                 value={item.value}
                 name={item.name}
+                checked={checked}
                 onChange={onRadioChange}/>
-        ));
+            );
+        });
         if (title) {
             title += ': ';
         }
@@ -38,12 +42,14 @@ class RadioGroup extends Component {
 
 RadioGroup.propTypes = {
     title: PropTypes.string,
+    checkRadio: PropTypes.string,
     aryRadioConfig: PropTypes.array,
     isNeedAll: PropTypes.bool,
     onRadioChange: PropTypes.func
 };
 
 RadioGroup.defaultProps = {
+    checkRadio: '',
     onRadioChange: () => {}
 };
 

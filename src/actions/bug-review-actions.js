@@ -20,6 +20,14 @@ export function fetchBugReviewApplicationsSuccess(data){
     };
 };
 
+export function resolvedReasonTypeChange(review, reasonType){
+    console.log('==========> Bug Review Action: Resolved Reason Type Change;');
+    console.log(review, reasonType);
+    return {
+        type: actionTypes.FETCH_BUG_REVIEW_CHANGE_RESOLVE_REASON_TYPE
+    };
+}
+
 export function fetchBugReviewApplications() {
     return (dispatch) => {
         let config = {
@@ -46,8 +54,6 @@ export function fetchBugReviewApplications() {
         return fetch(SERVER_API_URL, config)
             .then((res) => res.json())
             .then((body) => {
-                console.log('sss');
-                console.log(body.data);
                 dispatch(fetchBugReviewApplicationsSuccess(body.data.getAllBugs));
             })
             .catch((err) => {

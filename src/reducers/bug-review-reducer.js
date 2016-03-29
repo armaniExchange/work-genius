@@ -13,15 +13,22 @@ import * as actionTypes from '../constants/action-types';
 const initialState = Map({
     applications: List.of(),
     bugReviewTitleKeyMap: List.of(
-        Map({ title: 'Bug ID', key: 'id'}),
-        Map({ title: 'Title', key: 'title'}),
-        Map({ title: 'Resovled Reason Type', key: 'resolved_type'}),
-        Map({ title: 'Review Tags', key: 'tags'}),
-        Map({ title: 'Menu Tag', key: 'menu_tag'}),
-        Map({ title: 'Owner', key: 'assigned_to'}),
-        Map({ title: 'Review', key: 'review'})
+        Map({ title: 'Bug ID', key: 'id', colspan: '1'}),
+        Map({ title: 'Title', key: 'title', colspan: '2'}),
+        Map({ title: 'Resovled Reason Type', key: 'resolved_type', colspan: '2'}),
+        Map({ title: 'Review Tags', key: 'tags', colspan: '1'}),
+        Map({ title: 'Menu Tag', key: 'menu_tag', colspan: '1'}),
+        Map({ title: 'Owner', key: 'assigned_to', colspan: '1'}),
+        Map({ title: 'Review', key: 'review', colspan: '1'})
     ),
-    allProjectVersions: List.of('22', '22ss')
+    allProjectVersions: List.of('4.1.0', '3.2.1', '3.2.0'),
+    resolvedReasonTypes: List.of(
+        Map({ name: 'AXAPI', value: 'axapi' }),
+        Map({ name: 'Brower related', value: 'brower_related' }),
+        Map({ name: 'Requirement change', value: 'requirement_change' }),
+        Map({ name: 'Look and feel', value: 'look_and_feel' }),
+        Map({ name: 'Code issue', value: 'code_issue' })
+    )
 });
 
 function customizeTaskData(task) {
@@ -67,6 +74,8 @@ export default function bugReviewReducer(state = initialState, action) {
             // if (state.get('sortPTOTableBy').get('category')) {
             //     nextState = sortOriginal(nextState);
             // }
+            return nextState;
+        case actionTypes.FETCH_BUG_REVIEW_CHANGE_RESOLVE_REASON_TYPE:
             return nextState;
         default:
             return state;
