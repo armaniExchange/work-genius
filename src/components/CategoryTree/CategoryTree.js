@@ -1,6 +1,8 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
 
+import CategoryTreeLeaves from './CategoryTreeLeaves';
+
 class CategoryTree extends Component {
 
   buildCategoryTree(categories, tree) {
@@ -71,64 +73,13 @@ class CategoryTree extends Component {
     return isFound;
   }
 
-  renderTree(node={}, level = 0) {
-
-    const styles = {
-      countStyle: {
-        float: 'right'
-      },
-      iconStyle: {
-        paddingRight: '0.5em'
-      },
-      nodeStyle: {
-        paddingTop: '4px',
-        paddingBottom: '4px'
-      }
-    };
-
-    let leaves = node['leaves'] || [];
-
-    let caretIcon = <i style={styles['iconStyle']}></i>;
-
-    if (leaves && leaves.length) {
-      caretIcon = <i style={styles['iconStyle']} className="fa fa-caret-down"></i>;
-    }
-
-    if (node['name'] === 'root') {
-      return (
-        <div>
-          {
-            leaves.map(leaf => {
-              return this.renderTree(leaf, level);
-            })
-          }
-        </div>
-      );
-    } else {
-      return (
-        <div style={{ paddingLeft: (level * 0.5) + 'em'}} key={node['id']}>
-          <div style={styles['nodeStyle']}>
-            {caretIcon}
-            <span>{node['name']}</span>
-            <span style={styles['countStyle']}>{node['articlesCount']}</span>
-          </div>
-          {
-            leaves.map(leaf => {
-              return this.renderTree(leaf, (level + 1));
-            })
-          }
-        </div>
-      );
-    }
-  }
-
   render() {
 
     const { categories } = this.props;
     const tree = this.buildCategoryTree(categories);
 
     return (
-      <div>{this.renderTree(tree)}</div>
+      <CategoryTreeLeaves data={tree} />
     );
   }
 }
