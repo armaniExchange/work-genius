@@ -16,6 +16,7 @@ import InputValidIpv4oripv6ordns from './Input-Valid-Ipv4oripv6ordns';
 import InputValidEmail from './Input-Valid-Email';
 import InputValidFilepath from './Input-Valid-Filepath';
 import InputValidTime from './Input-Valid-Time';
+import InputValidDate from './Input-Valid-Date';
 
 export { InputValidNumber };
 export { InputValidCharacter };
@@ -35,6 +36,7 @@ export { InputValidIpv4oripv6ordns };
 export { InputValidEmail };
 export { InputValidFilepath };
 export { InputValidTime };
+export { InputValidDate };
 
 // export { InputValidWrap };
 // export { InputValidSame };
