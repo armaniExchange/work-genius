@@ -31,15 +31,15 @@ let BugTagMutation = {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				result = await query.run(connection);
 				if(result && result.length > 0){
-					return false;
+					return 'Fail to update bug tag!';
 				}
 				query = r.db('work_genius').table('bugtags').insert(tag);
 				await query.run(connection);
 				await connection.close();
 			} catch (err) {
-				return false;
+				return 'Fail to update bug tag!';
 			}
-			return true;
+			return 'Update bug tag successfully!';
 		}
 	}
 
