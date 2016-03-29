@@ -26,7 +26,9 @@ export function fetchBugReviewChangeOptionsChangeSuccess(){
     };
 };
 
-function updateBug = (dispatch, data) => {
+let updateBug = (dispatch, data) => {
+  data['id'] = parseInt(data['id']);
+
   let config = {
       method: 'POST',
       body: `mutation RootMutationType {
@@ -48,34 +50,30 @@ function updateBug = (dispatch, data) => {
       dispatch(setLoadingState(false));
       dispatch(apiFailure(err));
     });
-}
+};
 
 export function resolvedReasonTypeChange(review, reasonType){
-  review['id'] = parseInt(review['id']);
   review['resolved_type'] = reasonType;
 
-  return updateBug(dispatch, review);
+  return (dispatch) => {updateBug(dispatch, review);};
 };
 
-export function changeReviewTagOptions(review, option){
-  review['id'] = parseInt(review['id']);
-  review['tags'] = option;
+export function changeReviewTagOptions(review, reviewTag){
+  review['tags'] = reviewTag;
 
-  return updateBug(dispatch, review);
+  return (dispatch) => {updateBug(dispatch, review);};
 };
 
-export function changeMenuTagOptions(review, option){
-  review['id'] = parseInt(review['id']);
-  review['menu'] = option;
+export function changeMenuTagOptions(review, menuTag){
+  review['menu'] = menuTag;
 
-  return updateBug(dispatch, review);
+  return (dispatch) => {updateBug(dispatch, review);};
 };
 
-export function changeReviewText(review, reviceText){
-  review['id'] = parseInt(review['id']);
-  review['review'] = reviceText;
+export function changeReviewText(review, reviewText){
+  review['review'] = reviewText;
 
-  return updateBug(dispatch, review);
+  return (dispatch) => {updateBug(dispatch, review);};
 };
 
 export function fetchBugReviewApplications() {
