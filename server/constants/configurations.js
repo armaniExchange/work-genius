@@ -8,8 +8,8 @@ export const LDAP = {
 export const ADMIN = ['zli', 'stsai'];
 export const LDAP_AUTH_PREFIX = 'corp\\';
 export const SECURE_KEY = '77de68daecd823babbb58edb1c8e14d7106e83bb';
-export const GK2_LOG_IN_ACCOUNT = 'howardc';
-export const GK2_LOG_IN_PASSWORD = '2wsx#EDC$RFV5tgb';
+export const GK2_LOG_IN_ACCOUNT = '';
+export const GK2_LOG_IN_PASSWORD = '';
 export const GK2_LOG_IN_URL = 'https://gk2.a10networks.com/login/';
 export const GK2_REFERER_URL = 'https://gk2.a10networks.com/login/?next=/';
 export const ADMIN_ID = '00000';

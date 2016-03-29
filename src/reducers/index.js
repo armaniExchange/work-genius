@@ -21,7 +21,7 @@ const rootReducer = combineReducers({
 	admin,
 	documentation,
 	article,
-	bugReview
+	bugReview,
 	featureAnalysis
 });
 
