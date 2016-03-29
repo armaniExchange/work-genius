@@ -20,6 +20,20 @@ export function fetchBugReviewApplicationsSuccess(data){
     };
 };
 
+export function fetchAllUsersSuccess(data){
+    return {
+        type: actionTypes.FETCH_BUG_REVIEW_ALL_USERS,
+        data
+    };
+};
+
+export function fetchPreventTagsOptionsSuccess(data){
+    return {
+        type: actionTypes.FETCH_BUG_REVIEW_PREVENT_TAGS_OPTIONS,
+        data
+    };
+}
+
 export function fetchBugReviewChangeOptionsChangeSuccess(){
     return {
         type: actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS
@@ -110,95 +124,95 @@ export function fetchBugReviewApplications() {
     };
 };
 
-// const tmpData = [
-//     {
-//         'bug_id': '332472',
-//         'title': 'Need support license',
-//         'resovled_reason_type': '',
-//         'review_tags': '',
-//         'menu_tag': '',
-//         'owner': '',
-//         'review': ''
-//     },
-//     {
-//         'bug_id': '332473',
-//         'title': 'Status show tip',
-//         'resovled_reason_type': '',
-//         'review_tags': '',
-//         'menu_tag': '',
-//         'owner': '',
-//         'review': ''
-//     },
-//     {
-//         'bug_id': '330002',
-//         'title': 'page not found',
-//         'resovled_reason_type': '',
-//         'review_tags': '',
-//         'menu_tag': '',
-//         'owner': '',
-//         'review': ''
-//     },
-//     {
-//         'bug_id': '33s472',
-//         'title': 'message error',
-//         'resovled_reason_type': '',
-//         'review_tags': '',
-//         'menu_tag': '',
-//         'owner': '',
-//         'review': ''
-//     }
-// ];
+export function fetchPreventTagsOptionRequest() {
+    return (dispatch) => {
+        let config = {
+            method: 'POST',
+            body: `{
+                    getAllBugTags(name: ""){
+                      id,
+                      tag_name
+                    }
+            }`,
+            headers: {
+                'Content-Type': 'application/graphql',
+                'x-access-token': localStorage.token
+            }
+        };
+        return fetch(SERVER_API_URL, config)
+            .then((res) => res.json())
+            .then((body) => {
+                dispatch(fetchPreventTagsOptionsSuccess(body.data.getAllBugTags));
+            })
+            .catch((err) => {
+                throw new Error(err);
+            });
+    };
+}
 
+export function fetchPreventTagsOptions(){
+    return (dispatch) => {
+      Promise.all(
+          [dispatch(fetchPreventTagsOptionRequest())]
+      ).then(
+            () => {
+                dispatch(setLoadingState(false));
+            },
+            (err) => {
+                dispatch(setLoadingState(false));
+                dispatch(apiFailure(err));
+            }
+        );
+    };
+}
 
+export function fetchAllUsersRequest(){
+  return (dispatch) => {
+        let config = {
+            method: 'POST',
+            body: `{
+                    allUsers{
+                        id,
+                        email,
+                        name,
+                        nickname,
+                        alias
+                    }
+            }`,
+            headers: {
+                'Content-Type': 'application/graphql',
+                'x-access-token': localStorage.token
+            }
+        };
+        return fetch(SERVER_API_URL, config)
+            .then((res) => res.json())
+            .then((body) => {
+                dispatch(fetchAllUsersSuccess(body.data.allUsers));
+            })
+            .catch((err) => {
+                throw new Error(err);
+            });
+    };
+}
 
-
-
-
-
-
-
-
-
-
-
-
-// export function fetchUsersWithBugReview() {
-//     return (dispatch) => {
-//         let config = {
-//             method: 'POST',
-//             body: `{
-//                 allUserWithPto {
-//                     id,
-//                     name,
-//                     pto {
-//                         end_date
-//                     }
-//                 }
-//             }`,
-//             headers: {
-//                 'Content-Type': 'application/graphql',
-//                 'x-access-token': localStorage.token
-//             }
-//         };
-//         return fetch(SERVER_API_URL, config)
-//             .then((res) => res.json())
-//             .then((body) => {
-//                 dispatch(fetchUsersWithPTOSuccess(body.data.allUserWithPto));
-//             })
-//             .catch((err) => {
-//                 throw new Error(err);
-//             });
-//     };
-// };
-
-
-
-
-
+export function fetchAllUsers(){
+    return (dispatch) => {
+      Promise.all(
+          [dispatch(fetchAllUsersRequest())]
+      ).then(
+            () => {
+                dispatch(setLoadingState(false));
+            },
+            (err) => {
+                dispatch(setLoadingState(false));
+                dispatch(apiFailure(err));
+            }
+        );
+    };
+}
 
 export function fetchBugReviewPageData() {
-    return (dispatch, getState) => {
-        console.log(getState());
+    return (dispatch) => {
         dispatch(setLoadingState(true));
         Promise.all([
             dispatch(fetchBugReviewApplications())

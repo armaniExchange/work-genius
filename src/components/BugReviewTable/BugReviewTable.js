@@ -78,10 +78,12 @@ let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, op
                     resolvedReasonTypeChange(review, type);
                 };
                 var reviewTagChange = function (type){
-                    changeReviewTagOptions(review, type);
+                    let arr = type.split(',');
+                    changeReviewTagOptions(review, arr);
                 };
                 var menuChange = function (type) {
-                    changeMenuTagOptions(review, type);
+                    let arr = type.split(',');
+                    changeMenuTagOptions(review, arr);
                 };
                 var outBlurReviewText = function(event){
                     let value = event.target.value;
@@ -95,7 +97,7 @@ let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, op
                         //   colSpan={header['colspan']}>
                         //   <RadioGroup aryRadioConfig={resolvedReasonTypes} checkRadio="axapi" onRadioChange={resolvedReasonChange}/>
                         //</Td>
-                        <Td isAlignLeft="true" colSpan={header['colspan']}>
+                        <Td isAlignLeft={true} colSpan={header['colspan']}>
                             <Select
                                 name="menu_tag"
                                 value={review[header['key']]}
@@ -106,14 +108,17 @@ let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, op
                     );
                 } else
                 if ( header['key'] === 'tags' ){
+                    let tags = review[header['key']];
+                    tags = (tags) ? tags.join(',') : tags;
                     return (
-                        <Td isAlignLeft="true"
+                        <Td isAlignLeft={true}
                             colSpan={header['colspan']}
                         >
                             <Select
                                 multi={true}
+                                allowCreate={true}
                                 name="resolved_tags"
-                                value={review[header['key']]}
+                                value={tags}
                                 options={optionsReviewTags}
                                 onChange={reviewTagChange}
                             />
@@ -121,11 +126,13 @@ let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, op
                     );
                 } else
                 if ( header['key'] === 'menu' ) {
+                    let menu = review[header['key']];
+                    menu = (menu) ? menu.join(',') : menu;
                     return (
-                        <Td isAlignLeft="true" colSpan={header['colspan']}>
+                        <Td isAlignLeft={true} colSpan={header['colspan']}>
                             <Select
                                 name="menu_tag"
-                                value={review[header['key']]}
+                                value={menu}
                                 options={optionsMenus}
                                 onChange={menuChange}
                             />

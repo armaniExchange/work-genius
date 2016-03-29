@@ -5,7 +5,7 @@
 import { Map, List, OrderedMap} from 'immutable';
 // Constants
 import * as actionTypes from '../constants/action-types';
-import { ADMIN_ID } from '../../server/constants/configurations.js';
+// import { ADMIN_ID } from '../../server/constants/configurations.js';
 // const initialPTOFilterConditions = Map({
 //     'status': ''
 // });
@@ -23,6 +23,7 @@ const initialState = Map({
         Map({ title: 'Root Cause Detail', key: 'review', colspan: '2'})
     ),
     allProjectVersions: List.of('4.1.0', '3.2.1', '3.2.0'),
+    allUsers: List.of(),
     resolvedReasonTypes: List.of(
         Map({ label: 'AXAPI', value: 'axapi' }),
         Map({ label: 'Brower related', value: 'brower_related' }),
@@ -76,9 +77,20 @@ function setTableData(state, data) {
         .set(`applications`, formatedData);
 }
 
+function setPreventTagData(state, data) {
+    let result = List.of();
+    data.forEach((tag) => {
+        let updateTag = Map({value: tag.tag_name, label: tag.tag_name});
+        result = result.push(updateTag);
+    });
+    return state.set(`optionsReviewTags`, result);
+}
+
+function setAllUsers(state, data){
+    return state.set(`allUsers`, data);
+}
 
 export default function bugReviewReducer(state = initialState, action) {
-    console.log('=============>' + ADMIN_ID);
     let nextState = state;
     switch (action.type) {
         case actionTypes.FETCH_BUG_REVIEW_APPLICATION_SUCCESS:
@@ -91,6 +103,12 @@ export default function bugReviewReducer(state = initialState, action) {
             // }
             return nextState;
         case actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS:
+            return nextState;
+        case actionTypes.FETCH_BUG_REVIEW_PREVENT_TAGS_OPTIONS:
+            nextState = setPreventTagData(nextState, action.data);
+            return nextState;
+        case actionTypes.FETCH_BUG_REVIEW_ALL_USERS:
+            nextState = setAllUsers(state, action.data);
             return nextState;
         default:
             return state;

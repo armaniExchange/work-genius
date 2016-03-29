@@ -30,8 +30,10 @@ class BugReviewPage extends Component {
     }
 
     componentWillMount() {
-        const { fetchBugReviewPageData } = this.props;
+        const { fetchBugReviewPageData, fetchPreventTagsOptions, fetchAllUsers } = this.props;
         // Get the init bug review page data
+        fetchPreventTagsOptions();
+        fetchAllUsers();
         fetchBugReviewPageData();
     }
 
@@ -79,6 +81,8 @@ BugReviewPage.propTypes = {
     optionsReviewTags:         PropTypes.array,
     optionsMenus:              PropTypes.array,
     fetchBugReviewPageData:    PropTypes.func,
+    fetchPreventTagsOptions:   PropTypes.func,
+    fetchAllUsers:             PropTypes.func,
     resolvedReasonTypeChange:  PropTypes.func,
     changeReviewTagOptions:    PropTypes.func,
     changeMenuTagOptions:      PropTypes.func,
