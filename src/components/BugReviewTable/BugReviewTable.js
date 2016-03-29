@@ -8,7 +8,6 @@ import classnames from 'classnames';
 import Table from '../A10-UI/Table/Table';
 import Th from '../A10-UI/Table/Th';
 import Td from '../A10-UI/Table/Td';
-import RadioGroup from '../A10-UI/Input/Radio-Group';
 import Select from 'react-select';
 
 let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort}) => {
@@ -91,10 +90,18 @@ let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, op
 
                 if ( header['key'] === 'resolved_type' ){
                     return (
-                        <Td isAlignLeft="true" key={cellIndex}
-                            className="bug-review-table__body--front"
-                            colSpan={header['colspan']}>
-                            <RadioGroup aryRadioConfig={resolvedReasonTypes} checkRadio="axapi" onRadioChange={resolvedReasonChange}/>
+                        //<Td isAlignLeft="true" key={cellIndex}
+                        //    className="bug-review-table__body--front"
+                        //   colSpan={header['colspan']}>
+                        //   <RadioGroup aryRadioConfig={resolvedReasonTypes} checkRadio="axapi" onRadioChange={resolvedReasonChange}/>
+                        //</Td>
+                        <Td isAlignLeft="true" colSpan={header['colspan']}>
+                            <Select
+                                name="menu_tag"
+                                value={review[header['key']]}
+                                options={resolvedReasonTypes}
+                                onChange={resolvedReasonChange}
+                            />
                         </Td>
                     );
                 } else

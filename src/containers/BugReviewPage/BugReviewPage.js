@@ -8,6 +8,8 @@ import * as BugReviewActions from '../../actions/bug-review-actions';
 import * as appActions from '../../actions/app-actions';
 import * as mainActions from '../../actions/main-actions';
 
+import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
+
 import BugReviewTable from '../../components/BugReviewTable/BugReviewTable.js';
 // import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 
@@ -47,7 +49,11 @@ class BugReviewPage extends Component {
         } = this.props;
         // const dropdownTitle = 'Project';
         return (
-            <section className="table_layout_center">
+            <section>
+                <DropDownList
+                isNeedAll={false}
+                title="Project: "
+                />
                 <BugReviewTable
                     data={applications}
                     resolvedReasonTypes={resolvedReasonTypes}
