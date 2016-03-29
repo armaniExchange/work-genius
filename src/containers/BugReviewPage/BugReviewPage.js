@@ -11,6 +11,8 @@ import * as mainActions from '../../actions/main-actions';
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 
 import BugReviewTable from '../../components/BugReviewTable/BugReviewTable.js';
+import Space from '../../components/A10-UI/Space.js';
+
 // import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 
 // let PTOYearFilter = ({ selectedYear, goToPreviousYear, goToNextYear }) => {
@@ -27,6 +29,8 @@ import BugReviewTable from '../../components/BugReviewTable/BugReviewTable.js';
 class BugReviewPage extends Component {
     constructor(props) {
         super(props);
+        this._onChangeProjectVesion = ::this._onChangeProjectVesion;
+        this._onChangeSelectUser = ::this._onChangeSelectUser;
     }
 
     componentWillMount() {
@@ -37,10 +41,24 @@ class BugReviewPage extends Component {
         fetchBugReviewPageData();
     }
 
+    _onChangeProjectVesion(version){
+        const { fetchBugReviewPageData, currentSelectUser } = this.props;
+        fetchBugReviewPageData(version, currentSelectUser.value);
+    }
+
+    _onChangeSelectUser(user){
+        const { fetchBugReviewPageData, currentProjectVersion } = this.props;
+        fetchBugReviewPageData(currentProjectVersion, user);
+    }
+
     render() {
         const {
+            currentProjectVersion,
+            currentSelectUser,
             applications,
             bugReviewTitleKeyMap,
+            allProjectVersions,
+            allUsers,
             resolvedReasonTypes,
             resolvedReasonTypeChange,
             optionsReviewTags,
@@ -49,12 +67,21 @@ class BugReviewPage extends Component {
             changeMenuTagOptions,
             changeReviewText
         } = this.props;
-        // const dropdownTitle = 'Project';
+
         return (
             <section>
                 <DropDownList
-                isNeedAll={false}
-                title="Project: "
+                    isNeedAll={false}
+                    title={currentProjectVersion}
+                    onOptionClick={this._onChangeProjectVesion}
+                    aryOptionConfig={allProjectVersions}
+                />
+                <Space h="20" />
+                <DropDownList
+                    isNeedAll={false}
+                    title={currentSelectUser.title}
+                    onOptionClick={this._onChangeSelectUser}
+                    aryOptionConfig={allUsers}
                 />
                 <BugReviewTable
                     data={applications}
@@ -74,12 +101,15 @@ class BugReviewPage extends Component {
 }
 
 BugReviewPage.propTypes = {
-    applications : PropTypes.array,
+    currentProjectVersion:     PropTypes.string,
+    applications:              PropTypes.array,
     bugReviewTitleKeyMap:      PropTypes.array,
     allProjectVersions:        PropTypes.array,
+    allUsers:                  PropTypes.array,
     resolvedReasonTypes:       PropTypes.array,
     optionsReviewTags:         PropTypes.array,
     optionsMenus:              PropTypes.array,
+    currentSelectUser:         PropTypes.map,
     fetchBugReviewPageData:    PropTypes.func,
     fetchPreventTagsOptions:   PropTypes.func,
     fetchAllUsers:             PropTypes.func,

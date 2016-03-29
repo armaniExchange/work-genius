@@ -103,8 +103,6 @@ class PTOPage extends Component {
             sortPTOTableBy
         } = this.props;
 
-        console.log('-------------------------> ' + currentSelectedUserID);
-
         const KEY = 'status';
         let aryRadioConfigValue = applicationsOriginalData.reduce((prev, cur) => {
             return prev.indexOf(cur[KEY])>=0 ? prev : prev.concat(cur[KEY]);

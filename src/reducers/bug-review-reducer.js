@@ -13,17 +13,24 @@ import * as actionTypes from '../constants/action-types';
 const initialState = Map({
     applications: List.of(),
     bugReviewTitleKeyMap: List.of(
-        Map({ title: 'Bug ID', key: 'id', colspan: '1'}),
-        Map({ title: 'Title', key: 'title', colspan: '3'}),
-        Map({ title: 'Root Cause', key: 'resolved_type', colspan: '3'}),
-        Map({ title: 'Prevent Tags', key: 'tags', colspan: '3'}),
-        Map({ title: 'Belongs To Menu', key: 'menu', colspan: '2'}),
-        Map({ title: 'Owner', key: 'assigned_to', colspan: '1'}),
-        Map({ title: 'Bug Resolved Status', key: 'resolved_status', colspan: '1'}),
-        Map({ title: 'Root Cause Detail', key: 'review', colspan: '2'})
+        Map({ title: 'Bug ID', key: 'id', colspan: 1}),
+        Map({ title: 'Title', key: 'title', colspan: 3}),
+        Map({ title: 'Root Cause', key: 'resolved_type', colspan: 3}),
+        Map({ title: 'Prevent Tags', key: 'tags', colspan: 3}),
+        Map({ title: 'Belongs To Menu', key: 'menu', colspan: 2}),
+        Map({ title: 'Owner', key: 'assigned_to', colspan: 1}),
+        Map({ title: 'Bug Resolved Status', key: 'resolved_status', colspan: 1}),
+        Map({ title: 'Root Cause Detail', key: 'review', colspan: 2})
     ),
-    allProjectVersions: List.of('4.1.0', '3.2.1', '3.2.0'),
+    // allProjectVersions: List.of('4.1.0', '3.2.1', '3.2.0'),
+    allProjectVersions: List.of(
+        Map({title: '4.1.0', value: '4.1.0'}),
+        Map({title: '3.2.0', value: '3.2.0'}),
+        Map({title: '3.2.1', value: '3.2.1'})
+    ),
+    currentProjectVersion: '',
     allUsers: List.of(),
+    currentSelectUser: Map({}),
     resolvedReasonTypes: List.of(
         Map({ label: 'AXAPI', value: 'axapi' }),
         Map({ label: 'Brower related', value: 'brower_related' }),
@@ -87,7 +94,23 @@ function setPreventTagData(state, data) {
 }
 
 function setAllUsers(state, data){
-    return state.set(`allUsers`, data);
+    let result = List.of();
+    data.forEach((user) => {
+        let updateUser = Map({title: user.name, value: user.alias});
+        result = result.push(updateUser);
+    });
+    return state.set(`allUsers`, result);
+}
+
+function setSelectUser(state, userAlisa){
+    let allUsers = state.get(`allUsers`);
+    allUsers.forEach((userMap) => {
+        var alisa = userMap.get('value');
+        if (alisa === userAlisa) {
+            state = state.set(`currentSelectUser`, userMap);
+        }
+    });
+    return state;
 }
 
 export default function bugReviewReducer(state = initialState, action) {
@@ -109,6 +132,12 @@ export default function bugReviewReducer(state = initialState, action) {
             return nextState;
         case actionTypes.FETCH_BUG_REVIEW_ALL_USERS:
             nextState = setAllUsers(state, action.data);
+            return nextState;
+        case actionTypes.SET_BUG_REVIEW_SELECT_USER:
+            nextState = setSelectUser(state, action.data);
+            return nextState;
+        case actionTypes.SET_BUG_REVIEW_PROJECT_VERSION:
+            nextState = nextState.set(`currentProjectVersion`, action.data);
             return nextState;
         default:
             return state;

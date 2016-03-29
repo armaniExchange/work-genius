@@ -34,6 +34,20 @@ export function fetchPreventTagsOptionsSuccess(data){
     };
 }
 
+export function fetchCurrentProjectVersion(data){
+    return {
+        type: actionTypes.SET_BUG_REVIEW_PROJECT_VERSION,
+        data
+    };
+}
+
+export function fetchCurrentSelectUser(data){
+    return {
+        type: actionTypes.SET_BUG_REVIEW_SELECT_USER,
+        data
+    };
+}
+
 export function fetchBugReviewChangeOptionsChangeSuccess(){
     return {
         type: actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS
@@ -90,12 +104,12 @@ export function changeReviewText(review, reviewText){
   return (dispatch) => {updateBug(dispatch, review);};
 };
 
-export function fetchBugReviewApplications() {
+export function fetchBugReviewApplications(version, userAlisa) {
     return (dispatch) => {
         let config = {
             method: 'POST',
             body: `{
-                    getAllBugs(label:"4.1.0",assignedTo:"yhou",pageSize:0,pageIndex:1){
+                    getAllBugs(label:"` + version + `",assignedTo:"` + userAlisa.toLowerCase() + `",pageSize:0,pageIndex:1){
                         id,
                         assigned_to,
                         bug_severity,
@@ -116,6 +130,8 @@ export function fetchBugReviewApplications() {
         return fetch(SERVER_API_URL, config)
             .then((res) => res.json())
             .then((body) => {
+                dispatch(fetchCurrentProjectVersion(version));
+                dispatch(fetchCurrentSelectUser(userAlisa));
                 dispatch(fetchBugReviewApplicationsSuccess(body.data.getAllBugs));
             })
             .catch((err) => {
@@ -211,11 +227,13 @@ export function fetchAllUsers(){
     };
 }
 
-export function fetchBugReviewPageData() {
-    return (dispatch) => {
+export function fetchBugReviewPageData(version, userAlisa) {
+    version = version ? version : '4.1.0';
+    return (dispatch, getState) => {
+        userAlisa = userAlisa ? userAlisa : getState().app.toJS().currentUser.email.split('@')[0];
         dispatch(setLoadingState(true));
         Promise.all([
-            dispatch(fetchBugReviewApplications())
+            dispatch(fetchBugReviewApplications(version, userAlisa))
         ]).then(
             () => {
                 dispatch(setLoadingState(false));
