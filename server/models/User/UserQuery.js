@@ -129,6 +129,32 @@ let UserQuery = {
 				return err;
 			}
 		}
+	},
+	'allUsers':{
+		type: new GraphQLList(UserType),
+		description: 'Get all users',
+		resolve: async () => {
+			let connection = null,
+				users = null,
+			    query = null;
+
+			try {
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID)).coerceTo('array');
+				users = await query.run(connection);
+				let pattern = /[a-zA-Z]+@/;
+				for(let user of users){
+					if(!!user.email && user.email.match(pattern).length > 0){
+						user.alias = user.email.match(pattern)[0].replace('@','');
+					}
+					
+				}
+				await connection.close();
+				return users;
+			} catch (err) {
+				return err;
+			}
+		}
 	}
 };
 

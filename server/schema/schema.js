@@ -34,6 +34,7 @@ const schema = new GraphQLSchema({
 			// User page
 			allUserWithPrivilege: UserQuery.allUserWithPrivilege,
 			currentUser         : UserQuery.currentUser,
+			allUsers 			: UserQuery.allUsers,
 			// Document page
 			allCategories       : CategoryQuery.getAllCategories,
 			categoryTree        : CategoryQuery.getCategoryTree,
