@@ -21,6 +21,7 @@ import {
   InputValidEmail,
   InputValidFilepath,
   InputValidTime,
+  InputValidDate,
 } from '../../components/A10-UI/Valid/';
 
 let DemoBox = ({title, children, showContent}) => {
@@ -165,6 +166,13 @@ class ValidDemoPage extends Component {
       <DemoBox title="InputValidTime" showContent={this.state.showAllDemoBoxContent}>
         <InputValidTime defaultValue="24:00:00" />
         <InputValidTime allow240000={true} defaultValue="24:00:00" />
+      </DemoBox>
+      <DemoBox title="InputValidDate" showContent={this.state.showAllDemoBoxContent}>
+        <InputValidDate defaultValue="2016-03-29" />
+        <InputValidDate defaultValue="2016/03/29" dateSpliter="/" />
+        <InputValidDate defaultValue="2016-03-29" min="20160330" />
+        <InputValidDate defaultValue="2016-03-29" max="20160330" />
+        <InputValidDate defaultValue="2016-03-29" max="20160331" min="20160330" />
       </DemoBox>
       </div>
     </section>
