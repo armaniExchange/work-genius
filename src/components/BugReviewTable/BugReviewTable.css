@@ -1,0 +1,11 @@
+.pto-table .pto-table__body .pto-table__body--empty {
+    text-align: center;
+}
+
+.pto-table .hide {
+    display: none;
+}
+
+.pto-table .pto-table__header {
+    cursor: pointer;
+}
