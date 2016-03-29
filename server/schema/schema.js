@@ -19,6 +19,7 @@ import ArticleMutation from '../models/Article/ArticleMutation.js';
 import BugQuery from '../models/Bug/BugQuery.js';
 import BugMutation from '../models/Bug/BugMutation.js';
 import BugTagQuery from '../models/BugTag/BugTagQuery.js';
+import BugTagMutation from '../models/BugTag/BugTagMutation.js';
 
 const schema = new GraphQLSchema({
 	query: new GraphQLObjectType({
@@ -63,9 +64,11 @@ const schema = new GraphQLSchema({
 			createComment             : CommentMutation.createComment,
 			deleteComment             : CommentMutation.deleteCommentById,
 			createArticle			  : ArticleMutation.createArticle,
+			editArticle			  	  : ArticleMutation.editArticle,
 			deleteArticle			  : ArticleMutation.deleteArticle,
 			//Bug page
-			updateBug				  : BugMutation.updateBug
+			updateBug				  : BugMutation.updateBug,
+			createBugTag			  : BugTagMutation.createBugTag
 		}
 	})
 });
