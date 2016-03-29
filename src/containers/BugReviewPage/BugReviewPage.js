@@ -1,3 +1,4 @@
+import './_BugReviewPage.css';
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
@@ -35,13 +36,17 @@ class BugReviewPage extends Component {
     render() {
         const {
             applications,
-            bugReviewTitleKeyMap
+            bugReviewTitleKeyMap,
+            resolvedReasonTypes,
+            resolvedReasonTypeChange
         } = this.props;
         // const dropdownTitle = 'Project';
         return (
-            <section>
+            <section className="table_layout_center">
                 <BugReviewTable
                     data={applications}
+                    resolvedReasonTypes={resolvedReasonTypes}
+                    resolvedReasonTypeChange={resolvedReasonTypeChange}
                     titleKeyMap={bugReviewTitleKeyMap}
                 />
 
@@ -54,7 +59,9 @@ BugReviewPage.propTypes = {
     applications : PropTypes.array,
     bugReviewTitleKeyMap:      PropTypes.array,
     allProjectVersions:        PropTypes.array,
-    fetchBugReviewPageData:    PropTypes.func
+    resolvedReasonTypes:       PropTypes.array,
+    fetchBugReviewPageData:    PropTypes.func,
+    resolvedReasonTypeChange:  PropTypes.func
 };
 
 function mapStateToProps(state) {
