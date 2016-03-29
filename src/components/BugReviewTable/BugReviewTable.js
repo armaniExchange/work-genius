@@ -86,7 +86,7 @@ let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, op
                     changeMenuTagOptions(review, arr);
                 };
                 var outBlurReviewText = function(event){
-                    let value = event.target.value;
+                    let value = event.target.value.replace(/\n/g, '\\n');
                     changeReviewText(review, value);
                 };
 

@@ -34,62 +34,6 @@ export function fetchPreventTagsOptionsSuccess(data){
     };
 }
 
-export function fetchBugReviewChangeOptionsChangeSuccess(){
-    return {
-        type: actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS
-    };
-};
-
-let updateBug = (dispatch, data) => {
-  data['id'] = parseInt(data['id']);
-
-  let config = {
-      method: 'POST',
-      body: `mutation RootMutationType {
-          updateBug(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
-      }`,
-      headers: {
-        'Content-Type': 'application/graphql',
-        'x-access-token': localStorage.token
-      }
-    };
-
-  return fetch(SERVER_API_URL, config)
-    .then((res) => res.json())
-    .then(() => {
-      dispatch(setLoadingState(false));
-      dispatch(fetchBugReviewChangeOptionsChangeSuccess());
-    })
-    .catch((err) => {
-      dispatch(setLoadingState(false));
-      dispatch(apiFailure(err));
-    });
-};
-
-export function resolvedReasonTypeChange(review, reasonType){
-  review['resolved_type'] = reasonType;
-
-  return (dispatch) => {updateBug(dispatch, review);};
-};
-
-export function changeReviewTagOptions(review, reviewTag){
-  review['tags'] = reviewTag;
-
-  return (dispatch) => {updateBug(dispatch, review);};
-};
-
-export function changeMenuTagOptions(review, menuTag){
-  review['menu'] = menuTag;
-
-  return (dispatch) => {updateBug(dispatch, review);};
-};
-
-export function changeReviewText(review, reviewText){
-  review['review'] = reviewText;
-
-  return (dispatch) => {updateBug(dispatch, review);};
-};
-
 export function fetchBugReviewApplications() {
     return (dispatch) => {
         let config = {
@@ -123,6 +67,100 @@ export function fetchBugReviewApplications() {
             });
     };
 };
+
+export function fetchBugReviewChangeOptionsChangeSuccess(){
+    return {
+        type: actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS
+    };
+};
+
+let updateBug = (dispatch, data) => {
+  data['id'] = parseInt(data['id']);
+
+  let config = {
+      method: 'POST',
+      body: `mutation RootMutationType {
+          updateBug(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+      }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+
+  return fetch(SERVER_API_URL, config)
+    .then((res) => res.json())
+    .then(() => {
+      dispatch(setLoadingState(false));
+      dispatch(fetchBugReviewChangeOptionsChangeSuccess());
+      dispatch(fetchBugReviewApplications());
+    })
+    .catch((err) => {
+      dispatch(setLoadingState(false));
+      dispatch(apiFailure(err));
+    });
+};
+
+let createBugReviewTag = (tag) => {
+  let data = {};
+  data['tag_name'] = tag;
+
+  let config = {
+      method: 'POST',
+      body: `mutation RootMutationType {
+          createBugTag(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+      }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+
+  return fetch(SERVER_API_URL, config)
+    .then((res) => {
+      res.json();
+    })
+    .then(() => {
+    })
+    .catch(() => {
+    });
+};
+
+export function resolvedReasonTypeChange(review, reasonType){
+  review['resolved_type'] = reasonType;
+
+  return (dispatch) => {
+    updateBug(dispatch, review);
+  };
+};
+
+export function changeReviewTagOptions(review, reviewTagList){
+  reviewTagList.map((tag) => {
+    createBugReviewTag(tag);
+  });
+  review['tags'] = reviewTagList;
+
+  return (dispatch) => {
+    updateBug(dispatch, review);
+  };
+};
+
+export function changeMenuTagOptions(review, menuTag){
+  review['menu'] = menuTag;
+
+  return (dispatch) => {
+    updateBug(dispatch, review);
+  };
+};
+
+export function changeReviewText(review, reviewText){
+  review['review'] = reviewText;
+
+  return (dispatch) => {
+    updateBug(dispatch, review);
+  };
+};
+
 
 export function fetchPreventTagsOptionRequest() {
     return (dispatch) => {
