@@ -38,7 +38,7 @@ let CategoryQuery = {
 			return result;
 		}
 	},
-    'getCategoryTree': {
+  'getCategoryTree': {
 		type: CategoryType,
 		description: 'Get all documentation categories in tree form',
 		resolve: async () => {
