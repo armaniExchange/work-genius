@@ -34,16 +34,16 @@ let BugMutation = {
 					delete bug.id;
 				}
 				if(!id){
-					return false;
+					return 'Fail to update bug!';
 				}
 				query = r.db('work_genius').table('bugs').get(id).update(bug);
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				await query.run(connection);
 				await connection.close();
 			} catch (err) {
-				return false;
+				return 'Fail to update bug!';
 			}
-			return true;
+			return 'Update bug successfully!';
 		}
 	}
 
