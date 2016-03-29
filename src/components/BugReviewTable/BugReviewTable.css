@@ -23,7 +23,7 @@
 .bug-review-table{
     white-space: normal !important;
     table-layout:fixed;
-    width: 90%;
+    width: 100%;
 }
 
 .pto-table .hide {

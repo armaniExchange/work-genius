@@ -55,7 +55,7 @@ export function resolvedReasonTypeChange(review, reasonType){
     };
 };
 
-export function changeResolvedTagOptions(review, option){
+export function changeReviewTagOptions(review, option){
     console.log('==========> Bug Review Action: Resolved Tag Change;');
     console.log(review, option);
     return {
@@ -70,6 +70,14 @@ export function changeMenuTagOptions(review, option){
         type: actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS
     };
 };
+
+export function changeReviewText(review, reviceText){
+    console.log('==========> Bug Review Action: Review Text Change;');
+    console.log(review, reviceText);
+    return {
+        type: actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS
+    };
+}
 
 export function fetchBugReviewApplications() {
     return (dispatch) => {
@@ -144,8 +152,56 @@ export function fetchBugReviewApplications() {
 //     }
 // ];
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+// export function fetchUsersWithBugReview() {
+//     return (dispatch) => {
+//         let config = {
+//             method: 'POST',
+//             body: `{
+//                 allUserWithPto {
+//                     id,
+//                     name,
+//                     pto {
+//                         end_date
+//                     }
+//                 }
+//             }`,
+//             headers: {
+//                 'Content-Type': 'application/graphql',
+//                 'x-access-token': localStorage.token
+//             }
+//         };
+//         return fetch(SERVER_API_URL, config)
+//             .then((res) => res.json())
+//             .then((body) => {
+//                 dispatch(fetchUsersWithPTOSuccess(body.data.allUserWithPto));
+//             })
+//             .catch((err) => {
+//                 throw new Error(err);
+//             });
+//     };
+// };
+
+
+
+
+
+
 export function fetchBugReviewPageData() {
-    return (dispatch) => {
+    return (dispatch, getState) => {
+        console.log(getState());
         dispatch(setLoadingState(true));
         Promise.all([
             dispatch(fetchBugReviewApplications())

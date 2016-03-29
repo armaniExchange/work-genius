@@ -59,7 +59,7 @@ let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort}) => {
     );
 };
 
-let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, optionsMenus, resolvedReasonTypeChange, changeResolvedTagOptions, changeMenuTagOptions}) => {
+let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, optionsMenus, changeReviewText, resolvedReasonTypeChange, changeReviewTagOptions, changeMenuTagOptions}) => {
     let bodyHtml = (
         <tr>
             <Td
@@ -78,11 +78,15 @@ let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, op
                 var resolvedReasonChange = function (type) {
                     resolvedReasonTypeChange(review, type);
                 };
-                var resolvedTagChange = function (type){
-                    changeResolvedTagOptions(review, type);
+                var reviewTagChange = function (type){
+                    changeReviewTagOptions(review, type);
                 };
                 var menuChange = function (type) {
                     changeMenuTagOptions(review, type);
+                };
+                var outBlurReviewText = function(event){
+                    let value = event.target.value;
+                    changeReviewText(review, value);
                 };
 
                 if ( header['key'] === 'resolved_type' ){
@@ -104,7 +108,7 @@ let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, op
                                 name="resolved_tags"
                                 value={review[header['key']]}
                                 options={optionsReviewTags}
-                                onChange={resolvedTagChange}
+                                onChange={reviewTagChange}
                             />
                         </Td>
                     );
@@ -118,6 +122,13 @@ let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, op
                                 options={optionsMenus}
                                 onChange={menuChange}
                             />
+                        </Td>
+                    );
+                } else
+                if ( header['key'] === 'review') {
+                    return (
+                        <Td colSpan={header['colspan']}>
+                            <textarea className="mdl-textfield__input" type="text" onBlur={outBlurReviewText} rows= "3" defaultValue={review[header['key']]}></textarea>
                         </Td>
                     );
                 }
@@ -178,8 +189,9 @@ BugReviewTable.propTypes = {
     onStatusUpdateHandler: PropTypes.func,
     onDeleteHandler      : PropTypes.func,
     resolvedReasonTypeChange: PropTypes.func,
-    changeResolvedTagOptions: PropTypes.func,
-    changeMenuTagOptions: PropTypes.func
+    changeReviewTagOptions: PropTypes.func,
+    changeMenuTagOptions: PropTypes.func,
+    changeReviewText:   PropTypes.func
 };
 
 BugReviewTable.defaultProps = {
