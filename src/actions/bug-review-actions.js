@@ -20,11 +20,38 @@ export function fetchBugReviewApplicationsSuccess(data){
     };
 };
 
-export function resolvedReasonTypeChange(review, reasonType){
-    console.log('==========> Bug Review Action: Resolved Reason Type Change;');
-    console.log(review, reasonType);
+export function resolvedReasonTypeChangeSuccess(){
     return {
         type: actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS
+    };
+};
+
+export function resolvedReasonTypeChange(review, reasonType){
+    review['id'] = parseInt(review['id']);
+    review['resolved_type'] = reasonType;
+
+    return (dispatch) => {
+      let config = {
+          method: 'POST',
+          body: `mutation RootMutationType {
+              updateBug(data:"${JSON.stringify(review).replace(/\"/gi, '\\"')}")
+          }`,
+          headers: {
+            'Content-Type': 'application/graphql',
+            'x-access-token': localStorage.token
+          }
+        };
+
+      return fetch(SERVER_API_URL, config)
+        .then((res) => res.json())
+        .then(() => {
+          dispatch(setLoadingState(false));
+          dispatch(resolvedReasonTypeChangeSuccess());
+        })
+        .catch((err) => {
+          dispatch(setLoadingState(false));
+          dispatch(apiFailure(err));
+        });
     };
 };
 
