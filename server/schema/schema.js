@@ -27,28 +27,28 @@ const schema = new GraphQLSchema({
 		name: 'RootQueryType',
 		fields: {
 			// PTO Page
-			allUserWithPto        : UserQuery.allUserWithPto,
-			ptoApplications       : PTOQuery.ptoApplications,
+			allUserWithPto         : UserQuery.allUserWithPto,
+			ptoApplications        : PTOQuery.ptoApplications,
 			// Task Page
-			allUserWithTasks      : UserQuery.allUserWithTasks,
-			tasks                 : TaskQuery.tasks,
+			allUserWithTasks       : UserQuery.allUserWithTasks,
+			tasks                  : TaskQuery.tasks,
 			// User page
-			allUserWithPrivilege  : UserQuery.allUserWithPrivilege,
-			currentUser           : UserQuery.currentUser,
-			allUsers 			  : UserQuery.allUsers,
+			allUserWithPrivilege   : UserQuery.allUserWithPrivilege,
+			currentUser            : UserQuery.currentUser,
+			allUsers 			   : UserQuery.allUsers,
 			// Document page
-			allCategories         : CategoryQuery.getAllCategories,
-			categoryTree          : CategoryQuery.getCategoryTree,
-			commentById           : CommentQuery.getCommentById,
-			tags          		  : CategoryQuery.getAllTags,
-			getArticle 			  : ArticleQuery.getArticle,
-			getAllArticles 		  : ArticleQuery.getAllArticles,
-			getAllBugs			  : BugQuery.getAllBugs,
-			getAllBugTags	  	  : BugTagQuery.getAllBugTags,
+			allCategories          : CategoryQuery.getAllCategories,
+			categoryTree           : CategoryQuery.getCategoryTree,
+			commentById            : CommentQuery.getCommentById,
+			tags          		   : CategoryQuery.getAllTags,
+			getArticle 			   : ArticleQuery.getArticle,
+			getAllArticles 		   : ArticleQuery.getAllArticles,
+			getAllBugs			   : BugQuery.getAllBugs,
+			getAllBugTags	  	   : BugTagQuery.getAllBugTags,
 			// Feature Analysis
-			assignmentCategoryTree: AssignmentCategoryQuery.getAssignmentCategoryTree,
-			allAssignmentCategory : AssignmentCategoryQuery.getAllAssignmentCategories,
-			tags          		  : AssignmentCategoryQuery.getAllTags,
+			assignmentCategoryTree : AssignmentCategoryQuery.getAssignmentCategoryTree,
+			allAssignmentCategories: AssignmentCategoryQuery.getAllAssignmentCategories,
+			tags          		   : AssignmentCategoryQuery.getAllTags,
 		}
 	}),
 	mutation: new GraphQLObjectType({
