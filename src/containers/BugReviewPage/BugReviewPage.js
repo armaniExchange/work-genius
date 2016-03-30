@@ -124,7 +124,7 @@ class BugReviewPage extends Component {
             changeReviewText
         } = this.props;
         let menuTitle = currentSelectMenu === '' ? 'All' : currentSelectMenu;
-        let rootCauseTitle = currentSelectRootCause === '' ? 'All' : currentSelectMenu;
+        let rootCauseTitle = currentSelectRootCause === '' ? 'All' : currentSelectRootCause;
         let preventTagTitle = currentSelectPreventTag === '' ? 'All' : currentSelectPreventTag;
         return (
             <section>

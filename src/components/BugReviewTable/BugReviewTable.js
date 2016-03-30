@@ -141,7 +141,7 @@ let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, op
                 } else
                 if ( header['key'] === 'review') {
                     return (
-                        <Td key={cellIndex} colSpan={header['colspan']}>
+                        <Td key={cellIndex} isAlignLeft={true} colSpan={header['colspan']}>
                             <textarea className="mdl-textfield__input" type="text" onBlur={outBlurReviewText} rows= "3" defaultValue={review[header['key']]}></textarea>
                         </Td>
                     );

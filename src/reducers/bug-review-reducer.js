@@ -35,11 +35,11 @@ const initialState = Map({
     allUsers: List.of(),
     currentSelectUser: Map({}),
     resolvedReasonTypes: List.of(
-        Map({ label: 'Gui Code issue', value: 'code_issue' }),
-        Map({ label: 'AXAPI', value: 'axapi' }),
-        Map({ label: 'Look and feel', value: 'look_and_feel' }),
-        Map({ label: 'Requirement change', value: 'requirement_change' }),
-        Map({ label: 'Browser related', value: 'brower_related' })
+        Map({ label: 'Gui code issue', value: 'Gui code issue' }),
+        Map({ label: 'AXAPI', value: 'AXAPI' }),
+        Map({ label: 'Look and feel', value: 'Look and feel' }),
+        Map({ label: 'Requirement change', value: 'Requirement change' }),
+        Map({ label: 'Browser related', value: 'Browser related' })
     ),
     optionsReviewTags: List.of(
         Map({ value: 'test_more', label: 'Test More'}),
