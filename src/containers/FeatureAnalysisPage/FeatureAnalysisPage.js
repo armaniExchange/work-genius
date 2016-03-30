@@ -2,8 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // Components
-// import AssignmentCategoryTree from '../../components/AssignmentCategoryTree/AssignmentCategoryTree';
-import { Treebeard } from 'react-treebeard';
+import AssignmentCategoryTree from '../../components/AssignmentCategoryTree/AssignmentCategoryTree';
 // Actions
 import * as FeatureAnalysisActions from '../../actions/feature-analysis-actions';
 
@@ -22,73 +21,81 @@ class FeatureAnalysisPage extends Component {
                   {title:'Easy', 'value':1},
                   {title:'Nothing', 'value':0},
                   ];
-    }  
+    }
     componentWillMount() {
         const { fetchAssignmentCategories } = this.props;
         fetchAssignmentCategories();
     }
-
-    onToggle(node, toggled){
-        if (this.state.cursor){this.state.cursor.active = false;}
-        node.active = true;
-        if (node.children){ node.toggled = toggled; }
-        this.setState({ cursor: node });
+    _onNodeClick() {
+        const { setFormVisibility } = this.props;
+        setFormVisibility(false);
+    }
+    _onLeafClick(data) {
+        const { setCurrentLeafNode, setFormVisibility } = this.props;
+        setFormVisibility(true);
+        setCurrentLeafNode(data.id);
     }
     render() {
         const { treeDataSource } = this.props;
         return (
             <div>
-                <Treebeard
-                    data={treeDataSource} />
-            <div className="row">
-                <div className="pull-left col-md-6">Tree here</div>
-                <div className="pull-right col-md-6">
-                  <div className="form-horizontal">
-                    <h3>Edit {this.props.curCategory}</h3>
-                    <div className="col-xs-3">
-                      Primary Owner: 
+                <div className="row">
+                    <div className="pull-left col-md-6">
+                        <AssignmentCategoryTree
+                            data={treeDataSource}
+                            onNodeClick={::this._onNodeClick}
+                            onLeafClick={::this._onLeafClick}/>
                     </div>
-                    <div className="col-xs-9">
-                      <DropDownList
-                        isDropDownListVisual2={true}
-                        isNeedAll={false}
-                        onOptionClick={(val) => {
-                          console.log(val);
-                        }}
-                        aryOptionConfig={this.user} />
+                    <div className="pull-right col-md-6">
+                        <div className="form-horizontal">
+                            <h3>Edit {this.props.curCategory}</h3>
+                            <div className="col-xs-3">
+                                Primary Owner:
+                            </div>
+                            <div className="col-xs-9">
+                                <DropDownList
+                                    isDropDownListVisual2={true}
+                                    isNeedAll={false}
+                                    onOptionClick={(val) => {
+                                        console.log(val);
+                                    }}
+                                    aryOptionConfig={this.user} />
+                            </div>
+                            <div className="col-xs-3">
+                                Secondary Owner:
+                            </div>
+                            <div className="col-xs-9">
+                                <DropDownList
+                                    isDropDownListVisual2={true}
+                                    isNeedAll={false}
+                                    onOptionClick={(val) => {
+                                        console.log(val, 'val2');
+                                    }}
+                                    aryOptionConfig={this.user} />
+                            </div>
+                            <div className="col-xs-3">
+                                Level:
+                            </div>
+                            <div className="col-xs-9">
+                                <DropDownList
+                                    isDropDownListVisual2={true}
+                                    isNeedAll={false}
+                                    onOptionClick={(val) => {
+                                        console.log(val, 'val3');
+                                    }}
+                                    aryOptionConfig={this.level} />
+                            </div>
+                            <div className="col-xs-3"></div>
+                            <div className="col-xs-9">
+                                <RaisedButton
+                                    label="Update"
+                                    secondary={true}
+                                    onClick={()=>{
+                                        console.log('submited');
+                                    }} />
+                            </div>
+                        </div>
                     </div>
-                    <div className="col-xs-3">
-                      Secondary Owner: 
-                    </div>
-                    <div className="col-xs-9">
-                      <DropDownList
-                        isDropDownListVisual2={true}
-                        isNeedAll={false}
-                        onOptionClick={(val) => {
-                          console.log(val, 'val2');
-                        }}
-                        aryOptionConfig={this.user} />
-                    </div>
-                    <div className="col-xs-3">
-                      Level: 
-                    </div>
-                    <div className="col-xs-9">
-                      <DropDownList
-                        isDropDownListVisual2={true}
-                        isNeedAll={false}
-                        onOptionClick={(val) => {
-                          console.log(val, 'val3');
-                        }}
-                        aryOptionConfig={this.level} />
-                    </div>
-                    <div className="col-xs-3">
-                    </div>
-                    <div className="col-xs-9">
-                      <RaisedButton label="Update" secondary={true} onClick={()=>{
-                        console.log('submited');
-                      }} />
-                    </div>
-                  </div>
                 </div>
             </div>
         );
@@ -98,8 +105,9 @@ class FeatureAnalysisPage extends Component {
 FeatureAnalysisPage.propTypes = {
     treeDataSource: PropTypes.object.isRequired,
     curCategory: PropTypes.string,
-    treeDataSource: PropTypes.array.isRequired,
     fetchAssignmentCategories: PropTypes.func.isRequired,
+    setCurrentLeafNode: PropTypes.func.isRequired,
+    setFormVisibility: PropTypes.func.isRequired
 };
 FeatureAnalysisPage.defaultProps = {};
 

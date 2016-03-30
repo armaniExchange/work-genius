@@ -2,7 +2,9 @@ import * as actionTypes from '../constants/action-types';
 import { Map } from 'immutable';
 
 const initialState = Map({
-	treeDataSource: Map({})
+	treeDataSource: Map({}),
+	isFormVisible: false,
+	currentLeafId: -1
 });
 
 function generateTree(dataArr, root) {
@@ -15,9 +17,7 @@ function generateTree(dataArr, root) {
         return {
             id,
             name,
-            children: [],
-			toggled: true,
-			isLeaf: true
+            children: []
         };
     }
     directChildren = dataArr.filter((node) => { return node.parentId === root.id; });
@@ -28,9 +28,7 @@ function generateTree(dataArr, root) {
     return {
         id,
         name,
-        children: subTree,
-		toggled: true,
-		isLeaf: false
+        children: subTree
     };
 }
 
@@ -43,7 +41,11 @@ function transformToTree(dataArr) {
 export default function featureAnalysisReducer(state = initialState, action) {
 	switch (action.type) {
 		case actionTypes.FETCH_ASSIGNMENT_CATEGORIES_SUCCESS:
-		    return initialState.set('treeDataSource', transformToTree(action.data));
+		    return state.set('treeDataSource', transformToTree(action.data));
+		case actionTypes.SET_CURRENT_LEAF_NODE:
+		    return state.set('currentLeafId', action.id);
+		case actionTypes.SET_FORM_VISIBILITY:
+		    return state.set('isFormVisible', action.status);
 		default:
 			return state;
 	}

@@ -64,7 +64,8 @@ var config = {
     plugins: [
         new Webpack.HotModuleReplacementPlugin(),
         new Webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.bundle.js'),
-        new Webpack.NoErrorsPlugin()
+        new Webpack.NoErrorsPlugin(),
+        new Webpack.optimize.DedupePlugin()
     ],
     resolve: {
         extensions: ['', '.js', '.jsx', '.css'],
