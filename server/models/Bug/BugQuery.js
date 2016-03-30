@@ -52,9 +52,9 @@ let BugQuery = {
 					filter.assigned_to = assignedTo;
 				}
 				if(!!pageSize){
-					query = r.db('work_genius').table('bugs').filter(filter).skip((pageIndex - 1) * pageSize).limit(pageSize).coerceTo('array');
+					query = r.db('work_genius').table('bugs').filter(filter).orderBy('id').skip((pageIndex - 1) * pageSize).limit(pageSize).coerceTo('array');
 				}else{
-					query = r.db('work_genius').table('bugs').filter(filter).coerceTo('array');
+					query = r.db('work_genius').table('bugs').filter(filter).orderBy('id').coerceTo('array');
 				}
 				
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
