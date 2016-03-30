@@ -12,10 +12,10 @@ import {
 	apiFailure
 } from './app-actions';
 
-export function setCurrentLeafNode(id) {
+export function setCurrentLeafNode(data) {
 	return {
 		type: actionTypes.SET_CURRENT_LEAF_NODE,
-		id
+		data
 	};
 }
 
