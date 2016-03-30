@@ -101,7 +101,7 @@ let updateBug = (dispatch, data) => {
   let config = {
       method: 'POST',
       body: `mutation RootMutationType {
-          updateBug(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+          updateBug(data:"${JSON.stringify(data).replace(/\\/gi, '\\\\').replace(/\"/gi, '\\"')}")
       }`,
       headers: {
         'Content-Type': 'application/graphql',
