@@ -25,6 +25,39 @@ export function setFormVisibility(status) {
 		status
 	};
 }
+export function updateOneAssignmentCategoryBase(dispatch, row) {
+  let config = {
+    method: 'POST',
+    body: `mutation RootMutationType {
+        updateAssignmentCategory(data:"${JSON.stringify(row).replace(/\"/gi, '\\"')}")
+    }`,
+    headers: {
+      'Content-Type': 'application/graphql',
+      'x-access-token': localStorage.token
+    }
+  };
+  return fetch(SERVER_API_URL, config)
+    .then((res) => res.json())
+    .then((body) => {
+      console.log('body', body);
+      dispatch(setLoadingState(false));
+      console.log('body.data', body.data);
+      //dispatch(fetchAssignmentCategoriesSuccess(body.data));
+    })
+    .catch((err) => {
+      dispatch(setLoadingState(false));
+      dispatch(apiFailure(err));
+    });
+};
+
+export function updateOneAssignmentCategory(row, primaryOwner, secondaryOwner, level) {
+  row['primary_owner'] = primaryOwner;
+  row['secondary_owner'] = secondaryOwner;
+  row['level'] = level;
+  return (dispatch) => {
+    updateOneAssignmentCategoryBase(dispatch, row);
+  };
+};
 
 export function fetchAssignmentCategoriesSuccess(data) {
 	return {
