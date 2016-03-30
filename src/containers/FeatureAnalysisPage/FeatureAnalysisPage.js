@@ -36,10 +36,9 @@ class FeatureAnalysisPage extends Component {
         setCurrentLeafNode(data.id);
     }
     render() {
-        const { updateOneAssignmentCategory } = this.props;
+        const { treeDataSource, updateOneAssignmentCategory } = this.props;
         return (
             <div className="row">
-            {curCategory},{curPrimaryOwner},{curSecondaryOwner},{curLevel}
                 <div className="pull-left col-md-6">
                     <AssignmentCategoryTree
                             data={treeDataSource}
@@ -92,6 +91,7 @@ class FeatureAnalysisPage extends Component {
                         console.log('submited');
                         console.log('updateOneAssignmentCategory', updateOneAssignmentCategory);
                       }} />
+                    </div>
                     </div>
                 </div>
             </div>
