@@ -93,7 +93,6 @@ class BugReviewPage extends Component {
     }
 
     _onChangeSelectPreventTag(tag) {
-        console.log(tag);
         const {
             fetchBugReviewPageData,
             currentProjectVersion,

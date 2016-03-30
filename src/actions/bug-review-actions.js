@@ -223,7 +223,6 @@ export function changeReviewText(review, reviewText){
 };
 
 export function fetchBugReviewApplications(version, userAlisa, menu, rootCause, preventTag) {
-    console.log(version, userAlisa, menu, rootCause, preventTag);
     return (dispatch) => {
         var user = '';
         if (userAlisa !== 'All') {
@@ -258,7 +257,6 @@ export function fetchBugReviewApplications(version, userAlisa, menu, rootCause, 
                 'x-access-token': localStorage.token
             }
         };
-        console.log(config);
         return fetch(SERVER_API_URL, config)
             .then((res) => res.json())
             .then((body) => {
