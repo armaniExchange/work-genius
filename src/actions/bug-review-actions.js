@@ -223,9 +223,12 @@ export function changeReviewText(review, reviewText){
 };
 
 export function fetchBugReviewApplications(version, userAlisa, menu, rootCause, preventTag) {
-
+    console.log(version, userAlisa, menu, rootCause, preventTag);
     return (dispatch) => {
-        let user = userAlisa ? userAlisa.toLowerCase() : userAlisa;
+        var user = '';
+        if (userAlisa !== 'All') {
+            user = userAlisa ? userAlisa.toLowerCase() : userAlisa;
+        }
         menu = menu ? menu : '';
         rootCause = rootCause ? rootCause : '';
         preventTag = preventTag ? preventTag: '';
@@ -233,7 +236,7 @@ export function fetchBugReviewApplications(version, userAlisa, menu, rootCause, 
             method: 'POST',
             body: `{
                     getAllBugs(label:"` + version + `",assignedTo:"` + user +
-                        `menu:"` + menu +
+                        `",menu:"` + menu +
                         `",rootCause:"`+ rootCause +
                         `",preventTag:"` + preventTag +
                         `",pageSize:0,pageIndex:1){
@@ -261,6 +264,9 @@ export function fetchBugReviewApplications(version, userAlisa, menu, rootCause, 
             .then((body) => {
                 dispatch(fetchCurrentProjectVersion(version));
                 dispatch(fetchCurrentSelectUser(userAlisa));
+                dispatch(fetchCurrentSelectMenu(menu));
+                dispatch(fetchCurrentSelectRootCause(rootCause));
+                dispatch(fetchCurrentSelectPreventTag(preventTag));
                 dispatch(fetchBugReviewApplicationsSuccess(body.data.getAllBugs));
             })
             .catch((err) => {

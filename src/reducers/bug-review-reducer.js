@@ -46,13 +46,13 @@ const initialState = Map({
         Map({ value: 'deep_test', label: 'Deep Test'})
     ),
     optionsMenus: List.of(
-         Map({ value: 'slb', label: 'SLB'}),
-         Map({ value: 'gslb', label: 'GSLB'}),
-         Map({ value: 'system', label: 'System'}),
-         Map({ value: 'network', label: 'Network'}),
-         Map({ value: 'adc', label: 'ADC'}),
-         Map({ value: 'ssli', label: 'SSLi'}),
-         Map({ value: 'security', label: 'Security'})
+         Map({ value: 'SLB', label: 'SLB'}),
+         Map({ value: 'GSLB', label: 'GSLB'}),
+         Map({ value: 'System', label: 'System'}),
+         Map({ value: 'Network', label: 'Network'}),
+         Map({ value: 'ADC', label: 'ADC'}),
+         Map({ value: 'SSLi', label: 'SSLi'}),
+         Map({ value: 'Security', label: 'Security'})
     )
 });
 
@@ -115,12 +115,17 @@ function setAllUsers(state, data){
 
 function setSelectUser(state, userAlisa){
     let allUsers = state.get(`allUsers`);
+    let isAll = true;
     allUsers.forEach((userMap) => {
         var alisa = userMap.get('value');
         if (alisa === userAlisa) {
+            isAll = false;
             state = state.set(`currentSelectUser`, userMap);
         }
     });
+    if (isAll) {
+        state = state.set(`currentSelectUser`, Map({title: 'All'}));
+    }
     return state;
 }
 
@@ -162,6 +167,15 @@ export default function bugReviewReducer(state = initialState, action) {
             return nextState;
         case actionTypes.SET_BUG_REVIEW_PROJECT_VERSION:
             nextState = nextState.set(`currentProjectVersion`, action.data);
+            return nextState;
+        case actionTypes.SET_BUG_REVIEW_SELECT_MENU:
+            nextState = nextState.set(`currentSelectMenu`, action.data);
+            return nextState;
+        case actionTypes.SET_BUG_REVIEW_SELECT_PREVENT_TAG:
+            nextState = nextState.set(`currentSelectPreventTag`, action.data);
+            return nextState;
+        case actionTypes.SET_BUG_REVIEW_SELECT_ROOT_CAUSE:
+            nextState = nextState.set(`currentSelectRootCause`, action.data);
             return nextState;
         default:
             return state;

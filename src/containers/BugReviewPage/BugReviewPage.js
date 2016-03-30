@@ -64,7 +64,7 @@ class BugReviewPage extends Component {
             currentSelectRootCause,
             currentSelectPreventTag
         } = this.props;
-
+        user = user === '' ? 'All' : user;
         fetchBugReviewPageData(currentProjectVersion, user, currentSelectMenu, currentSelectRootCause, currentSelectPreventTag);
     }
 
@@ -124,6 +124,9 @@ class BugReviewPage extends Component {
             changeMenuTagOptions,
             changeReviewText
         } = this.props;
+        let menuTitle = currentSelectMenu === '' ? 'All' : currentSelectMenu;
+        let rootCauseTitle = currentSelectRootCause === '' ? 'All' : currentSelectMenu;
+        let preventTagTitle = currentSelectPreventTag === '' ? 'All' : currentSelectPreventTag;
         return (
             <section>
                 {/* Project Version */}
@@ -137,7 +140,7 @@ class BugReviewPage extends Component {
                 {/* Owner */}
                 <label>&nbsp;&nbsp;Owner:&nbsp;</label>
                 <DropDownList
-                    isNeedAll={false}
+                    isNeedAll={true}
                     title={currentSelectUser.title}
                     onOptionClick={this._onChangeSelectUser}
                     aryOptionConfig={allUsers}
@@ -145,8 +148,8 @@ class BugReviewPage extends Component {
                 {/* Menu */}
                 <label>&nbsp;&nbsp;Menu:&nbsp;</label>
                 <DropDownList
-                    isNeedAll={false}
-                    title={currentSelectMenu}
+                    isNeedAll={true}
+                    title={menuTitle}
                     onOptionClick={this._onChangeSelectMenu}
                     aryOptionConfig={optionsMenus.map((option) => {
                         return {title: option.label, value: option.value, subtitle: ''};
@@ -155,8 +158,8 @@ class BugReviewPage extends Component {
                 {/* Root Cause */}
                 <label>&nbsp;&nbsp;Root Cause:&nbsp;</label>
                 <DropDownList
-                    isNeedAll={false}
-                    title={currentSelectRootCause}
+                    isNeedAll={true}
+                    title={rootCauseTitle}
                     onOptionClick={this._onChangeSelectRootCause}
                     aryOptionConfig={resolvedReasonTypes.map((option) => {
                         return {title: option.label, value: option.value, subtitle: ''};
@@ -165,9 +168,9 @@ class BugReviewPage extends Component {
                 {/* Prevent Tags */}
                 <label>&nbsp;&nbsp;Prevent Tags:&nbsp;</label>
                 <DropDownList
-                    isNeedAll={false}
-                    title={currentSelectPreventTag}
-                    onOptionClick={this._onChangeSelectBugResovledType}
+                    isNeedAll={true}
+                    title={preventTagTitle}
+                    onOptionClick={this._onChangeSelectPreventTag}
                     aryOptionConfig={optionsReviewTags.map((option) => {
                         return {title: option.label, value: option.value, subtitle: ''};
                     })}
