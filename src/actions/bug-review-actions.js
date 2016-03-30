@@ -175,11 +175,13 @@ export function changeReviewText(review, reviewText){
 };
 
 export function fetchBugReviewApplications(version, userAlisa) {
+
     return (dispatch) => {
+        let user = userAlisa ? userAlisa.toLowerCase() : userAlisa;
         let config = {
             method: 'POST',
             body: `{
-                    getAllBugs(label:"` + version + `",assignedTo:"` + userAlisa.toLowerCase() + `",pageSize:0,pageIndex:1){
+                    getAllBugs(label:"` + version + `",assignedTo:"` + user + `",pageSize:0,pageIndex:1){
                         id,
                         assigned_to,
                         bug_severity,
