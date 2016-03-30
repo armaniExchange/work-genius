@@ -12,6 +12,19 @@ import {
 	apiFailure
 } from './app-actions';
 
+export function setCurrentLeafNode(id) {
+	return {
+		type: actionTypes.SET_CURRENT_LEAF_NODE,
+		id
+	};
+}
+
+export function setFormVisibility(status) {
+	return {
+		type: actionTypes.SET_FORM_VISIBILITY,
+		status
+	};
+}
 
 export function fetchAssignmentCategoriesSuccess(data) {
 	return {
