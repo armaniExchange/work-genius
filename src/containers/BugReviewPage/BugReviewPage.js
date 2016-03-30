@@ -109,7 +109,7 @@ BugReviewPage.propTypes = {
     resolvedReasonTypes:       PropTypes.array,
     optionsReviewTags:         PropTypes.array,
     optionsMenus:              PropTypes.array,
-    currentSelectUser:         PropTypes.map,
+    currentSelectUser:         PropTypes.object,
     fetchBugReviewPageData:    PropTypes.func,
     fetchPreventTagsOptions:   PropTypes.func,
     fetchAllUsers:             PropTypes.func,
@@ -117,6 +117,10 @@ BugReviewPage.propTypes = {
     changeReviewTagOptions:    PropTypes.func,
     changeMenuTagOptions:      PropTypes.func,
     changeReviewText:          PropTypes.func
+};
+
+BugReviewPage.defaultProps = {
+
 };
 
 function mapStateToProps(state) {

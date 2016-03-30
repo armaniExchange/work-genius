@@ -113,6 +113,18 @@ function setSelectUser(state, userAlisa){
     return state;
 }
 
+function changeOptions(state, data) {
+    var applications = state.get(`applications`);
+
+    applications.forEach((application) => {
+        if ( application.get(`id`) === String(data.id)){
+            application = data;
+        }
+    });
+
+    return state.set(`applications`, applications);
+}
+
 export default function bugReviewReducer(state = initialState, action) {
     let nextState = state;
     switch (action.type) {
@@ -126,6 +138,7 @@ export default function bugReviewReducer(state = initialState, action) {
             // }
             return nextState;
         case actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS:
+            nextState = changeOptions(nextState, action.data);
             return nextState;
         case actionTypes.FETCH_BUG_REVIEW_PREVENT_TAGS_OPTIONS:
             nextState = setPreventTagData(nextState, action.data);

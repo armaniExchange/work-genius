@@ -81,9 +81,10 @@ export function fetchBugReviewApplications() {
     };
 };
 
-export function fetchBugReviewChangeOptionsChangeSuccess(){
+export function fetchBugReviewChangeOptionsChangeSuccess(data){
     return {
-        type: actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS
+        type: actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS,
+        data
     };
 };
 
@@ -105,8 +106,8 @@ let updateBug = (dispatch, data) => {
     .then((res) => res.json())
     .then(() => {
       dispatch(setLoadingState(false));
-      dispatch(fetchBugReviewChangeOptionsChangeSuccess());
-      dispatch(fetchBugReviewApplications());
+      dispatch(fetchBugReviewChangeOptionsChangeSuccess(data));
+      // dispatch(fetchBugReviewApplications());
     })
     .catch((err) => {
       dispatch(setLoadingState(false));

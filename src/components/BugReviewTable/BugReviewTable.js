@@ -97,7 +97,7 @@ let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, op
                         //   colSpan={header['colspan']}>
                         //   <RadioGroup aryRadioConfig={resolvedReasonTypes} checkRadio="axapi" onRadioChange={resolvedReasonChange}/>
                         //</Td>
-                        <Td isAlignLeft={true} colSpan={header['colspan']}>
+                        <Td key={cellIndex} isAlignLeft={true} colSpan={header['colspan']}>
                             <Select
                                 name="menu_tag"
                                 value={review[header['key']]}
@@ -111,7 +111,7 @@ let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, op
                     let tags = review[header['key']];
                     tags = (tags) ? tags.join(',') : tags;
                     return (
-                        <Td isAlignLeft={true}
+                        <Td key={cellIndex} isAlignLeft={true}
                             colSpan={header['colspan']}
                         >
                             <Select
@@ -129,7 +129,7 @@ let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, op
                     let menu = review[header['key']];
                     menu = (menu) ? menu.join(',') : menu;
                     return (
-                        <Td isAlignLeft={true} colSpan={header['colspan']}>
+                        <Td key={cellIndex} isAlignLeft={true} colSpan={header['colspan']}>
                             <Select
                                 name="menu_tag"
                                 value={menu}
@@ -141,7 +141,7 @@ let TableBody = ({ data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, op
                 } else
                 if ( header['key'] === 'review') {
                     return (
-                        <Td colSpan={header['colspan']}>
+                        <Td key={cellIndex} colSpan={header['colspan']}>
                             <textarea className="mdl-textfield__input" type="text" onBlur={outBlurReviewText} rows= "3" defaultValue={review[header['key']]}></textarea>
                         </Td>
                     );

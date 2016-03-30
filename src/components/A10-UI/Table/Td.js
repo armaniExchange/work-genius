@@ -16,6 +16,6 @@ export default class Td extends Component {
 
 Td.propTypes = {
     className: PropTypes.string,
-    colSpan: PropTypes.string,
+    colSpan: PropTypes.number,
     isAlignLeft: PropTypes.bool
 };
