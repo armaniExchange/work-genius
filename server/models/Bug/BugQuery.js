@@ -25,6 +25,18 @@ let BugQuery = {
 				type: GraphQLString,
 				description: 'assigned To'
 			},
+			menu: {
+				type: GraphQLString,
+				description: 'belong to menu'
+			},
+			rootCause: {
+				type: GraphQLString,
+				description: 'root cause'
+			},
+			preventTag: {
+				type: GraphQLString,
+				description: 'prevent Tag'
+			},
 			pageSize: {
 				type: GraphQLInt,
 				description: 'page size'
@@ -34,15 +46,32 @@ let BugQuery = {
 				description: 'page index'
 			}
 		},
-		resolve: async (root, { label, assignedTo, pageSize, pageIndex }) => {
+		resolve: async (root, { label, assignedTo,menu,rootCause,preventTag, pageSize, pageIndex }) => {
 			let connection = null,
 			    result = null,
                 filter = {},
 				query = null;
+			let menuFilter = (bug) => {
+				if(menu){
+					return bug('menu').contains(menu);
+				}else{
+					return true;
+				}
+			},
+			tagFilter = (bug) => {
+				if(preventTag){
+					return bug('tags').contains(preventTag);
+				}else{
+					return true;
+				}
+			};
 
 			try {
 				console.log('label:' + label);
 				console.log('assignedTo:' + assignedTo);
+				console.log('menu:'+ menu) ;
+				console.log('rootCause:'+ rootCause) ;
+				console.log('preventTag:'+ preventTag) ;
 				console.log('page size:' + pageSize);
 				console.log('page index:' + pageIndex);
 				if(label){
@@ -51,10 +80,15 @@ let BugQuery = {
 				if(assignedTo){
 					filter.assigned_to = assignedTo;
 				}
+				if(rootCause){
+					filter.resolved_type = rootCause;
+				}
 				if(!!pageSize){
-					query = r.db('work_genius').table('bugs').filter(filter).orderBy('id').skip((pageIndex - 1) * pageSize).limit(pageSize).coerceTo('array');
+					query = r.db('work_genius').table('bugs').filter(filter).filter(menuFilter).filter(tagFilter)
+							.orderBy('id').skip((pageIndex - 1) * pageSize).limit(pageSize).coerceTo('array');
 				}else{
-					query = r.db('work_genius').table('bugs').filter(filter).orderBy('id').coerceTo('array');
+					query = r.db('work_genius').table('bugs').filter(filter).filter(menuFilter).filter(tagFilter)
+					.orderBy('id').coerceTo('array');
 				}
 				
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
