@@ -2,7 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // Components
-
+// import AssignmentCategoryTree from '../../components/AssignmentCategoryTree/AssignmentCategoryTree';
+import { Treebeard } from 'react-treebeard';
 // Actions
 import * as FeatureAnalysisActions from '../../actions/feature-analysis-actions';
 
@@ -26,8 +27,19 @@ class FeatureAnalysisPage extends Component {
         const { fetchAssignmentCategories } = this.props;
         fetchAssignmentCategories();
     }
+
+    onToggle(node, toggled){
+        if (this.state.cursor){this.state.cursor.active = false;}
+        node.active = true;
+        if (node.children){ node.toggled = toggled; }
+        this.setState({ cursor: node });
+    }
     render() {
+        const { treeDataSource } = this.props;
         return (
+            <div>
+                <Treebeard
+                    data={treeDataSource} />
             <div className="row">
                 <div className="pull-left col-md-6">Tree here</div>
                 <div className="pull-right col-md-6">
@@ -84,6 +96,7 @@ class FeatureAnalysisPage extends Component {
 }
 
 FeatureAnalysisPage.propTypes = {
+    treeDataSource: PropTypes.object.isRequired,
     curCategory: PropTypes.string,
     treeDataSource: PropTypes.array.isRequired,
     fetchAssignmentCategories: PropTypes.func.isRequired,
