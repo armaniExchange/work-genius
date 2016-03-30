@@ -8,6 +8,8 @@ import admin from './admin-reducer';
 import dataExplorer from './data-explorer-reducer';
 import documentation from './document-reducer';
 import article from './article-reducer';
+import featureAnalysis from './feature-analysis-reducer';
+import bugReview from './bug-review-reducer';
 
 const rootReducer = combineReducers({
 	app,
@@ -17,8 +19,10 @@ const rootReducer = combineReducers({
 	dataExplorer,
 	pto,
 	admin,
-  documentation,
-  article
+	documentation,
+	article,
+	bugReview,
+	featureAnalysis
 });
 
 export default rootReducer;

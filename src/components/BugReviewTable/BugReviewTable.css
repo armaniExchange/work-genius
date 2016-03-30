@@ -1,0 +1,36 @@
+.pto-table .pto-table__body .pto-table__body--empty {
+    text-align: center;
+}
+
+.bug-review-table__body--left{
+    text-align: left !important;
+    word-break: break-all;
+    word-wrap:break-word;
+}
+
+.bug-review-table__body--front .mdl-radio{
+    font-size: 12px !important;
+    line-height: 24px !important;
+    font-weight: 200 !important;
+}
+
+.bug-review-table__body--center{
+    text-align: center !important;
+    word-break: break-all;
+    word-wrap:break-word;
+}
+
+.bug-review-table{
+    white-space: normal !important;
+    table-layout:fixed;
+    width: 100%;
+}
+
+.pto-table .hide {
+    display: none;
+}
+
+.pto-table .pto-table__header {
+    cursor: pointer;
+    text-align: center;
+}

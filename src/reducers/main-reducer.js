@@ -23,6 +23,10 @@ const initialState = Map({
 			displayText: 'Data Explorer',
 			link: '/main/data-explorer'
 		}),
+		Map({
+			displayText: 'Bug Review',
+			link: '/main/bug-review'
+		}),
     Map({
       displayText: 'Document',
       link: '/main/document'
@@ -31,10 +35,14 @@ const initialState = Map({
 			displayText: 'Redux Demo',
 			link: '/main/redux-demo'
 		}),
-    Map({
-      displayText: 'Valid Demo',
-      link: '/main/valid-demo'
-    }),
+	    Map({
+	        displayText: 'Valid Demo',
+	        link: '/main/valid-demo'
+	    }),
+		Map({
+	        displayText: 'Feature Analysis',
+	        link: '/main/feature-analysis'
+	    })
 	),
 	hasLogo: true
 });

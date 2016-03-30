@@ -83,6 +83,10 @@ let UserType = new GraphQLObjectType({
 		privilege_display_name: {
 			type: GraphQLString,
 			description: 'User privilege display name'
+		},
+		alias: {
+			type: GraphQLString,
+			description: 'User alias'
 		}
 	})
 });
