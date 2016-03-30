@@ -2,40 +2,27 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // Components
-import FeatureAnalysisTableRow from '../../components/Feature-Analysis-Table-Row/Feature-Analysis-Table-Row.js';
+
 // Actions
 import * as FeatureAnalysisActions from '../../actions/feature-analysis-actions';
 
 class FeatureAnalysisPage extends Component {
-    _onFeatureChangeHandler(id, newFeature) {
-        console.log(id, newFeature);
+    componentWillMount() {
+        const { fetchAssignmentCategories } = this.props;
+        fetchAssignmentCategories();
     }
     render() {
-        const { data, featureOptions } = this.props;
-        let tableRowHTML = data.map((d, i) => {
-            return (
-                <FeatureAnalysisTableRow
-                    key={i}
-                    data={d}
-                    featureOptions={featureOptions}
-                    onChangeHandler={::this._onFeatureChangeHandler}/>
-            );
-        });
         return (
             <div>
-                <table>
-                    <tbody>
-                        {tableRowHTML}
-                    </tbody>
-                </table>
+                Hi
             </div>
         );
     }
 }
 
 FeatureAnalysisPage.propTypes = {
-    featureOptions: PropTypes.array.isRequired,
-    data: PropTypes.array.isRequired
+    treeDataSource: PropTypes.array.isRequired,
+    fetchAssignmentCategories: PropTypes.func.isRequired,
 };
 FeatureAnalysisPage.defaultProps = {};
 
@@ -47,9 +34,10 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        featureAnalysisActions: bindActionCreators(FeatureAnalysisActions, dispatch)
-    };
+    return Object.assign(
+        {},
+        bindActionCreators(FeatureAnalysisActions, dispatch)
+    );
 }
 
 export default connect(
