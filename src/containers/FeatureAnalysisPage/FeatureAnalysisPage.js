@@ -36,65 +36,62 @@ class FeatureAnalysisPage extends Component {
         setCurrentLeafNode(data.id);
     }
     render() {
-        const { treeDataSource } = this.props;
+        const { updateOneAssignmentCategory } = this.props;
         return (
-            <div>
-                <div className="row">
-                    <div className="pull-left col-md-6">
-                        <AssignmentCategoryTree
+            <div className="row">
+            {curCategory},{curPrimaryOwner},{curSecondaryOwner},{curLevel}
+                <div className="pull-left col-md-6">
+                    <AssignmentCategoryTree
                             data={treeDataSource}
                             onNodeClick={::this._onNodeClick}
                             onLeafClick={::this._onLeafClick}/>
+                </div>
+                <div className="pull-right col-md-6">
+                  <div className="form-horizontal">
+                    <h3>Edit {this.props.curCategory}</h3>
+                    <div className="col-xs-3">
+                      Primary Owner: 
                     </div>
-                    <div className="pull-right col-md-6">
-                        <div className="form-horizontal">
-                            <h3>Edit {this.props.curCategory}</h3>
-                            <div className="col-xs-3">
-                                Primary Owner:
-                            </div>
-                            <div className="col-xs-9">
-                                <DropDownList
-                                    isDropDownListVisual2={true}
-                                    isNeedAll={false}
-                                    onOptionClick={(val) => {
-                                        console.log(val);
-                                    }}
-                                    aryOptionConfig={this.user} />
-                            </div>
-                            <div className="col-xs-3">
-                                Secondary Owner:
-                            </div>
-                            <div className="col-xs-9">
-                                <DropDownList
-                                    isDropDownListVisual2={true}
-                                    isNeedAll={false}
-                                    onOptionClick={(val) => {
-                                        console.log(val, 'val2');
-                                    }}
-                                    aryOptionConfig={this.user} />
-                            </div>
-                            <div className="col-xs-3">
-                                Level:
-                            </div>
-                            <div className="col-xs-9">
-                                <DropDownList
-                                    isDropDownListVisual2={true}
-                                    isNeedAll={false}
-                                    onOptionClick={(val) => {
-                                        console.log(val, 'val3');
-                                    }}
-                                    aryOptionConfig={this.level} />
-                            </div>
-                            <div className="col-xs-3"></div>
-                            <div className="col-xs-9">
-                                <RaisedButton
-                                    label="Update"
-                                    secondary={true}
-                                    onClick={()=>{
-                                        console.log('submited');
-                                    }} />
-                            </div>
-                        </div>
+                    <div className="col-xs-9">
+                      <DropDownList
+                        isDropDownListVisual2={true}
+                        isNeedAll={false}
+                        onOptionClick={(val) => {
+                          console.log(val);
+                        }}
+                        aryOptionConfig={this.user} />
+                    </div>
+                    <div className="col-xs-3">
+                      Secondary Owner: 
+                    </div>
+                    <div className="col-xs-9">
+                      <DropDownList
+                        isDropDownListVisual2={true}
+                        isNeedAll={false}
+                        onOptionClick={(val) => {
+                          console.log(val, 'val2');
+                        }}
+                        aryOptionConfig={this.user} />
+                    </div>
+                    <div className="col-xs-3">
+                      Level: 
+                    </div>
+                    <div className="col-xs-9">
+                      <DropDownList
+                        isDropDownListVisual2={true}
+                        isNeedAll={false}
+                        onOptionClick={(val) => {
+                          console.log(val, 'val3');
+                        }}
+                        aryOptionConfig={this.level} />
+                    </div>
+                    <div className="col-xs-3">
+                    </div>
+                    <div className="col-xs-9">
+                      <RaisedButton label="Update" secondary={true} onClick={()=>{
+                        console.log('submited');
+                        console.log('updateOneAssignmentCategory', updateOneAssignmentCategory);
+                      }} />
                     </div>
                 </div>
             </div>
@@ -105,6 +102,7 @@ class FeatureAnalysisPage extends Component {
 FeatureAnalysisPage.propTypes = {
     treeDataSource: PropTypes.object.isRequired,
     curCategory: PropTypes.string,
+    updateOneAssignmentCategory: PropTypes.func.isRequired,
     fetchAssignmentCategories: PropTypes.func.isRequired,
     setCurrentLeafNode: PropTypes.func.isRequired,
     setFormVisibility: PropTypes.func.isRequired

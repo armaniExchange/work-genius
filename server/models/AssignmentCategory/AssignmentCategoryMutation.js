@@ -36,7 +36,7 @@ let Mutation = {
         if(!id){
           return 'Fail to update data!';
         }
-	console.log('mutation id', id);
+	      console.log('mutation id', id);
         query = r.db('work_genius').table('assignment_categories').get(id).update(data);
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         await query.run(connection);

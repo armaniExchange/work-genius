@@ -26,7 +26,6 @@ export function setFormVisibility(status) {
 	};
 }
 export function updateOneAssignmentCategoryBase(dispatch, row) {
-  
   let config = {
     method: 'POST',
     body: `mutation RootMutationType {
@@ -37,13 +36,13 @@ export function updateOneAssignmentCategoryBase(dispatch, row) {
       'x-access-token': localStorage.token
     }
   };
-  dispatch(setLoadingState(true));
   return fetch(SERVER_API_URL, config)
     .then((res) => res.json())
     .then((body) => {
       console.log('body', body);
       dispatch(setLoadingState(false));
-      // dispatch(fetchAssignmentCategoriesSuccess(body.data.allAssignmentCategories));
+      console.log('body.data', body.data);
+      //dispatch(fetchAssignmentCategoriesSuccess(body.data));
     })
     .catch((err) => {
       dispatch(setLoadingState(false));
