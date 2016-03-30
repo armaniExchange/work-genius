@@ -83,6 +83,12 @@ let BugQuery = {
 				if(rootCause){
 					filter.resolved_type = rootCause;
 				}
+
+				//get total row
+				query = r.db('work_genius').table('bugs').filter(filter).filter(menuFilter).filter(tagFilter).count();
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				let totalRow = await query.run(connection); 
+
 				if(!!pageSize){
 					query = r.db('work_genius').table('bugs').filter(filter).filter(menuFilter).filter(tagFilter)
 							.orderBy('id').skip((pageIndex - 1) * pageSize).limit(pageSize).coerceTo('array');
@@ -90,11 +96,12 @@ let BugQuery = {
 					query = r.db('work_genius').table('bugs').filter(filter).filter(menuFilter).filter(tagFilter)
 					.orderBy('id').coerceTo('array');
 				}
-				
-				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				result = await query.run(connection); 
+				for(let bug of result){
+					bug.total_row = totalRow;
+				}
 				console.log('result:');
-				console.log(result.length);             
+				console.log(totalRow);             
 				await connection.close();
 			} catch (err) {
 				return err;
