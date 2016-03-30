@@ -27,29 +27,27 @@ class FeatureAnalysisPage extends Component {
         fetchAssignmentCategories();
     }
     _onNodeClick() {
-        const { setFormVisibility } = this.props;
-        setFormVisibility(false);
-    }
-    _onLeafClick(data) {
-        const { setCurrentLeafNode, setFormVisibility } = this.props;
-        setFormVisibility(true);
-        setCurrentLeafNode(data.id);
+        this.props.setCurrentLeafNode(undefined);
     }
     render() {
-        const { treeDataSource, updateOneAssignmentCategory } = this.props;
+        const {
+            treeDataSource,
+            updateOneAssignmentCategory,
+            setCurrentLeafNode
+        } = this.props;
         return (
             <div className="row">
                 <div className="pull-left col-md-6">
                     <AssignmentCategoryTree
                             data={treeDataSource}
                             onNodeClick={::this._onNodeClick}
-                            onLeafClick={::this._onLeafClick}/>
+                            onLeafClick={setCurrentLeafNode}/>
                 </div>
                 <div className="pull-right col-md-6">
                   <div className="form-horizontal">
                     <h3>Edit {this.props.curCategory}</h3>
                     <div className="col-xs-3">
-                      Primary Owner: 
+                      Primary Owner:
                     </div>
                     <div className="col-xs-9">
                       <DropDownList
@@ -61,7 +59,7 @@ class FeatureAnalysisPage extends Component {
                         aryOptionConfig={this.user} />
                     </div>
                     <div className="col-xs-3">
-                      Secondary Owner: 
+                      Secondary Owner:
                     </div>
                     <div className="col-xs-9">
                       <DropDownList
@@ -73,7 +71,7 @@ class FeatureAnalysisPage extends Component {
                         aryOptionConfig={this.user} />
                     </div>
                     <div className="col-xs-3">
-                      Level: 
+                      Level:
                     </div>
                     <div className="col-xs-9">
                       <DropDownList

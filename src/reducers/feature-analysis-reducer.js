@@ -3,20 +3,17 @@ import { Map } from 'immutable';
 
 const initialState = Map({
 	treeDataSource: Map({}),
-	isFormVisible: false,
-	currentLeafId: -1
+	currentLeaf: Map({})
 });
 
 function generateTree(dataArr, root) {
     let subTree, directChildren, subDataArr;
-    let { name, id} = root;
     if (Object.keys(root).length === 0) {
         return {};
     }
     if (dataArr.length === 0) {
         return {
-            id,
-            name,
+            ...root,
             children: []
         };
     }
@@ -26,8 +23,7 @@ function generateTree(dataArr, root) {
         return generateTree(subDataArr, node);
     });
     return {
-        id,
-        name,
+        ...root,
         children: subTree
     };
 }
@@ -43,9 +39,7 @@ export default function featureAnalysisReducer(state = initialState, action) {
 		case actionTypes.FETCH_ASSIGNMENT_CATEGORIES_SUCCESS:
 		    return state.set('treeDataSource', transformToTree(action.data));
 		case actionTypes.SET_CURRENT_LEAF_NODE:
-		    return state.set('currentLeafId', action.id);
-		case actionTypes.SET_FORM_VISIBILITY:
-		    return state.set('isFormVisible', action.status);
+		    return !action.data ? state.set('currentLeaf', undefined) : state.set('currentLeaf', action.data);
 		default:
 			return state;
 	}
