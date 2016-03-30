@@ -21,6 +21,7 @@ import BugMutation from '../models/Bug/BugMutation.js';
 import BugTagQuery from '../models/BugTag/BugTagQuery.js';
 import BugTagMutation from '../models/BugTag/BugTagMutation.js';
 import AssignmentCategoryQuery from '../models/AssignmentCategory/AssignmentCategoryQuery.js';
+import AssignmentCategoryMutation from '../models/AssignmentCategory/AssignmentCategoryMutation.js';
 
 const schema = new GraphQLSchema({
 	query: new GraphQLObjectType({
@@ -72,6 +73,7 @@ const schema = new GraphQLSchema({
 			createArticle			  : ArticleMutation.createArticle,
 			editArticle			  	  : ArticleMutation.editArticle,
 			deleteArticle			  : ArticleMutation.deleteArticle,
+      updateAssignmentCategory: AssignmentCategoryMutation.updateAssignmentCategory,
 			//Bug page
 			updateBug				  : BugMutation.updateBug,
 			createBugTag			  : BugTagMutation.createBugTag
