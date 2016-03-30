@@ -88,6 +88,13 @@ export function fetchBugReviewChangeOptionsChangeSuccess(data){
     };
 };
 
+export function fetchBugReviewAddOptionsChangeSuccess(data){
+    return {
+        type: actionTypes.FETCH_BUG_REVIEW_ADD_OPTIONS_SUCCESS,
+        data
+    };
+}
+
 let updateBug = (dispatch, data) => {
   data['id'] = parseInt(data['id']);
 
@@ -115,7 +122,7 @@ let updateBug = (dispatch, data) => {
     });
 };
 
-let createBugReviewTag = (tag) => {
+function createBugReviewTag(tag) {
   let data = {};
   data['tag_name'] = tag;
 
@@ -130,15 +137,34 @@ let createBugReviewTag = (tag) => {
       }
     };
 
-  return fetch(SERVER_API_URL, config)
-    .then((res) => {
-      res.json();
-    })
-    .then(() => {
-    })
-    .catch(() => {
-    });
+  return (dispatch) => {
+    fetch(SERVER_API_URL, config)
+        .then((res) => {
+          res.json();
+          dispatch(fetchBugReviewAddOptionsChangeSuccess(tag));
+        })
+        .then(() => {
+        })
+        .catch(() => {
+        });
+    };
 };
+
+function changeOptionsReviewTags(dispatch, optionsReviewTags, tagList){
+
+    tagList.forEach((tag) => {
+        let notIn = true;
+        optionsReviewTags.forEach((option) => {
+            if (option.value === tag){
+                notIn = false;
+            }
+        });
+        if (notIn) {
+            dispatch(createBugReviewTag(tag));
+        }
+    });
+
+}
 
 export function resolvedReasonTypeChange(review, reasonType){
   review['resolved_type'] = reasonType;
@@ -149,12 +175,15 @@ export function resolvedReasonTypeChange(review, reasonType){
 };
 
 export function changeReviewTagOptions(review, reviewTagList){
-  reviewTagList.map((tag) => {
-    createBugReviewTag(tag);
-  });
+  // reviewTagList.map((tag) => {
+  //   createBugReviewTag(tag);
+  // });
+
   review['tags'] = reviewTagList;
 
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    var optionsReviewTags = getState().bugReview.toJS().optionsReviewTags;
+    changeOptionsReviewTags(dispatch, optionsReviewTags, reviewTagList);
     updateBug(dispatch, review);
   };
 };

@@ -93,6 +93,14 @@ function setPreventTagData(state, data) {
     return state.set(`optionsReviewTags`, result);
 }
 
+function addReviewTagData(state, data){
+    var options = state.get(`optionsReviewTags`);
+    if (data) {
+        options = options.push(Map({value: data, label: data}));
+    }
+    return state.set('optionsReviewTags', options);
+}
+
 function setAllUsers(state, data){
     let result = List.of();
     data.forEach((user) => {
@@ -115,14 +123,17 @@ function setSelectUser(state, userAlisa){
 
 function changeOptions(state, data) {
     var applications = state.get(`applications`);
-
+    var result = List.of();
     applications.forEach((application) => {
-        if ( application.get(`id`) === String(data.id)){
-            application = data;
+        if ( String(application.get(`id`)) === String(data.id)){
+            console.log(customizeTaskData(data));
+            result = result.push(OrderedMap(customizeTaskData(data)));
+        } else {
+            result = result.push(application);
         }
     });
-
-    return state.set(`applications`, applications);
+    console.log(result.toJS());
+    return state.set(`applications`, result);
 }
 
 export default function bugReviewReducer(state = initialState, action) {
@@ -130,18 +141,15 @@ export default function bugReviewReducer(state = initialState, action) {
     switch (action.type) {
         case actionTypes.FETCH_BUG_REVIEW_APPLICATION_SUCCESS:
             nextState = setTableData(state, action.data);
-            // if (!is(state.get('ptoFilterConditions'), initialPTOFilterConditions)) {
-            //     nextState = filterOriginal(nextState);
-            // }
-            // if (state.get('sortPTOTableBy').get('category')) {
-            //     nextState = sortOriginal(nextState);
-            // }
             return nextState;
         case actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS:
             nextState = changeOptions(nextState, action.data);
             return nextState;
         case actionTypes.FETCH_BUG_REVIEW_PREVENT_TAGS_OPTIONS:
             nextState = setPreventTagData(nextState, action.data);
+            return nextState;
+        case actionTypes.FETCH_BUG_REVIEW_ADD_OPTIONS_SUCCESS:
+            nextState = addReviewTagData(nextState, action.data);
             return nextState;
         case actionTypes.FETCH_BUG_REVIEW_ALL_USERS:
             nextState = setAllUsers(state, action.data);
