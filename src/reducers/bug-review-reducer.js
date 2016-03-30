@@ -134,13 +134,11 @@ function changeOptions(state, data) {
     var result = List.of();
     applications.forEach((application) => {
         if ( String(application.get(`id`)) === String(data.id)){
-            console.log(customizeTaskData(data));
             result = result.push(OrderedMap(customizeTaskData(data)));
         } else {
             result = result.push(application);
         }
     });
-    console.log(result.toJS());
     return state.set(`applications`, result);
 }
 
