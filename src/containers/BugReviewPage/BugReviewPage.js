@@ -44,9 +44,12 @@ class BugReviewPage extends Component {
             currentSelectPreventTag,
             pager
         } = this.props;
+        console.log(currentSelectUser);
+        let user = currentSelectUser.value;
+        user = ( user === undefined || user === '' ) ? 'All' : user;
         if (pager.rowIndex !== selected){
             pager.rowIndex = selected;
-            fetchBugReviewPageData(pager, currentProjectVersion, currentSelectUser.value, currentSelectMenu, currentSelectRootCause, currentSelectPreventTag);
+            fetchBugReviewPageData(pager, currentProjectVersion, user, currentSelectMenu, currentSelectRootCause, currentSelectPreventTag);
         }
     }
 
@@ -60,7 +63,9 @@ class BugReviewPage extends Component {
             pager
         } = this.props;
         pager.rowIndex = 1;
-        fetchBugReviewPageData(pager, version, currentSelectUser.value, currentSelectMenu, currentSelectRootCause, currentSelectPreventTag);
+        let user = currentSelectUser.value;
+        user = ( user === undefined || user === '' ) ? 'All' : user;
+        fetchBugReviewPageData(pager, version, user, currentSelectMenu, currentSelectRootCause, currentSelectPreventTag);
     }
 
     _onChangeSelectUser(user){
@@ -73,7 +78,7 @@ class BugReviewPage extends Component {
             pager
         } = this.props;
         pager.rowIndex = 1;
-        user = user === '' ? 'All' : user;
+        user = ( user === undefined || user === '' ) ? 'All' : user;
         fetchBugReviewPageData(pager, currentProjectVersion, user, currentSelectMenu, currentSelectRootCause, currentSelectPreventTag);
     }
 
@@ -87,7 +92,9 @@ class BugReviewPage extends Component {
             pager
         } = this.props;
         pager.rowIndex = 1;
-        fetchBugReviewPageData(pager, currentProjectVersion, currentSelectUser.value, menu, currentSelectRootCause, currentSelectPreventTag);
+        let user = currentSelectUser.value;
+        user = ( user === undefined || user === '' ) ? 'All' : user;
+        fetchBugReviewPageData(pager, currentProjectVersion, user, menu, currentSelectRootCause, currentSelectPreventTag);
     }
 
     _onChangeSelectRootCause(rootCause) {
@@ -100,7 +107,9 @@ class BugReviewPage extends Component {
             pager
         } = this.props;
         pager.rowIndex = 1;
-        fetchBugReviewPageData(pager, currentProjectVersion, currentSelectUser.value, currentSelectMenu, rootCause, currentSelectPreventTag);
+        let user = currentSelectUser.value;
+        user = ( user === undefined || user === '' ) ? 'All' : user;
+        fetchBugReviewPageData(pager, currentProjectVersion, user, currentSelectMenu, rootCause, currentSelectPreventTag);
     }
 
     _onChangeSelectPreventTag(tag) {
@@ -113,7 +122,9 @@ class BugReviewPage extends Component {
             pager
         } = this.props;
         pager.rowIndex = 1;
-        fetchBugReviewPageData(pager, currentProjectVersion, currentSelectUser.value, currentSelectMenu, currentSelectRootCause, tag);
+        let user = currentSelectUser.value;
+        user = ( user === undefined || user === '' ) ? 'All' : user;
+        fetchBugReviewPageData(pager, currentProjectVersion, user, currentSelectMenu, currentSelectRootCause, tag);
     }
 
     render() {
