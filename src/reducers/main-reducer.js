@@ -28,6 +28,10 @@ const initialState = Map({
 			link: '/main/bug-analysis'
 		}),
     Map({
+      displayText: 'Bug Report',
+      link: '/main/bug-report'
+    }),
+    Map({
       displayText: 'Document',
       link: '/main/document'
     }),

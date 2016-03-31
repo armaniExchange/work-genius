@@ -11,6 +11,7 @@ import DashboardPage from '../containers/DashboardPage/DashboardPage';
 import TaskPage from '../containers/TaskPage/TaskPage';
 import PTOPage from '../containers/PTOPage/PTOPage';
 import BugReviewPage from '../containers/BugReviewPage/BugReviewPage';
+import BugReportPage from '../containers/BugReportPage/BugReportPage';
 import DataExplorerPage from '../containers/DataExplorerPage/DataExplorerPage';
 import DataExplorerFolderView from '../containers/DataExplorerFolderView/DataExplorerFolderView';
 import DataExplorerFileView from '../containers/DataExplorerFileView/DataExplorerFileView';
@@ -38,6 +39,7 @@ const appRoutes = () => (
 			    <Route path="pto" component={requireAuth(PTOPage)} />
 			    <Route path="redux-demo" component={requireAuth(DemoPage)} />
 				<Route path="bug-analysis" component={requireAuth(BugReviewPage)} />
+				<Route path="bug-report" component={requireAuth(BugReportPage)} />
 				<Route path="valid-demo" component={requireAuth(ValidDemoPage)} />
 		        <Route path="articles/edit/:articleId" component={requireAuth(EditArticlePage)} />
 		        <Route path="articles/:articleId" component={requireAuth(ViewArticlePage)} />
