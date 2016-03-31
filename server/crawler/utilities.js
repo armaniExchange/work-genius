@@ -44,6 +44,7 @@ export async function updateBugsToDB(bugs) {
 	let connection, query, result = null;
 	let newBugIdMap = {};
 	let solvedBugs = [];
+	let users = [];
 
 	try {
 		connection = await r.connect({ host: DB_HOST, port: DB_PORT });
@@ -53,6 +54,8 @@ export async function updateBugsToDB(bugs) {
 		});
 		query = r.db('work_genius').table('tasks').filter({type: 'bug'}).coerceTo('array');
 		result = await query.run(connection);
+		query = r.db('work_genius').table('users').filter({}).coerceTo('array');
+		users = await query.run(connection);
 		for (let j = 0; j < result.length; j++) {
 			if (!(result[j].id in newBugIdMap)) {
 				solvedBugs.push(result[j].id);
@@ -64,6 +67,11 @@ export async function updateBugsToDB(bugs) {
 		}
 		// Insert and Update new bugs
 		for (let i = 0; i < bugs.length; i++) {
+			users.forEach((user) => {
+				if (user.email === bugs[i]['developer_email']) {
+					bugs[i]['dev_id'] = user.id;
+				}
+			});
 			query = r.db('work_genius').table('tasks').get(bugs[i]['id']);
 			result = await query.run(connection);
 
@@ -108,6 +116,7 @@ export async function updateFeaturesToDB(features) {
 	let connection, query, result = null;
 	let newFeatureIdMap = {};
 	let completedFeatures = [];
+	let users = [];
 
 	try {
 		connection = await r.connect({ host: DB_HOST, port: DB_PORT });
@@ -117,6 +126,8 @@ export async function updateFeaturesToDB(features) {
 		});
 		query = r.db('work_genius').table('tasks').filter({type: 'feature'}).coerceTo('array');
 		result = await query.run(connection);
+		query = r.db('work_genius').table('users').filter({}).coerceTo('array');
+		users = await query.run(connection);
 		for (let j = 0; j < result.length; j++) {
 			if (!(result[j].id in newFeatureIdMap)) {
 				completedFeatures.push(result[j].id);
@@ -128,6 +139,11 @@ export async function updateFeaturesToDB(features) {
 		}
 		// Insert and Update new features
 		for (let i = 0; i < features.length; i++) {
+			users.forEach((user) => {
+				if (user.nickname === features[i]['dev_name']) {
+					features[i]['dev_id'] = user.id;
+				}
+			});
 			query = r.db('work_genius').table('tasks').get(features[i]['id']);
 			result = await query.run(connection);
 

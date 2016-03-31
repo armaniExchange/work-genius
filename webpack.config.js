@@ -17,6 +17,7 @@ var config = {
     watch: true,
     entry: {
         app: [
+            'babel-polyfill',
             'webpack-hot-middleware/client',
             mainPath
         ],
@@ -28,6 +29,7 @@ var config = {
         publicPath: '/build/'
     },
     module: {
+        noParse: [/autoit\.js$/],
         preLoaders: [
             {
                 test: /\.js(x)?$/,
@@ -37,13 +39,17 @@ var config = {
         ],
         loaders: [
             {
+                test: /\.json$/,
+                loader: 'json'
+            },
+            {
                 test: /\.js(x)?$/,
                 loader: 'babel',
                 exclude: nodeModulesPath
             },
             {
                 test: /\.(css|scss)$/,
-                loaders: ['style', 'css', 'sass', 'postcss']
+                loaders: ['style', 'css', 'postcss']
             },
             {
                 test: /\.(png|jpg|jpeg|gif|svg)(\?v=\d\.\d\.\d)?$/,
@@ -58,10 +64,12 @@ var config = {
     plugins: [
         new Webpack.HotModuleReplacementPlugin(),
         new Webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.bundle.js'),
-        new Webpack.NoErrorsPlugin()
+        new Webpack.NoErrorsPlugin(),
+        new Webpack.optimize.DedupePlugin()
     ],
     resolve: {
-        extensions: ['', '.js', '.jsx', '.css', '.scss']
+        extensions: ['', '.js', '.jsx', '.css'],
+        modulesDirectories: ['node_modules']
     },
     eslint: {
         configFile: eslintrcPath

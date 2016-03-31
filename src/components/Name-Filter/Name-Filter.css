@@ -1,0 +1,29 @@
+.name-filter {
+	display: inline-block;
+	margin-right: 20px;
+	padding: 5px 10px;
+
+	text-align: center;
+	vertical-align: middle;
+
+	color: #fff;
+	background-color: #1ba1e2;
+
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.name-filter:hover {
+	background-color: #2cb2f3;
+}
+
+.name-filter.selected {
+	border: 1px solid black;
+	background-color: #2cb2f3;
+	cursor: default;
+	pointer-events: none;
+}
+
+.name-filter .name-filter__subtitle--hide {
+	display: none;
+}

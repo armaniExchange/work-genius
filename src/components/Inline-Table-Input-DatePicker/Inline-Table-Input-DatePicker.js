@@ -1,5 +1,5 @@
 // Styles
-import './_Inline-Table-Input-DatePicker.scss';
+import './_Inline-Table-Input-DatePicker.css';
 import 'react-datepicker/dist/react-datepicker.css';
 
 // Libraries

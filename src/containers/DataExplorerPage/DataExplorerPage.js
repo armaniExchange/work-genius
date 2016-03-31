@@ -3,7 +3,7 @@
  */
 
 // Style
-import './_DataExplorerPage';
+import './_DataExplorerPage.css';
 // React & Redux
 import React, { Component } from 'react';
 

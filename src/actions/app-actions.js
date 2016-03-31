@@ -1,8 +1,32 @@
 // Libraries
-import request from 'superagent';
+import fetch from 'isomorphic-fetch';
 // Constants
 import * as actionTypes from '../constants/action-types';
-import { SERVER_API_URL } from '../constants/config';
+import { SERVER_API_URL, SERVER_LOGIN_URL } from '../constants/config';
+
+export function setLoadingState(state) {
+	return {
+		type: actionTypes.SET_LOADING_STATE,
+		state
+	};
+};
+
+export function apiFailure(err) {
+	let msg = err.message ? err.message : err;
+	return (dispatch) => {
+		dispatch(setLoadingState(false));
+		dispatch({
+			type: actionTypes.API_FAILURE,
+			err : msg
+		});
+	};
+};
+
+export function clearErrorMessage() {
+	return {
+		type: actionTypes.CLEAR_ERROR_MESSAGE
+	};
+};
 
 export function loginFailure(error) {
 	return {
@@ -11,79 +35,88 @@ export function loginFailure(error) {
 	};
 }
 
-export function setToken(token) {
+export function loginSuccess(token, user, isAuthenticated) {
 	return {
-		type: actionTypes.SET_TOKEN,
-		token
+		type: actionTypes.LOGIN_SUCCESS,
+		token,
+		user,
+		isAuthenticated
 	};
 }
 
-export function logout(cb) {
+export function getCurrentUserSuccess(token, user, isAuthenticated) {
+	return {
+		type: actionTypes.GET_CURRENT_USER_SUCCESS,
+		token,
+		user,
+		isAuthenticated
+	};
+}
+
+export function logout() {
+	return {
+		type: actionTypes.LOG_OUT
+	};
+};
+
+export function login(user) {
 	return (dispatch) => {
-		return request
-			.post(SERVER_API_URL)
-			.withCredentials()
-			.set('Content-Type', 'application/graphql')
-			.send(`
-				mutation RootMutationType {
-				    logout
-				}
-			`)
-			.end((err, res) => {
-				let response = JSON.parse(res.text);
-				if (err || response.errors) {
-					let error = err || response.errors[0].message;
-					dispatch(loginFailure(error));
-				}
-				if (res) {
-					dispatch(setToken(''));
-				}
-				cb();
+		let config = {
+			method: 'POST',
+			body: `{
+				"account": "${user.username}",
+				"password": "${user.password}"
+			}`,
+			headers: {
+				'Content-Type': 'application/json',
+				'x-access-token': localStorage.token
+			}
+		};
+		dispatch(setLoadingState(true));
+		return fetch(SERVER_LOGIN_URL, config)
+			.then((res) => res.json())
+			.then((body) => {
+				dispatch(setLoadingState(false));
+				dispatch(loginSuccess(body.token, body.user, true));
+			})
+			.catch((err) => {
+				dispatch(setLoadingState(false));
+				dispatch(loginFailure(err.message));
 			});
 	};
 };
 
-export function login(user, cb) {
+export function getCurrentUser() {
 	return (dispatch) => {
-		return request
-			.post(SERVER_API_URL)
-			.withCredentials()
-			.set('Content-Type', 'application/graphql')
-			.send(`
-				mutation RootMutationType {
-				    login(account:"${user['username']}", password:"${user['password']}")
+		let config = {
+			method: 'POST',
+			body: `{
+			    currentUser {
+			    	id,
+			    	name,
+			    	email,
+			    	nickname,
+			    	token,
+			    	privilege
+			    }
+			}`,
+			headers: {
+				'Content-Type': 'application/graphql',
+				'x-access-token': localStorage.token
+			}
+		};
+		return fetch(SERVER_API_URL, config)
+			.then((res) => {
+				if (res.status >= 400) {
+					throw new Error(res.statusText);
 				}
-			`)
-			.end((err, res) => {
-				let response = JSON.parse(res.text);
-				if (err || response.errors) {
-					let error = err || response.errors[0].message;
-					dispatch(loginFailure(error));
-				}
-				if (res) {
-					dispatch(setToken(response.data.login));
-				}
-				cb();
-			});
-	};
-};
-
-export function checkLogin() {
-	return (dispatch) => {
-		return request
-			.post(SERVER_API_URL)
-			.set('Content-Type', 'application/graphql')
-			.send(`{
-			    isLogin
-			}`)
-			.end((err, res) => {
-				let response = JSON.parse(res.text);
-				if (err || response.errors) {
-					let error = err || response.errors[0].message;
-                    dispatch(loginFailure(error));
-	            } else {
-	                dispatch(setToken(response.data.isLogin));
-	            }
+				return res.json();
+			})
+			.then((body) => {
+				dispatch(getCurrentUserSuccess(body.data.currentUser.token, body.data.currentUser, true));
+			})
+			.catch(() => {
+				dispatch(loginFailure(''));
 			});
 	};
 };

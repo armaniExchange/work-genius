@@ -2,14 +2,17 @@
 import {
 	GraphQLObjectType,
 	GraphQLString,
-	GraphQLInt
+	GraphQLInt,
+	GraphQLList
 } from 'graphql';
+import PTOType from '../PTO/PTOType.js';
+import TaskType from '../Task/TaskType.js';
 
 let UserType = new GraphQLObjectType({
 	name: 'User',
 	description: 'A User object',
 	fields: () => ({
-		'user_id': {
+		'id': {
 			type: GraphQLString,
 			description: 'User ID'
 		},
@@ -21,9 +24,13 @@ let UserType = new GraphQLObjectType({
 			type: GraphQLString,
 			description: 'AD Password stored for craw'
 		},
-		'nick': {
+		'name': {
 			type: GraphQLString,
-			description: 'Nick name'
+			description: 'User name'
+		},
+		'nickname': {
+			type: GraphQLString,
+			description: 'User nickname'
 		},
 		'title': {
 			type: GraphQLString,
@@ -56,6 +63,30 @@ let UserType = new GraphQLObjectType({
 		'last_login_date': {
 			type: GraphQLString,
 			description: 'Date Time'
+		},
+		'token': {
+			type: GraphQLString,
+			description: 'User token'
+		},
+		pto: {
+			type: new GraphQLList(PTOType),
+			description: 'User pto applications'
+		},
+		tasks: {
+			type: new GraphQLList(TaskType),
+			description: 'User tasks'
+		},
+		privilege: {
+			type: GraphQLInt,
+			description: 'User privilege level'
+		},
+		privilege_display_name: {
+			type: GraphQLString,
+			description: 'User privilege display name'
+		},
+		alias: {
+			type: GraphQLString,
+			description: 'User alias'
 		}
 	})
 });
