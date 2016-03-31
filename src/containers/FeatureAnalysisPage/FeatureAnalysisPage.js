@@ -12,19 +12,12 @@ import RaisedButton from 'material-ui/lib/raised-button';
 class FeatureAnalysisPage extends Component {
     constructor(props){
       super(props);
-      this.level = [
-                  {title:'Very Hard', 'value':9},
-                  {title:'Hard', 'value':7},
-                  {title:'Medium', 'value':5},
-                  {title:'Simple', 'value':3},
-                  {title:'Easy', 'value':1},
-                  {title:'Nothing', 'value':0},
-                  ];
     }
     componentWillMount() {
-        const { fetchAssignmentCategories, fetchOwners } = this.props;
+        const { fetchAssignmentCategories, fetchOwners, fetchDifficulties } = this.props;
         fetchAssignmentCategories();
         fetchOwners();
+        fetchDifficulties();
     }
     _onNodeClick() {
         this.props.setCurrentLeafNode(undefined);
@@ -32,6 +25,7 @@ class FeatureAnalysisPage extends Component {
     render() {
         const {
             aryOwners,
+            aryDifficulties,
             currentLeaf,
             treeDataSource,
             updateOneAssignmentCategory,
@@ -40,18 +34,22 @@ class FeatureAnalysisPage extends Component {
         let user = aryOwners.map(item => {
             return {title:item.nickname, value: item.id};
         });
-        console.log('currentLeaf, this.user', currentLeaf, user);
+        let difficulties = aryDifficulties.map(item => {
+            return {
+                title:item.difficulty && item.difficulty.title, 
+                value: item.difficulty && item.difficulty.id
+            };
+        });
+        console.log('currentLeaf, this.user', currentLeaf, user, difficulties);
         const displayForm = currentLeaf.id ? '' : 'none';
         const displayHint = currentLeaf.id ? 'none' : '';
-        /*currentLeaf.primary_owner = 'yli';
-        currentLeaf.secondary_owner = 'zli';
-        currentLeaf.difficulty = 7;*/
+        const difficultyTitle = currentLeaf.difficulty && currentLeaf.difficulty.title;
         return (
             <div className="row">
                 <div className="pull-left col-md-4">
             {currentLeaf.primary_owner}
             {currentLeaf.secondary_owner}
-            {currentLeaf.difficulty}
+            {difficultyTitle}
                     <AssignmentCategoryTree
                             data={treeDataSource}
                             onNodeClick={::this._onNodeClick}
@@ -94,20 +92,20 @@ class FeatureAnalysisPage extends Component {
                     </div>
                     <div className="col-xs-9">
                       <DropDownList
-                        title={currentLeaf.difficulty}
+                        title={difficultyTitle}
                         isDropDownListVisual2={true}
                         isNeedAll={false}
                         onOptionClick={(val) => {
                           console.log(val, 'val3');
                         }}
-                        aryOptionConfig={this.level} />
+                        aryOptionConfig={difficulties} />
                     </div>
                     <div className="col-xs-3">
                     </div>
                     <div className="col-xs-9">
                       <RaisedButton label="Update" secondary={true} onClick={()=>{
                         console.log('submited');
-                        console.log('updateOneAssignmentCategory', updateOneAssignmentCategory);
+                        updateOneAssignmentCategory();
                       }} />
                     </div>
                     </div>
@@ -120,15 +118,19 @@ class FeatureAnalysisPage extends Component {
 FeatureAnalysisPage.propTypes = {
     treeDataSource: PropTypes.object.isRequired,
     currentLeaf: PropTypes.object.isRequired,
-    aryOwners: PropTypes.string.isRequired,
+    aryOwners: PropTypes.array.isRequired,
+    aryDifficulties: PropTypes.array.isRequired,
     updateOneAssignmentCategory: PropTypes.func.isRequired,
     fetchAssignmentCategories: PropTypes.func.isRequired,
     setCurrentLeafNode: PropTypes.func.isRequired,
     setFormVisibility: PropTypes.func.isRequired,
-    fetchOwners: PropTypes.func.isRequired
+    fetchOwners: PropTypes.func.isRequired,
+    fetchDifficulties: PropTypes.func.isRequired
 };
 FeatureAnalysisPage.defaultProps = {
-    currentLeaf: {}
+    currentLeaf: {},
+    aryOwners: [],
+    aryDifficulties: []
 };
 
 function mapStateToProps(state) {

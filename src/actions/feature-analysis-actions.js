@@ -94,6 +94,46 @@ export function fetchOwners() {
   };
 };
 
+export function fetchDifficultiesSuccess(data) {
+  return {
+    type: actionTypes.FETCH_DIFFICULTIES_SUCCESS,
+    data
+  };
+};
+
+export function fetchDifficulties() {
+  return (dispatch) => {
+    let config = {
+      method: 'POST',
+      body: `{
+        allDifficulties{
+          difficulty{
+            id,
+            title,
+            color
+          }
+        }
+      }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+    dispatch(setLoadingState(true));
+    return fetch(SERVER_API_URL, config)
+      .then((res) => res.json())
+      .then((body) => {
+        dispatch(setLoadingState(false));
+        dispatch(fetchDifficultiesSuccess(body.data.allDifficulties));
+      })
+      .catch((err) => {
+        dispatch(setLoadingState(false));
+        dispatch(apiFailure(err));
+      });
+  };
+};
+
+
 export function fetchAssignmentCategoriesSuccess(data) {
   return {
     type: actionTypes.FETCH_ASSIGNMENT_CATEGORIES_SUCCESS,
