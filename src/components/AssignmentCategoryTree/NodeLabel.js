@@ -32,11 +32,7 @@ export default function NodeLabel({ data, onClickHandler, isLeaf, key }) {
     let tagsHtml = null,
         total;
 
-    if (isLeaf) {
-        tagsHtml = (
-            <span>{data.difficulty.title}</span>
-        );
-    } else {
+    if (!isLeaf) {
         tagsHtml = data.children.map((childNode) => {
             return countTagsByDifficulty(childNode);
         }).reduce((acc, diff) => {
