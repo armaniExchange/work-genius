@@ -8,6 +8,9 @@ import * as FeatureAnalysisActions from '../../actions/feature-analysis-actions'
 
 import Select from 'react-select';
 import RaisedButton from 'material-ui/lib/raised-button';
+import Table from '../../components/A10-UI/Table/Table';
+import Th from '../../components/A10-UI/Table/Th';
+import Td from '../../components/A10-UI/Table/Td';
 
 class FeatureAnalysisPage extends Component {
     constructor(props){
@@ -57,18 +60,18 @@ class FeatureAnalysisPage extends Component {
         const input_difficulty_value = currentLeaf.difficulty && currentLeaf.difficulty.id ? currentLeaf.difficulty.id : '';
         return (
             <div className="row">
-                <div className="pull-left col-md-4">
+                <div className="col-md-4">
                     <AssignmentCategoryTree
                             data={treeDataSource}
                             onNodeClick={::this._onNodeClick}
                             onLeafClick={setCurrentLeafNode}/>
                 </div>
-                <div className="pull-right col-md-8">
-                  <div style={{display:displayHint, fontSize:'30px', padding:'30px 0'}}>
-                    Please choose and click leaf in root tree.
+                <div className="col-md-8">
+                  <div style={{display:displayHint, fontSize:'30px', margin:'90px 0', textDecoration:'underline'}}>
+                    &laquo; Please choose and click leaf in root tree.
                   </div>
                   <div className="form-horizontal" style={{display:displayForm}}>
-                    <h5 style={{color:'#999'}}>{'Edit '}<span style={{color:'#000'}}>{currentLeaf.path}</span></h5>
+                    <h5 style={{color:'#9cf'}}>{'Edit '}<span style={{color:'#000'}}>{currentLeaf.path}</span></h5>
                     <div className="col-xs-3" style={{paddingTop:'12px'}}>
                       Primary Owner:
                     </div>
@@ -127,7 +130,19 @@ class FeatureAnalysisPage extends Component {
                       <div style={{opacity:updateMsgOpacity, 'transition': 'opacity 2s'}}>{'Update successfully'}</div>
                     </div>
                     </div>
-                </div>
+                    <h5 style={{color:'#9cf'}}>Reporting</h5>
+                    <Table>
+                        <tr>{[<Th />, aryDifficulties.map((item, idx) => {
+                            return (<Th key={idx}>
+                                {item.difficulty && item.difficulty.title}
+                                <br />{'total: ' + (item.num||0)}
+                                </Th>);
+                        })]}</tr>
+                        {aryOwners.map((item, idx)=>{
+                            return (<tr key={idx}><Td>{item.nickname || 0}</Td><Td>{item.num1 || 0}</Td><Td>{item.num2 || 0}</Td><Td>{item.num3 || 0}</Td><Td>{item.num4 || 0}</Td><Td>{item.num5 || 0}</Td></tr>);
+                        })}
+                    </Table>
+                </div>{/*div col-md*/}
             </div>
         );
     }
