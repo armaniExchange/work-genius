@@ -39,13 +39,13 @@ class FeatureAnalysisPage extends Component {
         });
         let difficulties = aryDifficulties.map(item => {
             return {
-                title:item.difficulty && item.difficulty.title, 
+                title:item.difficulty && item.difficulty.title,
                 value: item.difficulty && item.difficulty.id
             };
         });
         const displayForm = currentLeaf.id ? '' : 'none';
         const displayHint = currentLeaf.id ? 'none' : '';
-        const difficultyTitle = currentLeaf.difficulty && currentLeaf.difficulty.title;
+        const difficultyTitle = currentLeaf.difficulty && currentLeaf.difficulty.id;
         return (
             <div className="row">
                 <div className="pull-left col-md-4">
