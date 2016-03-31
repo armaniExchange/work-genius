@@ -55,6 +55,7 @@ export default function NodeLabel({ data, onClickHandler, isLeaf, key }) {
             return (
                 <span
                     key={i}
+                    title={diff}
                     className={classes}>
                     {tagsHtml[diff]}
                 </span>
