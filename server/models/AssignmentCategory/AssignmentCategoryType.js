@@ -31,6 +31,14 @@ const ASSIGNMENT_CATEGORY_TYPE = new GraphQLObjectType({
 			type: GraphQLString,
             description: 'Category\'s path'
 		},
+		'primary_owner': {
+			type: GraphQLString,
+            description: 'Category\'s primary owner'
+		},
+		'secondary_owner': {
+			type: GraphQLString,
+            description: 'Category\'s secondary owner'
+		},
 		'difficulty': {
 			type: new GraphQLObjectType({
 				name: 'AssignmentDifficulty',
