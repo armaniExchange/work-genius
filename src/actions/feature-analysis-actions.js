@@ -25,38 +25,13 @@ export function setFormVisibility(status) {
 		status
 	};
 }
-export function updateOneAssignmentCategoryBase(dispatch, row) {
-  let config = {
-    method: 'POST',
-    body: `mutation RootMutationType {
-        updateAssignmentCategory(data:"${JSON.stringify(row).replace(/\"/gi, '\\"')}")
-    }`,
-    headers: {
-      'Content-Type': 'application/graphql',
-      'x-access-token': localStorage.token
-    }
-  };
-  return fetch(SERVER_API_URL, config)
-    .then((res) => res.json())
-    .then((body) => {
-      console.log('body updateOneAssignmentCategoryBase', body);
-      dispatch(setLoadingState(false));
-      console.log('body.data updateOneAssignmentCategoryBase', body.data);
-      //TODO: dispatch success action here!
-    })
-    .catch((err) => {
-      dispatch(setLoadingState(false));
-      dispatch(apiFailure(err));
-    });
-};
 
-export function updateOneAssignmentCategory(row) {
-  return (dispatch) => {
-    updateOneAssignmentCategoryBase(dispatch, row);
+export function changeAssignmentCategoryUpdateMsgOpacity(opacity) {
+  return {
+    type: actionTypes.CHANGE_ASSIGNMENT_CATEGORY_UPDATE_MSG_OPACITY,
+    opacity
   };
 };
-
-
 
 export function fetchOwnersSuccess(data) {
   return {
@@ -133,13 +108,20 @@ export function fetchDifficulties() {
   };
 };
 
+export function changeCategoryWaitForUpdate(field, value) {
+  return {
+    type: actionTypes.CHANGE_CATEGORY_WAIT_TO_UPDATE,
+    field,
+    value
+  };
+};
 
 export function fetchAssignmentCategoriesSuccess(data) {
   return {
     type: actionTypes.FETCH_ASSIGNMENT_CATEGORIES_SUCCESS,
     data
   };
-}
+};
 
 export function fetchAssignmentCategories() {
 	return (dispatch) => {
@@ -175,4 +157,41 @@ export function fetchAssignmentCategories() {
 				dispatch(apiFailure(err));
 			});
 	};
+};
+
+
+
+export function updateOneAssignmentCategoryBase(dispatch, id, row) {
+  let config = {
+    method: 'POST',
+    body: `mutation RootMutationType {
+        updateAssignmentCategory(data:"${JSON.stringify({...row, id}).replace(/\"/gi, '\\"')}")
+    }`,
+    headers: {
+      'Content-Type': 'application/graphql',
+      'x-access-token': localStorage.token
+    }
+  };
+  return fetch(SERVER_API_URL, config)
+    .then((res) => res.json())
+    .then((body) => {
+      console.log('body updateOneAssignmentCategoryBase', body);
+      dispatch(setLoadingState(false));
+      console.log('body.data updateOneAssignmentCategoryBase', body.data);
+      /*changeAssignmentCategoryUpdateMsgOpacity(1);
+      setTimeout(()=>{
+        changeAssignmentCategoryUpdateMsgOpacity(0);
+      }, 3000);*/
+      dispatch(fetchAssignmentCategories());
+    })
+    .catch((err) => {
+      dispatch(setLoadingState(false));
+      dispatch(apiFailure(err));
+    });
+};
+
+export function updateOneAssignmentCategory(id, row) {
+  return (dispatch) => {
+    updateOneAssignmentCategoryBase(dispatch, id, row);
+  };
 };

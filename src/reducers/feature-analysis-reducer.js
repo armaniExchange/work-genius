@@ -4,6 +4,8 @@ import { Map } from 'immutable';
 const initialState = Map({
     aryOwners: [],
     aryDifficulties: [],
+    updateMsgOpacity: 0,
+    categoryWaitToUpdate: {},
 	treeDataSource: Map({}),
 	currentLeaf: Map({})
 });
@@ -46,6 +48,18 @@ export default function featureAnalysisReducer(state = initialState, action) {
             return state.set('aryOwners', action.data);
         case actionTypes.FETCH_DIFFICULTIES_SUCCESS:
             return state.set('aryDifficulties', action.data);
+        case actionTypes.CHANGE_CATEGORY_WAIT_TO_UPDATE:
+            let fieldname = '__unknow__';
+            if (action.field==='primary_owner') {
+                fieldname = 'primary_owner';
+            } else if (action.field==='secondary_owner') {
+                fieldname = 'secondary_owner';
+            } else if (action.field==='difficulty') {
+                fieldname = 'difficulty';
+            }
+            return state.set('categoryWaitToUpdate', Object.assign({}, state.get('categoryWaitToUpdate'), {[fieldname]: action.value}));    
+        case actionTypes.CHANGE_ASSIGNMENT_CATEGORY_UPDATE_MSG_OPACITY:
+            return state.set('updateMsgOpacity', action.opacity);
 		default:
 			return state;
 	}
