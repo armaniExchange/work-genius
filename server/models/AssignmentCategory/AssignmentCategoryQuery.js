@@ -25,9 +25,16 @@ let CategoryQuery = {
 				query = r.db('work_genius').table('assignment_categories').coerceTo('array');
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				result = await query.run(connection);
-				result = result.map((category, index, arr) => {
+				result = result.map(async (category, index, arr) => {
+					let childQuery, childResult, difficulty = {};
+					if (category.difficulty || category.difficulty === 0) {
+						childQuery = r.db('work_genius').table('assignment_category_difficulty').coerceTo('array');
+						childResult = await childQuery.run(connection);
+						difficulty = childResult.filter((diff) => category.difficulty === diff.id)[0];
+					}
 					return {
 						...category,
+						difficulty,
 						path: generatePath(arr, category.id)
 					};
 				});
@@ -74,6 +81,28 @@ let CategoryQuery = {
 					return acc.concat(article.tags);
 				}, []);
 				result = dedupe(result);
+				await connection.close();
+			} catch (err) {
+				return err;
+			}
+			return result;
+		}
+	},
+	'getAllDifficulties': {
+		type: new GraphQLList(AssignmentCategoryType),
+		description: 'Get all difficulties',
+		resolve: async () => {
+			let connection = null,
+			    result = null,
+				query = null;
+
+			try {
+				query = r.db('work_genius').table('assignment_category_difficulty').coerceTo('array');
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				result = await query.run(connection);
+				result = result.map((diff) => ({
+					difficulty: diff
+				}));
 				await connection.close();
 			} catch (err) {
 				return err;

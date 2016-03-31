@@ -24,8 +24,8 @@ const initialState = Map({
 			link: '/main/data-explorer'
 		}),
 		Map({
-			displayText: 'Bug Review',
-			link: '/main/bug-review'
+			displayText: 'Bug Analysis',
+			link: '/main/bug-analysis'
 		}),
     Map({
       displayText: 'Document',
