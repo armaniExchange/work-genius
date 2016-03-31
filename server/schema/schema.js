@@ -50,6 +50,7 @@ const schema = new GraphQLSchema({
 			assignmentCategoryTree : AssignmentCategoryQuery.getAssignmentCategoryTree,
 			allAssignmentCategories: AssignmentCategoryQuery.getAllAssignmentCategories,
 			tags          		   : AssignmentCategoryQuery.getAllTags,
+			allDifficulties        : AssignmentCategoryQuery.getAllDifficulties
 		}
 	}),
 	mutation: new GraphQLObjectType({
