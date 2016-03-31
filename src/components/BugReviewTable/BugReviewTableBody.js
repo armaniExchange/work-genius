@@ -60,6 +60,7 @@ class BugReviewTableBody extends Component {
                         textarea.value = this.state.details[bugId];
                         textareaClassName = 'mdl-textfield__input';
                         textarea.className = textareaClassName;
+                        textarea.focus();
                         let span = ReactDOM.findDOMNode(this.refs[bugId + '-span']);
                         span.className = spanClassName + 'element-hide';
                     };
