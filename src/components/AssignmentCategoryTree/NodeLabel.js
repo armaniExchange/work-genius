@@ -29,7 +29,8 @@ export default function NodeLabel({ data, onClickHandler, isLeaf, key }) {
         display: isLeaf ? 'block' : 'inline-block',
         color: isLeaf ? 'green' : 'black'
     };
-    let tagsHtml = null;
+    let tagsHtml = null,
+        total;
 
     if (isLeaf) {
         tagsHtml = (
@@ -44,11 +45,25 @@ export default function NodeLabel({ data, onClickHandler, isLeaf, key }) {
             });
             return acc;
         }, {});
-        tagsHtml = Object.keys(tagsHtml).map((diff, i) => {
+        total = Object.keys(tagsHtml).reduce((acc, x) => {
+            return acc + tagsHtml[x];
+        }, 0);
+        tagsHtml = [(
+            <span
+                key={total}
+                className="tree-node-badge tree-node-badge--total">
+                {total}
+            </span>
+        )].concat(Object.keys(tagsHtml).map((diff, i) => {
+            let classes = `tree-node-badge tree-node-badge--${diff.replace(' ', '-')}`;
             return (
-                <span key={i} className="tree-node-badge">{tagsHtml[diff]}</span>
+                <span
+                    key={i}
+                    className={classes}>
+                    {tagsHtml[diff]}
+                </span>
             );
-        });
+        }));
     }
 
     return (
