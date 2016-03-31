@@ -36,7 +36,7 @@ class AssignmentCategoryTree extends Component {
             return (
                 <TreeView
                     nodeLabel={label}
-                    defaultCollapsed={true}
+                    defaultCollapsed={false}
                     key={index}>
                     {childTrees}
                 </TreeView>

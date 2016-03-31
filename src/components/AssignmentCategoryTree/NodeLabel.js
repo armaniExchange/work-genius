@@ -17,7 +17,7 @@ function countTagsByDifficulty(data) {
             .map((childNode) => countTagsByDifficulty(childNode))
             .reduce((acc, node) => {
                 Object.keys(node).forEach((k) => {
-                    acc[k] = acc[k] ? acc[k] + node[k] : 1;
+                    acc[k] = acc[k] ? acc[k] + node[k] : node[k];
                 });
                 return acc;
             }, {});
@@ -37,7 +37,7 @@ export default function NodeLabel({ data, onClickHandler, isLeaf, key }) {
             return countTagsByDifficulty(childNode);
         }).reduce((acc, diff) => {
             Object.keys(diff).forEach((k) => {
-                acc[k] = acc[k] ? acc[k] + diff[k] : 1;
+                acc[k] = acc[k] ? acc[k] + diff[k] : diff[k];
             });
             return acc;
         }, {});

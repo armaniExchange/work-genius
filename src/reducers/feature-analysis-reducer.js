@@ -57,7 +57,7 @@ export default function featureAnalysisReducer(state = initialState, action) {
             } else if (action.field==='difficulty') {
                 fieldname = 'difficulty';
             }
-            return state.set('categoryWaitToUpdate', Object.assign({}, state.get('categoryWaitToUpdate'), {[fieldname]: action.value}));    
+            return state.set('categoryWaitToUpdate', Object.assign({}, state.get('categoryWaitToUpdate'), {[fieldname]: action.value}));
         case actionTypes.CHANGE_ASSIGNMENT_CATEGORY_UPDATE_MSG_OPACITY:
             return state.set('updateMsgOpacity', action.opacity);
 		default:

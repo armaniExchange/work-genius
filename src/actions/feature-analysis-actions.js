@@ -133,6 +133,8 @@ export function fetchAssignmentCategories() {
 			        parentId,
 					name,
 					path,
+					primary_owner,
+					secondary_owner,
 					difficulty {
 			            id,
 			            title,
