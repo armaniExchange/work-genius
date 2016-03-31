@@ -37,7 +37,7 @@ const appRoutes = () => (
 			    <Route path="task" component={requireAuth(TaskPage)} />
 			    <Route path="pto" component={requireAuth(PTOPage)} />
 			    <Route path="redux-demo" component={requireAuth(DemoPage)} />
-				<Route path="bug-review" component={requireAuth(BugReviewPage)} />
+				<Route path="bug-analysis" component={requireAuth(BugReviewPage)} />
 				<Route path="valid-demo" component={requireAuth(ValidDemoPage)} />
 		        <Route path="articles/edit/:articleId" component={requireAuth(EditArticlePage)} />
 		        <Route path="articles/:articleId" component={requireAuth(ViewArticlePage)} />
