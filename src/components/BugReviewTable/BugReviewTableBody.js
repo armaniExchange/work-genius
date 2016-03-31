@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react';
-
+import ReactDOM from 'react-dom';
 import Td from '../A10-UI/Table/Td';
 import Select from 'react-select';
 class BugReviewTableBody extends Component {
@@ -44,13 +44,24 @@ class BugReviewTableBody extends Component {
                         let arr = type.split(',');
                         changeMenuTagOptions(review, arr);
                     };
-                    var outBlurReviewText = function(event){
+                    var spanClassName = ' ';
+                    var textareaClassName = 'mdl-textfield__input element-hide';
+                    var outBlurReviewText = (event) => {
                         let value = event.target.value.replace(/\n/g, '\\n');
                         changeReviewText(review, value);
+                        let textarea = ReactDOM.findDOMNode(this.refs[bugId + '-textarea']);
+                        textareaClassName = 'mdl-textfield__input element-hide';
+                        textarea.className = textareaClassName;
+                        let span = ReactDOM.findDOMNode(this.refs[bugId + '-span']);
+                        span.className = spanClassName;
                     };
-
                     var toEdit = () => {
-                        console.log(this.state.details[bugId]);
+                        let textarea = ReactDOM.findDOMNode(this.refs[bugId + '-textarea']);
+                        textarea.value = this.state.details[bugId];
+                        textareaClassName = 'mdl-textfield__input';
+                        textarea.className = textareaClassName;
+                        let span = ReactDOM.findDOMNode(this.refs[bugId + '-span']);
+                        span.className = spanClassName + 'element-hide';
                     };
                     switch (header['key']){
                     case 'resolved_type':
@@ -96,9 +107,12 @@ class BugReviewTableBody extends Component {
                         );
                     case 'review':
                         return (
-                            <Td key={cellIndex} onClick={toEdit} colSpan={header['colspan']}>
-                                <textarea className="mdl-textfield__input" type="text"
-                                onBlur={outBlurReviewText} rows= "3" defaultValue={review[header['key']]}></textarea>
+                            <Td key={cellIndex} onClick={toEdit} isAlignLeft={true}  colSpan={header['colspan']}>
+                                <span ref={bugId + '-span'} className={spanClassName} >{this.state.details[bugId]}</span>
+                                <textarea className={textareaClassName}
+                                type="text"
+                                ref={bugId + '-textarea'}
+                                onBlur={outBlurReviewText} rows= "3"></textarea>
                             </Td>
                         );
                     case 'id':
@@ -107,7 +121,16 @@ class BugReviewTableBody extends Component {
                             <Td key={cellIndex}
                             isAlignLeft={isAlignLeft}
                             className={className}
-                            colSpan={header['colspan']}>{review[header['key']]}</Td>
+                            colSpan={header['colspan']}>
+                            <a className="bug-review-link" href={'https://bugzilla/show_bug.cgi?id=' + bugId} target="_Blank">
+                                {review[header['key']]}</a></Td>
+                        );
+                    case 'title':
+                        return (
+                            <Td key={cellIndex}
+                            isAlignLeft={isAlignLeft}
+                            colSpan={header['colspan']}>
+                                {review[header['key']]}</Td>
                         );
                     default:
                         return (
