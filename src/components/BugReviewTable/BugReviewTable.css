@@ -1,3 +1,8 @@
+
+.bug-review-link{
+    color:rgb(63, 81, 181);
+}
+
 .pto-table .pto-table__body .pto-table__body--empty {
     text-align: center;
 }
@@ -12,6 +17,14 @@
     font-size: 12px !important;
     line-height: 24px !important;
     font-weight: 200 !important;
+}
+
+.auto-width{
+    width: 100% ! important;
+}
+
+.element-hide{
+    display:none;
 }
 
 .bug-review-table__body--center{

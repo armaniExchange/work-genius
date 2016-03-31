@@ -75,7 +75,12 @@ export function fetchAssignmentCategories() {
 			    	id,
 			        parentId,
 					name,
-					path
+					path,
+					difficulty {
+			            id,
+			            title,
+			            color
+			        }
 			    }
 			}`,
 			headers: {
