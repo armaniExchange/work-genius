@@ -26,10 +26,13 @@ class FeatureAnalysisPage extends Component {
         const {
             aryOwners,
             aryDifficulties,
+            updateMsgOpacity,
             currentLeaf,
+            categoryWaitToUpdate,
             treeDataSource,
             updateOneAssignmentCategory,
-            setCurrentLeafNode
+            setCurrentLeafNode,
+            changeCategoryWaitForUpdate
         } = this.props;
         let user = aryOwners.map(item => {
             return {title:item.nickname, value: item.id};
@@ -40,16 +43,12 @@ class FeatureAnalysisPage extends Component {
                 value: item.difficulty && item.difficulty.id
             };
         });
-        console.log('currentLeaf, this.user', currentLeaf, user, difficulties);
         const displayForm = currentLeaf.id ? '' : 'none';
         const displayHint = currentLeaf.id ? 'none' : '';
         const difficultyTitle = currentLeaf.difficulty && currentLeaf.difficulty.title;
         return (
             <div className="row">
                 <div className="pull-left col-md-4">
-            {currentLeaf.primary_owner}
-            {currentLeaf.secondary_owner}
-            {difficultyTitle}
                     <AssignmentCategoryTree
                             data={treeDataSource}
                             onNodeClick={::this._onNodeClick}
@@ -70,7 +69,7 @@ class FeatureAnalysisPage extends Component {
                         isDropDownListVisual2={true}
                         isNeedAll={false}
                         onOptionClick={(val) => {
-                          console.log(val);
+                          changeCategoryWaitForUpdate('primary_owner', val);
                         }}
                         aryOptionConfig={user} />
                     </div>
@@ -83,7 +82,7 @@ class FeatureAnalysisPage extends Component {
                         isDropDownListVisual2={true}
                         isNeedAll={false}
                         onOptionClick={(val) => {
-                          console.log(val, 'val2');
+                          changeCategoryWaitForUpdate('secondary_owner', val);
                         }}
                         aryOptionConfig={user} />
                     </div>
@@ -96,7 +95,7 @@ class FeatureAnalysisPage extends Component {
                         isDropDownListVisual2={true}
                         isNeedAll={false}
                         onOptionClick={(val) => {
-                          console.log(val, 'val3');
+                          changeCategoryWaitForUpdate('difficulty', val);
                         }}
                         aryOptionConfig={difficulties} />
                     </div>
@@ -104,9 +103,13 @@ class FeatureAnalysisPage extends Component {
                     </div>
                     <div className="col-xs-9">
                       <RaisedButton label="Update" secondary={true} onClick={()=>{
-                        console.log('submited');
-                        updateOneAssignmentCategory();
+                        updateOneAssignmentCategory(currentLeaf.id, {
+                            primary_owner: categoryWaitToUpdate.primary_owner,
+                            secondary_owner: categoryWaitToUpdate.secondary_owner,
+                            difficulty: categoryWaitToUpdate.difficulty
+                        });
                       }} />
+                      <div style={{opacity:updateMsgOpacity, 'transition': 'opacity 2s'}}>{'Update successfully'}</div>
                     </div>
                     </div>
                 </div>
@@ -118,6 +121,8 @@ class FeatureAnalysisPage extends Component {
 FeatureAnalysisPage.propTypes = {
     treeDataSource: PropTypes.object.isRequired,
     currentLeaf: PropTypes.object.isRequired,
+    categoryWaitToUpdate: PropTypes.object,
+    updateMsgOpacity: PropTypes.number.isRequired,
     aryOwners: PropTypes.array.isRequired,
     aryDifficulties: PropTypes.array.isRequired,
     updateOneAssignmentCategory: PropTypes.func.isRequired,
@@ -125,12 +130,16 @@ FeatureAnalysisPage.propTypes = {
     setCurrentLeafNode: PropTypes.func.isRequired,
     setFormVisibility: PropTypes.func.isRequired,
     fetchOwners: PropTypes.func.isRequired,
-    fetchDifficulties: PropTypes.func.isRequired
+    fetchDifficulties: PropTypes.func.isRequired,
+    changeCategoryWaitForUpdate: PropTypes.func.isRequired
 };
 FeatureAnalysisPage.defaultProps = {
     currentLeaf: {},
     aryOwners: [],
-    aryDifficulties: []
+    aryDifficulties: [],
+    updateMsgOpacity: 0,
+    categoryWaitToUpdate: {},
+    changeCategoryWaitForUpdate: () => {}
 };
 
 function mapStateToProps(state) {

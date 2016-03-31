@@ -40,7 +40,7 @@ const initialState = Map({
 	        link: '/main/valid-demo'
 	    }),
 		Map({
-	        displayText: 'Feature Analysis',
+	        displayText: 'Page Assignment',
 	        link: '/main/feature-analysis'
 	    })
 	),
