@@ -91,10 +91,10 @@ let BugQuery = {
 
 				if(!!pageSize){
 					query = r.db('work_genius').table('bugs').filter(filter).filter(menuFilter).filter(tagFilter)
-							.orderBy('id').skip((pageIndex - 1) * pageSize).limit(pageSize).coerceTo('array');
+							.orderBy(r.desc('id')).skip((pageIndex - 1) * pageSize).limit(pageSize).coerceTo('array');
 				}else{
 					query = r.db('work_genius').table('bugs').filter(filter).filter(menuFilter).filter(tagFilter)
-					.orderBy('id').coerceTo('array');
+					.orderBy(r.desc('id')).coerceTo('array');
 				}
 				result = await query.run(connection); 
 				for(let bug of result){
