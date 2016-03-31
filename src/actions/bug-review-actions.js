@@ -47,45 +47,71 @@ export function fetchCurrentSelectUser(data){
         data
     };
 }
-export function fetchBugReviewApplications() {
-    return (dispatch) => {
-        let config = {
-            method: 'POST',
-            body: `{
-                    getAllBugs(label:"4.1.0",assignedTo:"yhou",pageSize:0,pageIndex:1){
-                        id,
-                        assigned_to,
-                        bug_severity,
-                        bug_status,
-                        label,
-                        menu,
-                        resolved_type,
-                        review,
-                        tags,
-                        title
-                    }
-            }`,
-            headers: {
-                'Content-Type': 'application/graphql',
-                'x-access-token': localStorage.token
-            }
-        };
-        return fetch(SERVER_API_URL, config)
-            .then((res) => res.json())
-            .then((body) => {
-                dispatch(fetchBugReviewApplicationsSuccess(body.data.getAllBugs));
-            })
-            .catch((err) => {
-                throw new Error(err);
-            });
+export function fetchCurrentSelectMenu(data){
+    return {
+        type: actionTypes.SET_BUG_REVIEW_SELECT_MENU,
+        data
+    };
+}
+export function fetchCurrentSelectPreventTag(data){
+    return {
+        type: actionTypes.SET_BUG_REVIEW_SELECT_PREVENT_TAG,
+        data
+    };
+}
+export function fetchCurrentSelectRootCause(data){
+    return {
+        type: actionTypes.SET_BUG_REVIEW_SELECT_ROOT_CAUSE,
+        data
+    };
+}
+// export function fetchBugReviewApplications() {
+//     return (dispatch) => {
+//         let config = {
+//             method: 'POST',
+//             body: `{
+//                     getAllBugs(label:"4.1.0",assignedTo:"yhou",pageSize:0,pageIndex:1){
+//                         id,
+//                         assigned_to,
+//                         bug_severity,
+//                         bug_status,
+//                         label,
+//                         menu,
+//                         resolved_type,
+//                         review,
+//                         tags,
+//                         title
+//                     }
+//             }`,
+//             headers: {
+//                 'Content-Type': 'application/graphql',
+//                 'x-access-token': localStorage.token
+//             }
+//         };
+//         return fetch(SERVER_API_URL, config)
+//             .then((res) => res.json())
+//             .then((body) => {
+//                 dispatch(fetchBugReviewApplicationsSuccess(body.data.getAllBugs));
+//             })
+//             .catch((err) => {
+//                 throw new Error(err);
+//             });
+//     };
+// };
+
+export function fetchBugReviewChangeOptionsChangeSuccess(data){
+    return {
+        type: actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS,
+        data
     };
 };
 
-export function fetchBugReviewChangeOptionsChangeSuccess(){
+export function fetchBugReviewAddOptionsChangeSuccess(data){
     return {
-        type: actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS
+        type: actionTypes.FETCH_BUG_REVIEW_ADD_OPTIONS_SUCCESS,
+        data
     };
-};
+}
 
 let updateBug = (dispatch, data) => {
   data['id'] = parseInt(data['id']);
@@ -93,7 +119,7 @@ let updateBug = (dispatch, data) => {
   let config = {
       method: 'POST',
       body: `mutation RootMutationType {
-          updateBug(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+          updateBug(data:"${JSON.stringify(data).replace(/\\/gi, '\\\\').replace(/\"/gi, '\\"')}")
       }`,
       headers: {
         'Content-Type': 'application/graphql',
@@ -105,8 +131,8 @@ let updateBug = (dispatch, data) => {
     .then((res) => res.json())
     .then(() => {
       dispatch(setLoadingState(false));
-      dispatch(fetchBugReviewChangeOptionsChangeSuccess());
-      dispatch(fetchBugReviewApplications());
+      dispatch(fetchBugReviewChangeOptionsChangeSuccess(data));
+      // dispatch(fetchBugReviewApplications());
     })
     .catch((err) => {
       dispatch(setLoadingState(false));
@@ -114,7 +140,7 @@ let updateBug = (dispatch, data) => {
     });
 };
 
-let createBugReviewTag = (tag) => {
+function createBugReviewTag(tag) {
   let data = {};
   data['tag_name'] = tag;
 
@@ -129,15 +155,34 @@ let createBugReviewTag = (tag) => {
       }
     };
 
-  return fetch(SERVER_API_URL, config)
-    .then((res) => {
-      res.json();
-    })
-    .then(() => {
-    })
-    .catch(() => {
-    });
+  return (dispatch) => {
+    fetch(SERVER_API_URL, config)
+        .then((res) => {
+          res.json();
+          dispatch(fetchBugReviewAddOptionsChangeSuccess(tag));
+        })
+        .then(() => {
+        })
+        .catch(() => {
+        });
+    };
 };
+
+function changeOptionsReviewTags(dispatch, optionsReviewTags, tagList){
+
+    tagList.forEach((tag) => {
+        let notIn = true;
+        optionsReviewTags.forEach((option) => {
+            if (option.value === tag){
+                notIn = false;
+            }
+        });
+        if (notIn) {
+            dispatch(createBugReviewTag(tag));
+        }
+    });
+
+}
 
 export function resolvedReasonTypeChange(review, reasonType){
   review['resolved_type'] = reasonType;
@@ -148,12 +193,15 @@ export function resolvedReasonTypeChange(review, reasonType){
 };
 
 export function changeReviewTagOptions(review, reviewTagList){
-  reviewTagList.map((tag) => {
-    createBugReviewTag(tag);
-  });
+  // reviewTagList.map((tag) => {
+  //   createBugReviewTag(tag);
+  // });
+
   review['tags'] = reviewTagList;
 
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    var optionsReviewTags = getState().bugReview.toJS().optionsReviewTags;
+    changeOptionsReviewTags(dispatch, optionsReviewTags, reviewTagList);
     updateBug(dispatch, review);
   };
 };
@@ -174,14 +222,24 @@ export function changeReviewText(review, reviewText){
   };
 };
 
-export function fetchBugReviewApplications(version, userAlisa) {
-
+export function fetchBugReviewApplications(version, userAlisa, menu, rootCause, preventTag) {
     return (dispatch) => {
-        let user = userAlisa ? userAlisa.toLowerCase() : userAlisa;
+        var user = '';
+        if (userAlisa !== 'All') {
+            user = userAlisa ? userAlisa.toLowerCase() : userAlisa;
+        }
+        menu = menu ? menu : '';
+        rootCause = rootCause ? rootCause : '';
+        preventTag = preventTag ? preventTag: '';
         let config = {
             method: 'POST',
             body: `{
-                    getAllBugs(label:"` + version + `",assignedTo:"` + user + `",pageSize:0,pageIndex:1){
+                    getAllBugs(label:"` + version + `",assignedTo:"` + user +
+                        `",menu:"` + menu +
+                        `",rootCause:"`+ rootCause +
+                        `",preventTag:"` + preventTag +
+                        `",pageSize:0,pageIndex:1){
+
                         id,
                         assigned_to,
                         bug_severity,
@@ -204,6 +262,9 @@ export function fetchBugReviewApplications(version, userAlisa) {
             .then((body) => {
                 dispatch(fetchCurrentProjectVersion(version));
                 dispatch(fetchCurrentSelectUser(userAlisa));
+                dispatch(fetchCurrentSelectMenu(menu));
+                dispatch(fetchCurrentSelectRootCause(rootCause));
+                dispatch(fetchCurrentSelectPreventTag(preventTag));
                 dispatch(fetchBugReviewApplicationsSuccess(body.data.getAllBugs));
             })
             .catch((err) => {
@@ -299,13 +360,13 @@ export function fetchAllUsers(){
     };
 }
 
-export function fetchBugReviewPageData(version, userAlisa) {
+export function fetchBugReviewPageData(version, userAlisa, menu, rootCause, preventTag) {
     version = version ? version : '4.1.0';
     return (dispatch, getState) => {
         userAlisa = userAlisa ? userAlisa : getState().app.toJS().currentUser.email.split('@')[0];
         dispatch(setLoadingState(true));
         Promise.all([
-            dispatch(fetchBugReviewApplications(version, userAlisa))
+            dispatch(fetchBugReviewApplications(version, userAlisa, menu, rootCause, preventTag))
         ]).then(
             () => {
                 dispatch(setLoadingState(false));

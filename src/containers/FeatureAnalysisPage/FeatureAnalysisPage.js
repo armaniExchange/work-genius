@@ -2,40 +2,108 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // Components
-import FeatureAnalysisTableRow from '../../components/Feature-Analysis-Table-Row/Feature-Analysis-Table-Row.js';
+import AssignmentCategoryTree from '../../components/AssignmentCategoryTree/AssignmentCategoryTree';
 // Actions
 import * as FeatureAnalysisActions from '../../actions/feature-analysis-actions';
 
+import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
+import RaisedButton from 'material-ui/lib/raised-button';
+
 class FeatureAnalysisPage extends Component {
-    _onFeatureChangeHandler(id, newFeature) {
-        console.log(id, newFeature);
+    constructor(props){
+      super(props);
+      this.user = [{title:'Zli', 'value': 'zli'}];
+      this.level = [
+                  {title:'Very Hard', 'value':9},
+                  {title:'Hard', 'value':7},
+                  {title:'Medium', 'value':5},
+                  {title:'Simple', 'value':3},
+                  {title:'Easy', 'value':1},
+                  {title:'Nothing', 'value':0},
+                  ];
+    }
+    componentWillMount() {
+        const { fetchAssignmentCategories } = this.props;
+        fetchAssignmentCategories();
+    }
+    _onNodeClick() {
+        this.props.setCurrentLeafNode(undefined);
     }
     render() {
-        const { data, featureOptions } = this.props;
-        let tableRowHTML = data.map((d, i) => {
-            return (
-                <FeatureAnalysisTableRow
-                    key={i}
-                    data={d}
-                    featureOptions={featureOptions}
-                    onChangeHandler={::this._onFeatureChangeHandler}/>
-            );
-        });
+        const {
+            treeDataSource,
+            updateOneAssignmentCategory,
+            setCurrentLeafNode
+        } = this.props;
         return (
-            <div>
-                <table>
-                    <tbody>
-                        {tableRowHTML}
-                    </tbody>
-                </table>
+            <div className="row">
+                <div className="pull-left col-md-6">
+                    <AssignmentCategoryTree
+                            data={treeDataSource}
+                            onNodeClick={::this._onNodeClick}
+                            onLeafClick={setCurrentLeafNode}/>
+                </div>
+                <div className="pull-right col-md-6">
+                  <div className="form-horizontal">
+                    <h3>Edit {this.props.curCategory}</h3>
+                    <div className="col-xs-3">
+                      Primary Owner:
+                    </div>
+                    <div className="col-xs-9">
+                      <DropDownList
+                        isDropDownListVisual2={true}
+                        isNeedAll={false}
+                        onOptionClick={(val) => {
+                          console.log(val);
+                        }}
+                        aryOptionConfig={this.user} />
+                    </div>
+                    <div className="col-xs-3">
+                      Secondary Owner:
+                    </div>
+                    <div className="col-xs-9">
+                      <DropDownList
+                        isDropDownListVisual2={true}
+                        isNeedAll={false}
+                        onOptionClick={(val) => {
+                          console.log(val, 'val2');
+                        }}
+                        aryOptionConfig={this.user} />
+                    </div>
+                    <div className="col-xs-3">
+                      Level:
+                    </div>
+                    <div className="col-xs-9">
+                      <DropDownList
+                        isDropDownListVisual2={true}
+                        isNeedAll={false}
+                        onOptionClick={(val) => {
+                          console.log(val, 'val3');
+                        }}
+                        aryOptionConfig={this.level} />
+                    </div>
+                    <div className="col-xs-3">
+                    </div>
+                    <div className="col-xs-9">
+                      <RaisedButton label="Update" secondary={true} onClick={()=>{
+                        console.log('submited');
+                        console.log('updateOneAssignmentCategory', updateOneAssignmentCategory);
+                      }} />
+                    </div>
+                    </div>
+                </div>
             </div>
         );
     }
 }
 
 FeatureAnalysisPage.propTypes = {
-    featureOptions: PropTypes.array.isRequired,
-    data: PropTypes.array.isRequired
+    treeDataSource: PropTypes.object.isRequired,
+    curCategory: PropTypes.string,
+    updateOneAssignmentCategory: PropTypes.func.isRequired,
+    fetchAssignmentCategories: PropTypes.func.isRequired,
+    setCurrentLeafNode: PropTypes.func.isRequired,
+    setFormVisibility: PropTypes.func.isRequired
 };
 FeatureAnalysisPage.defaultProps = {};
 
@@ -47,9 +115,10 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    return {
-        featureAnalysisActions: bindActionCreators(FeatureAnalysisActions, dispatch)
-    };
+    return Object.assign(
+        {},
+        bindActionCreators(FeatureAnalysisActions, dispatch)
+    );
 }
 
 export default connect(

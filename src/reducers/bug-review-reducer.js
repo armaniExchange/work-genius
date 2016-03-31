@@ -19,7 +19,7 @@ const initialState = Map({
         Map({ title: 'Prevent Tags', key: 'tags', colspan: 3}),
         Map({ title: 'Belongs To Menu', key: 'menu', colspan: 2}),
         Map({ title: 'Owner', key: 'assigned_to', colspan: 1}),
-        Map({ title: 'Bug Resolved Status', key: 'resolved_status', colspan: 1}),
+        Map({ title: 'Bug Resolved Status', key: 'resolved_status', colspan: 2}),
         Map({ title: 'Root Cause Detail', key: 'review', colspan: 2})
     ),
     // allProjectVersions: List.of('4.1.0', '3.2.1', '3.2.0'),
@@ -29,27 +29,30 @@ const initialState = Map({
         Map({title: '3.2.1', value: '3.2.1'})
     ),
     currentProjectVersion: '',
+    currentSelectPreventTag: '',
+    currentSelectMenu: '',
+    currentSelectRootCause: '',
     allUsers: List.of(),
     currentSelectUser: Map({}),
     resolvedReasonTypes: List.of(
-        Map({ label: 'AXAPI', value: 'axapi' }),
-        Map({ label: 'Brower related', value: 'brower_related' }),
-        Map({ label: 'Requirement change', value: 'requirement_change' }),
-        Map({ label: 'Look and feel', value: 'look_and_feel' }),
-        Map({ label: 'Code issue', value: 'code_issue' })
+        Map({ label: 'Gui code issue', value: 'Gui code issue' }),
+        Map({ label: 'AXAPI', value: 'AXAPI' }),
+        Map({ label: 'Look and feel', value: 'Look and feel' }),
+        Map({ label: 'Requirement change', value: 'Requirement change' }),
+        Map({ label: 'Browser related', value: 'Browser related' })
     ),
     optionsReviewTags: List.of(
         Map({ value: 'test_more', label: 'Test More'}),
         Map({ value: 'deep_test', label: 'Deep Test'})
     ),
     optionsMenus: List.of(
-         Map({ value: 'slb', label: 'SLB'}),
-         Map({ value: 'gslb', label: 'GSLB'}),
-         Map({ value: 'system', label: 'System'}),
-         Map({ value: 'network', label: 'Network'}),
-         Map({ value: 'adc', label: 'ADC'}),
-         Map({ value: 'ssli', label: 'SSLi'}),
-         Map({ value: 'security', label: 'Security'})
+         Map({ value: 'SLB', label: 'SLB'}),
+         Map({ value: 'GSLB', label: 'GSLB'}),
+         Map({ value: 'System', label: 'System'}),
+         Map({ value: 'Network', label: 'Network'}),
+         Map({ value: 'ADC', label: 'ADC'}),
+         Map({ value: 'SSLi', label: 'SSLi'}),
+         Map({ value: 'Security', label: 'Security'})
     )
 });
 
@@ -93,6 +96,14 @@ function setPreventTagData(state, data) {
     return state.set(`optionsReviewTags`, result);
 }
 
+function addReviewTagData(state, data){
+    var options = state.get(`optionsReviewTags`);
+    if (data) {
+        options = options.push(Map({value: data, label: data}));
+    }
+    return state.set('optionsReviewTags', options);
+}
+
 function setAllUsers(state, data){
     let result = List.of();
     data.forEach((user) => {
@@ -104,13 +115,31 @@ function setAllUsers(state, data){
 
 function setSelectUser(state, userAlisa){
     let allUsers = state.get(`allUsers`);
+    let isAll = true;
     allUsers.forEach((userMap) => {
         var alisa = userMap.get('value');
         if (alisa === userAlisa) {
+            isAll = false;
             state = state.set(`currentSelectUser`, userMap);
         }
     });
+    if (isAll) {
+        state = state.set(`currentSelectUser`, Map({title: 'All'}));
+    }
     return state;
+}
+
+function changeOptions(state, data) {
+    var applications = state.get(`applications`);
+    var result = List.of();
+    applications.forEach((application) => {
+        if ( String(application.get(`id`)) === String(data.id)){
+            result = result.push(OrderedMap(customizeTaskData(data)));
+        } else {
+            result = result.push(application);
+        }
+    });
+    return state.set(`applications`, result);
 }
 
 export default function bugReviewReducer(state = initialState, action) {
@@ -118,17 +147,15 @@ export default function bugReviewReducer(state = initialState, action) {
     switch (action.type) {
         case actionTypes.FETCH_BUG_REVIEW_APPLICATION_SUCCESS:
             nextState = setTableData(state, action.data);
-            // if (!is(state.get('ptoFilterConditions'), initialPTOFilterConditions)) {
-            //     nextState = filterOriginal(nextState);
-            // }
-            // if (state.get('sortPTOTableBy').get('category')) {
-            //     nextState = sortOriginal(nextState);
-            // }
             return nextState;
         case actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS:
+            nextState = changeOptions(nextState, action.data);
             return nextState;
         case actionTypes.FETCH_BUG_REVIEW_PREVENT_TAGS_OPTIONS:
             nextState = setPreventTagData(nextState, action.data);
+            return nextState;
+        case actionTypes.FETCH_BUG_REVIEW_ADD_OPTIONS_SUCCESS:
+            nextState = addReviewTagData(nextState, action.data);
             return nextState;
         case actionTypes.FETCH_BUG_REVIEW_ALL_USERS:
             nextState = setAllUsers(state, action.data);
@@ -138,6 +165,15 @@ export default function bugReviewReducer(state = initialState, action) {
             return nextState;
         case actionTypes.SET_BUG_REVIEW_PROJECT_VERSION:
             nextState = nextState.set(`currentProjectVersion`, action.data);
+            return nextState;
+        case actionTypes.SET_BUG_REVIEW_SELECT_MENU:
+            nextState = nextState.set(`currentSelectMenu`, action.data);
+            return nextState;
+        case actionTypes.SET_BUG_REVIEW_SELECT_PREVENT_TAG:
+            nextState = nextState.set(`currentSelectPreventTag`, action.data);
+            return nextState;
+        case actionTypes.SET_BUG_REVIEW_SELECT_ROOT_CAUSE:
+            nextState = nextState.set(`currentSelectRootCause`, action.data);
             return nextState;
         default:
             return state;

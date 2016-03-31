@@ -1,30 +1,45 @@
-// import * as actionTypes from '../constants/action-types';
-import { Map, List } from 'immutable';
-import FEATURE_OPTIONS from './static-feature-options';
+import * as actionTypes from '../constants/action-types';
+import { Map } from 'immutable';
 
 const initialState = Map({
-	featureOptions: FEATURE_OPTIONS,
-    data: List.of(
-        Map({
-            id: 1
-        }),
-        Map({
-            id: 2
-        }),
-        Map({
-            id: 3
-        }),
-        Map({
-            id: 4
-        }),
-        Map({
-            id: 5
-        })
-    )
+	treeDataSource: Map({}),
+	currentLeaf: Map({})
 });
+
+function generateTree(dataArr, root) {
+    let subTree, directChildren, subDataArr;
+    if (Object.keys(root).length === 0) {
+        return {};
+    }
+    if (dataArr.length === 0) {
+        return {
+            ...root,
+            children: []
+        };
+    }
+    directChildren = dataArr.filter((node) => { return node.parentId === root.id; });
+    subDataArr = dataArr.filter((node) => { return node.parentId !== root.id; });
+    subTree = directChildren.map((node) => {
+        return generateTree(subDataArr, node);
+    });
+    return {
+        ...root,
+        children: subTree
+    };
+}
+
+function transformToTree(dataArr) {
+    let root = dataArr.filter((node) => { return !node.parentId; })[0],
+        rest = dataArr.filter((node) => { return node.parentId; });
+    return generateTree(rest, root);
+}
 
 export default function featureAnalysisReducer(state = initialState, action) {
 	switch (action.type) {
+		case actionTypes.FETCH_ASSIGNMENT_CATEGORIES_SUCCESS:
+		    return state.set('treeDataSource', transformToTree(action.data));
+		case actionTypes.SET_CURRENT_LEAF_NODE:
+		    return !action.data ? state.set('currentLeaf', undefined) : state.set('currentLeaf', action.data);
 		default:
 			return state;
 	}
