@@ -52,7 +52,8 @@ const schema = new GraphQLSchema({
 			allAssignmentCategories: AssignmentCategoryQuery.getAllAssignmentCategories,
 			tags          		   : AssignmentCategoryQuery.getAllTags,
 			allDifficulties        : AssignmentCategoryQuery.getAllDifficulties,
-			getRootCauseSummary	   : BugStats.getRootCauseSummary
+			getRootCauseSummary	   : BugStats.getRootCauseSummary,
+			getOwnerSummary		   : BugStats.getOwnerSummary
 		}
 	}),
 	mutation: new GraphQLObjectType({
