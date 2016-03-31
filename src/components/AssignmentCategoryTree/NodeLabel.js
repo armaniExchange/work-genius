@@ -3,7 +3,7 @@ import React from 'react';
 
 function countTagsByDifficulty(data) {
     if (data.children.length === 0) {
-        if (data.difficulty.title) {
+        if (data.difficulty && data.difficulty.title) {
             return {
                 [data.difficulty.title]: 1
             };

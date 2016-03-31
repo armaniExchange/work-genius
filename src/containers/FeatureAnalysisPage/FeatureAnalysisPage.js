@@ -6,8 +6,11 @@ import AssignmentCategoryTree from '../../components/AssignmentCategoryTree/Assi
 // Actions
 import * as FeatureAnalysisActions from '../../actions/feature-analysis-actions';
 
-import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
+import Select from 'react-select';
 import RaisedButton from 'material-ui/lib/raised-button';
+import Table from '../../components/A10-UI/Table/Table';
+import Th from '../../components/A10-UI/Table/Th';
+import Td from '../../components/A10-UI/Table/Td';
 
 class FeatureAnalysisPage extends Component {
     constructor(props){
@@ -28,91 +31,118 @@ class FeatureAnalysisPage extends Component {
             aryDifficulties,
             updateMsgOpacity,
             currentLeaf,
-            categoryWaitToUpdate,
+            // categoryWaitToUpdate,
             treeDataSource,
             updateOneAssignmentCategory,
-            setCurrentLeafNode,
-            changeCategoryWaitForUpdate
+            setCurrentLeafNode
         } = this.props;
-        let user = aryOwners.map(item => {
-            return {title:item.nickname, value: item.id};
+        let select_owner1_value = '', select_owner2_value='', select_difficulty_value='';
+        let optUser = aryOwners.map(item => {
+            if (+item.id === currentLeaf.primary_owner) {
+                select_owner1_value = item.nickname;
+            }
+            if (+item.id === currentLeaf.secondary_owner) {
+                select_owner2_value = item.nickname;
+            }
+            return {label:item.nickname, value: +item.id};
         });
-        let difficulties = aryDifficulties.map(item => {
-            return {
-                title:item.difficulty && item.difficulty.title,
-                value: item.difficulty && item.difficulty.id
-            };
+        let optDifficulty = aryDifficulties.map(item => {
+            if (item.difficulty && currentLeaf.difficulty && +item.difficulty.id===currentLeaf.difficulty.id) {
+               select_difficulty_value = item.difficulty && item.difficulty.title;
+            }
+            return {label: item.difficulty && item.difficulty.title, 
+                    value: item.difficulty && item.difficulty.id};
         });
         const displayForm = currentLeaf.id ? '' : 'none';
         const displayHint = currentLeaf.id ? 'none' : '';
-        const difficultyTitle = currentLeaf.difficulty && currentLeaf.difficulty.id;
+        const input_owner1_value = currentLeaf.primary_owner ? currentLeaf.primary_owner : '';
+        const input_owner2_value = currentLeaf.secondary_owner ? currentLeaf.secondary_owner : '';
+        const input_difficulty_value = currentLeaf.difficulty && currentLeaf.difficulty.id ? currentLeaf.difficulty.id : '';
         return (
             <div className="row">
-                <div className="pull-left col-md-4">
+                <div className="col-md-4">
                     <AssignmentCategoryTree
                             data={treeDataSource}
                             onNodeClick={::this._onNodeClick}
                             onLeafClick={setCurrentLeafNode}/>
                 </div>
-                <div className="pull-right col-md-8">
-                  <div style={{display:displayHint, fontSize:'30px', padding:'30px 0'}}>
-                    Please choose and click leaf in root tree.
+                <div className="col-md-8">
+                  <div style={{display:displayHint, fontSize:'30px', margin:'90px 0', textDecoration:'underline'}}>
+                    &laquo; Please choose and click leaf in root tree.
                   </div>
                   <div className="form-horizontal" style={{display:displayForm}}>
-                    <h5 style={{color:'#999'}}>{'Edit '}<span style={{color:'#000'}}>{currentLeaf.path}</span></h5>
-                    <div className="col-xs-3">
+                    <h5 style={{color:'#9cf'}}>{'Edit '}<span style={{color:'#000'}}>{currentLeaf.path}</span></h5>
+                    <div className="col-xs-3" style={{paddingTop:'12px'}}>
                       Primary Owner:
                     </div>
                     <div className="col-xs-9">
-                      <DropDownList
-                        title={currentLeaf.primary_owner}
-                        isDropDownListVisual2={true}
-                        isNeedAll={false}
-                        onOptionClick={(val) => {
-                          changeCategoryWaitForUpdate('primary_owner', val);
-                        }}
-                        aryOptionConfig={user} />
+                      <input type="hidden" ref="input_owner1" value={input_owner1_value} />
+                      <div style={{width:'200px', paddingBottom:'10px'}}>
+                          <Select ref="select_owner1"
+                                value={select_owner1_value}
+                                options={optUser}
+                                onChange={(val) => {
+                                this.refs.input_owner1.value = val;
+                            }}
+                            />
+                        </div>
                     </div>
-                    <div className="col-xs-3">
+                    <div className="col-xs-3" style={{paddingTop:'12px'}}>
                       Secondary Owner:
                     </div>
                     <div className="col-xs-9">
-                      <DropDownList
-                        title={currentLeaf.secondary_owner}
-                        isDropDownListVisual2={true}
-                        isNeedAll={false}
-                        onOptionClick={(val) => {
-                          changeCategoryWaitForUpdate('secondary_owner', val);
-                        }}
-                        aryOptionConfig={user} />
+                      <input type="hidden" ref="input_owner2" value={input_owner2_value} />
+                      <div style={{width:'200px', paddingBottom:'10px'}}>
+                          <Select ref="select_owner2"
+                                value={select_owner2_value}
+                                options={optUser}
+                                onChange={(val) => {
+                                this.refs.input_owner2.value = val;
+                            }}
+                            />
+                       </div>
                     </div>
-                    <div className="col-xs-3">
+                    <div className="col-xs-3" style={{paddingTop:'12px'}}>
                       Difficulty:
                     </div>
                     <div className="col-xs-9">
-                      <DropDownList
-                        title={difficultyTitle}
-                        isDropDownListVisual2={true}
-                        isNeedAll={false}
-                        onOptionClick={(val) => {
-                          changeCategoryWaitForUpdate('difficulty', val);
-                        }}
-                        aryOptionConfig={difficulties} />
+                      <input type="hidden" ref="input_difficulty" value={input_difficulty_value} />
+                      <div style={{width:'200px', paddingBottom:'10px'}}>
+                          <Select ref="select_difficulty"
+                                value={select_difficulty_value}
+                                options={optDifficulty}
+                                onChange={(val) => {
+                                this.refs.input_difficulty.value = val;
+                            }}
+                            />
+                      </div>
                     </div>
-                    <div className="col-xs-3">
+                    <div className="col-xs-3" style={{paddingTop:'12px'}}>
                     </div>
                     <div className="col-xs-9">
                       <RaisedButton label="Update" secondary={true} onClick={()=>{
                         updateOneAssignmentCategory(currentLeaf.id, {
-                            primary_owner: categoryWaitToUpdate.primary_owner,
-                            secondary_owner: categoryWaitToUpdate.secondary_owner,
-                            difficulty: categoryWaitToUpdate.difficulty
+                            primary_owner: +this.refs.input_owner1.value,
+                            secondary_owner: +this.refs.input_owner2.value,
+                            difficulty: +this.refs.input_difficulty.value
                         });
                       }} />
                       <div style={{opacity:updateMsgOpacity, 'transition': 'opacity 2s'}}>{'Update successfully'}</div>
                     </div>
                     </div>
-                </div>
+                    <h5 style={{color:'#9cf'}}>Reporting</h5>
+                    <Table>
+                        <tr>{[<Th />, aryDifficulties.map((item, idx) => {
+                            return (<Th key={idx}>
+                                {item.difficulty && item.difficulty.title}
+                                <br />{'total: ' + (item.num||0)}
+                                </Th>);
+                        })]}</tr>
+                        {aryOwners.map((item, idx)=>{
+                            return (<tr key={idx}><Td>{item.nickname || 0}</Td><Td>{item.num1 || 0}</Td><Td>{item.num2 || 0}</Td><Td>{item.num3 || 0}</Td><Td>{item.num4 || 0}</Td><Td>{item.num5 || 0}</Td></tr>);
+                        })}
+                    </Table>
+                </div>{/*div col-md*/}
             </div>
         );
     }
