@@ -22,6 +22,7 @@ import BugTagQuery from '../models/BugTag/BugTagQuery.js';
 import BugTagMutation from '../models/BugTag/BugTagMutation.js';
 import AssignmentCategoryQuery from '../models/AssignmentCategory/AssignmentCategoryQuery.js';
 import AssignmentCategoryMutation from '../models/AssignmentCategory/AssignmentCategoryMutation.js';
+import BugStats from '../models/Bug/BugStats.js';
 
 const schema = new GraphQLSchema({
 	query: new GraphQLObjectType({
@@ -50,7 +51,8 @@ const schema = new GraphQLSchema({
 			assignmentCategoryTree : AssignmentCategoryQuery.getAssignmentCategoryTree,
 			allAssignmentCategories: AssignmentCategoryQuery.getAllAssignmentCategories,
 			tags          		   : AssignmentCategoryQuery.getAllTags,
-			allDifficulties        : AssignmentCategoryQuery.getAllDifficulties
+			allDifficulties        : AssignmentCategoryQuery.getAllDifficulties,
+			getRootCauseSummary	   : BugStats.getRootCauseSummary
 		}
 	}),
 	mutation: new GraphQLObjectType({
