@@ -3,7 +3,8 @@ import { Map } from 'immutable';
 
 const initialState = Map({
 	treeDataSource: Map({}),
-	currentLeaf: Map({})
+	currentLeaf: Map({}),
+    aryOwners: []
 });
 
 function generateTree(dataArr, root) {
@@ -40,6 +41,8 @@ export default function featureAnalysisReducer(state = initialState, action) {
 		    return state.set('treeDataSource', transformToTree(action.data));
 		case actionTypes.SET_CURRENT_LEAF_NODE:
 		    return !action.data ? state.set('currentLeaf', undefined) : state.set('currentLeaf', action.data);
+        case actionTypes.FETCH_OWNERS_SUCCESS:
+            return state.set('aryOwners', action.data);
 		default:
 			return state;
 	}

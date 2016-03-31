@@ -12,9 +12,6 @@ import RaisedButton from 'material-ui/lib/raised-button';
 class FeatureAnalysisPage extends Component {
     constructor(props){
       super(props);
-      this.user = [{title:'Zuoping', 'value': 'zli'}, 
-                   {title:'Yuhua', 'value': 'yli'}
-                  ];
       this.level = [
                   {title:'Very Hard', 'value':9},
                   {title:'Hard', 'value':7},
@@ -25,25 +22,30 @@ class FeatureAnalysisPage extends Component {
                   ];
     }
     componentWillMount() {
-        const { fetchAssignmentCategories } = this.props;
+        const { fetchAssignmentCategories, fetchOwners } = this.props;
         fetchAssignmentCategories();
+        fetchOwners();
     }
     _onNodeClick() {
         this.props.setCurrentLeafNode(undefined);
     }
     render() {
         const {
+            aryOwners,
             currentLeaf,
             treeDataSource,
             updateOneAssignmentCategory,
             setCurrentLeafNode
         } = this.props;
-        console.log('currentLeaf, this.user', currentLeaf, this.user);
+        let user = aryOwners.map(item => {
+            return {title:item.nickname, value: item.id};
+        });
+        console.log('currentLeaf, this.user', currentLeaf, user);
         const displayForm = currentLeaf.id ? '' : 'none';
         const displayHint = currentLeaf.id ? 'none' : '';
-        currentLeaf.primary_owner = 'yli';
+        /*currentLeaf.primary_owner = 'yli';
         currentLeaf.secondary_owner = 'zli';
-        currentLeaf.difficulty = 7;
+        currentLeaf.difficulty = 7;*/
         return (
             <div className="row">
                 <div className="pull-left col-md-4">
@@ -72,7 +74,7 @@ class FeatureAnalysisPage extends Component {
                         onOptionClick={(val) => {
                           console.log(val);
                         }}
-                        aryOptionConfig={this.user} />
+                        aryOptionConfig={user} />
                     </div>
                     <div className="col-xs-3">
                       Secondary Owner:
@@ -85,7 +87,7 @@ class FeatureAnalysisPage extends Component {
                         onOptionClick={(val) => {
                           console.log(val, 'val2');
                         }}
-                        aryOptionConfig={this.user} />
+                        aryOptionConfig={user} />
                     </div>
                     <div className="col-xs-3">
                       Difficulty:
@@ -118,10 +120,12 @@ class FeatureAnalysisPage extends Component {
 FeatureAnalysisPage.propTypes = {
     treeDataSource: PropTypes.object.isRequired,
     currentLeaf: PropTypes.object.isRequired,
+    aryOwners: PropTypes.string.isRequired,
     updateOneAssignmentCategory: PropTypes.func.isRequired,
     fetchAssignmentCategories: PropTypes.func.isRequired,
     setCurrentLeafNode: PropTypes.func.isRequired,
-    setFormVisibility: PropTypes.func.isRequired
+    setFormVisibility: PropTypes.func.isRequired,
+    fetchOwners: PropTypes.func.isRequired
 };
 FeatureAnalysisPage.defaultProps = {
     currentLeaf: {}
@@ -130,7 +134,8 @@ FeatureAnalysisPage.defaultProps = {
 function mapStateToProps(state) {
     return Object.assign(
         {},
-        state.featureAnalysis.toJS()
+        state.featureAnalysis.toJS(),
+        state.app.toJS()
     );
 }
 
