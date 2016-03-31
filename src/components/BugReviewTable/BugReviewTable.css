@@ -33,6 +33,10 @@
     word-wrap:break-word;
 }
 
+.bug-review-table-bug-id-width {
+    width: 100px;
+}
+
 .bug-review-table{
     white-space: normal !important;
     table-layout:fixed;
