@@ -1,0 +1,11 @@
+.assignment-category-tree {
+    .tree-node-text {
+        cursor: pointer;
+        &:hover {
+            background-color: #aaa
+        }
+    }
+    .tree-node-badge {
+        margin-left: 5px;
+    }
+}
