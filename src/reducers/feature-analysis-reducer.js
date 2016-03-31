@@ -2,6 +2,8 @@ import * as actionTypes from '../constants/action-types';
 import { Map } from 'immutable';
 
 const initialState = Map({
+    aryOwners: [],
+    aryDifficulties: [],
 	treeDataSource: Map({}),
 	currentLeaf: Map({})
 });
@@ -40,6 +42,10 @@ export default function featureAnalysisReducer(state = initialState, action) {
 		    return state.set('treeDataSource', transformToTree(action.data));
 		case actionTypes.SET_CURRENT_LEAF_NODE:
 		    return !action.data ? state.set('currentLeaf', undefined) : state.set('currentLeaf', action.data);
+        case actionTypes.FETCH_OWNERS_SUCCESS:
+            return state.set('aryOwners', action.data);
+        case actionTypes.FETCH_DIFFICULTIES_SUCCESS:
+            return state.set('aryDifficulties', action.data);
 		default:
 			return state;
 	}

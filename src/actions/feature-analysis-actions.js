@@ -39,10 +39,10 @@ export function updateOneAssignmentCategoryBase(dispatch, row) {
   return fetch(SERVER_API_URL, config)
     .then((res) => res.json())
     .then((body) => {
-      console.log('body', body);
+      console.log('body updateOneAssignmentCategoryBase', body);
       dispatch(setLoadingState(false));
-      console.log('body.data', body.data);
-      //dispatch(fetchAssignmentCategoriesSuccess(body.data));
+      console.log('body.data updateOneAssignmentCategoryBase', body.data);
+      //TODO: dispatch success action here!
     })
     .catch((err) => {
       dispatch(setLoadingState(false));
@@ -50,20 +50,95 @@ export function updateOneAssignmentCategoryBase(dispatch, row) {
     });
 };
 
-export function updateOneAssignmentCategory(row, primaryOwner, secondaryOwner, level) {
-  row['primary_owner'] = primaryOwner;
-  row['secondary_owner'] = secondaryOwner;
-  row['level'] = level;
+export function updateOneAssignmentCategory(row) {
   return (dispatch) => {
     updateOneAssignmentCategoryBase(dispatch, row);
   };
 };
 
+
+
+export function fetchOwnersSuccess(data) {
+  return {
+    type: actionTypes.FETCH_OWNERS_SUCCESS,
+    data
+  };
+};
+
+export function fetchOwners() {
+  return (dispatch) => {
+    let config = {
+      method: 'POST',
+      body: `{
+          allUsers {
+            id,
+            nickname
+          }
+      }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+    dispatch(setLoadingState(true));
+    return fetch(SERVER_API_URL, config)
+      .then((res) => res.json())
+      .then((body) => {
+        dispatch(setLoadingState(false));
+        dispatch(fetchOwnersSuccess(body.data.allUsers));
+      })
+      .catch((err) => {
+        dispatch(setLoadingState(false));
+        dispatch(apiFailure(err));
+      });
+  };
+};
+
+export function fetchDifficultiesSuccess(data) {
+  return {
+    type: actionTypes.FETCH_DIFFICULTIES_SUCCESS,
+    data
+  };
+};
+
+export function fetchDifficulties() {
+  return (dispatch) => {
+    let config = {
+      method: 'POST',
+      body: `{
+        allDifficulties{
+          difficulty{
+            id,
+            title,
+            color
+          }
+        }
+      }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+    dispatch(setLoadingState(true));
+    return fetch(SERVER_API_URL, config)
+      .then((res) => res.json())
+      .then((body) => {
+        dispatch(setLoadingState(false));
+        dispatch(fetchDifficultiesSuccess(body.data.allDifficulties));
+      })
+      .catch((err) => {
+        dispatch(setLoadingState(false));
+        dispatch(apiFailure(err));
+      });
+  };
+};
+
+
 export function fetchAssignmentCategoriesSuccess(data) {
-	return {
-		type: actionTypes.FETCH_ASSIGNMENT_CATEGORIES_SUCCESS,
-		data
-	};
+  return {
+    type: actionTypes.FETCH_ASSIGNMENT_CATEGORIES_SUCCESS,
+    data
+  };
 }
 
 export function fetchAssignmentCategories() {
