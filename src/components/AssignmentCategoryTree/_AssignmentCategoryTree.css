@@ -7,6 +7,10 @@
     .node {
         display: inline-block;
         margin-bottom: 3px;
+        &--selected {
+            font-weight: bold;
+            text-decoration: underline;
+        }
     }
     .leaf {
         display: block;
@@ -15,7 +19,8 @@
     .tree-node-text {
         cursor: pointer;
         &:hover {
-            background-color: #aaa
+            background-color: #5cb85c;
+            color: white;
         }
     }
     .tree-node-icon {
