@@ -1,0 +1,43 @@
+.assignment-category-tree {
+    .tree-node-text {
+        cursor: pointer;
+        &:hover {
+            background-color: #aaa
+        }
+    }
+    .tree-node-badge {
+        cursor: help;
+        display: inline-block;
+        margin-left: 5px;
+        padding: 0px 4px;
+        border-radius: 5px;
+        &--undefined {
+            background-color: grey;
+            color: white;
+        }
+        &--total {
+            background-color: teal;
+            color: white;
+        }
+        &--Very-Hard {
+            background-color: red;
+            color: white;
+        }
+        &--Hard {
+            background-color: orange;
+            color: black;
+        }
+        &--Medium {
+            background-color: yellow;
+            color: black;
+        }
+        &--Easy {
+            background-color: green;
+            color: white;
+        }
+        &--Nothing {
+            background-color: blue;
+            color: white;
+        }
+    }
+}

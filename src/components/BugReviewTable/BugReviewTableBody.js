@@ -49,6 +49,7 @@ class BugReviewTableBody extends Component {
                     var outBlurReviewText = (event) => {
                         let value = event.target.value.replace(/\n/g, '\\n');
                         changeReviewText(review, value);
+                        this.state.details[bugId] = value;
                         let textarea = ReactDOM.findDOMNode(this.refs[bugId + '-textarea']);
                         textareaClassName = 'mdl-textfield__input element-hide';
                         textarea.className = textareaClassName;
@@ -60,6 +61,7 @@ class BugReviewTableBody extends Component {
                         textarea.value = this.state.details[bugId];
                         textareaClassName = 'mdl-textfield__input';
                         textarea.className = textareaClassName;
+                        textarea.focus();
                         let span = ReactDOM.findDOMNode(this.refs[bugId + '-span']);
                         span.className = spanClassName + 'element-hide';
                     };
@@ -116,11 +118,10 @@ class BugReviewTableBody extends Component {
                             </Td>
                         );
                     case 'id':
-                        className += ' table-bug-id-width';
                         return (
                             <Td key={cellIndex}
                             isAlignLeft={isAlignLeft}
-                            className={className}
+                            className={'bug-review-table-bug-id-width'}
                             colSpan={header['colspan']}>
                             <a className="bug-review-link" href={'https://bugzilla/show_bug.cgi?id=' + bugId} target="_Blank">
                                 {review[header['key']]}</a></Td>

@@ -24,7 +24,7 @@ export default class DropDownList extends Component {
 
         if (isDropDownListVisual2) {
             return (<div id={this.htmlid}>
-                <SelectField 
+                <SelectField
                 value={this.state.curDropDownListVisual2Value}
                 onChange={(evt, index, value)=>{
                     var name = '';
@@ -63,7 +63,7 @@ export default class DropDownList extends Component {
 DropDownList.propTypes = {
     isDropDownListVisual2: PropTypes.bool, // change to material-ui visual from default_visual=material-lite
     htmlid: PropTypes.string,
-    title: PropTypes.string,
+    title: PropTypes.oneOfType([PropTypes.string,PropTypes.number]),
     isNeedAll: PropTypes.bool,
     AllValue: PropTypes.oneOfType([PropTypes.string,PropTypes.number]),
     aryOptionConfig: PropTypes.array,
