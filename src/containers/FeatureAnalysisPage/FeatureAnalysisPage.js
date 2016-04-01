@@ -65,6 +65,7 @@ class FeatureAnalysisPage extends Component {
                     <AssignmentCategoryTree
                             data={treeDataSource}
                             owners={aryOwners}
+                            selectedId={currentLeaf.id}
                             onNodeClick={::this._onNodeClick}
                             onLeafClick={setCurrentLeafNode}/>
                 </div>

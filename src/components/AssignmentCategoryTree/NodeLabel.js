@@ -36,8 +36,8 @@ function orderByDifficulty(a, b) {
     return MAP[b] - MAP[a];
 }
 
-export default function NodeLabel({ data, onClickHandler, isLeaf, key, owners }) {
-    const nodeClasses = `node ${isLeaf ? 'leaf' : ''}`;
+export default function NodeLabel({ data, onClickHandler, isLeaf, key, owners, selected }) {
+    const nodeClasses = `node ${isLeaf ? 'leaf' : ''} ${selected ? 'node--selected' : ''}`;
     let tagsHtml = null,
         total;
 
@@ -75,7 +75,7 @@ export default function NodeLabel({ data, onClickHandler, isLeaf, key, owners })
             if (ownerId) {
                 return (
                     <span className="tree-node-icon" key={ownerId + i}>
-                        <i className="material-icons">face</i>
+                        <i className="material-icons">mood</i>
                         {owners.filter(owner => +owner.id === +ownerId)[0].nickname}
                     </span>
                 );
