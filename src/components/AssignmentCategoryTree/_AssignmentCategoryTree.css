@@ -14,12 +14,12 @@
     }
     .leaf {
         display: block;
-        color: green;
+        color: #337ab7;
     }
     .tree-node-text {
         cursor: pointer;
         &:hover {
-            background-color: #5cb85c;
+            background-color: #337ab7;
             color: white;
         }
     }
@@ -28,6 +28,7 @@
         color: black;
         .material-icons {
             vertical-align: middle;
+            color: #5cb85c;
         }
     }
     .tree-node-badge {

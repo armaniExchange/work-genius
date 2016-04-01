@@ -72,10 +72,13 @@ export default function NodeLabel({ data, onClickHandler, isLeaf, key, owners, s
         }));
     } else {
         tagsHtml = [data.primary_owner, data.secondary_owner].map((ownerId, i) =>{
+            let iconHtml = i === 0 ?
+                (<i className="material-icons">looks_one</i>) :
+                (<i className="material-icons">looks_two</i>);
             if (ownerId) {
                 return (
                     <span className="tree-node-icon" key={ownerId + i}>
-                        <i className="material-icons">mood</i>
+                        {iconHtml}
                         {owners.filter(owner => +owner.id === +ownerId)[0].nickname}
                     </span>
                 );
