@@ -47,7 +47,8 @@ export function fetchOwners() {
       body: `{
           allUsers {
             id,
-            nickname
+            nickname,
+			name
           }
       }`,
       headers: {

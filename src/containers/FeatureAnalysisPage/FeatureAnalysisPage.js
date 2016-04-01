@@ -3,14 +3,12 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // Components
 import AssignmentCategoryTree from '../../components/AssignmentCategoryTree/AssignmentCategoryTree';
+import AssignmentReportTable from '../../components/AssignmentReportTable/AssignmentReportTable';
 // Actions
 import * as FeatureAnalysisActions from '../../actions/feature-analysis-actions';
 
 import Select from 'react-select';
 import RaisedButton from 'material-ui/lib/raised-button';
-import Table from '../../components/A10-UI/Table/Table';
-import Th from '../../components/A10-UI/Table/Th';
-import Td from '../../components/A10-UI/Table/Td';
 
 class FeatureAnalysisPage extends Component {
     constructor(props){
@@ -31,7 +29,7 @@ class FeatureAnalysisPage extends Component {
             aryDifficulties,
             updateMsgOpacity,
             currentLeaf,
-            // changeCategoryWaitForUpdate,
+            dataSource,
             treeDataSource,
             updateOneAssignmentCategory,
             setCurrentLeafNode
@@ -39,12 +37,12 @@ class FeatureAnalysisPage extends Component {
         let select_owner1_value = '', select_owner2_value='', select_difficulty_value='';
         let optUser = aryOwners.map(item => {
             if (+item.id === currentLeaf.primary_owner) {
-                select_owner1_value = item.nickname;
+                select_owner1_value = item.name;
             }
             if (+item.id === currentLeaf.secondary_owner) {
-                select_owner2_value = item.nickname;
+                select_owner2_value = item.name;
             }
-            return {label:item.nickname, value: +item.id};
+            return {label:item.name, value: +item.id};
         });
         let optDifficulty = aryDifficulties.map(item => {
             if (item.difficulty && currentLeaf.difficulty && +item.difficulty.id===currentLeaf.difficulty.id) {
@@ -133,18 +131,7 @@ class FeatureAnalysisPage extends Component {
                       <div style={{opacity:updateMsgOpacity, 'transition': 'opacity 2s'}}>{'Update successfully'}</div>
                     </div>
                     </div>
-                    <h5 style={{color:'#9cf'}}>Reporting</h5>
-                    <Table>
-                        <tr>{[<Th />, aryDifficulties.map((item, idx) => {
-                            return (<Th key={idx}>
-                                {item.difficulty && item.difficulty.title}
-                                <br />{'total: ' + (item.num||0)}
-                                </Th>);
-                        })]}</tr>
-                        {aryOwners.map((item, idx)=>{
-                            return (<tr key={idx}><Td>{item.nickname || 0}</Td><Td>{item.num1 || 0}</Td><Td>{item.num2 || 0}</Td><Td>{item.num3 || 0}</Td><Td>{item.num4 || 0}</Td><Td>{item.num5 || 0}</Td></tr>);
-                        })}
-                    </Table>
+                    <AssignmentReportTable data={dataSource} userData={aryOwners} />
                 </div>{/*div col-md*/}
             </div>
         );
@@ -152,6 +139,7 @@ class FeatureAnalysisPage extends Component {
 }
 
 FeatureAnalysisPage.propTypes = {
+    dataSource: PropTypes.array.isRequired,
     treeDataSource: PropTypes.object.isRequired,
     currentLeaf: PropTypes.object.isRequired,
     categoryWaitToUpdate: PropTypes.object,

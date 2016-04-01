@@ -1,5 +1,5 @@
 import actionTypes from '../constants/action-types';
-import { Map } from 'immutable';
+import { Map, List } from 'immutable';
 
 const initialState = Map({
     aryOwners: [],
@@ -7,6 +7,7 @@ const initialState = Map({
     updateMsgOpacity: 0,
     categoryWaitToUpdate: {},
 	treeDataSource: Map({}),
+    dataSource: List.of(),
 	currentLeaf: Map({})
 });
 
@@ -57,9 +58,9 @@ export default function featureAnalysisReducer(state = initialState, action) {
             let newTree = transformToTree(action.data),
                 currentLeaf = state.get('currentLeaf');
             if (currentLeaf.id) {
-                return state.set('treeDataSource', newTree).set('currentLeaf', findLeaf(newTree, currentLeaf.id));
+                return state.set('treeDataSource', newTree).set('currentLeaf', findLeaf(newTree, currentLeaf.id)).set('dataSource', action.data);
             } else {
-                return state.set('treeDataSource', newTree);
+                return state.set('treeDataSource', newTree).set('dataSource', action.data);;
             }
 		case actionTypes.SET_CURRENT_LEAF_NODE:
 		    return !action.data ? state.set('currentLeaf', undefined) : state.set('currentLeaf', action.data);
