@@ -1,43 +1,55 @@
+@define-extend tree-node-tag {
+    cursor: help;
+    display: inline-block;
+    margin-left: 5px;
+}
 .assignment-category-tree {
+    .node {
+        display: inline-block;
+        margin-bottom: 3px;
+    }
+    .leaf {
+        display: block;
+        color: green;
+    }
     .tree-node-text {
         cursor: pointer;
         &:hover {
             background-color: #aaa
         }
     }
+    .tree-node-icon {
+        @extend tree-node-tag;
+        color: black;
+        .material-icons {
+            vertical-align: middle;
+        }
+    }
     .tree-node-badge {
-        cursor: help;
-        display: inline-block;
-        margin-left: 5px;
+        @extend tree-node-tag;
         padding: 0px 4px;
         border-radius: 5px;
+        color: white;
         &--undefined {
-            background-color: grey;
-            color: white;
+            background-color: #777;
         }
         &--total {
-            background-color: teal;
-            color: white;
+            background-color: #5bc0de;
         }
         &--Very-Hard {
-            background-color: red;
-            color: white;
+            background-color: purple;
         }
         &--Hard {
-            background-color: orange;
-            color: black;
+            background-color: #d9534f;
         }
         &--Medium {
-            background-color: yellow;
-            color: black;
+            background-color: #f0ad4e;
         }
         &--Easy {
-            background-color: green;
-            color: white;
+            background-color: #5cb85c;
         }
         &--Nothing {
-            background-color: blue;
-            color: white;
+            background-color: #337ab7;
         }
     }
 }

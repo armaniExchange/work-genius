@@ -24,11 +24,20 @@ function countTagsByDifficulty(data) {
     }
 }
 
-export default function NodeLabel({ data, onClickHandler, isLeaf, key }) {
-    const style = {
-        display: isLeaf ? 'block' : 'inline-block',
-        color: isLeaf ? 'green' : 'black'
+function orderByDifficulty(a, b) {
+    const MAP = {
+        'undefined': 0,
+        'Nothing': 1,
+        'Easy': 2,
+        'Medium': 3,
+        'Hard': 4,
+        'Very Hard': 5
     };
+    return MAP[b] - MAP[a];
+}
+
+export default function NodeLabel({ data, onClickHandler, isLeaf, key, owners }) {
+    const nodeClasses = `node ${isLeaf ? 'leaf' : ''}`;
     let tagsHtml = null,
         total;
 
@@ -50,7 +59,7 @@ export default function NodeLabel({ data, onClickHandler, isLeaf, key }) {
                 className="tree-node-badge tree-node-badge--total">
                 {total}
             </span>
-        )].concat(Object.keys(tagsHtml).map((diff, i) => {
+        )].concat(Object.keys(tagsHtml).sort(orderByDifficulty).map((diff, i) => {
             let classes = `tree-node-badge tree-node-badge--${diff.replace(' ', '-')}`;
             return (
                 <span
@@ -61,13 +70,24 @@ export default function NodeLabel({ data, onClickHandler, isLeaf, key }) {
                 </span>
             );
         }));
+    } else {
+        tagsHtml = [data.primary_owner, data.secondary_owner].map((ownerId, i) =>{
+            if (ownerId) {
+                return (
+                    <span className="tree-node-icon" key={ownerId + i}>
+                        <i className="material-icons">face</i>
+                        {owners.filter(owner => +owner.id === +ownerId)[0].nickname}
+                    </span>
+                );
+            }
+            return null;
+        });
     }
 
     return (
         <div
             key={key}
-            className="node"
-            style={style}>
+            className={nodeClasses}>
             <span
                 className="tree-node-text"
                 onClick={onClickHandler}>
