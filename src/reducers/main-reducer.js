@@ -28,6 +28,10 @@ const initialState = Map({
 			link: '/main/bug-analysis'
 		}),
     Map({
+      displayText: 'Bug Report',
+      link: '/main/bug-report'
+    }),
+    Map({
       displayText: 'Document',
       link: '/main/document'
     }),
@@ -40,7 +44,7 @@ const initialState = Map({
 	        link: '/main/valid-demo'
 	    }),
 		Map({
-	        displayText: 'Feature Analysis',
+	        displayText: 'Page Assignment',
 	        link: '/main/feature-analysis'
 	    })
 	),

@@ -10,6 +10,7 @@ import documentation from './document-reducer';
 import article from './article-reducer';
 import featureAnalysis from './feature-analysis-reducer';
 import bugReview from './bug-review-reducer';
+import bugReport from './bug-report-reducer';
 
 const rootReducer = combineReducers({
 	app,
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
 	documentation,
 	article,
 	bugReview,
+  bugReport,
 	featureAnalysis
 });
 
