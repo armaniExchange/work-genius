@@ -152,6 +152,9 @@ export function fetchAssignmentCategories() {
 			.then((res) => res.json())
 			.then((body) => {
 				dispatch(setLoadingState(false));
+				if (!body.data.allAssignmentCategories) {
+					throw new Error('Fetch Failed: empty data!');
+				}
 				dispatch(fetchAssignmentCategoriesSuccess(body.data.allAssignmentCategories));
 			})
 			.catch((err) => {

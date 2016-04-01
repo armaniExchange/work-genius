@@ -31,7 +31,7 @@ class FeatureAnalysisPage extends Component {
             aryDifficulties,
             updateMsgOpacity,
             currentLeaf,
-            // categoryWaitToUpdate,
+            // changeCategoryWaitForUpdate,
             treeDataSource,
             updateOneAssignmentCategory,
             setCurrentLeafNode
@@ -50,7 +50,7 @@ class FeatureAnalysisPage extends Component {
             if (item.difficulty && currentLeaf.difficulty && +item.difficulty.id===currentLeaf.difficulty.id) {
                select_difficulty_value = item.difficulty && item.difficulty.title;
             }
-            return {label: item.difficulty && item.difficulty.title, 
+            return {label: item.difficulty && item.difficulty.title,
                     value: item.difficulty && item.difficulty.id};
         });
         const displayForm = currentLeaf.id ? '' : 'none';

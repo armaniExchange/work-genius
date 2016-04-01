@@ -38,10 +38,29 @@ function transformToTree(dataArr) {
     return generateTree(rest, root);
 }
 
+function findLeaf(root, leafId) {
+    if (root.id === leafId) {
+        return root;
+    }
+    if (root.children.length === 0) {
+        return undefined;
+    }
+    let result = root.children
+        .map((childRoot) => findLeaf(childRoot, leafId))
+        .filter((res) => res);
+    return result.length === 0 ? undefined : result[0];
+}
+
 export default function featureAnalysisReducer(state = initialState, action) {
 	switch (action.type) {
 		case actionTypes.FETCH_ASSIGNMENT_CATEGORIES_SUCCESS:
-		    return state.set('treeDataSource', transformToTree(action.data));
+            let newTree = transformToTree(action.data),
+                currentLeaf = state.get('currentLeaf');
+            if (currentLeaf.id) {
+                return state.set('treeDataSource', newTree).set('currentLeaf', findLeaf(newTree, currentLeaf.id));
+            } else {
+                return state.set('treeDataSource', newTree);
+            }
 		case actionTypes.SET_CURRENT_LEAF_NODE:
 		    return !action.data ? state.set('currentLeaf', undefined) : state.set('currentLeaf', action.data);
         case actionTypes.FETCH_OWNERS_SUCCESS:
