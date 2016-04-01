@@ -58,11 +58,13 @@ class FeatureAnalysisPage extends Component {
         const input_owner1_value = currentLeaf.primary_owner ? currentLeaf.primary_owner : '';
         const input_owner2_value = currentLeaf.secondary_owner ? currentLeaf.secondary_owner : '';
         const input_difficulty_value = currentLeaf.difficulty && currentLeaf.difficulty.id ? currentLeaf.difficulty.id : '';
+
         return (
             <div className="row">
                 <div className="col-md-4">
                     <AssignmentCategoryTree
                             data={treeDataSource}
+                            owners={aryOwners}
                             onNodeClick={::this._onNodeClick}
                             onLeafClick={setCurrentLeafNode}/>
                 </div>
