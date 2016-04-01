@@ -1,7 +1,7 @@
 // Immutable
 import { Map, List } from 'immutable';
 // Constants
-import * as actionTypes from '../constants/action-types';
+import actionTypes from '../constants/action-types';
 import { PRIVILEGE } from '../constants/config.js';
 
 const initialState = Map({

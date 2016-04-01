@@ -4,7 +4,7 @@
 // Libraries
 import { Map, List, OrderedMap} from 'immutable';
 // Constants
-import * as actionTypes from '../constants/action-types';
+import actionTypes from '../constants/action-types';
 // import { ADMIN_ID } from '../../server/constants/configurations.js';
 // const initialPTOFilterConditions = Map({
 //     'status': ''

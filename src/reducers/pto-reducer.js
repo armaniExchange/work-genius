@@ -5,7 +5,7 @@
 import { Map, List, OrderedMap, is } from 'immutable';
 import moment from 'moment';
 // Constants
-import * as actionTypes from '../constants/action-types';
+import actionTypes from '../constants/action-types';
 import { ADMIN_ID } from '../../server/constants/configurations.js';
 
 const initialPTOFilterConditions = Map({

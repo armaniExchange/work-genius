@@ -4,7 +4,7 @@
 // Libraries
 import { List , OrderedMap} from 'immutable';
 // Constants
-import * as actionTypes from '../constants/action-types';
+import actionTypes from '../constants/action-types';
 
 const initialState = OrderedMap({
   // data of article

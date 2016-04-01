@@ -1,7 +1,7 @@
 // Libraries
 import fetch from 'isomorphic-fetch';
 // Constants
-import * as actionTypes from '../constants/action-types';
+import actionTypes from '../constants/action-types';
 import { SERVER_API_URL, SERVER_LOGIN_URL } from '../constants/config';
 
 export function setLoadingState(state) {
