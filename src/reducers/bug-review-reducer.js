@@ -36,11 +36,11 @@ const initialState = Map({
     currentSelectUser: Map({}),
     pager: Map({ totalRow: 0, pageRow: 25, rowIndex: 1, pageSize: 0 }),
     resolvedReasonTypes: List.of(
-        Map({ label: 'GUI Code Issue', value: 'GUI code issue' }),
+        Map({ label: 'GUI Code Issue', value: 'GUI Code Issue' }),
         Map({ label: 'AXAPI', value: 'AXAPI' }),
-        Map({ label: 'Look and Feel', value: 'Look and feel' }),
-        Map({ label: 'Requirement Change', value: 'Requirement change' }),
-        Map({ label: 'Browser Related', value: 'Browser related' })
+        Map({ label: 'Look and Feel', value: 'Look and Feel' }),
+        Map({ label: 'Requirement Change', value: 'Requirement Change' }),
+        Map({ label: 'Browser Related', value: 'Browser Related' })
     ),
     optionsReviewTags: List.of(
         Map({ value: 'test_more', label: 'Test More'}),
