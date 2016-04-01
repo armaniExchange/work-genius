@@ -19,7 +19,7 @@ const initialState = Map({
     ),
     ownerTableTitleKeyMap: List.of(
         Map({ title: 'Owner', key: 'name', colspan: 1}),
-        Map({ title: 'Gui code issue', key: 'item1', colspan: 1}),
+        Map({ title: 'GUI Code Issue', key: 'item1', colspan: 1}),
         Map({ title: 'AXAPI', key: 'item2', colspan: 1}),
         Map({ title: 'Look and Feel', key: 'item3', colspan: 1}),
         Map({ title: 'Requirement Change', key: 'item4', colspan: 1}),

@@ -35,29 +35,6 @@ export function fetchCurrentProjectVersion(data){
     };
 }
 
-// let tmpData = [
-//       {
-//         'name': 'AXAPI',
-//         'number': 4,
-//         'percentage': '25%'
-//       },
-//       {
-//         'name': 'Browser related',
-//         'number': 4,
-//         'percentage': '25%'
-//       },
-//       {
-//         'name': 'Gui code issue',
-//         'number': 4,
-//         'percentage': '25%'
-//       },
-//       {
-//         'name': 'Look and feel',
-//         'number': 4,
-//         'percentage': '25%'
-//       }
-//     ];
-
 export function fetchBugReportRootCause(version) {
     return (dispatch) => {
         let config = {
@@ -107,10 +84,7 @@ export function fetchBugReportTags(version) {
         return fetch(SERVER_API_URL, config)
             .then((res) => res.json())
             .then((body) => {
-                console.log('fetch owner body: ', body);
-                console.log('fetch owner body data: ', body.data);
                 dispatch(fetchCurrentProjectVersion(version));
-                // dispatch(fetchBugReportRootCauseSuccess(tmpData));
                 dispatch(fetchBugReportTagsSuccess(body.data.getTagSummary));
             })
             .catch((err) => {
