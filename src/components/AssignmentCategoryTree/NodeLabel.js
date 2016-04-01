@@ -79,7 +79,7 @@ export default function NodeLabel({ data, onClickHandler, isLeaf, key, owners, s
                 return (
                     <span className="tree-node-icon" key={ownerId + i}>
                         {iconHtml}
-                        {owners.filter(owner => +owner.id === +ownerId)[0].nickname}
+                        {owners.filter(owner => +owner.id === +ownerId)[0].name}
                     </span>
                 );
             }
