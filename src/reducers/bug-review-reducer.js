@@ -40,7 +40,8 @@ const initialState = Map({
         Map({ label: 'AXAPI', value: 'AXAPI' }),
         Map({ label: 'Look and Feel', value: 'Look and Feel' }),
         Map({ label: 'Requirement Change', value: 'Requirement Change' }),
-        Map({ label: 'Browser Related', value: 'Browser Related' })
+        Map({ label: 'Browser Related', value: 'Browser Related' }),
+        Map({ label: 'Others', value: 'Others' })
     ),
     optionsReviewTags: List.of(
         Map({ value: 'test_more', label: 'Test More'}),
