@@ -4,7 +4,7 @@
 // Libraries
 import fetch from 'isomorphic-fetch';
 // Constants
-import * as actionTypes from '../constants/action-types';
+import actionTypes from '../constants/action-types';
 import { SERVER_API_URL } from '../constants/config';
 // Actions
 import {
@@ -47,7 +47,8 @@ export function fetchOwners() {
       body: `{
           allUsers {
             id,
-            nickname
+            nickname,
+			name
           }
       }`,
       headers: {
@@ -152,6 +153,9 @@ export function fetchAssignmentCategories() {
 			.then((res) => res.json())
 			.then((body) => {
 				dispatch(setLoadingState(false));
+				if (!body.data.allAssignmentCategories) {
+					throw new Error('Fetch Failed: empty data!');
+				}
 				dispatch(fetchAssignmentCategoriesSuccess(body.data.allAssignmentCategories));
 			})
 			.catch((err) => {

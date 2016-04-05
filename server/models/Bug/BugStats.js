@@ -35,6 +35,23 @@ let BugStats = {
 				query = r.db('work_genius').table('bugs').filter(filter).group('resolved_type').count();
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				let rootCauseSummary = await query.run(connection); 
+				//combine the group = null and group = ''
+				if(rootCauseSummary){
+					let nullIndex = -1, emptyIndex = -1;
+					for(let i = 0; i < rootCauseSummary.length; i++){
+						if(rootCauseSummary[i].group === null){
+							nullIndex = i;
+						}
+						if(rootCauseSummary[i].group === ''){
+							emptyIndex = i;
+						}
+					}
+					if(nullIndex !=emptyIndex && nullIndex!=-1 && emptyIndex!=-1){
+						rootCauseSummary[emptyIndex].reduction += rootCauseSummary[nullIndex].reduction;
+						rootCauseSummary.splice(nullIndex,1);
+					}
+				}
+				
 				let totalNumber = 0;
 				//get total bug number
 				rootCauseSummary.forEach((group) => {
@@ -78,11 +95,11 @@ let BugStats = {
 				query = null;
 
 			const rootCauseList = [
-				'Gui code issue',
+				'GUI Code Issue',
 				'AXAPI',
-				'Look and feel',
-				'Requirement change',
-				'Browser related'
+				'Look and Feel',
+				'Requirement Change',
+				'Browser Related'
 			];
 
 			try {

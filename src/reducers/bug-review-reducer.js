@@ -4,7 +4,7 @@
 // Libraries
 import { Map, List, OrderedMap} from 'immutable';
 // Constants
-import * as actionTypes from '../constants/action-types';
+import actionTypes from '../constants/action-types';
 // import { ADMIN_ID } from '../../server/constants/configurations.js';
 // const initialPTOFilterConditions = Map({
 //     'status': ''
@@ -36,24 +36,27 @@ const initialState = Map({
     currentSelectUser: Map({}),
     pager: Map({ totalRow: 0, pageRow: 25, rowIndex: 1, pageSize: 0 }),
     resolvedReasonTypes: List.of(
-        Map({ label: 'GUI code issue', value: 'GUI code issue' }),
+        Map({ label: 'GUI Code Issue', value: 'GUI Code Issue' }),
         Map({ label: 'AXAPI', value: 'AXAPI' }),
-        Map({ label: 'Look and feel', value: 'Look and feel' }),
-        Map({ label: 'Requirement change', value: 'Requirement change' }),
-        Map({ label: 'Browser related', value: 'Browser related' })
+        Map({ label: 'Look and Feel', value: 'Look and Feel' }),
+        Map({ label: 'Requirement Change', value: 'Requirement Change' }),
+        Map({ label: 'Browser Related', value: 'Browser Related' })
     ),
     optionsReviewTags: List.of(
         Map({ value: 'test_more', label: 'Test More'}),
         Map({ value: 'deep_test', label: 'Deep Test'})
     ),
     optionsMenus: List.of(
-         Map({ value: 'SLB', label: 'SLB'}),
-         Map({ value: 'GSLB', label: 'GSLB'}),
-         Map({ value: 'System', label: 'System'}),
-         Map({ value: 'Network', label: 'Network'}),
-         Map({ value: 'ADC', label: 'ADC'}),
-         Map({ value: 'SSLi', label: 'SSLi'}),
-         Map({ value: 'Security', label: 'Security'})
+        Map({ value: 'Dashboard', label: 'Dashboard'}),
+        Map({ value: 'ADC', label: 'ADC'}),
+        Map({ value: 'SLB', label: 'SLB'}),
+        Map({ value: 'GSLB', label: 'GSLB'}),
+        Map({ value: 'Security', label: 'Security'}),
+        Map({ value: 'SSLi', label: 'SSLi'}),
+        Map({ value: 'AAM', label: 'AAM'}),
+        Map({ value: 'CGN', label: 'CGN'}),
+        Map({ value: 'Network', label: 'Network'}),
+        Map({ value: 'System', label: 'System'})
     )
 });
 

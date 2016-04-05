@@ -4,7 +4,7 @@
 // Libraries
 import { Map, List } from 'immutable';
 // Constants
-import * as actionTypes from '../constants/action-types';
+import actionTypes from '../constants/action-types';
 
 const initialState = Map({
   articleList: List.of(),
