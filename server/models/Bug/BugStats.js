@@ -78,11 +78,11 @@ let BugStats = {
 				query = null;
 
 			const rootCauseList = [
-				'Gui code issue',
+				'GUI Code Issue',
 				'AXAPI',
-				'Look and feel',
-				'Requirement change',
-				'Browser related'
+				'Look and Feel',
+				'Requirement Change',
+				'Browser Related'
 			];
 
 			try {
