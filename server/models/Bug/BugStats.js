@@ -32,7 +32,7 @@ let BugStats = {
 				if(label){
 					filter.label = label;
 				}
-				query = r.db('work_genius').table('bugs').filter(filter).group('resolved_type').count();
+				query = r.db('work_genius').table('bugs_review').filter(filter).group('resolved_type').count();
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				let rootCauseSummary = await query.run(connection); 
 				//combine the group = null and group = ''
@@ -106,7 +106,7 @@ let BugStats = {
 				if(label){
 					filter.label = label;
 				}
-				query = r.db('work_genius').table('bugs').filter(filter).group('assigned_to','resolved_type').count();
+				query = r.db('work_genius').table('bugs_review').filter(filter).group('assigned_to','resolved_type').count();
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				//get summary result
 				// the pattern of result : 
@@ -200,7 +200,7 @@ let BugStats = {
 				if(label){
 					filter.label = label;
 				}
-				query = r.db('work_genius').table('bugs').group(r.row('tags'), {multi: true})
+				query = r.db('work_genius').table('bugs_review').group(r.row('tags'), {multi: true})
 					.count().ungroup().orderBy(r.desc('reduction'));
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				let bugSummary = await query.run(connection); 
@@ -255,7 +255,7 @@ let BugStats = {
 				if(label){
 					filter.label = label;
 				}
-				query = r.db('work_genius').table('bugs').filter(filter).group('assigned_to').count();
+				query = r.db('work_genius').table('bugs_review').filter(filter).group('assigned_to').count();
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				let OwnerSummary = await query.run(connection); 
 
