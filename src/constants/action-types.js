@@ -1,4 +1,4 @@
-var keyMirror = require('keyMirror');
+var keyMirror = require('keymirror');
 
 export default keyMirror({
     // Demo page actions
