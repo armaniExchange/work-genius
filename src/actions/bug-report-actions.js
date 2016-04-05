@@ -98,7 +98,7 @@ export function fetchBugReportOwner(version) {
         let config = {
             method: 'POST',
             body: `{
-              getOwnerSummary(label:"` + version + `"){
+              getOwnerRootCauseSummary(label:"` + version + `"){
                 name,
                 item1,
                 item2,
@@ -117,7 +117,7 @@ export function fetchBugReportOwner(version) {
             .then((res) => res.json())
             .then((body) => {
                 dispatch(fetchCurrentProjectVersion(version));
-                dispatch(fetchBugReportOwnerSuccess(body.data.getOwnerSummary));
+                dispatch(fetchBugReportOwnerSuccess(body.data.getOwnerRootCauseSummary));
             })
             .catch((err) => {
                 throw new Error(err);

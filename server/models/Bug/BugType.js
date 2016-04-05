@@ -52,6 +52,10 @@ const BUG_TYPE = new GraphQLObjectType({
 			type: GraphQLString,
             description: 'title'
 		},
+		'resolution': {
+			type: GraphQLString,
+            description: 'resolution'
+		},
 		'total_row': {
 			type: GraphQLInt,
             description: 'total row (for pagination)'
