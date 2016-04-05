@@ -9,13 +9,15 @@ import './_AssignmentCategoryTree.css';
 
 class AssignmentCategoryTree extends Component {
     _renderTree(data, index) {
-        const { onLeafClick, onNodeClick } = this.props;
+        const { onLeafClick, onNodeClick, owners, selectedId } = this.props;
         let label, childTrees;
 
         if (!data.children || data.children.length === 0) {
             return (
                 <NodeLabel
                     data={data}
+                    owners={owners}
+                    selected={selectedId === data.id}
                     onClickHandler={() => {
                         onLeafClick(data);
                     }}
@@ -29,6 +31,8 @@ class AssignmentCategoryTree extends Component {
             label = (
                 <NodeLabel
                     data={data}
+                    owners={owners}
+                    selected={selectedId === data.id}
                     onClickHandler={() => {
                         onNodeClick(data);
                     }} />
@@ -36,7 +40,7 @@ class AssignmentCategoryTree extends Component {
             return (
                 <TreeView
                     nodeLabel={label}
-                    defaultCollapsed={false}
+                    defaultCollapsed={data.id === 'root' ? false : true}
                     key={index}>
                     {childTrees}
                 </TreeView>
@@ -56,10 +60,13 @@ class AssignmentCategoryTree extends Component {
 
 AssignmentCategoryTree.propTypes = {
     data: PropTypes.object.isRequired,
+    owners: PropTypes.array.isRequired,
+    selectedId: PropTypes.string,
     onNodeClick: PropTypes.func,
     onLeafClick: PropTypes.func
 };
 AssignmentCategoryTree.defaultProps = {
+    selectedId: '',
     onNodeClick: () => {},
     onLeafClick: () => {}
 };

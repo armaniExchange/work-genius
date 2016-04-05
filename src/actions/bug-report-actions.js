@@ -1,5 +1,5 @@
 // Constants
-import * as actionTypes from '../constants/action-types';
+import actionTypes from '../constants/action-types';
 import { SERVER_API_URL } from '../constants/config';
 // Actions
 import {
