@@ -84,6 +84,7 @@ export default keyMirror({
     REMOVE_ARTICLE_FILE: null,
     REMOVE_ARTICLE_FILE_SUCCESS: null,
     REMOVE_ARTICLE_FILE_FAIL: null,
+    CLEAR_ARTICLE: null,
 
     // Document page actions
     FETCH_ARTICLES: null,
