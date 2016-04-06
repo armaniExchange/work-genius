@@ -4,7 +4,7 @@
 // Libraries
 import fetch from 'isomorphic-fetch';
 // Constants
-import * as actionTypes from '../constants/action-types';
+import actionTypes from '../constants/action-types';
 import { SERVER_API_URL } from '../constants/config';
 // Actions
 import {
@@ -25,46 +25,104 @@ export function setFormVisibility(status) {
 		status
 	};
 }
-export function updateOneAssignmentCategoryBase(dispatch, row) {
-  let config = {
-    method: 'POST',
-    body: `mutation RootMutationType {
-        updateAssignmentCategory(data:"${JSON.stringify(row).replace(/\"/gi, '\\"')}")
-    }`,
-    headers: {
-      'Content-Type': 'application/graphql',
-      'x-access-token': localStorage.token
-    }
+
+export function changeAssignmentCategoryUpdateMsgOpacity(opacity) {
+  return {
+    type: actionTypes.CHANGE_ASSIGNMENT_CATEGORY_UPDATE_MSG_OPACITY,
+    opacity
   };
-  return fetch(SERVER_API_URL, config)
-    .then((res) => res.json())
-    .then((body) => {
-      console.log('body', body);
-      dispatch(setLoadingState(false));
-      console.log('body.data', body.data);
-      //dispatch(fetchAssignmentCategoriesSuccess(body.data));
-    })
-    .catch((err) => {
-      dispatch(setLoadingState(false));
-      dispatch(apiFailure(err));
-    });
 };
 
-export function updateOneAssignmentCategory(row, primaryOwner, secondaryOwner, level) {
-  row['primary_owner'] = primaryOwner;
-  row['secondary_owner'] = secondaryOwner;
-  row['level'] = level;
+export function fetchOwnersSuccess(data) {
+  return {
+    type: actionTypes.FETCH_OWNERS_SUCCESS,
+    data
+  };
+};
+
+export function fetchOwners() {
   return (dispatch) => {
-    updateOneAssignmentCategoryBase(dispatch, row);
+    let config = {
+      method: 'POST',
+      body: `{
+          allUsers {
+            id,
+            nickname,
+			name
+          }
+      }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+    dispatch(setLoadingState(true));
+    return fetch(SERVER_API_URL, config)
+      .then((res) => res.json())
+      .then((body) => {
+        dispatch(setLoadingState(false));
+        dispatch(fetchOwnersSuccess(body.data.allUsers));
+      })
+      .catch((err) => {
+        dispatch(setLoadingState(false));
+        dispatch(apiFailure(err));
+      });
+  };
+};
+
+export function fetchDifficultiesSuccess(data) {
+  return {
+    type: actionTypes.FETCH_DIFFICULTIES_SUCCESS,
+    data
+  };
+};
+
+export function fetchDifficulties() {
+  return (dispatch) => {
+    let config = {
+      method: 'POST',
+      body: `{
+        allDifficulties{
+          difficulty{
+            id,
+            title,
+            color
+          }
+        }
+      }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+    dispatch(setLoadingState(true));
+    return fetch(SERVER_API_URL, config)
+      .then((res) => res.json())
+      .then((body) => {
+        dispatch(setLoadingState(false));
+        dispatch(fetchDifficultiesSuccess(body.data.allDifficulties));
+      })
+      .catch((err) => {
+        dispatch(setLoadingState(false));
+        dispatch(apiFailure(err));
+      });
+  };
+};
+
+export function changeCategoryWaitForUpdate(field, value) {
+  return {
+    type: actionTypes.CHANGE_CATEGORY_WAIT_TO_UPDATE,
+    field,
+    value
   };
 };
 
 export function fetchAssignmentCategoriesSuccess(data) {
-	return {
-		type: actionTypes.FETCH_ASSIGNMENT_CATEGORIES_SUCCESS,
-		data
-	};
-}
+  return {
+    type: actionTypes.FETCH_ASSIGNMENT_CATEGORIES_SUCCESS,
+    data
+  };
+};
 
 export function fetchAssignmentCategories() {
 	return (dispatch) => {
@@ -76,6 +134,8 @@ export function fetchAssignmentCategories() {
 			        parentId,
 					name,
 					path,
+					primary_owner,
+					secondary_owner,
 					difficulty {
 			            id,
 			            title,
@@ -93,6 +153,9 @@ export function fetchAssignmentCategories() {
 			.then((res) => res.json())
 			.then((body) => {
 				dispatch(setLoadingState(false));
+				if (!body.data.allAssignmentCategories) {
+					throw new Error('Fetch Failed: empty data!');
+				}
 				dispatch(fetchAssignmentCategoriesSuccess(body.data.allAssignmentCategories));
 			})
 			.catch((err) => {
@@ -100,4 +163,41 @@ export function fetchAssignmentCategories() {
 				dispatch(apiFailure(err));
 			});
 	};
+};
+
+
+
+export function updateOneAssignmentCategoryBase(dispatch, id, row) {
+  let config = {
+    method: 'POST',
+    body: `mutation RootMutationType {
+        updateAssignmentCategory(data:"${JSON.stringify({...row, id}).replace(/\"/gi, '\\"')}")
+    }`,
+    headers: {
+      'Content-Type': 'application/graphql',
+      'x-access-token': localStorage.token
+    }
+  };
+  return fetch(SERVER_API_URL, config)
+    .then((res) => res.json())
+    .then((body) => {
+      console.log('body updateOneAssignmentCategoryBase', body);
+      dispatch(setLoadingState(false));
+      console.log('body.data updateOneAssignmentCategoryBase', body.data);
+      /*changeAssignmentCategoryUpdateMsgOpacity(1);
+      setTimeout(()=>{
+        changeAssignmentCategoryUpdateMsgOpacity(0);
+      }, 3000);*/
+      dispatch(fetchAssignmentCategories());
+    })
+    .catch((err) => {
+      dispatch(setLoadingState(false));
+      dispatch(apiFailure(err));
+    });
+};
+
+export function updateOneAssignmentCategory(id, row) {
+  return (dispatch) => {
+    updateOneAssignmentCategoryBase(dispatch, id, row);
+  };
 };

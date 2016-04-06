@@ -3,114 +3,171 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // Components
 import AssignmentCategoryTree from '../../components/AssignmentCategoryTree/AssignmentCategoryTree';
+import AssignmentReportTable from '../../components/AssignmentReportTable/AssignmentReportTable';
 // Actions
 import * as FeatureAnalysisActions from '../../actions/feature-analysis-actions';
 
-import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
+import Select from 'react-select';
 import RaisedButton from 'material-ui/lib/raised-button';
 
 class FeatureAnalysisPage extends Component {
     constructor(props){
       super(props);
-      this.user = [{title:'Zli', 'value': 'zli'}];
-      this.level = [
-                  {title:'Very Hard', 'value':9},
-                  {title:'Hard', 'value':7},
-                  {title:'Medium', 'value':5},
-                  {title:'Simple', 'value':3},
-                  {title:'Easy', 'value':1},
-                  {title:'Nothing', 'value':0},
-                  ];
     }
     componentWillMount() {
-        const { fetchAssignmentCategories } = this.props;
+        const { fetchAssignmentCategories, fetchOwners, fetchDifficulties } = this.props;
         fetchAssignmentCategories();
+        fetchOwners();
+        fetchDifficulties();
     }
     _onNodeClick() {
         this.props.setCurrentLeafNode(undefined);
     }
     render() {
         const {
+            aryOwners,
+            aryDifficulties,
+            updateMsgOpacity,
+            currentLeaf,
+            dataSource,
             treeDataSource,
             updateOneAssignmentCategory,
             setCurrentLeafNode
         } = this.props;
+        let select_owner1_value = '', select_owner2_value='', select_difficulty_value='';
+        let optUser = aryOwners.map(item => {
+            if (+item.id === currentLeaf.primary_owner) {
+                select_owner1_value = item.name;
+            }
+            if (+item.id === currentLeaf.secondary_owner) {
+                select_owner2_value = item.name;
+            }
+            return {label:item.name, value: +item.id};
+        });
+        let optDifficulty = aryDifficulties.map(item => {
+            if (item.difficulty && currentLeaf.difficulty && +item.difficulty.id===currentLeaf.difficulty.id) {
+               select_difficulty_value = item.difficulty && item.difficulty.title;
+            }
+            return {label: item.difficulty && item.difficulty.title,
+                    value: item.difficulty && item.difficulty.id};
+        });
+        const displayForm = currentLeaf.id ? '' : 'none';
+        const displayHint = currentLeaf.id ? 'none' : '';
+        const input_owner1_value = currentLeaf.primary_owner ? currentLeaf.primary_owner : '';
+        const input_owner2_value = currentLeaf.secondary_owner ? currentLeaf.secondary_owner : '';
+        const input_difficulty_value = currentLeaf.difficulty && currentLeaf.difficulty.id ? currentLeaf.difficulty.id : '';
+
         return (
             <div className="row">
-                <div className="pull-left col-md-6">
+                <div className="col-md-4">
                     <AssignmentCategoryTree
                             data={treeDataSource}
+                            owners={aryOwners}
+                            selectedId={currentLeaf.id}
                             onNodeClick={::this._onNodeClick}
                             onLeafClick={setCurrentLeafNode}/>
                 </div>
-                <div className="pull-right col-md-6">
-                  <div className="form-horizontal">
-                    <h3>Edit {this.props.curCategory}</h3>
-                    <div className="col-xs-3">
+                <div className="col-md-8">
+                  <div style={{display:displayHint, fontSize:'30px', margin:'90px 0', textDecoration:'underline'}}>
+                    &laquo; Please choose and click leaf in root tree.
+                  </div>
+                  <div className="form-horizontal" style={{display:displayForm}}>
+                    <h5 style={{color:'#9cf'}}>{'Edit '}<span style={{color:'#000'}}>{currentLeaf.path}</span></h5>
+                    <div className="col-xs-3" style={{paddingTop:'12px'}}>
                       Primary Owner:
                     </div>
                     <div className="col-xs-9">
-                      <DropDownList
-                        isDropDownListVisual2={true}
-                        isNeedAll={false}
-                        onOptionClick={(val) => {
-                          console.log(val);
-                        }}
-                        aryOptionConfig={this.user} />
+                      <input type="hidden" ref="input_owner1" value={input_owner1_value} />
+                      <div style={{width:'200px', paddingBottom:'10px'}}>
+                          <Select ref="select_owner1"
+                                value={select_owner1_value}
+                                options={optUser}
+                                onChange={(val) => {
+                                this.refs.input_owner1.value = val;
+                            }}
+                            />
+                        </div>
                     </div>
-                    <div className="col-xs-3">
+                    <div className="col-xs-3" style={{paddingTop:'12px'}}>
                       Secondary Owner:
                     </div>
                     <div className="col-xs-9">
-                      <DropDownList
-                        isDropDownListVisual2={true}
-                        isNeedAll={false}
-                        onOptionClick={(val) => {
-                          console.log(val, 'val2');
-                        }}
-                        aryOptionConfig={this.user} />
+                      <input type="hidden" ref="input_owner2" value={input_owner2_value} />
+                      <div style={{width:'200px', paddingBottom:'10px'}}>
+                          <Select ref="select_owner2"
+                                value={select_owner2_value}
+                                options={optUser}
+                                onChange={(val) => {
+                                this.refs.input_owner2.value = val;
+                            }}
+                            />
+                       </div>
                     </div>
-                    <div className="col-xs-3">
-                      Level:
+                    <div className="col-xs-3" style={{paddingTop:'12px'}}>
+                      Difficulty:
                     </div>
                     <div className="col-xs-9">
-                      <DropDownList
-                        isDropDownListVisual2={true}
-                        isNeedAll={false}
-                        onOptionClick={(val) => {
-                          console.log(val, 'val3');
-                        }}
-                        aryOptionConfig={this.level} />
+                      <input type="hidden" ref="input_difficulty" value={input_difficulty_value} />
+                      <div style={{width:'200px', paddingBottom:'10px'}}>
+                          <Select ref="select_difficulty"
+                                value={select_difficulty_value}
+                                options={optDifficulty}
+                                onChange={(val) => {
+                                this.refs.input_difficulty.value = val;
+                            }}
+                            />
+                      </div>
                     </div>
-                    <div className="col-xs-3">
+                    <div className="col-xs-3" style={{paddingTop:'12px'}}>
                     </div>
                     <div className="col-xs-9">
                       <RaisedButton label="Update" secondary={true} onClick={()=>{
-                        console.log('submited');
-                        console.log('updateOneAssignmentCategory', updateOneAssignmentCategory);
+                        updateOneAssignmentCategory(currentLeaf.id, {
+                            primary_owner: +this.refs.input_owner1.value,
+                            secondary_owner: +this.refs.input_owner2.value,
+                            difficulty: +this.refs.input_difficulty.value
+                        });
                       }} />
+                      <div style={{opacity:updateMsgOpacity, 'transition': 'opacity 2s'}}>{'Update successfully'}</div>
                     </div>
                     </div>
-                </div>
+                    <AssignmentReportTable data={dataSource} userData={aryOwners} />
+                </div>{/*div col-md*/}
             </div>
         );
     }
 }
 
 FeatureAnalysisPage.propTypes = {
+    dataSource: PropTypes.array.isRequired,
     treeDataSource: PropTypes.object.isRequired,
-    curCategory: PropTypes.string,
+    currentLeaf: PropTypes.object.isRequired,
+    categoryWaitToUpdate: PropTypes.object,
+    updateMsgOpacity: PropTypes.number.isRequired,
+    aryOwners: PropTypes.array.isRequired,
+    aryDifficulties: PropTypes.array.isRequired,
     updateOneAssignmentCategory: PropTypes.func.isRequired,
     fetchAssignmentCategories: PropTypes.func.isRequired,
     setCurrentLeafNode: PropTypes.func.isRequired,
-    setFormVisibility: PropTypes.func.isRequired
+    setFormVisibility: PropTypes.func.isRequired,
+    fetchOwners: PropTypes.func.isRequired,
+    fetchDifficulties: PropTypes.func.isRequired,
+    changeCategoryWaitForUpdate: PropTypes.func.isRequired
 };
-FeatureAnalysisPage.defaultProps = {};
+FeatureAnalysisPage.defaultProps = {
+    currentLeaf: {},
+    aryOwners: [],
+    aryDifficulties: [],
+    updateMsgOpacity: 0,
+    categoryWaitToUpdate: {},
+    changeCategoryWaitForUpdate: () => {}
+};
 
 function mapStateToProps(state) {
     return Object.assign(
         {},
-        state.featureAnalysis.toJS()
+        state.featureAnalysis.toJS(),
+        state.app.toJS()
     );
 }
 

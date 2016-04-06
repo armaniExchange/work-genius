@@ -1,0 +1,61 @@
+@define-extend tree-node-tag {
+    cursor: help;
+    display: inline-block;
+    margin-left: 5px;
+}
+.assignment-category-tree {
+    .node {
+        display: inline-block;
+        margin-bottom: 3px;
+        &--selected {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+    }
+    .leaf {
+        display: block;
+        color: #337ab7;
+    }
+    .tree-node-text {
+        cursor: pointer;
+        &:hover {
+            background-color: #337ab7;
+            color: white;
+        }
+    }
+    .tree-node-icon {
+        @extend tree-node-tag;
+        color: black;
+        .material-icons {
+            vertical-align: middle;
+            color: #5cb85c;
+        }
+    }
+    .tree-node-badge {
+        @extend tree-node-tag;
+        padding: 0px 4px;
+        border-radius: 5px;
+        color: white;
+        &--undefined {
+            background-color: #777;
+        }
+        &--total {
+            background-color: #5bc0de;
+        }
+        &--Very-Hard {
+            background-color: purple;
+        }
+        &--Hard {
+            background-color: #d9534f;
+        }
+        &--Medium {
+            background-color: #f0ad4e;
+        }
+        &--Easy {
+            background-color: #5cb85c;
+        }
+        &--Nothing {
+            background-color: #337ab7;
+        }
+    }
+}

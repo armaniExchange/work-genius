@@ -1,19 +1,14 @@
-
-.bug-review-link{
-    color:rgb(63, 81, 181);
-}
-
-.pto-table .pto-table__body .pto-table__body--empty {
+.bug-report-table .bug-report-table__body .bug-report-table__body--empty {
     text-align: center;
 }
 
-.bug-review-table__body--left{
+.bug-report-table__body--left{
     text-align: left !important;
     word-break: break-all;
     word-wrap:break-word;
 }
 
-.bug-review-table__body--front .mdl-radio{
+.bug-report-table__body--front .mdl-radio{
     font-size: 12px !important;
     line-height: 24px !important;
     font-weight: 200 !important;
@@ -23,31 +18,24 @@
     width: 100% ! important;
 }
 
-.element-hide{
-    display:none;
-}
-
-.bug-review-table__body--center{
+.bug-report-table__body--center{
     text-align: center !important;
     word-break: break-all;
     word-wrap:break-word;
 }
 
-.bug-review-table-bug-id-width {
-    width: 100px;
-}
-
-.bug-review-table{
+.bug-report-table{
     white-space: normal !important;
     table-layout:fixed;
     width: 100%;
 }
 
-.pto-table .hide {
+.bug-report-table .hide {
     display: none;
 }
 
-.pto-table .pto-table__header {
+.bug-report-table .bug-report-table__header {
     cursor: pointer;
     text-align: center;
+    /*background-color: #6fe4d8;*/
 }

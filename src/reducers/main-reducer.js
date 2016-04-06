@@ -1,7 +1,7 @@
 // Immutable
 import { Map, List } from 'immutable';
 // Constants
-import * as actionTypes from '../constants/action-types';
+import actionTypes from '../constants/action-types';
 import { PRIVILEGE } from '../constants/config.js';
 
 const initialState = Map({
@@ -28,6 +28,10 @@ const initialState = Map({
 			link: '/main/bug-analysis'
 		}),
     Map({
+      displayText: 'Bug Report',
+      link: '/main/bug-report'
+    }),
+    Map({
       displayText: 'Document',
       link: '/main/document'
     }),
@@ -40,7 +44,7 @@ const initialState = Map({
 	        link: '/main/valid-demo'
 	    }),
 		Map({
-	        displayText: 'Feature Analysis',
+	        displayText: 'Page Assignment',
 	        link: '/main/feature-analysis'
 	    })
 	),

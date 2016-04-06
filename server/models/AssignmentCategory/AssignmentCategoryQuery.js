@@ -97,7 +97,7 @@ let CategoryQuery = {
 				query = null;
 
 			try {
-				query = r.db('work_genius').table('assignment_category_difficulty').coerceTo('array');
+				query = r.db('work_genius').table('assignment_category_difficulty').orderBy(r.desc('id')).coerceTo('array');
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				result = await query.run(connection);
 				result = result.map((diff) => ({

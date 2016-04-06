@@ -1,4 +1,4 @@
-import * as actionTypes from '../constants/action-types';
+import actionTypes from '../constants/action-types';
 
 // for development use, delete when database ready
 // --- start ---

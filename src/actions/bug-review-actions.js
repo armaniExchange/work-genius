@@ -4,7 +4,7 @@
 // Libraries
 // import fetch from 'isomorphic-fetch';
 // Constants
-import * as actionTypes from '../constants/action-types';
+import actionTypes from '../constants/action-types';
 import { SERVER_API_URL } from '../constants/config';
 // Actions
 import {
@@ -34,70 +34,18 @@ export function fetchPreventTagsOptionsSuccess(data){
     };
 }
 
-export function fetchCurrentProjectVersion(data){
+export function fetchBugReviewQueryData(data, version, user, menu, tag, cause, pager) {
     return {
-        type: actionTypes.SET_BUG_REVIEW_PROJECT_VERSION,
-        data
+        type: actionTypes.FETCH_BUG_REVIEW_QUERY_DATA,
+        data,
+        version,
+        user,
+        menu,
+        tag,
+        cause,
+        pager
     };
 }
-
-export function fetchCurrentSelectUser(data){
-    return {
-        type: actionTypes.SET_BUG_REVIEW_SELECT_USER,
-        data
-    };
-}
-export function fetchCurrentSelectMenu(data){
-    return {
-        type: actionTypes.SET_BUG_REVIEW_SELECT_MENU,
-        data
-    };
-}
-export function fetchCurrentSelectPreventTag(data){
-    return {
-        type: actionTypes.SET_BUG_REVIEW_SELECT_PREVENT_TAG,
-        data
-    };
-}
-export function fetchCurrentSelectRootCause(data){
-    return {
-        type: actionTypes.SET_BUG_REVIEW_SELECT_ROOT_CAUSE,
-        data
-    };
-}
-// export function fetchBugReviewApplications() {
-//     return (dispatch) => {
-//         let config = {
-//             method: 'POST',
-//             body: `{
-//                     getAllBugs(label:"4.1.0",assignedTo:"yhou",pageSize:0,pageIndex:1){
-//                         id,
-//                         assigned_to,
-//                         bug_severity,
-//                         bug_status,
-//                         label,
-//                         menu,
-//                         resolved_type,
-//                         review,
-//                         tags,
-//                         title
-//                     }
-//             }`,
-//             headers: {
-//                 'Content-Type': 'application/graphql',
-//                 'x-access-token': localStorage.token
-//             }
-//         };
-//         return fetch(SERVER_API_URL, config)
-//             .then((res) => res.json())
-//             .then((body) => {
-//                 dispatch(fetchBugReviewApplicationsSuccess(body.data.getAllBugs));
-//             })
-//             .catch((err) => {
-//                 throw new Error(err);
-//             });
-//     };
-// };
 
 export function fetchBugReviewChangeOptionsChangeSuccess(data){
     return {
@@ -222,7 +170,7 @@ export function changeReviewText(review, reviewText){
   };
 };
 
-export function fetchBugReviewApplications(version, userAlisa, menu, rootCause, preventTag) {
+export function fetchBugReviewApplications(pager, version, userAlisa, menu, rootCause, preventTag) {
     return (dispatch) => {
         var user = '';
         if (userAlisa !== 'All') {
@@ -231,6 +179,8 @@ export function fetchBugReviewApplications(version, userAlisa, menu, rootCause, 
         menu = menu ? menu : '';
         rootCause = rootCause ? rootCause : '';
         preventTag = preventTag ? preventTag: '';
+        let pageRow = pager['pageRow'];
+        let rowIndex = pager['rowIndex'];
         let config = {
             method: 'POST',
             body: `{
@@ -238,7 +188,9 @@ export function fetchBugReviewApplications(version, userAlisa, menu, rootCause, 
                         `",menu:"` + menu +
                         `",rootCause:"`+ rootCause +
                         `",preventTag:"` + preventTag +
-                        `",pageSize:0,pageIndex:1){
+                        `",pageSize:` + pageRow +
+                        `,pageIndex:` + rowIndex +
+                        `){
 
                         id,
                         assigned_to,
@@ -249,7 +201,8 @@ export function fetchBugReviewApplications(version, userAlisa, menu, rootCause, 
                         resolved_type,
                         review,
                         tags,
-                        title
+                        title,
+                        total_row
                     }
             }`,
             headers: {
@@ -260,12 +213,15 @@ export function fetchBugReviewApplications(version, userAlisa, menu, rootCause, 
         return fetch(SERVER_API_URL, config)
             .then((res) => res.json())
             .then((body) => {
-                dispatch(fetchCurrentProjectVersion(version));
-                dispatch(fetchCurrentSelectUser(userAlisa));
-                dispatch(fetchCurrentSelectMenu(menu));
-                dispatch(fetchCurrentSelectRootCause(rootCause));
-                dispatch(fetchCurrentSelectPreventTag(preventTag));
-                dispatch(fetchBugReviewApplicationsSuccess(body.data.getAllBugs));
+                dispatch(fetchBugReviewQueryData(
+                    body.data.getAllBugs,
+                    version,
+                    userAlisa,
+                    menu,
+                    preventTag,
+                    rootCause,
+                    pager
+                ));
             })
             .catch((err) => {
                 throw new Error(err);
@@ -360,13 +316,13 @@ export function fetchAllUsers(){
     };
 }
 
-export function fetchBugReviewPageData(version, userAlisa, menu, rootCause, preventTag) {
+export function fetchBugReviewPageData(pager, version, userAlisa, menu, rootCause, preventTag) {
     version = version ? version : '4.1.0';
     return (dispatch, getState) => {
         userAlisa = userAlisa ? userAlisa : getState().app.toJS().currentUser.email.split('@')[0];
         dispatch(setLoadingState(true));
         Promise.all([
-            dispatch(fetchBugReviewApplications(version, userAlisa, menu, rootCause, preventTag))
+            dispatch(fetchBugReviewApplications(pager, version, userAlisa, menu, rootCause, preventTag))
         ]).then(
             () => {
                 dispatch(setLoadingState(false));

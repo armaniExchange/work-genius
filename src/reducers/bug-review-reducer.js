@@ -4,7 +4,7 @@
 // Libraries
 import { Map, List, OrderedMap} from 'immutable';
 // Constants
-import * as actionTypes from '../constants/action-types';
+import actionTypes from '../constants/action-types';
 // import { ADMIN_ID } from '../../server/constants/configurations.js';
 // const initialPTOFilterConditions = Map({
 //     'status': ''
@@ -34,25 +34,30 @@ const initialState = Map({
     currentSelectRootCause: '',
     allUsers: List.of(),
     currentSelectUser: Map({}),
+    pager: Map({ totalRow: 0, pageRow: 25, rowIndex: 1, pageSize: 0 }),
     resolvedReasonTypes: List.of(
-        Map({ label: 'Gui code issue', value: 'Gui code issue' }),
+        Map({ label: 'GUI Code Issue', value: 'GUI Code Issue' }),
         Map({ label: 'AXAPI', value: 'AXAPI' }),
-        Map({ label: 'Look and feel', value: 'Look and feel' }),
-        Map({ label: 'Requirement change', value: 'Requirement change' }),
-        Map({ label: 'Browser related', value: 'Browser related' })
+        Map({ label: 'Look and Feel', value: 'Look and Feel' }),
+        Map({ label: 'Requirement Change', value: 'Requirement Change' }),
+        Map({ label: 'Browser Related', value: 'Browser Related' }),
+        Map({ label: 'Others', value: 'Others' })
     ),
     optionsReviewTags: List.of(
         Map({ value: 'test_more', label: 'Test More'}),
         Map({ value: 'deep_test', label: 'Deep Test'})
     ),
     optionsMenus: List.of(
-         Map({ value: 'SLB', label: 'SLB'}),
-         Map({ value: 'GSLB', label: 'GSLB'}),
-         Map({ value: 'System', label: 'System'}),
-         Map({ value: 'Network', label: 'Network'}),
-         Map({ value: 'ADC', label: 'ADC'}),
-         Map({ value: 'SSLi', label: 'SSLi'}),
-         Map({ value: 'Security', label: 'Security'})
+        Map({ value: 'Dashboard', label: 'Dashboard'}),
+        Map({ value: 'ADC', label: 'ADC'}),
+        Map({ value: 'SLB', label: 'SLB'}),
+        Map({ value: 'GSLB', label: 'GSLB'}),
+        Map({ value: 'Security', label: 'Security'}),
+        Map({ value: 'SSLi', label: 'SSLi'}),
+        Map({ value: 'AAM', label: 'AAM'}),
+        Map({ value: 'CGN', label: 'CGN'}),
+        Map({ value: 'Network', label: 'Network'}),
+        Map({ value: 'System', label: 'System'})
     )
 });
 
@@ -80,8 +85,19 @@ function formatResponse(data) {
     return result;
 }
 
-function setTableData(state, data) {
+function setTableData(state, data, pager) {
     let formatedData = formatResponse(data);
+    if ( formatedData.size > 0 ) {
+        let one = formatedData.get(0);
+        let totalRow = one.get('total_row');
+        pager.totalRow = totalRow;
+        pager.pageSize = parseInt(totalRow / pager.pageRow);
+        pager.pageSize = totalRow % pager.pageRow === 0 ? pager.pageSize : pager.pageSize + 1;
+    } else {
+        pager.totalRow = 0;
+        pager.pageSize = 0;
+    }
+    state = state.set(`pager`, pager);
     return state
         .set(`applicationsOriginalData`, formatedData)
         .set(`applications`, formatedData);
@@ -145,8 +161,19 @@ function changeOptions(state, data) {
 export default function bugReviewReducer(state = initialState, action) {
     let nextState = state;
     switch (action.type) {
-        case actionTypes.FETCH_BUG_REVIEW_APPLICATION_SUCCESS:
-            nextState = setTableData(state, action.data);
+        case actionTypes.FETCH_BUG_REVIEW_QUERY_DATA:
+            // Set query data and pager.
+            nextState = setTableData(nextState, action.data, action.pager);
+            // Set select user.
+            nextState = setSelectUser(nextState, action.user);
+            // Set query project version.
+            nextState = nextState.set(`currentProjectVersion`, action.version);
+            // Set query menu.
+            nextState = nextState.set(`currentSelectMenu`, action.menu);
+            // Set query prevent tag
+            nextState = nextState.set(`currentSelectPreventTag`, action.tag);
+            // Set query root cause.
+            nextState = nextState.set(`currentSelectRootCause`, action.cause);
             return nextState;
         case actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS:
             nextState = changeOptions(nextState, action.data);
@@ -159,21 +186,6 @@ export default function bugReviewReducer(state = initialState, action) {
             return nextState;
         case actionTypes.FETCH_BUG_REVIEW_ALL_USERS:
             nextState = setAllUsers(state, action.data);
-            return nextState;
-        case actionTypes.SET_BUG_REVIEW_SELECT_USER:
-            nextState = setSelectUser(state, action.data);
-            return nextState;
-        case actionTypes.SET_BUG_REVIEW_PROJECT_VERSION:
-            nextState = nextState.set(`currentProjectVersion`, action.data);
-            return nextState;
-        case actionTypes.SET_BUG_REVIEW_SELECT_MENU:
-            nextState = nextState.set(`currentSelectMenu`, action.data);
-            return nextState;
-        case actionTypes.SET_BUG_REVIEW_SELECT_PREVENT_TAG:
-            nextState = nextState.set(`currentSelectPreventTag`, action.data);
-            return nextState;
-        case actionTypes.SET_BUG_REVIEW_SELECT_ROOT_CAUSE:
-            nextState = nextState.set(`currentSelectRootCause`, action.data);
             return nextState;
         default:
             return state;
