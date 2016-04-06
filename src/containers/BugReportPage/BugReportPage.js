@@ -146,12 +146,8 @@ class BugReportPage extends Component {
         for (let owner of ownerTotalData) {
             owner.name = (owner.name === undefined || owner.name === '') ? 'Not Mark' : owner.name;
             let pre = [ owner.name, owner.number ];
-            tagsData.data.push(pre);
+            ownerData.data.push(pre);
         }
-
-        // var rootCauseHighcharts = HIGHCHARTS_DEFAULT_CONFIG.toJS();
-        // rootCauseHighcharts.title.text = 'Root Cause';
-        // rootCauseHighcharts.series.push(tagsData);
 
         HIGHCHARTS_DEFAULT_CONFIG_ROOT_CAUSE.series = [];
         HIGHCHARTS_DEFAULT_CONFIG_ROOT_CAUSE.series.push(rootCauseData);
@@ -176,13 +172,13 @@ class BugReportPage extends Component {
                   <div className="col-md-12 col-lg-12">
                     <label>Root Cause Summary:&nbsp;</label>
                   </div>
-                  <div className="col-md-8 col-lg-8">
+                  <div className="col-md-12 col-lg-8">
                       <BugReportTable
                           data={rootCauseTableData}
                           titleKeyMap={rootCauseTableTitleKeyMap}
                       />
                   </div>
-                  <div className="col-md-4 col-lg-4">
+                  <div className="col-md-12 col-lg-4">
                     <ReactHighcharts config={HIGHCHARTS_DEFAULT_CONFIG_ROOT_CAUSE} />
                   </div>
                 </div>
@@ -191,13 +187,13 @@ class BugReportPage extends Component {
                   <div className="col-md-12 col-lg-12">
                     <label>Tags Summary:&nbsp;</label>
                   </div>
-                  <div className="col-md-8 col-lg-8">
+                  <div className="col-md-12 col-lg-8">
                       <BugReportTable
                           data={tagsTableData}
                           titleKeyMap={tagsTableTitleKeyMap}
                       />
                   </div>
-                  <div className="col-md-4 col-lg-4">
+                  <div className="col-md-12 col-lg-4">
                     <ReactHighcharts config={HIGHCHARTS_DEFAULT_CONFIG_TAG} />
                   </div>
                 </div>
@@ -205,13 +201,13 @@ class BugReportPage extends Component {
                   <div className="col-md-12 col-lg-12">
                     <label>Owner Summary:&nbsp;</label>
                   </div>
-                  <div className="col-md-8 col-lg-8">
+                  <div className="col-md-12 col-lg-8">
                       <BugReportTable
                           data={ownerTableData}
                           titleKeyMap={ownerTableTitleKeyMap}
                       />
                   </div>
-                  <div className="col-md-4 col-lg-4">
+                  <div className="col-md-12 col-lg-4">
                     <ReactHighcharts config={HIGHCHARTS_DEFAULT_CONFIG_OWNER} />
                   </div>
                 </div>

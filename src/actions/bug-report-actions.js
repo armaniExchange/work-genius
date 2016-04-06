@@ -152,8 +152,7 @@ export function fetchBugReportOwnerTotal(version) {
         return fetch(SERVER_API_URL, config)
             .then((res) => res.json())
             .then((body) => {
-                dispatch(fetchCurrentProjectVersion(version));
-                dispatch(fetchBugReportOwnerTotalSuccess(body.data.getOwnerRootCauseSummary));
+                dispatch(fetchBugReportOwnerTotalSuccess(body.data.getOwnerSummary));
             })
             .catch((err) => {
                 throw new Error(err);

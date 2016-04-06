@@ -97,6 +97,7 @@ export default function bugReportReducer(state = initialState, action) {
             return nextState;
         case actionTypes.FETCH_BUG_REPORT_OWNER_TOTAL_SUCCESS:
             nextState = setOwnerTotalData(state, action.data);
+            return nextState;
         case actionTypes.SET_BUG_REPORT_PROJECT_VERSION:
             nextState = state.set(`currentProjectVersion`, action.data);
             return nextState;
