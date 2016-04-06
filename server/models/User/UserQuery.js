@@ -142,13 +142,16 @@ let UserQuery = {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID)).coerceTo('array');
 				users = await query.run(connection);
-				let pattern = /[a-zA-Z]+@/;
+				console.log('users:');
+				console.log(users);
 				for(let user of users){
-					if(!!user.email && user.email.match(pattern).length > 0){
-						user.alias = user.email.match(pattern)[0].replace('@','');
+					if(!!user.email){
+						user.alias = user.email.replace('@a10networks.com','');
 					}
 					
 				}
+				console.log('users with alias:');
+				console.log(users);
 				await connection.close();
 				return users;
 			} catch (err) {
