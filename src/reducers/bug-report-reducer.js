@@ -7,6 +7,7 @@ const initialState = Map({
     rootCauseTableData: List.of(),
     tagsTableData: List.of(),
     ownerTableData: List.of(),
+    ownerTotalData: List.of(),
     rootCauseTableTitleKeyMap: List.of(
         Map({ title: 'Root Cause', key: 'name', colspan: 1}),
         Map({ title: 'Num', key: 'number', colspan: 1}),
@@ -64,6 +65,12 @@ function setRootCauseTableData(state, data) {
         .set(`rootCauseTableData`, formatedData);
 }
 
+function setOwnerTotalData(state, data){
+    let formatedData = formatResponse(data);
+    return state
+        .set(`ownerTotalData`, formatedData);
+}
+
 function setTagsTableData(state, data) {
     let formatedData = formatResponse(data);
     return state
@@ -88,6 +95,8 @@ export default function bugReportReducer(state = initialState, action) {
         case actionTypes.FETCH_BUG_REPORT_OWNER_SUCCESS:
             nextState = setOwnerTableData(state, action.data);
             return nextState;
+        case actionTypes.FETCH_BUG_REPORT_OWNER_TOTAL_SUCCESS:
+            nextState = setOwnerTotalData(state, action.data);
         case actionTypes.SET_BUG_REPORT_PROJECT_VERSION:
             nextState = state.set(`currentProjectVersion`, action.data);
             return nextState;
