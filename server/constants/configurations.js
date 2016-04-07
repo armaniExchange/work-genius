@@ -12,7 +12,7 @@ export const GK2_LOG_IN_ACCOUNT = '';
 export const GK2_LOG_IN_PASSWORD = '';
 export const GK2_LOG_IN_URL = 'https://gk2.a10networks.com/login/';
 export const GK2_REFERER_URL = 'https://gk2.a10networks.com/login/?next=/';
-export const ADMIN_ID = 24567 ;
+export const ADMIN_ID = '00000';
 
 
 
