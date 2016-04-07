@@ -53,7 +53,7 @@ const initialState = Map({
 		'Page Assignment': List.of(
 			{
 				name: 'Tree View',
-				url: '/main/feature-analysis/tree'
+				url: '/main/feature-analysis'
 			},
 		    {
 				name: 'Table View',

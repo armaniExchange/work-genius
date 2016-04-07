@@ -21,6 +21,8 @@ import DocumentPage from '../containers/DocumentPage/DocumentPage';
 import EditArticlePage from '../containers/EditArticlePage/EditArticlePage';
 import ViewArticlePage from '../containers/ViewArticlePage/ViewArticlePage';
 import FeatureAnalysisPage from '../containers/FeatureAnalysisPage/FeatureAnalysisPage';
+import FeatureAnalysisTreePage from '../containers/FeatureAnalysisPage/FeatureAnalysisTree';
+import FeatureAnalysisTablePage from '../containers/FeatureAnalysisPage/FeatureAnalysisTable';
 
 // Utilities
 import requireAuth from '../containers/Require-Auth/Require-Auth';
@@ -44,7 +46,10 @@ const appRoutes = () => (
 		        <Route path="articles/edit/:articleId" component={requireAuth(EditArticlePage)} />
 		        <Route path="articles/:articleId" component={requireAuth(ViewArticlePage)} />
 		        <Route path="document" component={requireAuth(DocumentPage)} />
-				<Route path="feature-analysis" component={requireAuth(FeatureAnalysisPage)} />
+				<Route path="feature-analysis" component={requireAuth(FeatureAnalysisPage)}>
+				    <IndexRoute component={requireAuth(FeatureAnalysisTreePage)} />
+					<Route path="table" component={requireAuth(FeatureAnalysisTablePage)} />
+				</Route>
 			    <Route path="data-explorer" component={requireAuth(DataExplorerPage)}>
 			        <IndexRoute component={requireAuth(DataExplorerFolderView)}/>
 			        <Route path="data-explorer/:folderName" component={requireAuth(DataExplorerFileView)} />
