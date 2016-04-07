@@ -8,6 +8,8 @@ import Main from '../containers/Main/Main';
 import AdminPage from '../containers/AdminPage/AdminPage';
 import ValidDemoPage from '../containers/ValidDemoPage/ValidDemoPage';
 import DashboardPage from '../containers/DashboardPage/DashboardPage';
+import BugTrackingPage from '../containers/BugTrackingPage/BugTrackingPage';
+import OvertimePage from '../containers/OvertimePage/OvertimePage';
 import TaskPage from '../containers/TaskPage/TaskPage';
 import PTOPage from '../containers/PTOPage/PTOPage';
 import BugReviewPage from '../containers/BugReviewPage/BugReviewPage';
@@ -41,6 +43,9 @@ const appRoutes = () => (
 			    <Route path="task" component={requireAuth(TaskPage)} />
 			    <Route path="pto" component={requireAuth(PTOPage)} />
 			    <Route path="redux-demo" component={requireAuth(DemoPage)} />
+        <Route path="resource-map" component={requireAuth(ResourceMapPage)} />
+        <Route path="bug-tracking" component={requireAuth(BugTrackingPage)} />
+        <Route path="overtime" component={requireAuth(OvertimePage)} />
 				<Route path="bug-analysis" component={requireAuth(BugReviewPage)} />
 				<Route path="bug-report" component={requireAuth(BugReportPage)} />
 				<Route path="resource-map" component={requireAuth(ResourceMapPage)} />
