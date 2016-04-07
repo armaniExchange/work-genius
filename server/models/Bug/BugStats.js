@@ -10,7 +10,7 @@ import BUG_STATS_TYPE from './BugStatsType.js';
 // RethinkDB
 import r from 'rethinkdb';
 // Constants
-import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
+import { DB_HOST, DB_PORT , ADMIN_ID,TESTER_ID } from '../../constants/configurations.js';
 
 let BugStats = {
 	'getRootCauseSummary': {
@@ -128,11 +128,8 @@ let BugStats = {
 					// 	}
 				// ]
 				let ownerSummary = await query.run(connection); 
-				query = r.db('work_genius').table('users').filter(function(user){
-					return user('email').match('@a10networks.com')
-				}).pluck('name','email').coerceTo('array');
-				console.log('ownerSummary:');
-				console.log(ownerSummary);
+				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID)))
+				.pluck('name','email').coerceTo('array');
 
 				// construct the result
 				// the pattern:
@@ -146,9 +143,9 @@ let BugStats = {
 					//  item6 : 6 //Others
 				// }]
 				let users = await query.run(connection);
-
+				console.log('users:');
+				console.log(users);
 				for(let user of users){
-					console.log('user:' + user.name);
 					let statusItems = ownerSummary.filter( item => {
 						return item.group.indexOf(user.email.replace('@a10networks.com','').toLowerCase()) > -1;
 					});
@@ -161,13 +158,7 @@ let BugStats = {
 							let itemSummary = statusItems.filter((item => {
 								return item.group.indexOf(rootCause) > -1;
 							}));
-							console.log('itemSummary:');
-							console.log(itemSummary);
-							console.log();
 							if(itemSummary && itemSummary.length > 0){
-								console.log('itemSummary:');
-								console.log(itemSummary[0].reduction);
-								console.log();
 								userSummary['item'+String(index+1)] = itemSummary[0].reduction;
 							}
 						});
@@ -261,7 +252,7 @@ let BugStats = {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				let OwnerSummary = await query.run(connection); 
 
-				query = r.db('work_genius').table('users').pluck('email','name').coerceTo('array');
+				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID))).pluck('email','name').coerceTo('array');
 				let userList = await query.run(connection);
 
 				

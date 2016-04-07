@@ -136,21 +136,21 @@ class BugReportPage extends Component {
 
         var rootCauseData = { type: 'pie', name: 'Root Cause', data: []};
         for (let cause of rootCauseTableData) {
-            cause.name = (cause.name === undefined || cause.name === '') ? 'Not Mark' : cause.name;
+            cause.name = (cause.name === undefined || cause.name === '') ? 'Not Marked' : cause.name;
             let pre = [ cause.name, cause.number ];
             rootCauseData.data.push(pre);
         }
 
         var tagsData = { type: 'pie', name: 'Tag', data: [] };
         for (let tag of tagsTableData) {
-            tag.name = (tag.name === undefined || tag.name === '') ? 'Not Mark' : tag.name;
+            tag.name = (tag.name === undefined || tag.name === '') ? 'Not Marked' : tag.name;
             let pre = [ tag.name, tag.number ];
             tagsData.data.push(pre);
         }
 
         var ownerData = { type: 'pie', name: 'Owner', data: [] };
         for (let owner of ownerTotalData) {
-            owner.name = (owner.name === undefined || owner.name === '') ? 'Not Mark' : owner.name;
+            owner.name = (owner.name === undefined || owner.name === '') ? 'Not Marked' : owner.name;
             let pre = [ owner.name, owner.number ];
             ownerData.data.push(pre);
         }
