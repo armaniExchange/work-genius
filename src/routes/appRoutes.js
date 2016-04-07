@@ -43,7 +43,6 @@ const appRoutes = () => (
 			    <Route path="task" component={requireAuth(TaskPage)} />
 			    <Route path="pto" component={requireAuth(PTOPage)} />
 			    <Route path="redux-demo" component={requireAuth(DemoPage)} />
-        <Route path="resource-map" component={requireAuth(ResourceMapPage)} />
         <Route path="bug-tracking" component={requireAuth(BugTrackingPage)} />
         <Route path="overtime" component={requireAuth(OvertimePage)} />
 				<Route path="bug-analysis" component={requireAuth(BugReviewPage)} />
