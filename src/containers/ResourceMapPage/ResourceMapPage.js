@@ -37,9 +37,6 @@ class ResourceMapPage extends Component{
 			startDate,
 			totalDays
 		} = this.props;
-		console.log(startDate);
-		console.log(typeof startDate);
-		console.log(new Date(startDate));
 		return (
 			<section>
 				<DatePicker defaultDate={String(startDate)} placeholder="Start Date" onChange={this._changeStartDate} />
