@@ -15,10 +15,8 @@ class FeatureAnalysisPage extends Component {
       super(props);
     }
     componentWillMount() {
-        const { fetchAssignmentCategories, fetchOwners, fetchDifficulties } = this.props;
-        fetchAssignmentCategories();
-        fetchOwners();
-        fetchDifficulties();
+        const { fetchAnalysisPageData } = this.props;
+        fetchAnalysisPageData();
     }
     _onNodeClick() {
         this.props.setCurrentLeafNode(undefined);
@@ -152,7 +150,8 @@ FeatureAnalysisPage.propTypes = {
     setFormVisibility: PropTypes.func.isRequired,
     fetchOwners: PropTypes.func.isRequired,
     fetchDifficulties: PropTypes.func.isRequired,
-    changeCategoryWaitForUpdate: PropTypes.func.isRequired
+    changeCategoryWaitForUpdate: PropTypes.func.isRequired,
+    fetchAnalysisPageData: PropTypes.func.isRequired
 };
 FeatureAnalysisPage.defaultProps = {
     currentLeaf: {},
