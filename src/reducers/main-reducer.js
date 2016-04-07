@@ -7,53 +7,54 @@ import { PRIVILEGE } from '../constants/config.js';
 const initialState = Map({
 	navHeaderTitle: 'WG',
 	navItems: List.of(
+    Map({
+        displayText: 'Knowledge',
+        link: '/main/document'
+    }),
 		Map({
-			displayText: 'Dashboard',
-			link: '/main'
-		}),
-		Map({
-			displayText: 'Task',
-			link: '/main/task'
-		}),
-		Map({
-			displayText: 'PTO',
-			link: '/main/pto'
-		}),
-		Map({
-			displayText: 'Data Explorer',
-			link: '/main/data-explorer'
-		}),
-		Map({
-			displayText: 'Bug Analysis',
-			link: '/main/bug-analysis'
-		}),
-	    Map({
-	        displayText: 'Bug Report',
-	        link: '/main/bug-report'
-	    }),
-	    Map({
-	      displayText: 'Resource Map',
-	      link: '/main/resource-map'
-	    }),
-	    Map({
-	        displayText: 'Document',
-	        link: '/main/document'
-	    }),
-		Map({
-			displayText: 'Redux Demo',
-			link: '/main/redux-demo'
-		}),
-	    Map({
-	        displayText: 'Valid Demo',
-	        link: '/main/valid-demo'
-	    }),
-		Map({
-	        displayText: 'Page Assignment',
-	        link: '/main/feature-analysis'
-	    })
+      displayText: 'Resources',
+      link: '/main/resource-map' //new
+    }),
+    Map({
+        displayText: 'Reporting',
+        link: '/main/bug-analysis'
+    }),
+    Map({
+        displayText: 'Page Assignment',
+        link: '/main/feature-analysis'
+    }),
+    Map({
+      displayText: 'PTO',
+      link: '/main/pto'
+    }),
 	),
 	subMenu: Map({
-		'Dashboard': List.of(),
+    'Knowledge': List.of(
+      {
+        name: 'Document',
+        url: '/main/document'
+      },
+      {
+        name: 'Bug Tracking',
+        url: '/main/bug-tracking' //new
+      }
+    ),
+    'Resources': List.of(
+      {
+        name: 'Resource Map',
+        url: '/main/resource-map' //new
+      }
+    ),
+    'Reporting': List.of(
+      {
+        displayText: 'Bug Analysis',
+        link: '/main/bug-analysis'
+      },
+      {
+        displayText: 'Bug Report',
+        link: '/main/bug-report'
+      }
+    ),
 		'Page Assignment': List.of(
 			{
 				name: 'Tree View',
@@ -63,7 +64,17 @@ const initialState = Map({
 				name: 'Table View',
 				url: '/main/feature-analysis/table'
 			}
-		)
+		),
+    'PTO': List.of(
+      {
+        name: 'Apply',
+        url: '/main/pto'
+      },
+      {
+        name: 'Overtime',
+        url: '/main/overtime' //new
+      }
+    )
 	}),
 	currentSelectedPageSubMenu: List.of(),
 	hasLogo: true
