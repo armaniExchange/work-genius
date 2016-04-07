@@ -99,7 +99,8 @@ let BugStats = {
 				'AXAPI',
 				'Look and Feel',
 				'Requirement Change',
-				'Browser Related'
+				'Browser Related',
+				'Others'
 			];
 
 			try {
@@ -142,6 +143,7 @@ let BugStats = {
 					// 	item3 : 3 , //Look and feel
 					// 	item4 : 4, //Requirement change
 					// 	item5 : 5 //Browser related
+					//  item6 : 6 //Others
 				// }]
 				let users = await query.run(connection);
 
