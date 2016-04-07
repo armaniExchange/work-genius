@@ -8,7 +8,6 @@ import Main from '../containers/Main/Main';
 import AdminPage from '../containers/AdminPage/AdminPage';
 import ValidDemoPage from '../containers/ValidDemoPage/ValidDemoPage';
 import DashboardPage from '../containers/DashboardPage/DashboardPage';
-import ResourceMapPage from '../containers/ResourceMapPage/ResourceMapPage';
 import BugTrackingPage from '../containers/BugTrackingPage/BugTrackingPage';
 import OvertimePage from '../containers/OvertimePage/OvertimePage';
 import TaskPage from '../containers/TaskPage/TaskPage';
