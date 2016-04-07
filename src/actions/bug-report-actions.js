@@ -21,6 +21,13 @@ export function fetchBugReportTagsSuccess(data){
     };
 };
 
+export function fetchBugReportOwnerTotalSuccess(data){
+    return {
+        type: actionTypes.FETCH_BUG_REPORT_OWNER_TOTAL_SUCCESS,
+        data
+    };
+};
+
 export function fetchBugReportOwnerSuccess(data){
     return {
         type: actionTypes.FETCH_BUG_REPORT_OWNER_SUCCESS,
@@ -98,7 +105,7 @@ export function fetchBugReportOwner(version) {
         let config = {
             method: 'POST',
             body: `{
-              getOwnerSummary(label:"` + version + `"){
+              getOwnerRootCauseSummary(label:"` + version + `"){
                 name,
                 item1,
                 item2,
@@ -117,7 +124,35 @@ export function fetchBugReportOwner(version) {
             .then((res) => res.json())
             .then((body) => {
                 dispatch(fetchCurrentProjectVersion(version));
-                dispatch(fetchBugReportOwnerSuccess(body.data.getOwnerSummary));
+                dispatch(fetchBugReportOwnerSuccess(body.data.getOwnerRootCauseSummary));
+            })
+            .catch((err) => {
+                throw new Error(err);
+            });
+    };
+};
+
+export function fetchBugReportOwnerTotal(version) {
+    return (dispatch) => {
+        let config = {
+            method: 'POST',
+            body: `{
+              getOwnerSummary(label:"` + version + `"){
+                name,
+                number,
+                percentage
+              }
+            }`,
+            headers: {
+                'Content-Type': 'application/graphql',
+                'x-access-token': localStorage.token
+            }
+        };
+
+        return fetch(SERVER_API_URL, config)
+            .then((res) => res.json())
+            .then((body) => {
+                dispatch(fetchBugReportOwnerTotalSuccess(body.data.getOwnerSummary));
             })
             .catch((err) => {
                 throw new Error(err);
@@ -132,7 +167,8 @@ export function fetchBugReportPageData(version) {
         Promise.all([
             dispatch(fetchBugReportRootCause(version)),
             dispatch(fetchBugReportTags(version)),
-            dispatch(fetchBugReportOwner(version))
+            dispatch(fetchBugReportOwner(version)),
+            dispatch(fetchBugReportOwnerTotal(version))
         ]).then(
             () => {
                 dispatch(setLoadingState(false));

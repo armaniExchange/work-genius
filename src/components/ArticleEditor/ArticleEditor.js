@@ -75,6 +75,7 @@ class ArticleEditor extends Component {
       category,
       files,
       allCategories,
+      tagSuggestions,
       onContentChange,
       onTitleChange,
       onTagsChange,
@@ -86,6 +87,19 @@ class ArticleEditor extends Component {
       editingFile
     } = this.state;
 
+    const allCategoryItems = allCategories
+      .filter(item => {
+        return item.name !== 'root';
+      })
+      .map((item, index) => {
+        return (
+          <MenuItem
+            key={index}
+            value={item.id}
+            primaryText={item.name}
+          />
+        );
+      });
 
     return (
       <div className="article-editor"
@@ -99,19 +113,9 @@ class ArticleEditor extends Component {
           className="drop-down-menu"
           autoWidth={false}
           maxHeight={allCategoriesMaxHeight}
-          value={category.id}
+          value={category && category.id}
           onChange={onCategoryChange} >
-          {
-            allCategories.map((item, index) => {
-              return (
-                <MenuItem
-                  key={index}
-                  value={item.id}
-                  primaryText={item.name}
-                />
-              );
-            })
-          }
+          {allCategoryItems}
         </DropDownMenu>
         <br />
         <br />
@@ -125,6 +129,7 @@ class ArticleEditor extends Component {
         <br />
         <TagsInput
           tags={tags}
+          suggestions={tagSuggestions}
           onTagsChange={onTagsChange} />
         <br />
         <h5>File Input</h5>
@@ -156,6 +161,7 @@ ArticleEditor.propTypes = {
   files               : PropTypes.array,
   allCategories       : PropTypes.array,
   style               : PropTypes.object,
+  tagSuggestions      : PropTypes.arrayOf(PropTypes.string),
   onContentChange     : PropTypes.func.isRequired,
   onTitleChange       : PropTypes.func.isRequired,
   onTagsChange        : PropTypes.func.isRequired,

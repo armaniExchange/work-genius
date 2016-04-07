@@ -210,7 +210,14 @@ class BugReviewPage extends Component {
                     titleKeyMap={bugReviewTitleKeyMap}
                 />
                 <br/>
-                <Pagination onChange={this._onClickPaginate} pageSize={pager.pageRow} current={pager.rowIndex} total={pager.totalRow} />
+                <div>
+                    <div className="col-md-10 col-lg-10">
+                        <Pagination onChange={this._onClickPaginate} pageSize={pager.pageRow} current={pager.rowIndex} total={pager.totalRow} />
+                    </div>
+                    <div className="col-md-2 col-lg-2">
+                        <span className="float-right">Total:&nbsp;{pager.totalRow}</span>
+                    </div>
+                </div>
             </section>
         );
     }

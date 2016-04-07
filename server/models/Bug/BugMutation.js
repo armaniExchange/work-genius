@@ -36,7 +36,7 @@ let BugMutation = {
 				if(!id){
 					return 'Fail to update bug!';
 				}
-				query = r.db('work_genius').table('bugs').get(id).update(bug);
+				query = r.db('work_genius').table('bugs_review').get(id).update(bug);
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				await query.run(connection);
 				await connection.close();

@@ -32,7 +32,7 @@ let BugStats = {
 				if(label){
 					filter.label = label;
 				}
-				query = r.db('work_genius').table('bugs').filter(filter).group('resolved_type').count();
+				query = r.db('work_genius').table('bugs_review').filter(filter).group('resolved_type').count();
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				let rootCauseSummary = await query.run(connection); 
 				//combine the group = null and group = ''
@@ -79,9 +79,9 @@ let BugStats = {
 			return result;
 		}
 	},
-	'getOwnerSummary': {
+	'getOwnerRootCauseSummary': {
 		type: new GraphQLList(BUG_STATS_TYPE),
-		description: 'Get owner summary',
+		description: 'Get owner root cause summary',
         args: {
 			label: {
 				type: GraphQLString,
@@ -106,7 +106,7 @@ let BugStats = {
 				if(label){
 					filter.label = label;
 				}
-				query = r.db('work_genius').table('bugs').filter(filter).group('assigned_to','resolved_type').count();
+				query = r.db('work_genius').table('bugs_review').filter(filter).group('assigned_to','resolved_type').count();
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				//get summary result
 				// the pattern of result : 
@@ -200,7 +200,7 @@ let BugStats = {
 				if(label){
 					filter.label = label;
 				}
-				query = r.db('work_genius').table('bugs').group(r.row('tags'), {multi: true})
+				query = r.db('work_genius').table('bugs_review').group(r.row('tags'), {multi: true})
 					.count().ungroup().orderBy(r.desc('reduction'));
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				let bugSummary = await query.run(connection); 
@@ -225,6 +225,72 @@ let BugStats = {
 					//get percentage
 					if(totalNumber){
 						item.percentage = String((item.number/totalNumber * 100).toFixed(2)) + '%';
+					}
+					result.push(item);
+				}
+           
+				await connection.close();
+			} catch (err) {
+				return err;
+			}
+			return result;
+		}
+	},
+	'getOwnerSummary': {
+		type: new GraphQLList(BUG_STATS_TYPE),
+		description: 'Get owner summary',
+        args: {
+			label: {
+				type: GraphQLString,
+				description: 'project'
+			}
+		},
+		resolve: async (root, { label}) => {
+			let connection = null,
+			    result = [],
+                filter = {},
+				query = null;
+
+			try {
+				if(label){
+					filter.label = label;
+				}
+				query = r.db('work_genius').table('bugs_review').filter(filter).group('assigned_to').count();
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				let OwnerSummary = await query.run(connection); 
+
+				query = r.db('work_genius').table('users').pluck('email','name').coerceTo('array');
+				let userList = await query.run(connection);
+
+				
+				let totalNumber = 0;
+				//get total bug number
+				OwnerSummary.forEach((group) => {
+					totalNumber += group.reduction;
+				});
+				for(let group of OwnerSummary){
+					if(group.group.indexOf('bugzilla') > -1){
+						continue;
+					}
+					let item = {
+						name : '',
+						number : 0,
+						percentage : ''
+					};
+
+					item.name = group.group || '';
+					//get user name
+					let user = userList.filter((user) => {
+						return user.email.replace('@a10networks.com','').toLowerCase() == group.group;
+					});
+					if(user && user.length > 0){
+						item.name = user[0].name;
+					}
+					
+					item.number = group.reduction || 0;
+					//get percentage
+					if(totalNumber){
+						item.percentage = String((item.number/totalNumber * 100).toFixed(2));
 					}
 					result.push(item);
 				}
