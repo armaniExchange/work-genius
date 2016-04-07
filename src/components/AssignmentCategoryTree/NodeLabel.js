@@ -75,7 +75,7 @@ export default function NodeLabel({ data, onClickHandler, isLeaf, key, owners, s
             let iconHtml = i === 0 ?
                 (<i className="material-icons">looks_one</i>) :
                 (<i className="material-icons">looks_two</i>);
-            if (ownerId) {
+            if (ownerId && owners.length > 0) {
                 return (
                     <span className="tree-node-icon" key={ownerId + i}>
                         {iconHtml}
