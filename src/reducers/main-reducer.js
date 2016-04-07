@@ -27,14 +27,14 @@ const initialState = Map({
 			displayText: 'Bug Analysis',
 			link: '/main/bug-analysis'
 		}),
-    Map({
-      displayText: 'Bug Report',
-      link: '/main/bug-report'
-    }),
-    Map({
-      displayText: 'Document',
-      link: '/main/document'
-    }),
+	    Map({
+	        displayText: 'Bug Report',
+	        link: '/main/bug-report'
+	    }),
+	    Map({
+	        displayText: 'Document',
+	        link: '/main/document'
+	    }),
 		Map({
 			displayText: 'Redux Demo',
 			link: '/main/redux-demo'
@@ -48,6 +48,20 @@ const initialState = Map({
 	        link: '/main/feature-analysis'
 	    })
 	),
+	subMenu: Map({
+		'Dashboard': List.of(),
+		'Page Assignment': List.of(
+			{
+				name: 'Tree View',
+				url: '/main/feature-analysis'
+			},
+		    {
+				name: 'Table View',
+				url: '/main/feature-analysis/table'
+			}
+		)
+	}),
+	currentSelectedPageSubMenu: List.of(),
 	hasLogo: true
 });
 
@@ -74,6 +88,9 @@ export default function mainReducer(state = initialState, action) {
 			return updateNavigationItem(state, action);
 		case actionTypes.LOGIN_SUCCESS:
 			return updateNavigationItem(state, action);
+		case actionTypes.SET_CURRENT_SELECTED_PAGE_NAME:
+		    let newSubMenu = state.get('subMenu').get(action.name);
+			return state.set('currentSelectedPageSubMenu', newSubMenu ? newSubMenu : List.of());
 		default:
 			return state;
 	}
