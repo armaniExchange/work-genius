@@ -84,6 +84,7 @@ export default keyMirror({
     REMOVE_ARTICLE_FILE: null,
     REMOVE_ARTICLE_FILE_SUCCESS: null,
     REMOVE_ARTICLE_FILE_FAIL: null,
+    CLEAR_ARTICLE: null,
 
     // Document page actions
     FETCH_ARTICLES: null,
@@ -121,6 +122,7 @@ export default keyMirror({
     FETCH_BUG_REPORT_ROOT_CAUSE_SUCCESS: null,
     FETCH_BUG_REPORT_TAGS_SUCCESS: null,
     FETCH_BUG_REPORT_OWNER_SUCCESS: null,
+    FETCH_BUG_REPORT_OWNER_TOTAL_SUCCESS: null,
     SET_BUG_REPORT_PROJECT_VERSION: null
 });
 

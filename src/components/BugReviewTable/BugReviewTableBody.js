@@ -15,10 +15,15 @@ class BugReviewTableBody extends Component {
             data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, optionsMenus, changeReviewText, resolvedReasonTypeChange, changeReviewTagOptions, changeMenuTagOptions
         } = this.props;
 
+        var titleLength = 0;
+        for (let key of titleKeyMap) {
+            titleLength += key.colspan;
+        }
+
         let bodyHtml = (
             <tr>
                 <Td
-                    colSpan={titleKeyMap.length}
+                    colSpan={titleLength}
                     className="pto-table__body--empty">
                     No Match Result!
                 </Td>
@@ -132,6 +137,12 @@ class BugReviewTableBody extends Component {
                             isAlignLeft={isAlignLeft}
                             colSpan={header['colspan']}>
                                 {review[header['key']]}</Td>
+                        );
+                    case 'resolved_status':
+                        return (
+                            <Td key={cellIndex}
+                            colSpan={header['colspan']}>
+                                {review['bug_status']}&nbsp;|&nbsp;{review['resolution']}</Td>
                         );
                     default:
                         return (
