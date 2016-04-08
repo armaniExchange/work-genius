@@ -9,6 +9,7 @@ class SubMenu extends Component {
 	render () {
 		const { data, headerTitle } = this.props;
 		let linkHtml = data.map(({ name, url }, i) => {
+			url = url ? url : '/';
 			return (
 				<span className="mdl-navigation__link" key={`submenu-${i}`}>
 				    <Link to={url} key={i}>{name}</Link>
