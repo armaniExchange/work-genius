@@ -9,7 +9,7 @@ const initialState = Map({
 	navItems: List.of(
     Map({
         displayText: 'Knowledge',
-        link: '/main/document'
+        link: '/main/knowledge/document'
     }),
 		Map({
       displayText: 'Resources',
@@ -32,11 +32,11 @@ const initialState = Map({
     'Knowledge': List.of(
       {
         name: 'Document',
-        url: '/main/document'
+        url: '/main/knowledge/document'
       },
       {
         name: 'Bug Tracking',
-        url: '/main/bug-tracking' //new
+        url: '/main/knowledge/bug-tracking' //new
       }
     ),
     'Resources': List.of(

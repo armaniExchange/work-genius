@@ -8,7 +8,7 @@ import Main from '../containers/Main/Main';
 import AdminPage from '../containers/AdminPage/AdminPage';
 import ValidDemoPage from '../containers/ValidDemoPage/ValidDemoPage';
 import DashboardPage from '../containers/DashboardPage/DashboardPage';
-import BugTrackingPage from '../containers/BugTrackingPage/BugTrackingPage';
+import BugTrackingPage from '../containers/KnowledgePage/BugTrackingPage';
 import TaskPage from '../containers/TaskPage/TaskPage';
 import PTOPage from '../containers/PTOPage/PTOPage';
 import PTOApplication from '../containers/PTOPage/PTO-Application';
@@ -21,7 +21,8 @@ import DataExplorerFolderView from '../containers/DataExplorerFolderView/DataExp
 import DataExplorerFileView from '../containers/DataExplorerFileView/DataExplorerFileView';
 import Login from '../containers/Login/Login';
 import NotFoundPage from '../containers/NotFoundPage/NotFoundPage';
-import DocumentPage from '../containers/DocumentPage/DocumentPage';
+import KnowledgePage from '../containers/KnowledgePage/KnowledgePage';
+import DocumentPage from '../containers/KnowledgePage/DocumentPage';
 import EditArticlePage from '../containers/EditArticlePage/EditArticlePage';
 import ViewArticlePage from '../containers/ViewArticlePage/ViewArticlePage';
 import FeatureAnalysisPage from '../containers/FeatureAnalysisPage/FeatureAnalysisPage';
@@ -47,14 +48,17 @@ const appRoutes = () => (
 					<Route path="overtime" component={requireAuth(PTOOvertime)} />
 				</Route>
 			    <Route path="redux-demo" component={requireAuth(DemoPage)} />
-				<Route path="bug-tracking" component={requireAuth(BugTrackingPage)} />
 				<Route path="bug-analysis" component={requireAuth(BugReviewPage)} />
 				<Route path="bug-report" component={requireAuth(BugReportPage)} />
 				<Route path="resource-map" component={requireAuth(ResourceMapPage)} />
 				<Route path="valid-demo" component={requireAuth(ValidDemoPage)} />
 		        <Route path="articles/edit/:articleId" component={requireAuth(EditArticlePage)} />
 		        <Route path="articles/:articleId" component={requireAuth(ViewArticlePage)} />
-		        <Route path="document" component={requireAuth(DocumentPage)} />
+
+            <Route path="knowledge" component={requireAuth(KnowledgePage)}>
+  		        <Route path="document" component={requireAuth(DocumentPage)} />
+              <Route path="bug-tracking" component={requireAuth(BugTrackingPage)} />
+            </Route>
 				<Route path="feature-analysis" component={requireAuth(FeatureAnalysisPage)}>
 				    <IndexRoute component={requireAuth(FeatureAnalysisTreePage)} />
 					<Route path="table" component={requireAuth(FeatureAnalysisTablePage)} />
