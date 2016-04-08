@@ -14,7 +14,7 @@ const initialState = Map({
 
 function generateTree(dataArr, root) {
     let subTree, directChildren, subDataArr;
-    if (Object.keys(root).length === 0) {
+    if (!root || Object.keys(root).length === 0) {
         return {};
     }
     if (dataArr.length === 0) {
@@ -56,7 +56,7 @@ function findLeaf(root, leafId) {
 export default function featureAnalysisReducer(state = initialState, action) {
 	switch (action.type) {
 		case actionTypes.FETCH_ASSIGNMENT_CATEGORIES_SUCCESS:
-            let newTree = action.data.length > 0 ? transformToTree(action.data) : [],
+            let newTree = action.data.length > 0 ? transformToTree(action.data) : {},
                 currentLeaf = state.get('currentLeaf');
             if (currentLeaf && currentLeaf.id) {
                 return state.set('treeDataSource', newTree).set('currentLeaf', findLeaf(newTree, currentLeaf.id)).set('dataSource', action.data);
