@@ -56,7 +56,7 @@ class DocumentPage extends Component {
   }
 
   onConfirmDeleteArticle(deletingArticle) {
-    console.log(`delete article id:${deletingArticle.id} index:${deletingArticle.index}`);
+    // console.log(`delete article id:${deletingArticle.id} index:${deletingArticle.index}`);
     this.props.articleActions.deleteArticle(deletingArticle.id);
   }
 
