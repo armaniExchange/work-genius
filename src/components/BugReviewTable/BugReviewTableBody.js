@@ -15,10 +15,15 @@ class BugReviewTableBody extends Component {
             data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, optionsMenus, changeReviewText, resolvedReasonTypeChange, changeReviewTagOptions, changeMenuTagOptions
         } = this.props;
 
+        var titleLength = 0;
+        for (let key of titleKeyMap) {
+            titleLength += key.colspan;
+        }
+
         let bodyHtml = (
             <tr>
                 <Td
-                    colSpan={titleKeyMap.length}
+                    colSpan={titleLength}
                     className="pto-table__body--empty">
                     No Match Result!
                 </Td>
@@ -121,7 +126,7 @@ class BugReviewTableBody extends Component {
                         return (
                             <Td key={cellIndex}
                             isAlignLeft={isAlignLeft}
-                            className={'bug-review-table-bug-id-width'}
+                            className={'pto-table__body--empty'}
                             colSpan={header['colspan']}>
                             <a className="bug-review-link" href={'https://bugzilla/show_bug.cgi?id=' + bugId} target="_Blank">
                                 {review[header['key']]}</a></Td>
@@ -132,6 +137,19 @@ class BugReviewTableBody extends Component {
                             isAlignLeft={isAlignLeft}
                             colSpan={header['colspan']}>
                                 {review[header['key']]}</Td>
+                        );
+                    case 'resolved_status':
+                        return (
+                            <Td key={cellIndex}
+                            className={'pto-table__body--empty'}
+                            colSpan={header['colspan']}>
+                            {review['bug_status']}<br/>{review['resolution']}</Td>
+                        );
+                    case 'assigned_to':
+                        return (
+                            <Td key={cellIndex}
+                            className={'pto-table__body--empty'}
+                            colSpan={header['colspan']}>{review[header['key']]}</Td>
                         );
                     default:
                         return (

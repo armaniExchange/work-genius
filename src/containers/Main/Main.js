@@ -6,8 +6,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // Components
 import Navigation from '../../components/Navigation/Navigation';
-import PageHeader from '../../components/Page-Header/Page-Header';
 import AlertBox from '../../components/AlertBox/AlertBox';
+import SubMenu from '../../components/Sub-Menu/Sub-Menu';
 // Actions
 import * as AppActions from '../../actions/app-actions';
 import * as MainActions from '../../actions/main-actions';
@@ -16,11 +16,22 @@ class Main extends Component {
 	constructor(props) {
 		super(props);
 		this._closeAlertBox = ::this._closeAlertBox;
-	}
-
-	componentDidUpdate() {
 		this._navItemsClickHandler = ::this._navItemsClickHandler;
 		this._mapPathNameToDisplayName = ::this._mapPathNameToDisplayName;
+	}
+
+	componentDidMount() {
+		const { setCurrentSelectedPageName } = this.props.mainActions;
+		let name = this._mapPathNameToDisplayName(this.props.location.pathname, this.props.mainState.navItems);
+		setCurrentSelectedPageName(name);
+	}
+
+	componentDidUpdate(prevProps) {
+		const { setCurrentSelectedPageName } = this.props.mainActions;
+		if (prevProps.location.pathname !== this.props.location.pathname) {
+			let name = this._mapPathNameToDisplayName(this.props.location.pathname, this.props.mainState.navItems);
+			setCurrentSelectedPageName(name);
+		}
 	}
 
 	_mapPathNameToDisplayName(pathName, navItems) {
@@ -36,7 +47,7 @@ class Main extends Component {
 	}
 
 	_navItemsClickHandler() {
-		// console.log(name, index);
+		// console.log(name);
 	}
 
 	_closeAlertBox() {
@@ -53,7 +64,8 @@ class Main extends Component {
 		const {
 			navHeaderTitle,
 			navItems,
-			hasLogo
+			hasLogo,
+			currentSelectedPageSubMenu
 		} = this.props.mainState;
 		const {
 			errorMessage
@@ -77,7 +89,9 @@ class Main extends Component {
 				    hasLogo={hasLogo}
 				    onNavItemsClick={this._navItemsClickHandler}
 				    onLogoutHandler={logout} />
-				<PageHeader headerTitle={this._mapPathNameToDisplayName(pathname, navItems)} />
+				<SubMenu
+				    data={currentSelectedPageSubMenu}
+					headerTitle={this._mapPathNameToDisplayName(pathname, navItems)} />
 				<main className="mdl-layout__content">
 				    <div className="page-content">
 						{this.props.children}

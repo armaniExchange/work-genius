@@ -202,6 +202,7 @@ export function fetchBugReviewApplications(pager, version, userAlisa, menu, root
                         review,
                         tags,
                         title,
+                        resolution,
                         total_row
                     }
             }`,

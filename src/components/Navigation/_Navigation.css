@@ -6,9 +6,17 @@
 		height: 54px;
 		background: url('../../assets/images/logo-white.png') no-repeat 0 0;
 		vertical-align: middle;
+		@media screen and (max-width: 1024px){
+			width:41px;
+			height:27px;
+			background-size: 100%;
+		}
 	}
 	&__header-title {
 		vertical-align: middle;
+		@media screen and (max-width: 1024px){
+			display:none;
+		}
 	}
 	&__link--active {
 		font-weight: bold;
@@ -24,3 +32,21 @@
 	background: #eee;
 	color: #666;
 }
+
+.mdl-layout__header-row .mdl-navigation__link{
+	font-size:16px;
+	padding: 0 20px;
+	outline:none;
+	@media screen and (max-width: 1024px){
+		padding: 0 5px;
+	}
+}
+
+.mdl-layout__header{
+	@media screen and (max-width: 1024px){
+		display:block; /* because we use notebook when meeting. */
+	}
+}
+
+
+.mdl-layout__header-row{padding:0 20px 0 40px;}

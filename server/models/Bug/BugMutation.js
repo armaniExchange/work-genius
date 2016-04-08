@@ -26,6 +26,10 @@ let BugMutation = {
 				console.log('data:');
 				console.log(data);
 				let bug = JSON.parse(data);
+				//total_row is used for pagination, don't need to be insert into db
+				if('total_row' in bug){
+					delete bug['total_row'];
+				}
 				console.log('bug:');
 				console.log(bug);
 				let id = null;
