@@ -166,13 +166,15 @@ class BugReportPage extends Component {
         return (
             <section>
                 {/* Project Version */}
-                <label>&nbsp;&nbsp;&nbsp;&nbsp;Project:&nbsp;</label>
-                <DropDownList
-                    isNeedAll={false}
-                    title={currentProjectVersion}
-                    onOptionClick={this._onChangeProjectVesion}
-                    aryOptionConfig={allProjectVersions}
-                />
+                <div className="col-md-12 col-lg-12">
+                    <label>&nbsp;&nbsp;&nbsp;&nbsp;Project:&nbsp;</label>
+                    <DropDownList
+                        isNeedAll={false}
+                        title={currentProjectVersion}
+                        onOptionClick={this._onChangeProjectVesion}
+                        aryOptionConfig={allProjectVersions}
+                    />
+                </div>
                 <br/><br/>
                 <div className="col-md-12 col-lg-12">
                   <div className="col-md-12 col-lg-12">
@@ -188,7 +190,9 @@ class BugReportPage extends Component {
                     <ReactHighcharts config={HIGHCHARTS_DEFAULT_CONFIG_ROOT_CAUSE} />
                   </div>
                 </div>
-
+                <div className="col-md-12 col-lg-12">
+                    <br/>
+                </div>
                 <div className="col-md-12 col-lg-12">
                   <div className="col-md-12 col-lg-12">
                     <label>Tags Summary:&nbsp;</label>
@@ -204,6 +208,9 @@ class BugReportPage extends Component {
                   </div>
                 </div>
                 <div className="col-md-12 col-lg-12">
+                    <br/>
+                </div>
+                <div className="col-md-12 col-lg-12">
                   <div className="col-md-12 col-lg-12">
                     <label>Owner Summary:&nbsp;</label>
                   </div>
@@ -216,6 +223,9 @@ class BugReportPage extends Component {
                   <div className="col-md-12 col-lg-4">
                     <ReactHighcharts config={HIGHCHARTS_DEFAULT_CONFIG_OWNER} />
                   </div>
+                </div>
+                <div className="col-md-12 col-lg-12">
+                    <br/><br/><br/><br/><br/>
                 </div>
             </section>
         );
