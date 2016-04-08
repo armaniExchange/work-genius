@@ -23,7 +23,7 @@ import BugTagMutation from '../models/BugTag/BugTagMutation.js';
 import AssignmentCategoryQuery from '../models/AssignmentCategory/AssignmentCategoryQuery.js';
 import AssignmentCategoryMutation from '../models/AssignmentCategory/AssignmentCategoryMutation.js';
 import BugStats from '../models/Bug/BugStats.js';
-//import WorkLogMutation from '../models/WorKLog/WorKLogMutation.js';
+import WorkLogMutation from '../models/WorKLog/WorKLogMutation.js';
 
 const schema = new GraphQLSchema({
 	query: new GraphQLObjectType({
@@ -85,8 +85,8 @@ const schema = new GraphQLSchema({
 			updateBug				  : BugMutation.updateBug,
 			createBugTag			  : BugTagMutation.createBugTag,
 			//work log page
-			// createWorkLog			  : WorkLogMutation.createWorkLog,
-			// updateWorkLog			  : WorkLogMutation.updateWorkLog
+			createWorkLog			  : WorkLogMutation.createWorkLog,
+			updateWorkLog			  : WorkLogMutation.updateWorkLog
 		}
 	})
 });
