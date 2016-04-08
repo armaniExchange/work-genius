@@ -2,10 +2,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import Breadcrumb from '../../components/A10-UI/Breadcrumb';
+import BREADCRUMB from '../../constants/breadcrumb';
+
 class PTOOvertime extends Component {
     render() {
         return (
             <section>
+                <Breadcrumb data={BREADCRUMB.overtime} />
                 Overtime
             </section>
         );

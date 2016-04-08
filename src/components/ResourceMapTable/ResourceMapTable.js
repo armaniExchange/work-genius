@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import Table from '../A10-UI/Table/Table';
 
 import ResourceMapTableHeader from './ResourceMapTableHeader.js';
+import ResourceMapTableBody from './ResourceMapTableBody';
 
 class ResourceMapTable extends Component {
 
@@ -12,7 +13,8 @@ class ResourceMapTable extends Component {
 
 		const {
 			startDate,
-			totalDays
+			totalDays,
+			data
 		} = this.props;
 
 		return (
@@ -22,6 +24,7 @@ class ResourceMapTable extends Component {
 						startDate={startDate}
 						totalDays={totalDays}
 					/>
+					<ResourceMapTableBody data={data} startDate={startDate}/>
                 </Table>
             </div>
         );
@@ -30,12 +33,14 @@ class ResourceMapTable extends Component {
 
 ResourceMapTable.propTypes = {
     startDate          : PropTypes.string.isRequired,
-    totalDays          : PropTypes.number.isRequired
+    totalDays          : PropTypes.number.isRequired,
+    data               : PropTypes.array.isRequired
 };
 
 ResourceMapTable.defaultProps = {
 	startDate: new Date(),
-	totalDays: 14
+	totalDays: 10,
+	data:[]
 };
 
 export default ResourceMapTable;

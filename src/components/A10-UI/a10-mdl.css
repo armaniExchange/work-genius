@@ -12,3 +12,17 @@
 .a10-radio-group .mdl-radio.is-upgraded{
     padding-left: 19px;
 }
+
+.a10-breadcrumb.breadcrumb{
+    padding:0;
+}
+.a10-breadcrumb.breadcrumb>li+li:before{
+    display:none; /*override .breadcrumb>li+li:before*/
+}
+.a10-breadcrumb li a{
+    color:#888;
+}
+.a10-breadcrumb__divide{
+    margin: 0 6px 0 3px;
+    color:#aaa;
+}

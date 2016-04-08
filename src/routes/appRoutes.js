@@ -8,20 +8,23 @@ import Main from '../containers/Main/Main';
 import AdminPage from '../containers/AdminPage/AdminPage';
 import ValidDemoPage from '../containers/ValidDemoPage/ValidDemoPage';
 import DashboardPage from '../containers/DashboardPage/DashboardPage';
-import BugTrackingPage from '../containers/BugTrackingPage/BugTrackingPage';
+import BugTrackingPage from '../containers/KnowledgePage/BugTrackingPage';
 import TaskPage from '../containers/TaskPage/TaskPage';
 import PTOPage from '../containers/PTOPage/PTOPage';
 import PTOApplication from '../containers/PTOPage/PTO-Application';
 import PTOOvertime from '../containers/PTOPage/PTO-Overtime';
-import BugReviewPage from '../containers/BugReviewPage/BugReviewPage';
-import BugReportPage from '../containers/BugReportPage/BugReportPage';
-import ResourceMapPage from '../containers/ResourceMapPage/ResourceMapPage.js';
+import BugAnalysisPage from '../containers/BugAnalysisPage/BugAnalysisPage';
+import BugReviewPage from '../containers/BugAnalysisPage/BugReviewPage';
+import BugReportPage from '../containers/BugAnalysisPage/BugReportPage';
+import ResourcePage from '../containers/ResourcePage/ResourcePage.js';
+import ResourceMapPage from '../containers/ResourcePage/ResourceMapPage.js';
 import DataExplorerPage from '../containers/DataExplorerPage/DataExplorerPage';
 import DataExplorerFolderView from '../containers/DataExplorerFolderView/DataExplorerFolderView';
 import DataExplorerFileView from '../containers/DataExplorerFileView/DataExplorerFileView';
 import Login from '../containers/Login/Login';
 import NotFoundPage from '../containers/NotFoundPage/NotFoundPage';
-import DocumentPage from '../containers/DocumentPage/DocumentPage';
+import KnowledgePage from '../containers/KnowledgePage/KnowledgePage';
+import DocumentPage from '../containers/KnowledgePage/DocumentPage';
 import EditArticlePage from '../containers/EditArticlePage/EditArticlePage';
 import ViewArticlePage from '../containers/ViewArticlePage/ViewArticlePage';
 import FeatureAnalysisPage from '../containers/FeatureAnalysisPage/FeatureAnalysisPage';
@@ -47,14 +50,21 @@ const appRoutes = () => (
 					<Route path="overtime" component={requireAuth(PTOOvertime)} />
 				</Route>
 			    <Route path="redux-demo" component={requireAuth(DemoPage)} />
-				<Route path="bug-tracking" component={requireAuth(BugTrackingPage)} />
-				<Route path="bug-analysis" component={requireAuth(BugReviewPage)} />
-				<Route path="bug-report" component={requireAuth(BugReportPage)} />
+        <Route path="bug-analysis" component={requireAuth(BugAnalysisPage)}> {/*Bug Analysis*/}
+        <Route path="bug-analysis" component={requireAuth(BugReviewPage)} /> {/*-- Bug Root Causes*/}
+				<Route path="bug-report" component={requireAuth(BugReportPage)} /> {/*-- Analysis Reports*/}
+        </Route>
+        <Route path="resource" component={requireAuth(ResourcePage)}> 
 				<Route path="resource-map" component={requireAuth(ResourceMapPage)} />
+        </Route>
 				<Route path="valid-demo" component={requireAuth(ValidDemoPage)} />
 		        <Route path="articles/edit/:articleId" component={requireAuth(EditArticlePage)} />
 		        <Route path="articles/:articleId" component={requireAuth(ViewArticlePage)} />
-		        <Route path="document" component={requireAuth(DocumentPage)} />
+
+            <Route path="knowledge" component={requireAuth(KnowledgePage)}>
+  		        <Route path="document" component={requireAuth(DocumentPage)} />
+              <Route path="bug-tracking" component={requireAuth(BugTrackingPage)} />
+            </Route>
 				<Route path="feature-analysis" component={requireAuth(FeatureAnalysisPage)}>
 				    <IndexRoute component={requireAuth(FeatureAnalysisTreePage)} />
 					<Route path="table" component={requireAuth(FeatureAnalysisTablePage)} />

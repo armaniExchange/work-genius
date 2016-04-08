@@ -3,6 +3,7 @@ import './ResourceMapTable.css';
 import React, { Component, PropTypes } from 'react';
 
 import Th from '../A10-UI/Table/Th';
+import moment from 'moment';
 
 const dateFormate = function(date, fmt)
   { //author: meizz
@@ -49,16 +50,23 @@ class ResourceMapTableHeader extends Component {
 			totalDays
 		} = this.props;
 
-		var dateList = getDateList(startDate, totalDays, 'M/d');
+		var dateList = getDateList(startDate, totalDays, 'yyyy-MM-dd');
 
 		var headerHtml = dateList.map((headerObj, index) => {
+      let className = 'table_header_style ';
+      //let date = headerObj.date;
+      let mo = moment(headerObj.date);
+      let day = mo.isoWeekday();
+      if (day === 6 || day === 7) {
+        className += 'weekend-style';
+      }
 			return (
 				<Th
-					className={'table_header_style'}
+					className={className}
 					key={index}
 					colSpan={1}
 				>
-					{headerObj.date}
+					{mo.format('M/D')}
 				</Th>
 			);
 		});
@@ -80,7 +88,7 @@ ResourceMapTableHeader.propTypes = {
 
 ResourceMapTableHeader.defaultProps = {
 	startDate: new Date(),
-	totalDays: 14
+	totalDays: 10
 };
 
 export default ResourceMapTableHeader;

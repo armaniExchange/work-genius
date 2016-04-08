@@ -14,6 +14,9 @@ import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 import BugReviewTable from '../../components/BugReviewTable/BugReviewTable.js';
 import Pagination from 'rc-pagination';
 
+import Breadcrumb from '../../components/A10-UI/Breadcrumb';
+import BREADCRUMB from '../../constants/breadcrumb';
+
 class BugReviewPage extends Component {
     constructor(props) {
         super(props);
@@ -151,6 +154,7 @@ class BugReviewPage extends Component {
         let preventTagTitle = currentSelectPreventTag === '' ? 'All' : currentSelectPreventTag;
         return (
             <section>
+                <Breadcrumb data={BREADCRUMB.bugrootcause} />
                 {/* Project Version */}
                 <label>Project:&nbsp;</label>
                 <DropDownList
