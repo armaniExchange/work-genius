@@ -62,8 +62,20 @@ class Navigation extends Component {
 				<nav className="mdl-navigation">
 					{ navItemsHtml }
 				</nav>
-				<LogoutButton onClickHandler={this._onLogoutHandler} />
 			</div>
+      <div className="top-right-area">
+        <div title="Tester" className="top-right-area__summary" />
+        <div className="top-right-area__sub-area">
+          <div className="top-right-area__sub-area__head">
+            Welcome, Tester
+          </div>
+          <div className="top-right-area__sub-area__body">
+          </div>
+          <div className="top-right-area__sub-area__foot">
+            <LogoutButton onClickHandler={this._onLogoutHandler} />
+          </div>
+        </div>
+      </div>
 			</header>
 		);
 	}

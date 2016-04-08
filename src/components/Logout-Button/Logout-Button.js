@@ -12,7 +12,7 @@ class LogoutButton extends Component {
 		return (
 	        <button
 	            className="btn btn-large btn-primary"
-	            onClick={this.props.onClickHandler}>
+              onClick={this.props.onClickHandler}>
 	            Log out
 	        </button>
 		);

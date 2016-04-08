@@ -50,3 +50,30 @@
 
 
 .mdl-layout__header-row{padding:0 20px 0 40px;}
+
+.top-right-area{
+	position:absolute;
+	top:2px;
+	right:40px;
+	&:hover .top-right-area__sub-area{
+		display:block;
+	}
+}
+.top-right-area__sub-area{
+	xdisplay:none;
+	position: absolute;
+	background: #fff;
+	width:200px;
+	margin:0 0 0 -140px;
+	border:1px solid #9cc8eb;
+	z-index:1; /*NEED ALSO .mdl-layout__header{z-index:auto;}*/
+}
+.mdl-layout__header{z-index:auto;} /*override*/
+
+.top-right-area__summary{
+	height:60px;
+	width:60px;
+	background: url(../../assets/images/avatar.png) no-repeat 50% #abd4e3;
+	border:1px solid green;
+	border-radius: 50%;
+}
