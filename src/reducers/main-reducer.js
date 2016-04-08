@@ -16,7 +16,7 @@ const initialState = Map({
       link: '/main/resource-map' //new
     }),
     Map({
-        displayText: 'Reporting',
+        displayText: 'Bug Analysis',
         link: '/main/bug-analysis'
     }),
     Map({
