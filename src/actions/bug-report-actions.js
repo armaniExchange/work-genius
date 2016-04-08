@@ -111,7 +111,8 @@ export function fetchBugReportOwner(version) {
                 item2,
                 item3,
                 item4,
-                item5
+                item5,
+                item6
               }
             }`,
             headers: {

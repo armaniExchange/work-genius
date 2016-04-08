@@ -214,8 +214,10 @@ export function fetchBugReviewApplications(pager, version, userAlisa, menu, root
         return fetch(SERVER_API_URL, config)
             .then((res) => res.json())
             .then((body) => {
+                let bugs = body.data.getAllBugs;
+                bugs = bugs == null ? [] : body.data.getAllBugs;
                 dispatch(fetchBugReviewQueryData(
-                    body.data.getAllBugs,
+                    bugs,
                     version,
                     userAlisa,
                     menu,

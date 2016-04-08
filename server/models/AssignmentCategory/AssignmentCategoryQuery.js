@@ -38,7 +38,6 @@ let CategoryQuery = {
 						path: generatePath(arr, category.id)
 					};
 				});
-				await connection.close();
 			} catch (err) {
 				return err;
 			}

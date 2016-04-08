@@ -24,7 +24,8 @@ const initialState = Map({
         Map({ title: 'AXAPI', key: 'item2', colspan: 1}),
         Map({ title: 'Look and Feel', key: 'item3', colspan: 1}),
         Map({ title: 'Requirement Change', key: 'item4', colspan: 1}),
-        Map({ title: 'Browser Related', key: 'item5', colspan: 1})
+        Map({ title: 'Browser Related', key: 'item5', colspan: 1}),
+        Map({ title: 'Others', key: 'item6', colspan: 1})
     ),
     // allProjectVersions: List.of('4.1.0', '3.2.1', '3.2.0'),
     allProjectVersions: List.of(

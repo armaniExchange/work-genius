@@ -126,7 +126,7 @@ class BugReviewTableBody extends Component {
                         return (
                             <Td key={cellIndex}
                             isAlignLeft={isAlignLeft}
-                            className={'bug-review-table-bug-id-width'}
+                            className={'pto-table__body--empty'}
                             colSpan={header['colspan']}>
                             <a className="bug-review-link" href={'https://bugzilla/show_bug.cgi?id=' + bugId} target="_Blank">
                                 {review[header['key']]}</a></Td>
@@ -141,8 +141,15 @@ class BugReviewTableBody extends Component {
                     case 'resolved_status':
                         return (
                             <Td key={cellIndex}
+                            className={'pto-table__body--empty'}
                             colSpan={header['colspan']}>
-                                {review['bug_status']}&nbsp;|&nbsp;{review['resolution']}</Td>
+                            {review['bug_status']}<br/>{review['resolution']}</Td>
+                        );
+                    case 'assigned_to':
+                        return (
+                            <Td key={cellIndex}
+                            className={'pto-table__body--empty'}
+                            colSpan={header['colspan']}>{review[header['key']]}</Td>
                         );
                     default:
                         return (

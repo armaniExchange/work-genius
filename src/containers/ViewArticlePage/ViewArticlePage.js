@@ -18,7 +18,6 @@ import * as ArticleActions from '../../actions/article-page-actions';
 class ViewArticlePage extends Component {
 
   componentWillMount() {
-    console.log('componentWillMount');
     const {
       params,
       articleActions
