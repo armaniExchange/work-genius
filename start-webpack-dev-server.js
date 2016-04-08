@@ -6,7 +6,7 @@ var opn = require('opn');
 
 var app = express();
 var compiler = webpack(config);
-var PORT = process.argv[2] ? parseInt(process.argv[2]) : 8080;
+var PORT = process.argv[2] ? parseInt(process.argv[2]) : 8001;
 
 app.use(require('webpack-dev-middleware')(compiler, {
     noInfo: true,
