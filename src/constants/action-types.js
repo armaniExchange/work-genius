@@ -110,6 +110,7 @@ export default keyMirror({
     FETCH_ASSIGNMENT_CATEGORIES_FAIL: null,
     SET_FORM_VISIBILITY: null,
     SET_CURRENT_LEAF_NODE: null,
+    SET_CURRENT_TREE_SELECTED_USER: null,
 
     // Bug Analysis page actions
     FETCH_BUG_REVIEW_APPLICATION_SUCCESS: null,

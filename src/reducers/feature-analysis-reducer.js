@@ -8,7 +8,8 @@ const initialState = Map({
     categoryWaitToUpdate: {},
 	treeDataSource: Map({}),
     dataSource: List.of(),
-	currentLeaf: Map({})
+	currentLeaf: Map({}),
+    currentTreeSelectedUserId: ''
 });
 
 function generateTree(dataArr, root) {
@@ -43,7 +44,7 @@ function findLeaf(root, leafId) {
     if (root.id === leafId) {
         return root;
     }
-    if (root.children.length === 0) {
+    if (!root.children || root.children.length === 0) {
         return undefined;
     }
     let result = root.children
@@ -62,6 +63,8 @@ export default function featureAnalysisReducer(state = initialState, action) {
             } else {
                 return state.set('treeDataSource', newTree).set('dataSource', action.data);;
             }
+        case actionTypes.SET_CURRENT_TREE_SELECTED_USER:
+		    return state.set('currentTreeSelectedUserId', action.id);
 		case actionTypes.SET_CURRENT_LEAF_NODE:
 		    return !action.data ? state.set('currentLeaf', undefined) : state.set('currentLeaf', action.data);
         case actionTypes.FETCH_OWNERS_SUCCESS:
