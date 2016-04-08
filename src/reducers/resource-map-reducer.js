@@ -2,13 +2,14 @@
 import { Map } from 'immutable';
 // Constants
 import actionTypes from '../constants/action-types';
+import moment from 'moment';
 // import { ADMIN_ID } from '../../server/constants/configurations.js';
 // const initialPTOFilterConditions = Map({
 //     'status': ''
 // });
 
 const initialState = Map({
-	startDate: ''
+	startDate: moment().startOf('week').format('YYYY-MM-DD')
 });
 
 function setStartDate(state, startDate) {
