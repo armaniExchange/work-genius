@@ -9,7 +9,7 @@ const initialState = Map({
 	navItems: List.of(
     Map({
         displayText: 'Knowledge',
-        link: '/main/document'
+        link: '/main/knowledge/document'
     }),
 		Map({
       displayText: 'Resources',
@@ -17,7 +17,7 @@ const initialState = Map({
     }),
     Map({
         displayText: 'Bug Analysis',
-        link: '/main/bug-analysis'
+        link: '/main/bug-analysis/bug-analysis'
     }),
     Map({
         displayText: 'Page Assignment',
@@ -32,11 +32,11 @@ const initialState = Map({
     'Knowledge': List.of(
       {
         name: 'Document',
-        url: '/main/document'
+        url: '/main/knowledge/document'
       },
       {
         name: 'Bug Tracking',
-        url: '/main/bug-tracking' //new
+        url: '/main/knowledge/bug-tracking' //new
       }
     ),
     'Resources': List.of(
@@ -45,14 +45,14 @@ const initialState = Map({
         url: '/main/resource-map' //new
       }
     ),
-    'Reporting': List.of(
+    'Bug Analysis': List.of(
       {
-        displayText: 'Bug Analysis',
-        link: '/main/bug-analysis'
+        name: 'Bug Root Causes',
+        url: '/main/bug-analysis/bug-analysis'
       },
       {
-        displayText: 'Bug Report',
-        link: '/main/bug-report'
+        name: 'Analysis Reports',
+        url: '/main/bug-analysis/bug-report'
       }
     ),
 		'Page Assignment': List.of(
