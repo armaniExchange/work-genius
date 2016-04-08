@@ -77,7 +77,7 @@ const schema = new GraphQLSchema({
 			createComment             : CommentMutation.createComment,
 			deleteComment             : CommentMutation.deleteCommentById,
 			createArticle			  : ArticleMutation.createArticle,
-			editArticle			  	  : ArticleMutation.editArticle,
+			updateArticle			  : ArticleMutation.updateArticle,
 			deleteArticle			  : ArticleMutation.deleteArticle,
       updateAssignmentCategory: AssignmentCategoryMutation.updateAssignmentCategory,
 			//Bug page

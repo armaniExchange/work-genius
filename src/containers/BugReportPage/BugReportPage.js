@@ -18,6 +18,7 @@ const HIGHCHARTS_DEFAULT_CONFIG_ROOT_CAUSE = {
         plotBorderWidth: null,
         plotShadow: false
     },
+    credits: { enabled: false },
     title: {
         text: 'Root Cause'
     },
@@ -31,8 +32,9 @@ const HIGHCHARTS_DEFAULT_CONFIG_ROOT_CAUSE = {
             dataLabels: {
                 enabled: true,
                 color: '#000000',
+                style: '{"fontSize": "8px", fontWeight: "normal"}',
                 connectorColor: '#000000',
-                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                format: '{point.name}'
             }
         }
     },
@@ -45,6 +47,7 @@ const HIGHCHARTS_DEFAULT_CONFIG_TAG = {
         plotBorderWidth: null,
         plotShadow: false
     },
+    credits: { enabled: false },
     title: {
         text: 'Tags'
     },
@@ -58,8 +61,9 @@ const HIGHCHARTS_DEFAULT_CONFIG_TAG = {
             dataLabels: {
                 enabled: true,
                 color: '#000000',
+                style: '{"fontSize": "8px", fontWeight: "normal"}',
                 connectorColor: '#000000',
-                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                format: '{point.name}'
             }
         }
     },
@@ -72,6 +76,7 @@ const HIGHCHARTS_DEFAULT_CONFIG_OWNER = {
         plotBorderWidth: null,
         plotShadow: false
     },
+    credits: { enabled: false },
     title: {
         text: 'Owner'
     },
@@ -85,8 +90,9 @@ const HIGHCHARTS_DEFAULT_CONFIG_OWNER = {
             dataLabels: {
                 enabled: true,
                 color: '#000000',
+                style: '{"fontSize": "8px", fontWeight: "normal"}',
                 connectorColor: '#000000',
-                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                format: '{point.name}'
             }
         }
     },
@@ -128,23 +134,23 @@ class BugReportPage extends Component {
             allProjectVersions,
         } = this.props;
 
-        var rootCauseData = { type: 'pie', name: 'Root Cause', xAxis: 10, yAxis: 10, data: []};
+        var rootCauseData = { type: 'pie', name: 'Root Cause', data: []};
         for (let cause of rootCauseTableData) {
-            cause.name = (cause.name === undefined || cause.name === '') ? 'Not Mark' : cause.name;
+            cause.name = (cause.name === undefined || cause.name === '') ? 'Not Marked' : cause.name;
             let pre = [ cause.name, cause.number ];
             rootCauseData.data.push(pre);
         }
 
-        var tagsData = { type: 'pie', name: 'Root Cause', xAxis: 10, yAxis: 500, data: [] };
+        var tagsData = { type: 'pie', name: 'Tag', data: [] };
         for (let tag of tagsTableData) {
-            tag.name = (tag.name === undefined || tag.name === '') ? 'Not Mark' : tag.name;
+            tag.name = (tag.name === undefined || tag.name === '') ? 'Not Marked' : tag.name;
             let pre = [ tag.name, tag.number ];
             tagsData.data.push(pre);
         }
 
-        var ownerData = { type: 'pie', name: 'Owner', xAxis: 10, yAxis: 500, data: [] };
+        var ownerData = { type: 'pie', name: 'Owner', data: [] };
         for (let owner of ownerTotalData) {
-            owner.name = (owner.name === undefined || owner.name === '') ? 'Not Mark' : owner.name;
+            owner.name = (owner.name === undefined || owner.name === '') ? 'Not Marked' : owner.name;
             let pre = [ owner.name, owner.number ];
             ownerData.data.push(pre);
         }

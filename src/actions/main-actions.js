@@ -7,3 +7,10 @@ export function setCurrentSelectedUserId(id) {
 		id
 	};
 };
+
+export function setCurrentSelectedPageName(name) {
+	return {
+		type: actionTypes.SET_CURRENT_SELECTED_PAGE_NAME,
+		name
+	};
+};

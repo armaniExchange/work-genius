@@ -130,15 +130,15 @@ let ArticleQuery = {
 		type: ArticleType,
 		description: 'Get single article by article id ',
 		args: {
-			article_id: {
+			id: {
 				type: GraphQLString,
 				description: 'Article ID'
 			}
 		},
-		resolve: async (root, {article_id}) => {
+		resolve: async (root, {id}) => {
 			let connection = null,result = null;
 			let	query = r.db('work_genius').table('articles')
-				    .get(article_id);
+				    .get(id);
 
 			try {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });

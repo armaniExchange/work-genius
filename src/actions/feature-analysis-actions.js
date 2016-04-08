@@ -56,15 +56,12 @@ export function fetchOwners() {
         'x-access-token': localStorage.token
       }
     };
-    dispatch(setLoadingState(true));
     return fetch(SERVER_API_URL, config)
       .then((res) => res.json())
       .then((body) => {
-        dispatch(setLoadingState(false));
         dispatch(fetchOwnersSuccess(body.data.allUsers));
       })
       .catch((err) => {
-        dispatch(setLoadingState(false));
         dispatch(apiFailure(err));
       });
   };
@@ -99,11 +96,9 @@ export function fetchDifficulties() {
     return fetch(SERVER_API_URL, config)
       .then((res) => res.json())
       .then((body) => {
-        dispatch(setLoadingState(false));
         dispatch(fetchDifficultiesSuccess(body.data.allDifficulties));
       })
       .catch((err) => {
-        dispatch(setLoadingState(false));
         dispatch(apiFailure(err));
       });
   };
@@ -152,11 +147,11 @@ export function fetchAssignmentCategories() {
 		return fetch(SERVER_API_URL, config)
 			.then((res) => res.json())
 			.then((body) => {
-				dispatch(setLoadingState(false));
 				if (!body.data.allAssignmentCategories) {
 					throw new Error('Fetch Failed: empty data!');
 				}
 				dispatch(fetchAssignmentCategoriesSuccess(body.data.allAssignmentCategories));
+				dispatch(setLoadingState(false));
 			})
 			.catch((err) => {
 				dispatch(setLoadingState(false));
@@ -165,7 +160,24 @@ export function fetchAssignmentCategories() {
 	};
 };
 
-
+export function fetchAnalysisPageData() {
+    return (dispatch) => {
+        dispatch(setLoadingState(true));
+        Promise.all([
+            dispatch(fetchAssignmentCategories()),
+            dispatch(fetchOwners()),
+            dispatch(fetchDifficulties())
+        ]).then(
+            () => {
+                dispatch(setLoadingState(false));
+            },
+            (err) => {
+                dispatch(setLoadingState(false));
+                dispatch(apiFailure(err));
+            }
+        );
+    };
+};
 
 export function updateOneAssignmentCategoryBase(dispatch, id, row) {
   let config = {

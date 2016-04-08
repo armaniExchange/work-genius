@@ -11,6 +11,7 @@ export default keyMirror({
     API_FAILURE: null,
     CLEAR_ERROR_MESSAGE: null,
     SET_CURRENT_SELECTED_USER_ID: null,
+    SET_CURRENT_SELECTED_PAGE_NAME: null,
 
     // Task page actions
     SORT_FEATURE_TABLE_BY_CATEGORY: null,
@@ -123,6 +124,8 @@ export default keyMirror({
     FETCH_BUG_REPORT_TAGS_SUCCESS: null,
     FETCH_BUG_REPORT_OWNER_SUCCESS: null,
     FETCH_BUG_REPORT_OWNER_TOTAL_SUCCESS: null,
-    SET_BUG_REPORT_PROJECT_VERSION: null
-});
+    SET_BUG_REPORT_PROJECT_VERSION: null,
 
+    // Resource Map page actions
+    FETCH_RESOURCE_MAP_DATA: null
+});

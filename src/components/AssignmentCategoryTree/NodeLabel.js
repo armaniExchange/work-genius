@@ -75,13 +75,16 @@ export default function NodeLabel({ data, onClickHandler, isLeaf, key, owners, s
             let iconHtml = i === 0 ?
                 (<i className="material-icons">looks_one</i>) :
                 (<i className="material-icons">looks_two</i>);
-            if (ownerId) {
-                return (
-                    <span className="tree-node-icon" key={ownerId + i}>
-                        {iconHtml}
-                        {owners.filter(owner => +owner.id === +ownerId)[0].name}
-                    </span>
-                );
+            if (ownerId && owners.length > 0) {
+                let filteredUser = owners.filter(owner => +owner.id === +ownerId)[0];
+                if (filteredUser) {
+                    return (
+                        <span className="tree-node-icon" key={ownerId + i}>
+                            {iconHtml}
+                            {filteredUser ? filteredUser.name : ''}
+                        </span>
+                    );
+                }                
             }
             return null;
         });
