@@ -7,6 +7,9 @@ import * as ResourceMapActions from '../../actions/resource-map-actions';
 import * as appActions from '../../actions/app-actions';
 import * as mainActions from '../../actions/main-actions';
 
+import Breadcrumb from '../../components/A10-UI/Breadcrumb';
+import BREADCRUMB from '../../constants/breadcrumb';
+
 import ResourceMapTable from '../../components/ResourceMapTable/ResourceMapTable.js';
 import DatePicker from '../../components/A10-UI/Input/Date-Picker.js';
 
@@ -40,6 +43,7 @@ class ResourceMapPage extends Component{
 		} = this.props;
 		return (
 			<section>
+        <Breadcrumb data={BREADCRUMB.resourcemap} />
 				<DatePicker defaultDate={String(startDate)} placeholder="Start Date" onChange={this._changeStartDate} />
 				<ResourceMapTable
 					startDate={startDate}

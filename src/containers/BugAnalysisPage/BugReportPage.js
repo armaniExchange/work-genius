@@ -12,6 +12,9 @@ import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 import BugReportTable from '../../components/BugReportTable/BugReportTable.js';
 import ReactHighcharts from 'react-highcharts';
 
+import Breadcrumb from '../../components/A10-UI/Breadcrumb';
+import BREADCRUMB from '../../constants/breadcrumb';
+
 const HIGHCHARTS_DEFAULT_CONFIG_ROOT_CAUSE = {
     chart: {
         plotBackgroundColor: null,
@@ -165,6 +168,7 @@ class BugReportPage extends Component {
         HIGHCHARTS_DEFAULT_CONFIG_OWNER.series.push(ownerData);
         return (
             <section>
+                <Breadcrumb data={BREADCRUMB.analysisreport} />
                 {/* Project Version */}
                 <div className="col-md-12 col-lg-12">
                     <label>&nbsp;&nbsp;&nbsp;&nbsp;Project:&nbsp;</label>

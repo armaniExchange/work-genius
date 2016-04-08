@@ -8,6 +8,9 @@ import RaisedButton from 'material-ui/lib/raised-button';
 // Actions
 import * as FeatureAnalysisActions from '../../actions/feature-analysis-actions';
 
+import Breadcrumb from '../../components/A10-UI/Breadcrumb';
+import BREADCRUMB from '../../constants/breadcrumb';
+
 function TreeFilter({ value, options, onChangeHandler }) {
     return (
         <div style={{width:'200px', paddingBottom:'10px'}}>
@@ -79,6 +82,7 @@ class FeatureAnalysisTreePage extends Component {
 
         return (
             <div className="row">
+                <Breadcrumb data={BREADCRUMB.treepageassignment} />
                 <div className="col-md-4">
                     <TreeFilter
                         value={currentTreeSelectedUserId}
