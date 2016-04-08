@@ -44,7 +44,6 @@ class BugReviewPage extends Component {
             currentSelectPreventTag,
             pager
         } = this.props;
-        console.log(currentSelectUser);
         let user = currentSelectUser.value;
         user = ( user === undefined || user === '' ) ? 'All' : user;
         if (pager.rowIndex !== selected){

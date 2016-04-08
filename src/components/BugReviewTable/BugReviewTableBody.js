@@ -70,7 +70,6 @@ class BugReviewTableBody extends Component {
                         let span = ReactDOM.findDOMNode(this.refs[bugId + '-span']);
                         span.className = spanClassName + 'element-hide';
                     };
-                    console.log(review);
                     switch (header['key']){
                     case 'resolved_type':
                         return (
