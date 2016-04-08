@@ -13,8 +13,9 @@ import TaskPage from '../containers/TaskPage/TaskPage';
 import PTOPage from '../containers/PTOPage/PTOPage';
 import PTOApplication from '../containers/PTOPage/PTO-Application';
 import PTOOvertime from '../containers/PTOPage/PTO-Overtime';
-import BugReviewPage from '../containers/BugReviewPage/BugReviewPage';
-import BugReportPage from '../containers/BugReportPage/BugReportPage';
+import BugAnalysisPage from '../containers/BugAnalysisPage/BugAnalysisPage';
+import BugReviewPage from '../containers/BugAnalysisPage/BugReviewPage';
+import BugReportPage from '../containers/BugAnalysisPage/BugReportPage';
 import ResourceMapPage from '../containers/ResourceMapPage/ResourceMapPage.js';
 import DataExplorerPage from '../containers/DataExplorerPage/DataExplorerPage';
 import DataExplorerFolderView from '../containers/DataExplorerFolderView/DataExplorerFolderView';
@@ -48,8 +49,10 @@ const appRoutes = () => (
 					<Route path="overtime" component={requireAuth(PTOOvertime)} />
 				</Route>
 			    <Route path="redux-demo" component={requireAuth(DemoPage)} />
-				<Route path="bug-analysis" component={requireAuth(BugReviewPage)} />
-				<Route path="bug-report" component={requireAuth(BugReportPage)} />
+        <Route path="bug-analysis" component={requireAuth(BugAnalysisPage)}> {/*Bug Analysis*/}
+        <Route path="bug-analysis" component={requireAuth(BugReviewPage)} /> {/*-- Bug Root Causes*/}
+				<Route path="bug-report" component={requireAuth(BugReportPage)} /> {/*-- Analysis Reports*/}
+        </Route>
 				<Route path="resource-map" component={requireAuth(ResourceMapPage)} />
 				<Route path="valid-demo" component={requireAuth(ValidDemoPage)} />
 		        <Route path="articles/edit/:articleId" component={requireAuth(EditArticlePage)} />
