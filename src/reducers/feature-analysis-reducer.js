@@ -55,9 +55,9 @@ function findLeaf(root, leafId) {
 export default function featureAnalysisReducer(state = initialState, action) {
 	switch (action.type) {
 		case actionTypes.FETCH_ASSIGNMENT_CATEGORIES_SUCCESS:
-            let newTree = transformToTree(action.data),
+            let newTree = action.data.length > 0 ? transformToTree(action.data) : [],
                 currentLeaf = state.get('currentLeaf');
-            if (currentLeaf.id) {
+            if (currentLeaf && currentLeaf.id) {
                 return state.set('treeDataSource', newTree).set('currentLeaf', findLeaf(newTree, currentLeaf.id)).set('dataSource', action.data);
             } else {
                 return state.set('treeDataSource', newTree).set('dataSource', action.data);;

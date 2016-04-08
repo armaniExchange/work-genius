@@ -3,11 +3,21 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // Components
 import AssignmentCategoryTree from '../../components/AssignmentCategoryTree/AssignmentCategoryTree';
+import Select from 'react-select';
+import RaisedButton from 'material-ui/lib/raised-button';
 // Actions
 import * as FeatureAnalysisActions from '../../actions/feature-analysis-actions';
 
-import Select from 'react-select';
-import RaisedButton from 'material-ui/lib/raised-button';
+function TreeFilter({ value, options, onChangeHandler }) {
+    return (
+        <div style={{width:'200px', paddingBottom:'10px'}}>
+            <Select
+                value={value}
+                options={options}
+                onChange={onChangeHandler} />
+        </div>
+    );
+}
 
 class FeatureAnalysisTreePage extends Component {
     constructor(props){
@@ -19,6 +29,10 @@ class FeatureAnalysisTreePage extends Component {
     }
     _onNodeClick() {
         this.props.setCurrentLeafNode(undefined);
+    }
+    _onTreeFilterChange(val) {
+        const { fetchAssignmentCategories } = this.props;
+        fetchAssignmentCategories(val);
     }
     render() {
         const {
@@ -56,6 +70,10 @@ class FeatureAnalysisTreePage extends Component {
         return (
             <div className="row">
                 <div className="col-md-4">
+                    <TreeFilter
+                        value="328275"
+                        options={optUser}
+                        onChangeHandler={::this._onTreeFilterChange}/>
                     <AssignmentCategoryTree
                             data={treeDataSource}
                             owners={aryOwners}
@@ -152,7 +170,8 @@ FeatureAnalysisTreePage.propTypes = {
     fetchOwners                : PropTypes.func.isRequired,
     fetchDifficulties          : PropTypes.func.isRequired,
     changeCategoryWaitForUpdate: PropTypes.func.isRequired,
-    fetchAnalysisPageData      : PropTypes.func.isRequired
+    fetchAnalysisPageData      : PropTypes.func.isRequired,
+    fetchAssignmentCategories  : PropTypes.func.isRequired
 };
 FeatureAnalysisTreePage.defaultProps = {
     currentLeaf                : {},

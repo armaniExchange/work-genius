@@ -10,13 +10,19 @@ import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 // Utils
-import { transformToTree, generatePath, dedupe } from './utils.js';
+import { transformToTree, generatePath, dedupe, filterByUserId } from './utils.js';
 
 let CategoryQuery = {
 	'getAllAssignmentCategories': {
 		type: new GraphQLList(AssignmentCategoryType),
 		description: 'Get all assignment categories',
-		resolve: async () => {
+		args: {
+			userId: {
+				type: GraphQLString,
+				description: 'UserId to filter'
+			}
+	    },
+		resolve: async (root, { userId }) => {
 			let connection = null,
 			    result = null,
 				query = null;
@@ -25,6 +31,9 @@ let CategoryQuery = {
 				query = r.db('work_genius').table('assignment_categories').coerceTo('array');
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				result = await query.run(connection);
+				if (userId) {
+					result = filterByUserId(result, userId);
+				}
 				result = result.map(async (category, index, arr) => {
 					let childQuery, childResult, difficulty = {};
 					if (category.difficulty || category.difficulty === 0) {

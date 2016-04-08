@@ -119,12 +119,13 @@ export function fetchAssignmentCategoriesSuccess(data) {
   };
 };
 
-export function fetchAssignmentCategories() {
+export function fetchAssignmentCategories(userId) {
+	userId = userId ? userId : '';
 	return (dispatch) => {
 		let config = {
 			method: 'POST',
 			body: `{
-			    allAssignmentCategories {
+			    allAssignmentCategories(userId:"${userId}") {
 			    	id,
 			        parentId,
 					name,
