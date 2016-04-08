@@ -72,7 +72,7 @@ const initialState = Map({
       },
       {
         name: 'Overtime',
-        url: '/main/overtime' //new
+        url: '/main/pto/overtime'
       }
     )
 	}),
