@@ -1,5 +1,6 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
+import LinearProgress from 'material-ui/lib/linear-progress';
 
 // Styles
 import './_ArticleFileList.css';
@@ -66,39 +67,65 @@ class ArticleFileList extends Component {
       enableRemove,
       files
     } = this.props;
+    const savedFiles = files.filter((file) => {
+      return !file.isUploading;
+    });
+    const uploadingFiles = files.filter((file) => {
+      return file.isUploading;
+    });
     return (
-      <span className="file-list">
+      <div className="file-list">
         {
-          files.map((file, index) => {
+          savedFiles.map((file, index) => {
             return (
-              <span key={index}>
+              <span key={`savedFiles${index}`}>
                 &nbsp;
                 <i className={`fa ${this.getMimeTypeIcon(file.type)}`} />
                 &nbsp;
                 <a href="#" >{file.name}</a>
                 &nbsp;
                 {
-                  enableRemove ? (
+                  enableRemove && !file.uploading && (
                     <i className="fa fa-remove remove-button"
                       onClick={this.onRemoveClick.bind(this, file, index)} />
-                  ) : null
+                  )
                 }
               </span>
             );
           })
         }
-      </span>
+        {
+          uploadingFiles.map((file, index) => {
+            const completed = Math.round(file.loaded * 100 /file.total) || 0;
+            return (
+              <div key={`uploadingFile${index}`}>
+                &nbsp;
+                <i className={`fa ${this.getMimeTypeIcon(file.type)}`} />
+                &nbsp;
+                <a href="#" >{file.name}</a>
+                &nbsp;
+                <div style={{
+                  width: 200,
+                  display: 'inline-block',
+                  position: 'relative',
+                  top: -2
+                }}>
+                  <LinearProgress mode="determinate" value={completed}/>
+                </div>
+              </div>
+            );
+          })
+        }
+      </div>
     );
   }
 }
 
-
 ArticleFileList.propTypes = {
   enableRemove    : PropTypes.bool,
   onRemove        : PropTypes.func,
-  files           : PropTypes.array,
+  files           : PropTypes.array
 };
-
 
 ArticleFileList.defaultProps = {
   enableRemove    : false,
