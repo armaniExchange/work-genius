@@ -18,7 +18,7 @@ class ResourceMapPage extends Component{
 	}
 
 	componentWillMount() {
-		let defaultStartDate = moment().startOf('week').format('YYYY-MM-DD');
+		let defaultStartDate = moment().isoWeekday(1).format('YYYY-MM-DD');
 		const {
 			queryResourceMapData
 		} = this.props;
@@ -35,7 +35,8 @@ class ResourceMapPage extends Component{
 	render () {
 		const {
 			startDate,
-			totalDays
+			totalDays,
+			data
 		} = this.props;
 		return (
 			<section>
@@ -43,6 +44,7 @@ class ResourceMapPage extends Component{
 				<ResourceMapTable
 					startDate={startDate}
 					totalDay={totalDays}
+					data={data}
 				/>
 			</section>
 		);
@@ -52,12 +54,14 @@ class ResourceMapPage extends Component{
 ResourceMapPage.propTypes = {
 	startDate:     PropTypes.string.isRequired,
 	totalDays:     PropTypes.number.isRequired,
+	data: 		   PropTypes.array.isRequired,
 	queryResourceMapData: PropTypes.func.isRequired
 };
 
 ResourceMapPage.defaultProps = {
 	startDate: new Date(),
-	totalDays: 14
+	totalDays: 14,
+	data: []
 };
 
 function mapStateToProps(state) {
