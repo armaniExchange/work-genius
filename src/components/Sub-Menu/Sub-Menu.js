@@ -3,6 +3,7 @@ import './_Sub-Menu.css';
 
 // Libraries
 import React, { Component, PropTypes } from 'react';
+import TextField from 'material-ui/lib/text-field';
 import { Link } from 'react-router';
 
 class SubMenu extends Component {
@@ -24,6 +25,13 @@ class SubMenu extends Component {
 					<nav className="mdl-navigation">
 			            {linkHtml}
 					</nav>
+
+          <div className="search-box">
+            <TextField
+              hintText="Search..." />
+            <i className="material-icons" title="Search">search</i>
+          </div>
+
 			    </div>
 			</header>
 		);

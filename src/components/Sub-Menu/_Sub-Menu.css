@@ -1,0 +1,10 @@
+.search-box{
+    position: absolute;
+    right: 50px;
+    margin-top:10px;
+    .material-icons{
+        cursor: pointer;
+        float: right;
+        margin: 14px 0 0;
+    }
+}
