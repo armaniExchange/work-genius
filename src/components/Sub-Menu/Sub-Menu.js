@@ -13,7 +13,7 @@ class SubMenu extends Component {
 			url = url ? url : '/';
 			return (
 				<span className="mdl-navigation__link" key={`submenu-${i}`}>
-				    <Link to={url} key={i}>{name}</Link>
+				    <Link className="mdl-navigation__link__tag" activeClassName="mdl-navigation__link__tag--active" to={url} key={i}>{name}</Link>
 				</span>
 			);
 		});
