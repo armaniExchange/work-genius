@@ -34,7 +34,7 @@ let BugStats = {
 				}
 				query = r.db('work_genius').table('bugs_review').filter(filter).group('resolved_type').count();
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				let rootCauseSummary = await query.run(connection); 
+				let rootCauseSummary = await query.run(connection);
 				//combine the group = null and group = ''
 				if(rootCauseSummary){
 					let nullIndex = -1, emptyIndex = -1;
@@ -51,7 +51,7 @@ let BugStats = {
 						rootCauseSummary.splice(nullIndex,1);
 					}
 				}
-				
+
 				let totalNumber = 0;
 				//get total bug number
 				rootCauseSummary.forEach((group) => {
@@ -71,7 +71,7 @@ let BugStats = {
 					}
 					result.push(item);
 				}
-           
+
 				await connection.close();
 			} catch (err) {
 				return err;
@@ -110,7 +110,7 @@ let BugStats = {
 				query = r.db('work_genius').table('bugs_review').filter(filter).group('assigned_to','resolved_type').count();
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				//get summary result
-				// the pattern of result : 
+				// the pattern of result :
 				// [
 					// 	{
 					// 	"group": [
@@ -127,7 +127,7 @@ let BugStats = {
 					// 	"reduction": 1
 					// 	}
 				// ]
-				let ownerSummary = await query.run(connection); 
+				let ownerSummary = await query.run(connection);
 				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID)))
 				.pluck('name','email').coerceTo('array');
 
@@ -143,13 +143,11 @@ let BugStats = {
 					//  item6 : 6 //Others
 				// }]
 				let users = await query.run(connection);
-				console.log('users:');
-				console.log(users);
 				for(let user of users){
 					let statusItems = ownerSummary.filter( item => {
 						return item.group.indexOf(user.email.replace('@a10networks.com','').toLowerCase()) > -1;
 					});
-					
+
 					let userSummary = {
 						name : user.name
 					};
@@ -166,7 +164,7 @@ let BugStats = {
 					result.push(userSummary);
 				}
 
-           
+
 				await connection.close();
 			} catch (err) {
 				return err;
@@ -196,7 +194,7 @@ let BugStats = {
 				query = r.db('work_genius').table('bugs_review').group(r.row('tags'), {multi: true})
 					.count().ungroup().orderBy(r.desc('reduction'));
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				let bugSummary = await query.run(connection); 
+				let bugSummary = await query.run(connection);
 				console.log('bugSummary:');
 				console.log(bugSummary);
 				if(bugSummary){
@@ -221,7 +219,7 @@ let BugStats = {
 					}
 					result.push(item);
 				}
-           
+
 				await connection.close();
 			} catch (err) {
 				return err;
@@ -250,12 +248,12 @@ let BugStats = {
 				}
 				query = r.db('work_genius').table('bugs_review').filter(filter).group('assigned_to').count();
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				let OwnerSummary = await query.run(connection); 
+				let OwnerSummary = await query.run(connection);
 
 				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID))).pluck('email','name').coerceTo('array');
 				let userList = await query.run(connection);
 
-				
+
 				let totalNumber = 0;
 				//get total bug number
 				OwnerSummary.forEach((group) => {
@@ -279,7 +277,7 @@ let BugStats = {
 					if(user && user.length > 0){
 						item.name = user[0].name;
 					}
-					
+
 					item.number = group.reduction || 0;
 					//get percentage
 					if(totalNumber){
@@ -287,7 +285,7 @@ let BugStats = {
 					}
 					result.push(item);
 				}
-           
+
 				await connection.close();
 			} catch (err) {
 				return err;
