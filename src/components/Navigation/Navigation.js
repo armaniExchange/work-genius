@@ -35,7 +35,7 @@ class Navigation extends Component {
 	}
 
 	render() {
-		const { headerTitle, navItems, hasLogo } = this.props;
+		const { headerTitle, currentUser, navItems, hasLogo } = this.props;
 		let headerLogoHtml = hasLogo ? <HeaderLogo /> : null,
 		    navItemsHtml = navItems.map((item, index) => {
 				return (
@@ -64,10 +64,13 @@ class Navigation extends Component {
 				</nav>
 			</div>
       <div className="top-right-area">
-        <div title="Tester" className="top-right-area__summary" />
+        <div className="top-right-area__bar">
+          <div title={currentUser.name} className="top-right-area__summary" />
+        </div>
+        <div style={{height:'9px'}}></div>
         <div className="top-right-area__sub-area">
           <div className="top-right-area__sub-area__head">
-            Welcome, Tester
+            Welcome, {currentUser.name}
           </div>
           <div className="top-right-area__sub-area__body">
           </div>
@@ -84,9 +87,10 @@ class Navigation extends Component {
 Navigation.propTypes = {
 	navItems       : PropTypes.array.isRequired,
 	headerTitle    : PropTypes.string,
+  currentUser    : PropTypes.object,
 	hasLogo        : PropTypes.bool,
 	onNavItemsClick: PropTypes.func,
-	onLogoutHandler: PropTypes.func,
+	onLogoutHandler: PropTypes.func
 };
 
 Navigation.defaultProps = {
