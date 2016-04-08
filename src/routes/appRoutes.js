@@ -16,7 +16,8 @@ import PTOOvertime from '../containers/PTOPage/PTO-Overtime';
 import BugAnalysisPage from '../containers/BugAnalysisPage/BugAnalysisPage';
 import BugReviewPage from '../containers/BugAnalysisPage/BugReviewPage';
 import BugReportPage from '../containers/BugAnalysisPage/BugReportPage';
-import ResourceMapPage from '../containers/ResourceMapPage/ResourceMapPage.js';
+import ResourcePage from '../containers/ResourcePage/ResourcePage.js';
+import ResourceMapPage from '../containers/ResourcePage/ResourceMapPage.js';
 import DataExplorerPage from '../containers/DataExplorerPage/DataExplorerPage';
 import DataExplorerFolderView from '../containers/DataExplorerFolderView/DataExplorerFolderView';
 import DataExplorerFileView from '../containers/DataExplorerFileView/DataExplorerFileView';
@@ -53,7 +54,9 @@ const appRoutes = () => (
         <Route path="bug-analysis" component={requireAuth(BugReviewPage)} /> {/*-- Bug Root Causes*/}
 				<Route path="bug-report" component={requireAuth(BugReportPage)} /> {/*-- Analysis Reports*/}
         </Route>
+        <Route path="resource" component={requireAuth(ResourcePage)}> 
 				<Route path="resource-map" component={requireAuth(ResourceMapPage)} />
+        </Route>
 				<Route path="valid-demo" component={requireAuth(ValidDemoPage)} />
 		        <Route path="articles/edit/:articleId" component={requireAuth(EditArticlePage)} />
 		        <Route path="articles/:articleId" component={requireAuth(ViewArticlePage)} />

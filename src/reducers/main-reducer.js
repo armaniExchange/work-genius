@@ -13,7 +13,7 @@ const initialState = Map({
     }),
 		Map({
       displayText: 'Resources',
-      link: '/main/resource-map' //new
+      link: '/main/resource/resource-map' //new
     }),
     Map({
         displayText: 'Bug Analysis',
@@ -42,7 +42,7 @@ const initialState = Map({
     'Resources': List.of(
       {
         name: 'Resource Map',
-        url: '/main/resource-map' //new
+        url: '/main/resource/resource-map' //new
       }
     ),
     'Bug Analysis': List.of(
