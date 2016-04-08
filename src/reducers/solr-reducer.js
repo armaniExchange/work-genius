@@ -13,7 +13,6 @@ const initialState = Map({
 });
 
 const searchResultItems = (state, action) => {
-    console.log(action);
     return state.set('searchItems', List.of(
         'Search Key No 6.',
         'Search Key No 7.',
