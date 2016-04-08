@@ -64,68 +64,72 @@ class FeatureAnalysisTreePage extends Component {
                             onLeafClick={setCurrentLeafNode}/>
                 </div>
                 <div className="col-md-8">
-                  <div style={{display:displayHint, fontSize:'30px', margin:'90px 0', textDecoration:'underline'}}>
-                    &laquo; Please choose and click leaf in root tree.
-                  </div>
-                  <div className="form-horizontal" style={{display:displayForm}}>
-                    <h5 style={{color:'#9cf'}}>{'Edit '}<span style={{color:'#000'}}>{currentLeaf.path}</span></h5>
-                    <div className="col-xs-3" style={{paddingTop:'12px'}}>
-                      Primary Owner:
+                    <div style={{display:displayHint, fontSize:'30px', margin:'90px 0', textDecoration:'underline'}}>
+                        &laquo; Please choose and click leaf in root tree.
                     </div>
-                    <div className="col-xs-9">
-                      <input type="hidden" ref="input_owner1" value={input_owner1_value} />
-                      <div style={{width:'200px', paddingBottom:'10px'}}>
-                          <Select ref="select_owner1"
-                                value={select_owner1_value}
-                                options={optUser}
-                                onChange={(val) => {
-                                this.refs.input_owner1.value = val;
-                            }}
-                            />
+                    <div className="form-horizontal" style={{display:displayForm}}>
+                        <h5 style={{color:'#9cf'}}>{'Edit '}<span style={{color:'#000'}}>{currentLeaf.path}</span></h5>
+                        <div className="col-xs-3" style={{paddingTop:'12px'}}>
+                            Primary Owner:
                         </div>
-                    </div>
-                    <div className="col-xs-3" style={{paddingTop:'12px'}}>
-                      Secondary Owner:
-                    </div>
-                    <div className="col-xs-9">
-                      <input type="hidden" ref="input_owner2" value={input_owner2_value} />
-                      <div style={{width:'200px', paddingBottom:'10px'}}>
-                          <Select ref="select_owner2"
-                                value={select_owner2_value}
-                                options={optUser}
-                                onChange={(val) => {
-                                this.refs.input_owner2.value = val;
-                            }}
-                            />
-                       </div>
-                    </div>
-                    <div className="col-xs-3" style={{paddingTop:'12px'}}>
-                      Difficulty:
-                    </div>
-                    <div className="col-xs-9">
-                      <input type="hidden" ref="input_difficulty" value={input_difficulty_value} />
-                      <div style={{width:'200px', paddingBottom:'10px'}}>
-                          <Select ref="select_difficulty"
-                                value={select_difficulty_value}
-                                options={optDifficulty}
-                                onChange={(val) => {
-                                this.refs.input_difficulty.value = val;
-                            }}
-                            />
-                      </div>
-                    </div>
-                    <div className="col-xs-3" style={{paddingTop:'12px'}}>
-                    </div>
-                    <div className="col-xs-9">
-                      <RaisedButton label="Update" secondary={true} onClick={()=>{
-                        updateOneAssignmentCategory(currentLeaf.id, {
-                            primary_owner: +this.refs.input_owner1.value,
-                            secondary_owner: +this.refs.input_owner2.value,
-                            difficulty: +this.refs.input_difficulty.value
-                        });
-                      }} />
-                      <div style={{opacity:updateMsgOpacity, 'transition': 'opacity 2s'}}>{'Update successfully'}</div>
-                    </div>
+                        <div className="col-xs-9">
+                            <input type="hidden" ref="input_owner1" value={input_owner1_value} />
+                            <div style={{width:'200px', paddingBottom:'10px'}}>
+                                <Select
+                                    ref="select_owner1"
+                                    value={select_owner1_value}
+                                    options={optUser}
+                                    onChange={(val) => {
+                                        this.refs.input_owner1.value = val;
+                                    }} />
+                            </div>
+                        </div>
+                        <div className="col-xs-3" style={{paddingTop:'12px'}}>
+                            Secondary Owner:
+                        </div>
+                        <div className="col-xs-9">
+                            <input type="hidden" ref="input_owner2" value={input_owner2_value} />
+                            <div style={{width:'200px', paddingBottom:'10px'}}>
+                                <Select
+                                    ref="select_owner2"
+                                    value={select_owner2_value}
+                                    options={optUser}
+                                    onChange={(val) => {
+                                        this.refs.input_owner2.value = val;
+                                    }} />
+                            </div>
+                        </div>
+                        <div className="col-xs-3" style={{paddingTop:'12px'}}>
+                            Difficulty:
+                        </div>
+                        <div className="col-xs-9">
+                            <input type="hidden" ref="input_difficulty" value={input_difficulty_value} />
+                            <div style={{width:'200px', paddingBottom:'10px'}}>
+                                <Select
+                                    ref="select_difficulty"
+                                    value={select_difficulty_value}
+                                    options={optDifficulty}
+                                    onChange={(val) => {
+                                        this.refs.input_difficulty.value = val;
+                                    }} />
+                            </div>
+                        </div>
+                        <div className="col-xs-3" style={{paddingTop:'12px'}}></div>
+                        <div className="col-xs-9">
+                            <RaisedButton
+                                label="Update"
+                                secondary={true}
+                                onClick={()=>{
+                                    updateOneAssignmentCategory(currentLeaf.id, {
+                                        primary_owner: +this.refs.input_owner1.value,
+                                        secondary_owner: +this.refs.input_owner2.value,
+                                        difficulty: +this.refs.input_difficulty.value
+                                    });
+                                }} />
+                            <div style={{opacity:updateMsgOpacity, 'transition': 'opacity 2s'}}>
+                                {'Update successfully'}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -134,28 +138,28 @@ class FeatureAnalysisTreePage extends Component {
 }
 
 FeatureAnalysisTreePage.propTypes = {
-    dataSource: PropTypes.array.isRequired,
-    treeDataSource: PropTypes.object.isRequired,
-    currentLeaf: PropTypes.object.isRequired,
-    categoryWaitToUpdate: PropTypes.object,
-    updateMsgOpacity: PropTypes.number.isRequired,
-    aryOwners: PropTypes.array.isRequired,
-    aryDifficulties: PropTypes.array.isRequired,
+    dataSource                 : PropTypes.array.isRequired,
+    treeDataSource             : PropTypes.object.isRequired,
+    currentLeaf                : PropTypes.object.isRequired,
+    categoryWaitToUpdate       : PropTypes.object,
+    updateMsgOpacity           : PropTypes.number.isRequired,
+    aryOwners                  : PropTypes.array.isRequired,
+    aryDifficulties            : PropTypes.array.isRequired,
     updateOneAssignmentCategory: PropTypes.func.isRequired,
-    fetchAssignmentCategories: PropTypes.func.isRequired,
-    setCurrentLeafNode: PropTypes.func.isRequired,
-    setFormVisibility: PropTypes.func.isRequired,
-    fetchOwners: PropTypes.func.isRequired,
-    fetchDifficulties: PropTypes.func.isRequired,
+    fetchAssignmentCategories  : PropTypes.func.isRequired,
+    setCurrentLeafNode         : PropTypes.func.isRequired,
+    setFormVisibility          : PropTypes.func.isRequired,
+    fetchOwners                : PropTypes.func.isRequired,
+    fetchDifficulties          : PropTypes.func.isRequired,
     changeCategoryWaitForUpdate: PropTypes.func.isRequired,
-    fetchAnalysisPageData: PropTypes.func.isRequired
+    fetchAnalysisPageData      : PropTypes.func.isRequired
 };
 FeatureAnalysisTreePage.defaultProps = {
-    currentLeaf: {},
-    aryOwners: [],
-    aryDifficulties: [],
-    updateMsgOpacity: 0,
-    categoryWaitToUpdate: {},
+    currentLeaf                : {},
+    aryOwners                  : [],
+    aryDifficulties            : [],
+    updateMsgOpacity           : 0,
+    categoryWaitToUpdate       : {},
     changeCategoryWaitForUpdate: () => {}
 };
 
