@@ -35,7 +35,7 @@ class Navigation extends Component {
 	}
 
 	render() {
-		const { headerTitle, navItems, hasLogo } = this.props;
+		const { headerTitle, currentUser, navItems, hasLogo } = this.props;
 		let headerLogoHtml = hasLogo ? <HeaderLogo /> : null,
 		    navItemsHtml = navItems.map((item, index) => {
 				return (
@@ -62,8 +62,23 @@ class Navigation extends Component {
 				<nav className="mdl-navigation">
 					{ navItemsHtml }
 				</nav>
-				<LogoutButton onClickHandler={this._onLogoutHandler} />
 			</div>
+      <div className="top-right-area">
+        <div className="top-right-area__bar">
+          <div title={currentUser.name} className="top-right-area__summary" />
+        </div>
+        <div style={{height:'9px'}}></div>
+        <div className="top-right-area__sub-area">
+          <div className="top-right-area__sub-area__head">
+            Welcome, {currentUser.name}
+          </div>
+          <div className="top-right-area__sub-area__body">
+          </div>
+          <div className="top-right-area__sub-area__foot">
+            <LogoutButton onClickHandler={this._onLogoutHandler} />
+          </div>
+        </div>
+      </div>
 			</header>
 		);
 	}
@@ -72,9 +87,10 @@ class Navigation extends Component {
 Navigation.propTypes = {
 	navItems       : PropTypes.array.isRequired,
 	headerTitle    : PropTypes.string,
+  currentUser    : PropTypes.object,
 	hasLogo        : PropTypes.bool,
 	onNavItemsClick: PropTypes.func,
-	onLogoutHandler: PropTypes.func,
+	onLogoutHandler: PropTypes.func
 };
 
 Navigation.defaultProps = {

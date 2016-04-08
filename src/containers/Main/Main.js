@@ -68,7 +68,8 @@ class Main extends Component {
 			currentSelectedPageSubMenu
 		} = this.props.mainState;
 		const {
-			errorMessage
+			errorMessage,
+      currentUser
 		} = this.props.appState;
 		const { logout } = this.props.appActions;
 
@@ -86,6 +87,7 @@ class Main extends Component {
 				<Navigation
 				    headerTitle={navHeaderTitle}
 				    navItems={navItems}
+            currentUser={currentUser}
 				    hasLogo={hasLogo}
 				    onNavItemsClick={this._navItemsClickHandler}
 				    onLogoutHandler={logout} />
