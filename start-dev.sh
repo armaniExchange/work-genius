@@ -1,7 +1,7 @@
 #/bin/bash
 killall nohup
 killall node
-/etc/init.d/rethinkdb restart
+#/etc/init.d/rethinkdb restart
 nohup npm run serverDev > server.log 2>&1 &
 nohup npm run dev > client.log 2>&1 &
 service nginx restart
