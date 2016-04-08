@@ -1,0 +1,2 @@
+2016-03-30T22:29:42.248742437 0.010998s error: getaddrinfo() failed for hostname 'hostname': Name or service not known (gai_errno -2)
+2016-03-30T22:29:59.209137244 0.002934s error: TCP socket creation failed for port 29015: Address already in use.
