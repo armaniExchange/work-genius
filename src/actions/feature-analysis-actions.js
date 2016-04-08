@@ -19,6 +19,13 @@ export function setCurrentLeafNode(data) {
 	};
 }
 
+export function setCurrentTreeSelectedUser(id) {
+	return {
+		type: actionTypes.SET_CURRENT_TREE_SELECTED_USER,
+		id
+	};
+}
+
 export function setFormVisibility(status) {
 	return {
 		type: actionTypes.SET_FORM_VISIBILITY,
@@ -119,12 +126,13 @@ export function fetchAssignmentCategoriesSuccess(data) {
   };
 };
 
-export function fetchAssignmentCategories() {
+export function fetchAssignmentCategories(userId) {
+	userId = userId ? userId : '';
 	return (dispatch) => {
 		let config = {
 			method: 'POST',
 			body: `{
-			    allAssignmentCategories {
+			    allAssignmentCategories(userId:"${userId}") {
 			    	id,
 			        parentId,
 					name,
@@ -160,11 +168,11 @@ export function fetchAssignmentCategories() {
 	};
 };
 
-export function fetchAnalysisPageData() {
+export function fetchAnalysisPageData(currentUserId) {
     return (dispatch) => {
         dispatch(setLoadingState(true));
         Promise.all([
-            dispatch(fetchAssignmentCategories()),
+            dispatch(fetchAssignmentCategories(currentUserId)),
             dispatch(fetchOwners()),
             dispatch(fetchDifficulties())
         ]).then(
@@ -179,7 +187,7 @@ export function fetchAnalysisPageData() {
     };
 };
 
-export function updateOneAssignmentCategoryBase(dispatch, id, row) {
+export function updateOneAssignmentCategoryBase(dispatch, id, row, currentTreeSelectedUserId) {
   let config = {
     method: 'POST',
     body: `mutation RootMutationType {
@@ -200,7 +208,7 @@ export function updateOneAssignmentCategoryBase(dispatch, id, row) {
       setTimeout(()=>{
         changeAssignmentCategoryUpdateMsgOpacity(0);
       }, 3000);*/
-      dispatch(fetchAssignmentCategories());
+      dispatch(fetchAssignmentCategories(currentTreeSelectedUserId));
     })
     .catch((err) => {
       dispatch(setLoadingState(false));
@@ -208,8 +216,8 @@ export function updateOneAssignmentCategoryBase(dispatch, id, row) {
     });
 };
 
-export function updateOneAssignmentCategory(id, row) {
+export function updateOneAssignmentCategory(id, row, currentTreeSelectedUserId) {
   return (dispatch) => {
-    updateOneAssignmentCategoryBase(dispatch, id, row);
+    updateOneAssignmentCategoryBase(dispatch, id, row, currentTreeSelectedUserId);
   };
 };
