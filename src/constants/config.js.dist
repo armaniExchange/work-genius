@@ -1,4 +1,4 @@
-const SERVERR_HOST = 'localhost';
+const SERVERR_HOST = '192.168.95.29';
 export const SERVER_API_URL = 'http://'+SERVERR_HOST+':3000/graphql';
 export const SERVER_LOGIN_URL = 'http://'+SERVERR_HOST+':3000/login';
 
