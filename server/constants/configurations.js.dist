@@ -59,4 +59,4 @@ export const GK2_FEATURE_URLS = [
 ];
 
 // file upload
-export const UPLOAD_FILE_LOCATION = './uploads';
+export const UPLOAD_FILE_LOCATION = './files';

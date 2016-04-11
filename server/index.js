@@ -8,7 +8,7 @@ import nodemailer from 'nodemailer';
 import schema from './schema/schema.js';
 import { loginHandler } from './models/User/UserMutation';
 import { fileUploadHandler } from './models/File/FileMutation';
-// Constants
+import { fileDownloadHandler } from './models/File/FileQuery';// Constants
 import {
     SECURE_KEY,
     MAIL_TRANSPORTER_CONFIG
@@ -42,6 +42,11 @@ app.use((req, res, next) => {
 app.post('/login', loginHandler);
 
 app.use((req, res, next) => {
+  if ( req.method === 'GET' && req.url.search('/files/') !== -1 ){
+    // when downloading file skip token checking
+    next();
+    return;
+  }
   let token = req.body.token || req.query.token || req.headers['x-access-token'];
   if (token) {
     jwt.verify(token, SECURE_KEY, (err, decoded) => {
@@ -72,7 +77,7 @@ app.use('/graphql', graphqlHTTP(request => ({
 })));
 
 app.post('/files', fileUploadHandler);
-
+app.get('/files/:id', fileDownloadHandler);
 app.listen(PORT, () => {
   console.log(`Server is listening at port: ${PORT}`);
 });

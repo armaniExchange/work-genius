@@ -75,7 +75,8 @@ export default function articleReducer(state = initialState, action) {
         }), (item) => {
           return item.delete('loaded')
             .delete('total')
-            .delete('isUploading');
+            .delete('isUploading')
+            .set('url', action.file.url);
       }));
     case actionTypes.REMOVE_ARTICLE_FILE_SUCCESS:
       return state.set('files', files.filter(removedFile => {

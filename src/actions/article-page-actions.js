@@ -1,6 +1,8 @@
 import actionTypes from '../constants/action-types';
-import { SERVER_API_URL } from '../constants/config';
-import {SERVER_FILE_URL} from '../constants/config';
+import {
+  SERVER_API_URL,
+  SERVER_FILES_URL
+} from '../constants/config';
 import sendFile from '../libraries/sendFile';
 
 
@@ -277,7 +279,7 @@ export function uploadArticleFile(file) {
     // server response with true id and file detailed without data
     sendFile({
       file,
-      url: SERVER_FILE_URL,
+      url: SERVER_FILES_URL,
       headers: {
         'x-access-token': localStorage.token
       },
