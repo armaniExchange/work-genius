@@ -95,22 +95,16 @@ class PTOApplication extends Component {
             showPTOApplyModal,
             applications,
             ptoTitleKeyMap,
-            // ptoFilterConditions, --> need many <RadioGroup /> if have 2+ fields. So far, see `const KEY='status'` for currently
+            ptoFilterConditions,
             allUsersWithClosestPTO,
+            ptoFilterOptions,
             currentSelectedUserID,
-            applicationsOriginalData,
             filterPTOTable,
             sortPTOTableByCategory,
             sortPTOTableBy
         } = this.props;
 
         const KEY = 'status';
-        let aryRadioConfigValue = applicationsOriginalData.reduce((prev, cur) => {
-            return prev.indexOf(cur[KEY])>=0 ? prev : prev.concat(cur[KEY]);
-        }, []);
-        let aryRadioConfig = aryRadioConfigValue.map(val=>{
-            return {name:val, value:val};
-        });
 
         let curUser = allUsersWithClosestPTO.find(_user => {
             if (_user.id===currentSelectedUserID) {
@@ -127,35 +121,35 @@ class PTOApplication extends Component {
                 <PTOYearFilter {...this.props} />
                 <Space h="20" />
                 <DropDownList
-                isNeedAll={true}
-                onOptionClick={this._onUserFilterClickedHandler}
-                title={dropdownTitle}
-                aryOptionConfig={allUsersWithClosestPTO.map((item) => {
-                    return {title: item.name, value: item.id, subtitle: item.subtitle};
-                })} />
+                    isNeedAll={true}
+                    onOptionClick={this._onUserFilterClickedHandler}
+                    title={dropdownTitle}
+                    aryOptionConfig={allUsersWithClosestPTO.map((item) => {
+                        return {title: item.name, value: item.id, subtitle: item.subtitle};
+                    })} />
 
                 {/*<NameFilterGroup
                     users={allUsersWithClosestPTO}
                     currentSelectedUserID={currentSelectedUserID}
                     onUserClickedHandler={this._onUserFilterClickedHandler} />*/}
-                    <Space h="20" />
-                    <RadioGroup
-                        title="Status"
-                        isNeedAll={true}
-                        aryRadioConfig={aryRadioConfig}
-                        onRadioChange={(curVal)=>{
-                            filterPTOTable({[KEY]:curVal});
-                        }} />
-                    <Space h="20" />
+                <Space h="20" />
+                <RadioGroup
+                    title="Status"
+                    isNeedAll={true}
+                    aryRadioConfig={ptoFilterOptions}
+                    checkRadio={ptoFilterConditions.status}
+                    onRadioChange={(curVal)=>{
+                        filterPTOTable({[KEY]:curVal});
+                    }} />
+                <Space h="20" />
                 <PTOTable
                     data={applications}
                     titleKeyMap={ptoTitleKeyMap}
                     enableSort={true}
                     sortBy={sortPTOTableBy}
                     onSortHandler={sortPTOTableByCategory}
-                    onStatusUpdateHandler={this._onApplicationStatusUpdate}
-                    onDeleteHandler={this._onPTORemoveClicked} />
-                    <Space h="20" />
+                    onStatusUpdateHandler={this._onApplicationStatusUpdate} />
+                <Space h="20" />
                 <RaisedButton label="PTO Application" onClick={this._onApplyButtonClicked} labelStyle={{'textTransform':'none'}} secondary={true} />
                 <PTOApplyModal
                     show={showPTOApplyModal}
@@ -172,6 +166,7 @@ PTOApplication.propTypes = {
     ptoTitleKeyMap          : PropTypes.array,
     applicationsOriginalData: PropTypes.array,
     allUsersWithClosestPTO  : PropTypes.array,
+    ptoFilterOptions        : PropTypes.array,
     showPTOApplyModal       : PropTypes.bool,
     ptoFilterConditions     : PropTypes.object,
     sortPTOTableBy          : PropTypes.object,

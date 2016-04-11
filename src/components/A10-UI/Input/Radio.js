@@ -2,9 +2,9 @@ import React, { Component, PropTypes } from 'react';
 
 class Radio extends Component {
     render() {
-        const { value, name, onChange } = this.props;
+        const { value, name, onChange, checked } = this.props;
         return (<label className="mdl-radio mdl-js-radio mdl-js-ripple-effect">
-              <input type="radio" className="mdl-radio__button" name="options" value={value} onChange={e=>{
+              <input type="radio" className="mdl-radio__button" name="options" value={value} checked={checked} onChange={e=>{
                 let curVal = e.target.value;
                 onChange && onChange(curVal);
               }} />
@@ -17,7 +17,8 @@ class Radio extends Component {
 Radio.propTypes = {
     onChange: PropTypes.func,
     value: PropTypes.string,
-    name: PropTypes.string
+    name: PropTypes.string,
+    checked: PropTypes.bool
 };
 
 export default Radio;
