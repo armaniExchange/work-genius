@@ -99,7 +99,7 @@ class DocumentPage extends Component {
       <section>
         <Breadcrumb data={BREADCRUMB.document} />
         <div style={leftPanelStyle}>
-          <Link to="/main/articles/edit/new">
+          <Link to="/main/knowledge/document/edit/new">
             <RaisedButton
               label="+ Create a Document"
               secondary={true} />
