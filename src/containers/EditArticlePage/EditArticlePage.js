@@ -35,9 +35,8 @@ class EditArticlePage extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-
     if (this.props.isEditing && !nextProps.isEditing) {
-      this.props.history.replace(`/main/articles/${nextProps.id}`);
+      this.props.history.replace(`/main/knowledge/document/${nextProps.id}`);
     }
     const newState = this.getEditingStateFromProps(nextProps);
     this.setState(newState);
