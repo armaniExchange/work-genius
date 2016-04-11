@@ -97,20 +97,14 @@ class PTOApplication extends Component {
             ptoTitleKeyMap,
             ptoFilterConditions,
             allUsersWithClosestPTO,
+            ptoFilterOptions,
             currentSelectedUserID,
-            applicationsOriginalData,
             filterPTOTable,
             sortPTOTableByCategory,
             sortPTOTableBy
         } = this.props;
 
         const KEY = 'status';
-        let aryRadioConfigValue = applicationsOriginalData.reduce((prev, cur) => {
-            return prev.indexOf(cur[KEY])>=0 ? prev : prev.concat(cur[KEY]);
-        }, []);
-        let aryRadioConfig = aryRadioConfigValue.map(val=>{
-            return {name:val, value:val};
-        });
 
         let curUser = allUsersWithClosestPTO.find(_user => {
             if (_user.id===currentSelectedUserID) {
@@ -142,7 +136,7 @@ class PTOApplication extends Component {
                 <RadioGroup
                     title="Status"
                     isNeedAll={true}
-                    aryRadioConfig={aryRadioConfig}
+                    aryRadioConfig={ptoFilterOptions}
                     checkRadio={ptoFilterConditions.status}
                     onRadioChange={(curVal)=>{
                         filterPTOTable({[KEY]:curVal});
@@ -154,9 +148,8 @@ class PTOApplication extends Component {
                     enableSort={true}
                     sortBy={sortPTOTableBy}
                     onSortHandler={sortPTOTableByCategory}
-                    onStatusUpdateHandler={this._onApplicationStatusUpdate}
-                    onDeleteHandler={this._onPTORemoveClicked} />
-                    <Space h="20" />
+                    onStatusUpdateHandler={this._onApplicationStatusUpdate} />
+                <Space h="20" />
                 <RaisedButton label="PTO Application" onClick={this._onApplyButtonClicked} labelStyle={{'textTransform':'none'}} secondary={true} />
                 <PTOApplyModal
                     show={showPTOApplyModal}
@@ -173,6 +166,7 @@ PTOApplication.propTypes = {
     ptoTitleKeyMap          : PropTypes.array,
     applicationsOriginalData: PropTypes.array,
     allUsersWithClosestPTO  : PropTypes.array,
+    ptoFilterOptions        : PropTypes.array,
     showPTOApplyModal       : PropTypes.bool,
     ptoFilterConditions     : PropTypes.object,
     sortPTOTableBy          : PropTypes.object,

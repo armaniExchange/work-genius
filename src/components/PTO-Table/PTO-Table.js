@@ -4,11 +4,17 @@ import './PTO-Table.css';
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 // Constants
-import * as PTOConstants from '../../constants/pto-constants';
+import {
+    PENDING,
+    APPROVED,
+    DENIED,
+    CANCEL_REQUEST_PENDING,
+    CANCEL_REQUEST_APPROVED
+} from '../../constants/pto-constants';
 import Table from '../A10-UI/Table/Table';
 import Th from '../A10-UI/Table/Th';
 import Td from '../A10-UI/Table/Td';
-import DeleteButton from '../A10-UI/Button/Delete-Button';
+import RestoreButton from '../A10-UI/Button/Restore-Button';
 import ApproveButton from '../A10-UI/Button/Approve-Button';
 import DenyButton from '../A10-UI/Button/Deny-Button';
 
@@ -57,7 +63,7 @@ let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort }) => {
     );
 };
 
-let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler, onDeleteHandler }) => {
+let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler }) => {
     let bodyHtml = (
         <tr>
             <Td
@@ -71,32 +77,38 @@ let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler, onDeleteHandler }) 
     if (data.length > 0) {
         bodyHtml = data.map((task, bodyIndex) => {
             const cellHtml = titleKeyMap.map((header, cellIndex) => {
-                let statusHTML;
+                let actionsHTML;
                 if (header['key'] === 'id') {
-                    return (
-                        <Td key={cellIndex}>
-                            <DeleteButton onClick={() => {onDeleteHandler(task[header['key']]);}} />
-                        </Td>
-                    );
-                } else if (header['key'] === 'status') {
-                    if (task[header['key']] === PTOConstants.APPROVED) {
-                        statusHTML = (
-                            <Td key={cellIndex}>Approved</Td>
+                    if (task.status === PENDING) {
+                        actionsHTML = (
+                            <Td key={cellIndex}>
+                                <ApproveButton onClick={() => {onStatusUpdateHandler(task['id'], APPROVED);}} />
+                                <DenyButton onClick={() => {onStatusUpdateHandler(task['id'], DENIED);}} />
+                                <RestoreButton onClick={() => {onStatusUpdateHandler(task['id'], CANCEL_REQUEST_PENDING);}} />
+                            </Td>
                         );
-                    } else if (task[header['key']] === PTOConstants.DENIED) {
-                        statusHTML = (
-                            <Td key={cellIndex}>Denied</Td>
+                    } else if (task.status === CANCEL_REQUEST_PENDING) {
+                        actionsHTML = (
+                            <Td key={cellIndex}>
+                                <ApproveButton onClick={() => {onStatusUpdateHandler(task['id'], CANCEL_REQUEST_APPROVED);}} />
+                            </Td>
+                        );
+                    } else if (task.status === APPROVED) {
+                        actionsHTML = (
+                            <Td key={cellIndex}>
+                                <RestoreButton onClick={() => {onStatusUpdateHandler(task['id'], CANCEL_REQUEST_PENDING);}} />
+                            </Td>
                         );
                     } else {
-                        statusHTML = (
+                        actionsHTML = (
                             <Td key={cellIndex}>
-                                <ApproveButton onClick={() => {onStatusUpdateHandler(task['id'], PTOConstants.APPROVED);}} />
-                                <DenyButton onClick={() => {onStatusUpdateHandler(task['id'], PTOConstants.DENIED);}} />
+                                No actions!
                             </Td>
                         );
                     }
-                    return statusHTML;
+                    return actionsHTML;
                 }
+
                 return (
                     <Td key={cellIndex}>{task[header['key']]}</Td>
                 );
