@@ -3,6 +3,7 @@ import {
 	GraphQLObjectType,
 	GraphQLString,
 	GraphQLID,
+	GraphQLInt,
 	GraphQLList
 } from 'graphql';
 
@@ -29,6 +30,31 @@ const ASSIGNMENT_CATEGORY_TYPE = new GraphQLObjectType({
 		'path': {
 			type: GraphQLString,
             description: 'Category\'s path'
+		},
+		'primary_owner': {
+			type: GraphQLInt,
+            description: 'Category\'s primary owner'
+		},
+		'secondary_owner': {
+			type: GraphQLInt,
+            description: 'Category\'s secondary owner'
+		},
+		'difficulty': {
+			type: new GraphQLObjectType({
+				name: 'AssignmentDifficulty',
+				fields: () => ({
+					id: {
+						type: GraphQLInt
+					},
+					color: {
+						type: GraphQLString
+					},
+					title: {
+						type: GraphQLString
+					}
+				})
+			}),
+			description: 'Category\'s difficulty'
 		}
     })
 });

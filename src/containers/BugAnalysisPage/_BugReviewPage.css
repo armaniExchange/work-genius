@@ -1,0 +1,11 @@
+.table_layout_center {
+    text-align: center;
+}
+
+.col-md-12, .col-lg-12, .col-lg-8 {
+	padding-left: 0px !important;
+}
+
+.col-md-12, .col-lg-12 {
+	padding-top: 10px !important;
+}

@@ -11,9 +11,8 @@ class LogoutButton extends Component {
 	render() {
 		return (
 	        <button
-	            className="btn btn-large btn-primary"
 	            onClick={this.props.onClickHandler}>
-	            Log out
+	            Sign Out
 	        </button>
 		);
 	}

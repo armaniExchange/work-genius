@@ -1,30 +1,5 @@
-import * as actionTypes from '../constants/action-types';
-
-// for development use, delete when database ready
-// --- start ---
-const fakeArticles = [
-  {
-      id: '0',
-      title: 'third article',
-      author: {
-        id: '0',
-        name: 'fong'
-      },
-      tags: [ 'tagA', 'tagB' ],
-      files: [
-        {id: '1', name: 'video', type: 'video/mp4', data: ''},
-        {id: '2', name: 'someimage', type: 'image/jpeg', data: ''},
-      ],
-      comments: [],
-      category: {id: '5706fecf-7915-48c4-aa60-0dd0fb709c9b'},
-      content: '# this is a test123 \n * 1 \n * 2 \n ```js \nfunction(){\n  console.log("test"); \n}\n ```\n[github link](http://www.github.com)\n## iframe\n<iframe width="560" height="315" src="http://www.w3schools.com/" frameborder="0" ></iframe>',
-      createdAt: 1457085436639,
-      updatedAt: 1457085446639,
-  }
-];
-
-
-// --- end---
+import actionTypes from '../constants/action-types';
+import { SERVER_API_URL } from '../constants/config';
 
 
 export function fetchArticleSucess(article) {
@@ -34,33 +9,140 @@ export function fetchArticleSucess(article) {
   };
 }
 
-export function fetchArticle(id) {
+export function fetchArticleFail(error) {
+  return {
+    type: actionTypes.FETCH_ARTICLE_FAIL,
+    error
+  };
+}
+
+function _fetchArticle(articleId) {
+  let config = {
+    method: 'POST',
+    body: `{
+      getArticle (article_id: "${articleId}") {
+        id,
+        title,
+        content,
+        tags,
+        categories_id,
+        author {
+          id,
+          name
+        },
+        comments {
+          id,
+          title,
+          content
+        },
+        created_at,
+        updated_at
+      }
+    }`,
+    headers: {
+      'Content-Type': 'application/graphql',
+      'x-access-token': localStorage.token
+    }
+  };
+  return fetch(SERVER_API_URL, config);
+}
+
+export function fetchArticle(articleId) {
   return dispatch => {
     dispatch({
       type: actionTypes.FETCH_ARTICLE,
-      id
+      id: articleId
     });
     // fetch from server
-    const article = fakeArticles[0];
-    dispatch(fetchArticleSucess(article));
+
+    return _fetchArticle(articleId)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((body) => {
+        const {
+          id,
+          title,
+          content,
+          tags,
+          author,
+          categories_id,
+          comments,
+          created_at,
+          updated_at
+        } = body.data.getArticle;
+        const article = {
+          id,
+          title,
+          content,
+          tags,
+          author,
+          category: {id: categories_id},
+          comments,
+          createdAt: parseInt(created_at), // remove this when ready
+          updatedAt: parseInt(updated_at) // remove this when server respond with current
+        };
+        dispatch(fetchArticleSucess(article));
+      })
+      .catch((error) => {
+        dispatch(fetchArticleFail(error));
+      });
   };
 }
 
 export function createArticleSuccess(article) {
   return {
-    type: actionTypes.UPDATE_ARTICLE_SUCCESS,
+    type: actionTypes.CREATE_ARTICLE_SUCCESS,
     ...article
   };
 }
 
-export function createArticle(article) {
+export function createArticleFail(error) {
+  return {
+    type: actionTypes.CREATE_ARTICLE_FAIL,
+    error
+  };
+}
+
+export function createArticle(newArticle) {
   return dispatch => {
     dispatch({
       type: actionTypes.CREATE_ARTICLE,
-      ...article
+      ...newArticle
     });
     // post to server
-    dispatch(fetchArticleSucess(article));
+
+    const config = {
+      method: 'POST',
+      body: `
+        mutation RootMutationType {
+          createArticle ( data: "${JSON.stringify(newArticle).replace(/"/g, '\\"')}")
+        }
+      `,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((body) => {
+        const id = body.data.createArticle;
+        dispatch(createArticleSuccess({id}));
+        return _fetchArticle(id);
+      })
+      .catch((error) => {
+        dispatch(createArticleFail(error));
+      });
   };
 }
 
@@ -71,15 +153,50 @@ export function updateArticleSuccess(article) {
   };
 }
 
+export function updateArticleFail(error) {
+  return {
+    type: actionTypes.UPDATE_ARTICLE_SUCCESS,
+    error
+  };
+}
+
+
 export function updateArticle(newArticle) {
   return dispatch => {
     dispatch({
       type: actionTypes.UPDATE_ARTICLE
     });
-    let article = fakeArticles[0];
     // update to server
-    Object.assign(article, newArticle);
-    dispatch(updateArticleSuccess(article));
+    const config = {
+      method: 'POST',
+      body: `
+        mutation RootMutationType {
+          editArticle (
+            articleId: "${newArticle.id}"
+            data: "${JSON.stringify(newArticle).replace(/"/g, '\\"')}"
+          ),
+        }
+      `,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((body) => {
+        const id = body.data.editArticle;
+        dispatch(updateArticleSuccess({id}));
+      })
+      .catch((error) => {
+        dispatch(updateArticleFail(error));
+      });
   };
 }
 
@@ -95,8 +212,34 @@ export function deleteArticle(articleId) {
     dispatch({
       type: actionTypes.DELETE_ARTICLE
     });
-    // update to server
-    dispatch(deleteArticleSuccess(articleId));
+    const config = {
+      method: 'POST',
+      body: `
+        mutation RootMutationType {
+          deleteArticle (
+            articleId: "${articleId}"
+          ),
+        }
+      `,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then(() => {
+        dispatch(deleteArticleSuccess(articleId));
+      })
+      .catch((error) => {
+        dispatch(updateArticleFail(error));
+      });
   };
 }
 
@@ -131,5 +274,11 @@ export function removeArticleFile(fileId) {
       id: fileId
     });
     dispatch(removeArticleFileSuccess(fileId));
+  };
+}
+
+export function clearArticle() {
+  return {
+    type: actionTypes.CLEAR_ARTICLE
   };
 }

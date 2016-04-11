@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react';
-
+import ReactDOM from 'react-dom';
 import Td from '../A10-UI/Table/Td';
 import Select from 'react-select';
 class BugReviewTableBody extends Component {
@@ -15,10 +15,15 @@ class BugReviewTableBody extends Component {
             data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, optionsMenus, changeReviewText, resolvedReasonTypeChange, changeReviewTagOptions, changeMenuTagOptions
         } = this.props;
 
+        var titleLength = 0;
+        for (let key of titleKeyMap) {
+            titleLength += key.colspan;
+        }
+
         let bodyHtml = (
             <tr>
                 <Td
-                    colSpan={titleKeyMap.length}
+                    colSpan={titleLength}
                     className="pto-table__body--empty">
                     No Match Result!
                 </Td>
@@ -44,32 +49,30 @@ class BugReviewTableBody extends Component {
                         let arr = type.split(',');
                         changeMenuTagOptions(review, arr);
                     };
-                    var outBlurReviewText = function(event){
+                    var spanClassName = ' ';
+                    var textareaClassName = 'mdl-textfield__input element-hide';
+                    var outBlurReviewText = (event) => {
                         let value = event.target.value.replace(/\n/g, '\\n');
                         changeReviewText(review, value);
+                        this.state.details[bugId] = value;
+                        let textarea = ReactDOM.findDOMNode(this.refs[bugId + '-textarea']);
+                        textareaClassName = 'mdl-textfield__input element-hide';
+                        textarea.className = textareaClassName;
+                        let span = ReactDOM.findDOMNode(this.refs[bugId + '-span']);
+                        span.className = spanClassName;
                     };
-
-                    // var toEdit = (e) => {
-                    //     console.log(e);
-                    // };
-                    // var loadText = () => {
-                    //     console.log('sssssssssssss');
-                    //     // this.refs[bugId].getDOMNode().value = this.state.details[bugId];
-                    //     this.refs[bugId].getDOMNode().value = 'ssssss';
-                    // };
-                    // var onChangeText = (e) => {
-                    //     this.state.name = e.target.value;
-                    //     console.log(this.state.name);
-                    //     this.refs[bugId].getDOMNode().value = e.target.value;
-                    // }; <span onClick={toEdit}>{review[header['key']]}</span>
-
-                    if ( header['key'] === 'resolved_type' ){
+                    var toEdit = () => {
+                        let textarea = ReactDOM.findDOMNode(this.refs[bugId + '-textarea']);
+                        textarea.value = this.state.details[bugId];
+                        textareaClassName = 'mdl-textfield__input';
+                        textarea.className = textareaClassName;
+                        textarea.focus();
+                        let span = ReactDOM.findDOMNode(this.refs[bugId + '-span']);
+                        span.className = spanClassName + 'element-hide';
+                    };
+                    switch (header['key']){
+                    case 'resolved_type':
                         return (
-                            //<Td isAlignLeft="true" key={cellIndex}
-                            //    className="bug-review-table__body--front"
-                            //   colSpan={header['colspan']}>
-                            //   <RadioGroup aryRadioConfig={resolvedReasonTypes} checkRadio="axapi" onRadioChange={resolvedReasonChange}/>
-                            //</Td>
                             <Td key={cellIndex} isAlignLeft={true} colSpan={header['colspan']}>
                                 <Select
                                     name="menu_tag"
@@ -79,8 +82,7 @@ class BugReviewTableBody extends Component {
                                 />
                             </Td>
                         );
-                    } else
-                    if ( header['key'] === 'tags' ){
+                    case 'tags':
                         let tags = review[header['key']];
                         tags = (tags) ? tags.join(',') : tags;
                         return (
@@ -97,8 +99,7 @@ class BugReviewTableBody extends Component {
                                 />
                             </Td>
                         );
-                    } else
-                    if ( header['key'] === 'menu' ) {
+                    case 'menu':
                         let menu = review[header['key']];
                         menu = (menu) ? menu.join(',') : menu;
                         return (
@@ -111,18 +112,46 @@ class BugReviewTableBody extends Component {
                                 />
                             </Td>
                         );
-                    } else
-                    if ( header['key'] === 'review') {
-                        console.log(this.refs[bugId]);
+                    case 'review':
                         return (
-                            <Td key={cellIndex} colSpan={header['colspan']}>
-                                <textarea className="mdl-textfield__input" type="text"
-                                onBlur={outBlurReviewText} rows= "3" initialValue={review[header['key']]}></textarea>
+                            <Td key={cellIndex} onClick={toEdit} isAlignLeft={true}  colSpan={header['colspan']}>
+                                <span ref={bugId + '-span'} className={spanClassName} >{this.state.details[bugId]}</span>
+                                <textarea className={textareaClassName}
+                                type="text"
+                                ref={bugId + '-textarea'}
+                                onBlur={outBlurReviewText} rows= "3"></textarea>
                             </Td>
                         );
-                    } else
-                    if (header['key'] === 'id') {
-                        className += ' table-bug-id-width';
+                    case 'id':
+                        return (
+                            <Td key={cellIndex}
+                            isAlignLeft={isAlignLeft}
+                            className={'pto-table__body--empty'}
+                            colSpan={header['colspan']}>
+                            <a className="bug-review-link" href={'https://bugzilla/show_bug.cgi?id=' + bugId} target="_Blank">
+                                {review[header['key']]}</a></Td>
+                        );
+                    case 'title':
+                        return (
+                            <Td key={cellIndex}
+                            isAlignLeft={isAlignLeft}
+                            colSpan={header['colspan']}>
+                                {review[header['key']]}</Td>
+                        );
+                    case 'resolved_status':
+                        return (
+                            <Td key={cellIndex}
+                            className={'pto-table__body--empty'}
+                            colSpan={header['colspan']}>
+                            {review['bug_status']}<br/>{review['resolution']}</Td>
+                        );
+                    case 'assigned_to':
+                        return (
+                            <Td key={cellIndex}
+                            className={'pto-table__body--empty'}
+                            colSpan={header['colspan']}>{review[header['key']]}</Td>
+                        );
+                    default:
                         return (
                             <Td key={cellIndex}
                             isAlignLeft={isAlignLeft}
@@ -130,12 +159,6 @@ class BugReviewTableBody extends Component {
                             colSpan={header['colspan']}>{review[header['key']]}</Td>
                         );
                     }
-                     return (
-                        <Td key={cellIndex}
-                        isAlignLeft={isAlignLeft}
-                        className={className}
-                        colSpan={header['colspan']}>{review[header['key']]}</Td>
-                    );
                 });
 
                 return (

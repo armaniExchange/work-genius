@@ -1,4 +1,5 @@
 import './_BugReviewPage.css';
+import './Pagination.css';
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
@@ -11,20 +12,10 @@ import * as mainActions from '../../actions/main-actions';
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 
 import BugReviewTable from '../../components/BugReviewTable/BugReviewTable.js';
-// import Space from '../../components/A10-UI/Space.js';
+import Pagination from 'rc-pagination';
 
-// import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
-
-// let PTOYearFilter = ({ selectedYear, goToPreviousYear, goToNextYear }) => {
-//     let style = {'minWidth':'25px', 'minHeight':'25px', height:'25px', 'lineHeight':1};
-//     return (
-//         <div className="pto-year-filter">
-//             <RaisedButton label="<" style={style} onClick={goToPreviousYear} />
-//             <span style={{margin:'0 6px', display:'inline-block'}}>{selectedYear}</span>
-//             <RaisedButton label=">" style={style} onClick={goToNextYear} />
-//         </div>
-//     );
-// };
+import Breadcrumb from '../../components/A10-UI/Breadcrumb';
+import BREADCRUMB from '../../constants/breadcrumb';
 
 class BugReviewPage extends Component {
     constructor(props) {
@@ -34,14 +25,34 @@ class BugReviewPage extends Component {
         this._onChangeSelectMenu = ::this._onChangeSelectMenu;
         this._onChangeSelectRootCause = ::this._onChangeSelectRootCause;
         this._onChangeSelectPreventTag = ::this._onChangeSelectPreventTag;
+        this._onClickPaginate = ::this._onClickPaginate;
     }
 
     componentWillMount() {
-        const { fetchBugReviewPageData, fetchPreventTagsOptions, fetchAllUsers } = this.props;
+        const { fetchBugReviewPageData, fetchPreventTagsOptions, fetchAllUsers, pager } = this.props;
+        pager.rowIndex = 1;
         // Get the init bug review page data
         fetchPreventTagsOptions();
         fetchAllUsers();
-        fetchBugReviewPageData();
+        fetchBugReviewPageData(pager);
+    }
+
+    _onClickPaginate(selected) {
+        const {
+            fetchBugReviewPageData,
+            currentSelectUser,
+            currentProjectVersion,
+            currentSelectMenu,
+            currentSelectRootCause,
+            currentSelectPreventTag,
+            pager
+        } = this.props;
+        let user = currentSelectUser.value;
+        user = ( user === undefined || user === '' ) ? 'All' : user;
+        if (pager.rowIndex !== selected){
+            pager.rowIndex = selected;
+            fetchBugReviewPageData(pager, currentProjectVersion, user, currentSelectMenu, currentSelectRootCause, currentSelectPreventTag);
+        }
     }
 
     _onChangeProjectVesion(version){
@@ -50,10 +61,13 @@ class BugReviewPage extends Component {
             currentSelectUser,
             currentSelectMenu,
             currentSelectRootCause,
-            currentSelectPreventTag
+            currentSelectPreventTag,
+            pager
         } = this.props;
-
-        fetchBugReviewPageData(version, currentSelectUser.value, currentSelectMenu, currentSelectRootCause, currentSelectPreventTag);
+        pager.rowIndex = 1;
+        let user = currentSelectUser.value;
+        user = ( user === undefined || user === '' ) ? 'All' : user;
+        fetchBugReviewPageData(pager, version, user, currentSelectMenu, currentSelectRootCause, currentSelectPreventTag);
     }
 
     _onChangeSelectUser(user){
@@ -62,10 +76,12 @@ class BugReviewPage extends Component {
             currentProjectVersion,
             currentSelectMenu,
             currentSelectRootCause,
-            currentSelectPreventTag
+            currentSelectPreventTag,
+            pager
         } = this.props;
-        user = user === '' ? 'All' : user;
-        fetchBugReviewPageData(currentProjectVersion, user, currentSelectMenu, currentSelectRootCause, currentSelectPreventTag);
+        pager.rowIndex = 1;
+        user = ( user === undefined || user === '' ) ? 'All' : user;
+        fetchBugReviewPageData(pager, currentProjectVersion, user, currentSelectMenu, currentSelectRootCause, currentSelectPreventTag);
     }
 
     _onChangeSelectMenu(menu) {
@@ -74,10 +90,13 @@ class BugReviewPage extends Component {
             currentProjectVersion,
             currentSelectUser,
             currentSelectRootCause,
-            currentSelectPreventTag
+            currentSelectPreventTag,
+            pager
         } = this.props;
-
-        fetchBugReviewPageData(currentProjectVersion, currentSelectUser.value, menu, currentSelectRootCause, currentSelectPreventTag);
+        pager.rowIndex = 1;
+        let user = currentSelectUser.value;
+        user = ( user === undefined || user === '' ) ? 'All' : user;
+        fetchBugReviewPageData(pager, currentProjectVersion, user, menu, currentSelectRootCause, currentSelectPreventTag);
     }
 
     _onChangeSelectRootCause(rootCause) {
@@ -86,10 +105,13 @@ class BugReviewPage extends Component {
             currentProjectVersion,
             currentSelectUser,
             currentSelectMenu,
-            currentSelectPreventTag
+            currentSelectPreventTag,
+            pager
         } = this.props;
-
-        fetchBugReviewPageData(currentProjectVersion, currentSelectUser.value, currentSelectMenu, rootCause, currentSelectPreventTag);
+        pager.rowIndex = 1;
+        let user = currentSelectUser.value;
+        user = ( user === undefined || user === '' ) ? 'All' : user;
+        fetchBugReviewPageData(pager, currentProjectVersion, user, currentSelectMenu, rootCause, currentSelectPreventTag);
     }
 
     _onChangeSelectPreventTag(tag) {
@@ -98,10 +120,13 @@ class BugReviewPage extends Component {
             currentProjectVersion,
             currentSelectUser,
             currentSelectMenu,
-            currentSelectRootCause
+            currentSelectRootCause,
+            pager
         } = this.props;
-
-        fetchBugReviewPageData(currentProjectVersion, currentSelectUser.value, currentSelectMenu, currentSelectRootCause, tag);
+        pager.rowIndex = 1;
+        let user = currentSelectUser.value;
+        user = ( user === undefined || user === '' ) ? 'All' : user;
+        fetchBugReviewPageData(pager, currentProjectVersion, user, currentSelectMenu, currentSelectRootCause, tag);
     }
 
     render() {
@@ -115,6 +140,7 @@ class BugReviewPage extends Component {
             bugReviewTitleKeyMap,
             allProjectVersions,
             allUsers,
+            pager,
             resolvedReasonTypes,
             resolvedReasonTypeChange,
             optionsReviewTags,
@@ -128,6 +154,7 @@ class BugReviewPage extends Component {
         let preventTagTitle = currentSelectPreventTag === '' ? 'All' : currentSelectPreventTag;
         return (
             <section>
+                <Breadcrumb data={BREADCRUMB.bugrootcause} />
                 {/* Project Version */}
                 <label>Project:&nbsp;</label>
                 <DropDownList
@@ -185,7 +212,15 @@ class BugReviewPage extends Component {
                     changeReviewText={changeReviewText}
                     titleKeyMap={bugReviewTitleKeyMap}
                 />
-
+                <br/>
+                <div>
+                    <div className="col-md-10 col-lg-10">
+                        <Pagination onChange={this._onClickPaginate} pageSize={pager.pageRow} current={pager.rowIndex} total={pager.totalRow} />
+                    </div>
+                    <div className="col-md-2 col-lg-2">
+                        <span className="float-right">Total:&nbsp;{pager.totalRow}</span>
+                    </div>
+                </div>
             </section>
         );
     }
@@ -204,6 +239,7 @@ BugReviewPage.propTypes = {
     optionsReviewTags:         PropTypes.array,
     optionsMenus:              PropTypes.array,
     currentSelectUser:         PropTypes.object,
+    pager:                     PropTypes.object,
     fetchBugReviewPageData:    PropTypes.func,
     fetchPreventTagsOptions:   PropTypes.func,
     fetchAllUsers:             PropTypes.func,

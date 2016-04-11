@@ -7,6 +7,8 @@ import { Link } from 'react-router';
 import { bindActionCreators } from 'redux';
 import TextField from 'material-ui/lib/text-field';
 import RaisedButton from 'material-ui/lib/raised-button';
+import Breadcrumb from '../../components/A10-UI/Breadcrumb';
+import BREADCRUMB from '../../constants/breadcrumb';
 
 import ArticleListItem from '../../components/ArticleListItem/ArticleListItem';
 import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
@@ -56,7 +58,7 @@ class DocumentPage extends Component {
   }
 
   onConfirmDeleteArticle(deletingArticle) {
-    console.log(`delete article id:${deletingArticle.id} index:${deletingArticle.index}`);
+    // console.log(`delete article id:${deletingArticle.id} index:${deletingArticle.index}`);
     this.props.articleActions.deleteArticle(deletingArticle.id);
   }
 
@@ -95,6 +97,7 @@ class DocumentPage extends Component {
 
     return (
       <section>
+        <Breadcrumb data={BREADCRUMB.document} />
         <div style={leftPanelStyle}>
           <Link to="/main/articles/edit/new">
             <RaisedButton

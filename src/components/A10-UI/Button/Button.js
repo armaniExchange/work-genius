@@ -5,7 +5,7 @@ export const BUTTON_TYPE = {
     'CLEAR': 'clear',
     'APPROVE': 'done',
     'DENY': 'clear',
-
+    'RESTORE': 'restore',
     'EDIT': 'edit',
     'DELETE': 'delete',
 };

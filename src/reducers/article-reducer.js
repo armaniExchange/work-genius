@@ -4,7 +4,7 @@
 // Libraries
 import { List , OrderedMap} from 'immutable';
 // Constants
-import * as actionTypes from '../constants/action-types';
+import actionTypes from '../constants/action-types';
 
 const initialState = OrderedMap({
   // data of article
@@ -23,11 +23,24 @@ const initialState = OrderedMap({
   content: '',
   createdAt: 0,
   updatedAt: 0,
+  isEditing: true
 });
 
 export default function articleReducer(state = initialState, action) {
   switch (action.type) {
+    case actionTypes.CREATE_ARTICLE_SUCCESS:
     case actionTypes.UPDATE_ARTICLE_SUCCESS:
+      return state.set('id', action.id)
+        .set('title', action.title)
+        .set('author', action.author)
+        .set('category', action.category)
+        .set('tags', action.tags)
+        .set('files', action.files)
+        .set('comments', action.comments)
+        .set('content', action.content)
+        .set('createdAt', action.createdAt)
+        .set('updatedAt', action.updatedAt)
+        .set('isEditing', false);
     case actionTypes.FETCH_ARTICLE_SUCCESS:
       return state.set('id', action.id)
         .set('title', action.title)
@@ -45,6 +58,8 @@ export default function articleReducer(state = initialState, action) {
       return state.set('files', state.get('files').filter(removedFile => {
         return removedFile.id !== action.id;
       }));
+    case actionTypes.CLEAR_ARTICLE:
+      return initialState;
     default:
       return state;
   }

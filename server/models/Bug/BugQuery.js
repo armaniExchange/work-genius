@@ -85,16 +85,16 @@ let BugQuery = {
 				}
 
 				//get total row
-				query = r.db('work_genius').table('bugs').filter(filter).filter(menuFilter).filter(tagFilter).count();
+				query = r.db('work_genius').table('bugs_review').filter(filter).filter(menuFilter).filter(tagFilter).count();
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				let totalRow = await query.run(connection); 
 
 				if(!!pageSize){
-					query = r.db('work_genius').table('bugs').filter(filter).filter(menuFilter).filter(tagFilter)
-							.orderBy('id').skip((pageIndex - 1) * pageSize).limit(pageSize).coerceTo('array');
+					query = r.db('work_genius').table('bugs_review').filter(filter).filter(menuFilter).filter(tagFilter)
+							.orderBy(r.desc('id')).skip((pageIndex - 1) * pageSize).limit(pageSize).coerceTo('array');
 				}else{
-					query = r.db('work_genius').table('bugs').filter(filter).filter(menuFilter).filter(tagFilter)
-					.orderBy('id').coerceTo('array');
+					query = r.db('work_genius').table('bugs_review').filter(filter).filter(menuFilter).filter(tagFilter)
+					.orderBy(r.desc('id')).coerceTo('array');
 				}
 				result = await query.run(connection); 
 				for(let bug of result){

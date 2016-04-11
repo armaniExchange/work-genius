@@ -22,6 +22,8 @@ import BugTagQuery from '../models/BugTag/BugTagQuery.js';
 import BugTagMutation from '../models/BugTag/BugTagMutation.js';
 import AssignmentCategoryQuery from '../models/AssignmentCategory/AssignmentCategoryQuery.js';
 import AssignmentCategoryMutation from '../models/AssignmentCategory/AssignmentCategoryMutation.js';
+import BugStats from '../models/Bug/BugStats.js';
+//import WorkLogMutation from '../models/WorKLog/WorKLogMutation.js';
 
 const schema = new GraphQLSchema({
 	query: new GraphQLObjectType({
@@ -50,6 +52,11 @@ const schema = new GraphQLSchema({
 			assignmentCategoryTree : AssignmentCategoryQuery.getAssignmentCategoryTree,
 			allAssignmentCategories: AssignmentCategoryQuery.getAllAssignmentCategories,
 			tags          		   : AssignmentCategoryQuery.getAllTags,
+			allDifficulties        : AssignmentCategoryQuery.getAllDifficulties,
+			getRootCauseSummary	   : BugStats.getRootCauseSummary,
+			getOwnerSummary		   : BugStats.getOwnerSummary,
+			getTagSummary		   : BugStats.getBugSummary,
+			getOwnerRootCauseSummary	   : BugStats.getOwnerRootCauseSummary
 		}
 	}),
 	mutation: new GraphQLObjectType({
@@ -71,12 +78,15 @@ const schema = new GraphQLSchema({
 			createComment             : CommentMutation.createComment,
 			deleteComment             : CommentMutation.deleteCommentById,
 			createArticle			  : ArticleMutation.createArticle,
-			editArticle			  	  : ArticleMutation.editArticle,
+			updateArticle			  : ArticleMutation.updateArticle,
 			deleteArticle			  : ArticleMutation.deleteArticle,
       updateAssignmentCategory: AssignmentCategoryMutation.updateAssignmentCategory,
 			//Bug page
 			updateBug				  : BugMutation.updateBug,
-			createBugTag			  : BugTagMutation.createBugTag
+			createBugTag			  : BugTagMutation.createBugTag,
+			//work log page
+			// createWorkLog			  : WorkLogMutation.createWorkLog,
+			// updateWorkLog			  : WorkLogMutation.updateWorkLog
 		}
 	})
 });

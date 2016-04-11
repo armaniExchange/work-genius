@@ -7,7 +7,7 @@ import UserType from './UserType.js';
 // RethinkDB
 import r from 'rethinkdb';
 // Constants
-import { DB_HOST, DB_PORT, ADMIN_ID } from '../../constants/configurations.js';
+import { DB_HOST, DB_PORT, ADMIN_ID,TESTER_ID } from '../../constants/configurations.js';
 
 let UserQuery = {
 	'currentUser': {
@@ -140,14 +140,13 @@ let UserQuery = {
 
 			try {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID)).coerceTo('array');
+				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID))).coerceTo('array');
 				users = await query.run(connection);
-				let pattern = /[a-zA-Z]+@/;
 				for(let user of users){
-					if(!!user.email && user.email.match(pattern).length > 0){
-						user.alias = user.email.match(pattern)[0].replace('@','');
+					if(!!user.email){
+						user.alias = user.email.replace('@a10networks.com','');
 					}
-					
+
 				}
 				await connection.close();
 				return users;

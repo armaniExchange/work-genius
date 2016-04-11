@@ -1,0 +1,25 @@
+
+
+.table_header_style{
+	border-right: solid 1px #fff;
+	text-align: center !important;
+}
+
+.weekend-style{
+	background-color : #eee !important;
+}
+
+.cell-layout-style{
+	border-right: solid 1px #fff;
+	text-align: center !important;
+}
+
+.label-default-style{
+	border: none !important;
+	font-weight: 100;
+	font-size: 8px;
+}
+
+.add-button {
+	background-color: #42bd41 !important;
+}

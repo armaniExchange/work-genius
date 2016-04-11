@@ -1,0 +1,41 @@
+.bug-report-table .bug-report-table__body .bug-report-table__body--empty {
+    text-align: center;
+}
+
+.bug-report-table__body--left{
+    text-align: left !important;
+    word-break: break-all;
+    word-wrap:break-word;
+}
+
+.bug-report-table__body--front .mdl-radio{
+    font-size: 12px !important;
+    line-height: 24px !important;
+    font-weight: 200 !important;
+}
+
+.auto-width{
+    width: 100% ! important;
+}
+
+.bug-report-table__body--center{
+    text-align: center !important;
+    word-break: break-all;
+    word-wrap:break-word;
+}
+
+.bug-report-table{
+    white-space: normal !important;
+    table-layout:fixed;
+    width: 100%;
+}
+
+.bug-report-table .hide {
+    display: none;
+}
+
+.bug-report-table .bug-report-table__header {
+    cursor: pointer;
+    text-align: center;
+    /*background-color: #6fe4d8;*/
+}

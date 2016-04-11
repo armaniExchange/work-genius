@@ -26,15 +26,25 @@ class EditArticlePage extends Component {
       articleActions,
       documentActions
     } = this.props;
-    if ( params.articleId !== 'new' ) {
+    articleActions.clearArticle();
+    if (!this.isCreate()) {
       articleActions.fetchArticle(params.articleId);
     }
     documentActions.fetchAllCategories();
+    documentActions.fetchAllTags();
   }
 
   componentWillReceiveProps(nextProps) {
+
+    if (this.props.isEditing && !nextProps.isEditing) {
+      this.props.history.replace(`/main/articles/${nextProps.id}`);
+    }
     const newState = this.getEditingStateFromProps(nextProps);
     this.setState(newState);
+  }
+
+  isCreate() {
+    return this.props.params.articleId === 'new';
   }
 
   getEditingStateFromProps(props) {
@@ -93,18 +103,29 @@ class EditArticlePage extends Component {
 
   onSubmit() {
     const {
+      files,
+      params,
+      articleActions
+    } = this.props;
+    const {
       editingTitle,
       editingTags,
       editingCategory,
       editingContent
     } = this.state;
-
-    this.props.articleActions.updateArticle({
+    const {
+      createArticle,
+      updateArticle
+    } = articleActions;
+    const postArticle = this.isCreate() ? createArticle : updateArticle;
+    const idField = this.isCreate() ? null : {id: params.articleId};
+    postArticle(Object.assign({
       title: editingTitle,
       tags: editingTags,
       category: editingCategory,
-      content: editingContent
-    });
+      content: editingContent,
+      files
+    }, idField));
   }
 
   render() {
@@ -119,7 +140,8 @@ class EditArticlePage extends Component {
     const {
       params,
       files,
-      allCategories
+      allCategories,
+      allTags
     } = this.props;
 
     const editorStyle = {
@@ -151,6 +173,7 @@ class EditArticlePage extends Component {
             content={editingContent}
             category={editingCategory}
             files={files}
+            tagSuggestions={allTags}
             allCategories={allCategories}
             onTagsChange={::this.onTagsChange}
             onTitleChange={::this.onTitleChange}
@@ -195,8 +218,11 @@ EditArticlePage.propTypes = {
   updatedAt           : PropTypes.number,
   params              : PropTypes.object,
   allCategories       : PropTypes.array,
+  allTags             : PropTypes.arrayOf(PropTypes.string),
+  isEditing           : PropTypes.bool,
   articleActions      : PropTypes.object.isRequired,
-  documentActions     : PropTypes.object.isRequired
+  documentActions     : PropTypes.object.isRequired,
+  history             : PropTypes.object
 };
 
 EditArticlePage.defaultProps = {
@@ -213,8 +239,14 @@ EditArticlePage.defaultProps = {
 };
 
 function mapStateToProps(state) {
+  const {
+    allCategories,
+    allTags
+  } = state.documentation.toJS();
+
   return Object.assign({}, state.article.toJS(), {
-    allCategories: state.documentation.toJS().allCategories
+    allCategories,
+    allTags
   });
 }
 

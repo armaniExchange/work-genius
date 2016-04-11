@@ -54,4 +54,23 @@ function dedupe(list) {
     return result;
 }
 
-export { transformToTree, generatePath, dedupe };
+function getParents(categories, target) {
+    if (!target.parentId) {
+        return [];
+    }
+    let directParent = categories.filter(
+        category => category.id === target.parentId
+    )[0];
+    return [directParent, ...getParents(categories, directParent)];
+}
+
+function filterByUserId(categories, userId) {
+    let filterCategoriesWithoutParent = categories.filter(
+        category => category.primary_owner === +userId || category.secondary_owner === +userId
+    );
+    return dedupe(filterCategoriesWithoutParent.map(
+        category => [category, ...getParents(categories, category)]
+    ).reduce((acc, next) => acc.concat(next), []));
+}
+
+export { transformToTree, generatePath, dedupe, filterByUserId };

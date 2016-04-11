@@ -1,0 +1,16 @@
+.search-box{
+    position: absolute;
+    right: 50px;
+    margin-top:10px;
+    .material-icons{
+        cursor: pointer;
+        float: right;
+        margin: 14px 0 0;
+    }
+}
+
+.mdl-navigation__link__tag--active{
+    font-weight: bold;
+    color:#888!important;
+    text-decoration: none!important;
+}
