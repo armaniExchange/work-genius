@@ -9,7 +9,7 @@ export default class Breadcrumb extends Component {
     return (<ol className="breadcrumb a10-breadcrumb">{
       data.map((item,idx) => {
         let isLast = idx===data.length-1;
-        let child = isLast ? [item.txt] : [<Link to={item.url}>{item.txt}</Link>];
+        let child = isLast ? [item.txt] : [<Link key={idx} to={item.url}>{item.txt}</Link>];
         if (!isLast) {
           child.push(<span className="a10-breadcrumb__divide" dangerouslySetInnerHTML={{__html:'&raquo;'}}></span>);
         }
