@@ -3,7 +3,8 @@ import {
 	GraphQLObjectType,
 	GraphQLString,
 	GraphQLID,
-    GraphQLInt
+    GraphQLInt,
+    GraphQLFloat
 } from 'graphql';
 
 const WorkLog_TYPE = new GraphQLObjectType({
@@ -19,7 +20,7 @@ const WorkLog_TYPE = new GraphQLObjectType({
             description: 'employee ID'
         },
         'date': {
-        	type: GraphQLInt,
+        	type: GraphQLFloat,
         	description: 'date'
         },
         'content': {
