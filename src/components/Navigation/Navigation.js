@@ -35,7 +35,7 @@ class Navigation extends Component {
 	}
 
 	render() {
-		const { headerTitle, currentUser, navItems, hasLogo } = this.props;
+		const { currentUser, navItems, hasLogo } = this.props;
 		let headerLogoHtml = hasLogo ? <HeaderLogo /> : null,
 		    navItemsHtml = navItems.map((item, index) => {
 				return (
@@ -57,7 +57,6 @@ class Navigation extends Component {
 			<div className="mdl-layout__header-row">
 			    <span className="mdl-layout-title">
 				    { headerLogoHtml }
-				    <span className="navigation__header-title">{ headerTitle }</span>
 				</span>
 				<nav className="mdl-navigation">
 					{ navItemsHtml }
