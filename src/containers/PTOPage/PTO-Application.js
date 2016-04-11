@@ -95,7 +95,7 @@ class PTOApplication extends Component {
             showPTOApplyModal,
             applications,
             ptoTitleKeyMap,
-            // ptoFilterConditions, --> need many <RadioGroup /> if have 2+ fields. So far, see `const KEY='status'` for currently
+            ptoFilterConditions,
             allUsersWithClosestPTO,
             currentSelectedUserID,
             applicationsOriginalData,
@@ -127,26 +127,27 @@ class PTOApplication extends Component {
                 <PTOYearFilter {...this.props} />
                 <Space h="20" />
                 <DropDownList
-                isNeedAll={true}
-                onOptionClick={this._onUserFilterClickedHandler}
-                title={dropdownTitle}
-                aryOptionConfig={allUsersWithClosestPTO.map((item) => {
-                    return {title: item.name, value: item.id, subtitle: item.subtitle};
-                })} />
+                    isNeedAll={true}
+                    onOptionClick={this._onUserFilterClickedHandler}
+                    title={dropdownTitle}
+                    aryOptionConfig={allUsersWithClosestPTO.map((item) => {
+                        return {title: item.name, value: item.id, subtitle: item.subtitle};
+                    })} />
 
                 {/*<NameFilterGroup
                     users={allUsersWithClosestPTO}
                     currentSelectedUserID={currentSelectedUserID}
                     onUserClickedHandler={this._onUserFilterClickedHandler} />*/}
-                    <Space h="20" />
-                    <RadioGroup
-                        title="Status"
-                        isNeedAll={true}
-                        aryRadioConfig={aryRadioConfig}
-                        onRadioChange={(curVal)=>{
-                            filterPTOTable({[KEY]:curVal});
-                        }} />
-                    <Space h="20" />
+                <Space h="20" />
+                <RadioGroup
+                    title="Status"
+                    isNeedAll={true}
+                    aryRadioConfig={aryRadioConfig}
+                    checkRadio={ptoFilterConditions.status}
+                    onRadioChange={(curVal)=>{
+                        filterPTOTable({[KEY]:curVal});
+                    }} />
+                <Space h="20" />
                 <PTOTable
                     data={applications}
                     titleKeyMap={ptoTitleKeyMap}

@@ -15,18 +15,18 @@ class RadioGroup extends Component {
 
         let ALL_DEFAULT_VALUE = '';
         if (isNeedAll) {
-            aryRadioConfig = [{val:ALL_DEFAULT_VALUE, name:'All'}].concat(aryRadioConfig);
+            aryRadioConfig = [{value:ALL_DEFAULT_VALUE, name:'All'}].concat(aryRadioConfig);
         }
 
         let radios = aryRadioConfig.map((item, index) => {
             let checked = checkRadio === item.value;
             return (
-            <Radio
-                key={index}
-                value={item.value}
-                name={item.name}
-                checked={checked}
-                onChange={onRadioChange}/>
+                <Radio
+                    key={index}
+                    value={item.value}
+                    name={item.name}
+                    checked={checked}
+                    onChange={onRadioChange}/>
             );
         });
         if (title) {
