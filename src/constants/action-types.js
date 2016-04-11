@@ -70,6 +70,7 @@ export default keyMirror({
     // Article actions
     FETCH_ARTICLE: null,
     FETCH_ARTICLE_SUCCESS: null,
+    FETCH_ARTICLE_FAIL: null,
     CREATE_ARTICLE: null,
     CREATE_ARTICLE_SUCCESS: null,
     CREATE_ARTICLE_FAIL: null,
