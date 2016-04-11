@@ -65,6 +65,12 @@ class ArticleEditor extends Component {
 
   render() {
     const allCategoriesMaxHeight = 300;
+    const dropzoneStyle = {
+      width: '100%',
+      border: '2px dashed gray',
+      padding: '2em 1em',
+      boxSizing: 'border-box'
+    };
     const {
       title,
       content,
@@ -78,7 +84,6 @@ class ArticleEditor extends Component {
       onTagsChange,
       onCategoryChange
     } = this.props;
-
     const {
       isConfirmDeleteFileDialogVisible,
       editingFile
@@ -130,15 +135,15 @@ class ArticleEditor extends Component {
           suggestions={tagSuggestions}
           onTagsChange={onTagsChange} />
         <br />
-        <h5>File Input</h5>
-        <hr />
+        <br />
         <ArticleFileList
           files={files}
           enableRemove={true}
           onRemove={::this.onFileRemove} />
         <br />
-        <br />
-        <Dropzone onDrop={::this.onFileChange}>
+        <Dropzone
+          style={dropzoneStyle}
+          onDrop={::this.onFileChange}>
           <div>Try dropping some files here, or click to select files to upload.</div>
         </Dropzone>
         <ConfirmDeleteDialog

@@ -59,7 +59,7 @@ export default function articleReducer(state = initialState, action) {
 
     case actionTypes.UPLOAD_ARTICLE_FILE_PROGRESS:
       return state.set('files', files.update(files.findIndex((item) => {
-          return item.tempId === action.tempId;
+          return item.get('tempId') === action.tempId;
         }), (item) => {
           const {
             loaded,
@@ -71,7 +71,7 @@ export default function articleReducer(state = initialState, action) {
 
     case actionTypes.UPLOAD_ARTICLE_FILE_SUCCESS:
       return state.set('files', files.update(files.findIndex((item) => {
-          return item.tempId === action.tempId;
+          return item.get('tempId') === action.tempId;
         }), (item) => {
           return item.delete('loaded')
             .delete('total')
