@@ -171,7 +171,7 @@ class BugReportPage extends Component {
                 <Breadcrumb data={BREADCRUMB.analysisreport} />
                 {/* Project Version */}
                 <div className="col-md-12 col-lg-12">
-                    <label>&nbsp;&nbsp;&nbsp;&nbsp;Project:&nbsp;</label>
+                    <label>Project:&nbsp;</label>
                     <DropDownList
                         isNeedAll={false}
                         title={currentProjectVersion}
