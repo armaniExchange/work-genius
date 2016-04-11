@@ -49,7 +49,7 @@ let ArticleMutation = {
 
       try {
         let article = JSON.parse(data);
-        if(article){
+        if (article){
           article.created_time = moment().format('YYYY/MM/DD');
         }
         query = r.db('work_genius').table('articles').insert(article);
@@ -82,10 +82,9 @@ let ArticleMutation = {
     resolve: async (root, { data , id }) => {
       let connection = null,
         query = null;
-
       try {
         let article = JSON.parse(data);
-        if(article){
+        if (article){
           article.updated_time = moment().format('YYYY/MM/DD');
         }
         query = r.db('work_genius').table('articles').get(id).update(article);

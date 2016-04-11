@@ -20,11 +20,11 @@ export function fetchArticleFail(error) {
   };
 }
 
-function _fetchArticle(articleId) {
+function _fetchArticle(id) {
   let config = {
     method: 'POST',
     body: `{
-      getArticle (article_id: "${articleId}") {
+      getArticle (id: "${id}") {
         id,
         title,
         content,
@@ -84,7 +84,7 @@ export function fetchArticle(articleId) {
           content,
           tags,
           author,
-          category: {id: categories_id},
+          category: {id: categories_id[0]},
           comments,
           createdAt: parseInt(created_at), // remove this when ready
           updatedAt: parseInt(updated_at) // remove this when server respond with current
@@ -117,6 +117,7 @@ export function createArticle(newArticle) {
       type: actionTypes.CREATE_ARTICLE,
       ...newArticle
     });
+    newArticle.categories_id = [newArticle.category.id];
     // post to server
 
     const config = {
@@ -159,7 +160,7 @@ export function updateArticleSuccess(article) {
 
 export function updateArticleFail(error) {
   return {
-    type: actionTypes.UPDATE_ARTICLE_SUCCESS,
+    type: actionTypes.UPDATE_ARTICLE_FAIL,
     error
   };
 }
@@ -170,13 +171,16 @@ export function updateArticle(newArticle) {
     dispatch({
       type: actionTypes.UPDATE_ARTICLE
     });
+    newArticle.categories_id = [newArticle.category.id];
+    newArticle.content = newArticle.content.replace(/\n/g, '\\n');
+
     // update to server
     const config = {
       method: 'POST',
       body: `
         mutation RootMutationType {
-          editArticle (
-            articleId: "${newArticle.id}"
+          updateArticle (
+            id: "${newArticle.id}"
             data: "${JSON.stringify(newArticle).replace(/"/g, '\\"')}"
           ),
         }
@@ -204,14 +208,14 @@ export function updateArticle(newArticle) {
   };
 }
 
-export function deleteArticleSuccess(articleId) {
+export function deleteArticleSuccess(id) {
   return {
     type: actionTypes.DELETE_ARTICLE_SUCCESS,
-    id: articleId
+    id
   };
 }
 
-export function deleteArticle(articleId) {
+export function deleteArticle(id) {
   return dispatch => {
     dispatch({
       type: actionTypes.DELETE_ARTICLE
@@ -221,7 +225,7 @@ export function deleteArticle(articleId) {
       body: `
         mutation RootMutationType {
           deleteArticle (
-            articleId: "${articleId}"
+            id: "${id}"
           ),
         }
       `,
@@ -239,7 +243,7 @@ export function deleteArticle(articleId) {
         return res.json();
       })
       .then(() => {
-        dispatch(deleteArticleSuccess(articleId));
+        dispatch(deleteArticleSuccess(id));
       })
       .catch((error) => {
         dispatch(updateArticleFail(error));
