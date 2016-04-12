@@ -5,11 +5,12 @@ import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 // Components
 import LogoutButton from '../Logout-Button/Logout-Button';
+import { MAIN_URL } from '../../constants/app';
 
 // Stateless functional components
 let HeaderLogo = () => {
 	return (
-		<Link to="/main"><span className="navigation__header-logo" title="More Detailed, More Beautiful"></span></Link>
+		<Link to={MAIN_URL}><span className="navigation__header-logo" title="More Detailed, More Beautiful"></span></Link>
 	);
 };
 

@@ -1,5 +1,6 @@
+import { MAIN_URL } from './app';
 // single
-const BASE_URL = '/main';
+const BASE_URL = MAIN_URL;
 export const FIRST_BREADCRUMB = [{txt:'Home', url: BASE_URL}];
 
 let BREADCRUMB = {
@@ -9,6 +10,7 @@ let BREADCRUMB = {
   
   resource: [{txt:'Resources', url: BASE_URL + '/resource/resource-map'}],
   resourcemap: [{txt:'Resource Map', url: BASE_URL + '/resource/resource-map'}],
+  teammember: [{txt:'Team Member', url: BASE_URL + '/resource/team'}],
 
   buganalysis: [{txt:'Bug Analysis', url: BASE_URL + '/bug-analysis/bug-analysis'}],
   bugrootcause: [{txt:'Root Causes', url: BASE_URL + '/bug-analysis/bug-analysis'}],
@@ -28,6 +30,7 @@ BREADCRUMB.document = BREADCRUMB.knowledge.concat(BREADCRUMB.document);
 BREADCRUMB.bugtracking = BREADCRUMB.knowledge.concat(BREADCRUMB.bugtracking);
 
 BREADCRUMB.resourcemap = BREADCRUMB.resource.concat(BREADCRUMB.resourcemap);
+BREADCRUMB.teammember = BREADCRUMB.resource.concat(BREADCRUMB.teammember);
 
 BREADCRUMB.bugrootcause = BREADCRUMB.buganalysis.concat(BREADCRUMB.bugrootcause);
 BREADCRUMB.analysisreport = BREADCRUMB.buganalysis.concat(BREADCRUMB.analysisreport);

@@ -5,7 +5,7 @@ import createBrowserHistory from 'history/lib/createBrowserHistory';
 // Components
 import App from '../containers/App/App';
 import Main from '../containers/Main/Main';
-import AdminPage from '../containers/AdminPage/AdminPage';
+//import AdminPage from '../containers/AdminPage/AdminPage'; //remove for a while
 import ValidDemoPage from '../containers/ValidDemoPage/ValidDemoPage';
 import DashboardPage from '../containers/DashboardPage/DashboardPage';
 import BugTrackingPage from '../containers/KnowledgePage/BugTrackingPage';
@@ -18,6 +18,7 @@ import BugReviewPage from '../containers/BugAnalysisPage/BugReviewPage';
 import BugReportPage from '../containers/BugAnalysisPage/BugReportPage';
 import ResourcePage from '../containers/ResourcePage/ResourcePage.js';
 import ResourceMapPage from '../containers/ResourcePage/ResourceMapPage.js';
+import TeamMemberPage from '../containers/ResourcePage/TeamMemberPage.js';
 import DataExplorerPage from '../containers/DataExplorerPage/DataExplorerPage';
 import DataExplorerFolderView from '../containers/DataExplorerFolderView/DataExplorerFolderView';
 import DataExplorerFileView from '../containers/DataExplorerFileView/DataExplorerFileView';
@@ -45,7 +46,6 @@ const appRoutes = () => (
       <Route path="main" component={requireAuth(Main)}>
         <IndexRoute component={requireAuth(DashboardPage)}/>
         <Route path="redux-demo" component={requireAuth(DemoPage)} />
-        <Route path="admin" component={requireAuth(AdminPage)} />
         <Route path="task" component={requireAuth(TaskPage)} />
         <Route path="pto" component={requireAuth(PTOPage)}>
           <IndexRoute component={requireAuth(PTOApplication)} />
@@ -61,6 +61,7 @@ const appRoutes = () => (
         {/* resource*/}
         <Route path="resource" component={requireAuth(ResourcePage)}>
           <Route path="resource-map" component={requireAuth(ResourceMapPage)} />
+          <Route path="team" component={requireAuth(TeamMemberPage)} />
         </Route>
         <Route path="valid-demo" component={requireAuth(ValidDemoPage)} />
 
