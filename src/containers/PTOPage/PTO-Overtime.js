@@ -54,9 +54,9 @@ class PTOOvertime extends Component {
         };
         createOvertimeApplication(finalData);
     }
-    _onOvertimeStatusUpdate(id, newState) {
+    _onOvertimeStatusUpdate(id, newState, hours) {
         const { setOvertimeApplicationStatus } = this.props;
-        setOvertimeApplicationStatus(id, newState);
+        setOvertimeApplicationStatus(id, newState, hours);
     }
     _onUserFilterClickedHandler(id) {
         const {
@@ -91,7 +91,7 @@ class PTOOvertime extends Component {
         if (curUser && curUser.name) {
             dropdownTitle = curUser.name;
         }
-        
+
         return (
             <section>
                 <Breadcrumb data={BREADCRUMB.overtime} />
