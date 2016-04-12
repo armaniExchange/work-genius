@@ -7,6 +7,9 @@ import * as ResourceMapActions from '../../actions/resource-map-actions';
 import * as appActions from '../../actions/app-actions';
 import * as mainActions from '../../actions/main-actions';
 
+import Breadcrumb from '../../components/A10-UI/Breadcrumb';
+import BREADCRUMB from '../../constants/breadcrumb';
+
 import ResourceMapTable from '../../components/ResourceMapTable/ResourceMapTable.js';
 import DatePicker from '../../components/A10-UI/Input/Date-Picker.js';
 
@@ -18,7 +21,7 @@ class ResourceMapPage extends Component{
 	}
 
 	componentWillMount() {
-		let defaultStartDate = moment().startOf('week').format('YYYY-MM-DD');
+		let defaultStartDate = moment().isoWeekday(1).format('YYYY-MM-DD');
 		const {
 			queryResourceMapData
 		} = this.props;
@@ -35,14 +38,15 @@ class ResourceMapPage extends Component{
 	render () {
 		const {
 			startDate,
-			totalDays
+			fetchResourceMapModalHandler
 		} = this.props;
 		return (
 			<section>
+        		<Breadcrumb data={BREADCRUMB.resourcemap} />
 				<DatePicker defaultDate={String(startDate)} placeholder="Start Date" onChange={this._changeStartDate} />
 				<ResourceMapTable
-					startDate={startDate}
-					totalDay={totalDays}
+					onModalHander={fetchResourceMapModalHandler}
+					{...this.props}
 				/>
 			</section>
 		);
@@ -52,12 +56,17 @@ class ResourceMapPage extends Component{
 ResourceMapPage.propTypes = {
 	startDate:     PropTypes.string.isRequired,
 	totalDays:     PropTypes.number.isRequired,
-	queryResourceMapData: PropTypes.func.isRequired
+	show:          PropTypes.bool.isRequired,
+	data: 		   PropTypes.array.isRequired,
+	queryResourceMapData: PropTypes.func.isRequired,
+	fetchResourceMapModalHandler: PropTypes.func.isRequired
 };
 
 ResourceMapPage.defaultProps = {
 	startDate: new Date(),
-	totalDays: 14
+	totalDays: 10,
+	show: false,
+	data: []
 };
 
 function mapStateToProps(state) {

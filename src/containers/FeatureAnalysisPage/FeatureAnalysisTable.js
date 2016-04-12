@@ -6,6 +6,9 @@ import AssignmentReportTable from '../../components/AssignmentReportTable/Assign
 // Actions
 import * as FeatureAnalysisActions from '../../actions/feature-analysis-actions';
 
+import Breadcrumb from '../../components/A10-UI/Breadcrumb';
+import BREADCRUMB from '../../constants/breadcrumb';
+
 class FeatureAnalysisPage extends Component {
     constructor(props){
       super(props);
@@ -22,6 +25,7 @@ class FeatureAnalysisPage extends Component {
 
         return (
             <div className="row">
+                <Breadcrumb data={BREADCRUMB.tablepageassignment} />
                 <AssignmentReportTable data={dataSource} userData={aryOwners} />
             </div>
         );

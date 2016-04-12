@@ -70,6 +70,7 @@ export default keyMirror({
     // Article actions
     FETCH_ARTICLE: null,
     FETCH_ARTICLE_SUCCESS: null,
+    FETCH_ARTICLE_FAIL: null,
     CREATE_ARTICLE: null,
     CREATE_ARTICLE_SUCCESS: null,
     CREATE_ARTICLE_FAIL: null,
@@ -110,6 +111,7 @@ export default keyMirror({
     FETCH_ASSIGNMENT_CATEGORIES_FAIL: null,
     SET_FORM_VISIBILITY: null,
     SET_CURRENT_LEAF_NODE: null,
+    SET_CURRENT_TREE_SELECTED_USER: null,
 
     // Bug Analysis page actions
     FETCH_BUG_REVIEW_APPLICATION_SUCCESS: null,
@@ -127,5 +129,6 @@ export default keyMirror({
     SET_BUG_REPORT_PROJECT_VERSION: null,
 
     // Resource Map page actions
-    FETCH_RESOURCE_MAP_DATA: null
+    FETCH_RESOURCE_MAP_DATA: null,
+    FETCH_RESOURCE_MAP_MODAL: null
 });

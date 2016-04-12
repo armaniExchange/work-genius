@@ -23,6 +23,8 @@ import BugTagMutation from '../models/BugTag/BugTagMutation.js';
 import AssignmentCategoryQuery from '../models/AssignmentCategory/AssignmentCategoryQuery.js';
 import AssignmentCategoryMutation from '../models/AssignmentCategory/AssignmentCategoryMutation.js';
 import BugStats from '../models/Bug/BugStats.js';
+import WorkLogMutation from '../models/WorkLog/WorkLogMutation.js';
+import WorkLogQuery from '../models/WorkLog/WorkLogQuery.js';
 
 const schema = new GraphQLSchema({
 	query: new GraphQLObjectType({
@@ -55,7 +57,9 @@ const schema = new GraphQLSchema({
 			getRootCauseSummary	   : BugStats.getRootCauseSummary,
 			getOwnerSummary		   : BugStats.getOwnerSummary,
 			getTagSummary		   : BugStats.getBugSummary,
-			getOwnerRootCauseSummary	   : BugStats.getOwnerRootCauseSummary
+			getOwnerRootCauseSummary	   : BugStats.getOwnerRootCauseSummary,
+			//worklog
+			getWorkLogList		   : WorkLogQuery.getWorkLogList
 		}
 	}),
 	mutation: new GraphQLObjectType({
@@ -82,7 +86,10 @@ const schema = new GraphQLSchema({
       updateAssignmentCategory: AssignmentCategoryMutation.updateAssignmentCategory,
 			//Bug page
 			updateBug				  : BugMutation.updateBug,
-			createBugTag			  : BugTagMutation.createBugTag
+			createBugTag			  : BugTagMutation.createBugTag,
+			//work log page
+			createWorkLog			  : WorkLogMutation.createWorkLog,
+			updateWorkLog			  : WorkLogMutation.updateWorkLog
 		}
 	})
 });

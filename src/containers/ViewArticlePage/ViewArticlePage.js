@@ -57,7 +57,7 @@ class ViewArticlePage extends Component {
             top: 5,
             right: 5
           }}>
-            <Link to={`/main/articles/edit/${id}`}>
+            <Link to={`/main/knowledge/document/edit/${id}`}>
               <RaisedButton
                 style={{margin: 10}}
                 label="Edit"

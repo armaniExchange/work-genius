@@ -3,10 +3,12 @@ import {
 	GraphQLObjectType,
 	GraphQLString,
 	GraphQLInt,
-	GraphQLList
+	GraphQLList,
+	GraphQLFloat
 } from 'graphql';
 import PTOType from '../PTO/PTOType.js';
 import TaskType from '../Task/TaskType.js';
+import WorkLog_Type from '../WorkLog/WorkLogType.js';
 
 let UserType = new GraphQLObjectType({
 	name: 'User',
@@ -87,6 +89,26 @@ let UserType = new GraphQLObjectType({
 		alias: {
 			type: GraphQLString,
 			description: 'User alias'
+		},
+		worklogs: {
+			type: new GraphQLList(new GraphQLObjectType({
+				name: 'UserWorkLog',
+				fields:{
+						date: {
+			        	type: GraphQLFloat,
+			        	description: 'date'
+			        },
+			        type: {
+			            type: GraphQLString,
+			            description: 'workday/pto/holiday'
+			        },
+			        worklog_items: {
+			            type: new GraphQLList(WorkLog_Type),
+			            description: 'workday/pto/holiday'
+			        }
+				}
+			})),
+			description: 'worklog list'
 		}
 	})
 });

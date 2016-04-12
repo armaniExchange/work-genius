@@ -19,7 +19,7 @@ const initialState = Map({
         Map({ title: 'Prevent Tags', key: 'tags', colspan: 3}),
         Map({ title: 'Belongs To Menu', key: 'menu', colspan: 2}),
         Map({ title: 'Owner', key: 'assigned_to', colspan: 1}),
-        Map({ title: 'Bug Resolved Status', key: 'resolved_status', colspan: 2}),
+        Map({ title: 'Resolved Status', key: 'resolved_status', colspan: 2}),
         Map({ title: 'Root Cause Detail', key: 'review', colspan: 2})
     ),
     // allProjectVersions: List.of('4.1.0', '3.2.1', '3.2.0'),
@@ -38,6 +38,7 @@ const initialState = Map({
     resolvedReasonTypes: List.of(
         Map({ label: 'GUI Code Issue', value: 'GUI Code Issue' }),
         Map({ label: 'AXAPI', value: 'AXAPI' }),
+        // Map({ label: 'AXAPI was changed', value: 'AXAPI was changed' }),
         Map({ label: 'Look and Feel', value: 'Look and Feel' }),
         Map({ label: 'Requirement Change', value: 'Requirement Change' }),
         Map({ label: 'Browser Related', value: 'Browser Related' }),

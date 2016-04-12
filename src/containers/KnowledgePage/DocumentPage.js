@@ -7,6 +7,8 @@ import { Link } from 'react-router';
 import { bindActionCreators } from 'redux';
 import TextField from 'material-ui/lib/text-field';
 import RaisedButton from 'material-ui/lib/raised-button';
+import Breadcrumb from '../../components/A10-UI/Breadcrumb';
+import BREADCRUMB from '../../constants/breadcrumb';
 
 import ArticleListItem from '../../components/ArticleListItem/ArticleListItem';
 import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
@@ -95,8 +97,9 @@ class DocumentPage extends Component {
 
     return (
       <section>
+        <Breadcrumb data={BREADCRUMB.document} />
         <div style={leftPanelStyle}>
-          <Link to="/main/articles/edit/new">
+          <Link to="/main/knowledge/document/edit/new">
             <RaisedButton
               label="+ Create a Document"
               secondary={true} />

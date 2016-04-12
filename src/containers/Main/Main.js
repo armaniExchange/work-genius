@@ -37,7 +37,7 @@ class Main extends Component {
 	_mapPathNameToDisplayName(pathName, navItems) {
 		var re = /main\/([a-zA-Z0-9-_]*)\/?/i;
 		let titleMatchResult = pathName.match(re),
-		    titleFromPath = titleMatchResult ? titleMatchResult[1] : titleMatchResult,
+		    titleFromPath = titleMatchResult ? titleMatchResult[1] : '',
 			filteredItems = navItems.filter((item) => {
 				let itemMatchResult = item.link.match(re),
 					titleFromItem = itemMatchResult ? itemMatchResult[1] : itemMatchResult;
@@ -68,7 +68,8 @@ class Main extends Component {
 			currentSelectedPageSubMenu
 		} = this.props.mainState;
 		const {
-			errorMessage
+			errorMessage,
+      currentUser
 		} = this.props.appState;
 		const { logout } = this.props.appActions;
 
@@ -86,6 +87,7 @@ class Main extends Component {
 				<Navigation
 				    headerTitle={navHeaderTitle}
 				    navItems={navItems}
+            currentUser={currentUser}
 				    hasLogo={hasLogo}
 				    onNavItemsClick={this._navItemsClickHandler}
 				    onLogoutHandler={logout} />
