@@ -24,10 +24,9 @@
 ### Start Server
 You can choose to start the part you are working on or both:
 
-Start front-end: `npm run dev`
-Start back-end: `npm run serverDev`
-
-To run both front-end and back-end: `npm run start`
+- Start back-end: `npm run serverDev`
+- Start front-end: `npm run dev`
+- Run both back-end and front-end: `npm run start`
 
 ## Tools
 - Our database visualizer is located at `192.168.95.155:8080`
