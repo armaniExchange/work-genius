@@ -43,7 +43,7 @@ const initialState = Map({
         Map({ label: 'Requirement Change', value: 'Requirement Change' }),
         Map({ label: 'Browser Related', value: 'Browser Related' }),
         Map({ label: 'Cannot be Reproduced', value: 'Cannot be Reproduced' }),
-        Map({ label: 'AXAPI Not Supported”', value: 'AXAPI Not Supported”' }),
+        Map({ label: 'AXAPI Not Supported', value: 'AXAPI Not Supported' }),
         Map({ label: 'GUI Not Supported', value: 'GUI Not Supported' }),
         Map({ label: 'Others', value: 'Others' })
     ),
