@@ -110,6 +110,36 @@ let TaskMutation = {
 			return 'Create successfully!';
 		}
 	},
+	'updateOvertimeApplicationStatus': {
+		type: GraphQLString,
+		description: 'Update a overtime application',
+		args: {
+			id: {
+				type: GraphQLString,
+				description: 'overtime application id to be updated'
+			},
+			status: {
+				type: GraphQLString,
+				description: 'new overtime application status'
+			}
+		},
+		resolve: async (root, { id, status }) => {
+			let connection = null,
+				mutationQuery = null;
+			try {
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				mutationQuery = r.db('work_genius').table('overtime').get(id).update({
+					status: status
+				});
+				await mutationQuery.run(connection);
+				await connection.close();
+			} catch (err) {
+				return err;
+			}
+
+			return 'Update successfully!';
+		}
+	}
 };
 
 export default TaskMutation;

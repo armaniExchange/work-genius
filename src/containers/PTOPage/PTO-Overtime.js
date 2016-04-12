@@ -13,6 +13,7 @@ import PTOOvertimeTable from '../../components/PTO-Overtime-Table/PTO-Overtime-T
 import Space from '../../components/A10-UI/Space.js';
 import RaisedButton from 'material-ui/lib/raised-button';
 import OvertimeApplyModal from '../../components/Overtime-Apply-Modal/Overtime-Apply-Modal';
+import RadioGroup from '../../components/A10-UI/Input/Radio-Group.js';
 // Constants
 import BREADCRUMB from '../../constants/breadcrumb';
 import * as PTOConstants from '../../constants/pto-constants';
@@ -21,6 +22,10 @@ class PTOOvertime extends Component {
     componentWillMount() {
         const { fetchOvertimeApplications, currentUser, selectedYear } = this.props;
         fetchOvertimeApplications(currentUser.id, selectedYear);
+    }
+    componentWillUnmount() {
+        const { resetPTOTable } = this.props;
+        resetPTOTable();
     }
     _onApplyButtonClicked() {
         const { setOvertimeApplyModalState } = this.props;
@@ -43,24 +48,41 @@ class PTOOvertime extends Component {
         };
         createOvertimeApplication(finalData);
     }
+    _onOvertimeStatusUpdate(id, newState) {
+        const { setOvertimeApplicationStatus } = this.props;
+        setOvertimeApplicationStatus(id, newState);
+    }
     render() {
         const {
             overtimeApplications,
             overtimeTitleKeyMap,
             sortOvertimeTableBy,
             sortOvertimeTableByCategory,
-            showOvertimeApplyModal
+            showOvertimeApplyModal,
+            overtimeFilterOptions,
+            overtimeFilterConditions,
+            filterOvertimeTable
         } = this.props;
         return (
             <section>
                 <Breadcrumb data={BREADCRUMB.overtime} />
+                <Space h="20" />
+                <RadioGroup
+                    title="Status"
+                    isNeedAll={true}
+                    aryRadioConfig={overtimeFilterOptions}
+                    checkRadio={overtimeFilterConditions.status}
+                    onRadioChange={(curVal)=>{
+                        filterOvertimeTable({'status': curVal});
+                    }} />
+                <Space h="20" />
                 <PTOOvertimeTable
                     data={overtimeApplications}
                     titleKeyMap={overtimeTitleKeyMap}
                     enableSort={true}
                     sortBy={sortOvertimeTableBy}
                     onSortHandler={sortOvertimeTableByCategory}
-                    onStatusUpdateHandler={this._onOvertimeStatusUpdate} />
+                    onStatusUpdateHandler={::this._onOvertimeStatusUpdate} />
                 <Space h="20" />
                 <RaisedButton
                     label="Overtime Application"
@@ -84,10 +106,15 @@ PTOOvertime.propTypes = {
     selectedYear            : PropTypes.number,
     currentUser             : PropTypes.object,
     showOvertimeApplyModal: PropTypes.bool,
+    overtimeFilterOptions: PropTypes.array,
+    overtimeFilterConditions: PropTypes.object,
     sortOvertimeTableByCategory: PropTypes.func,
     fetchOvertimeApplications: PropTypes.func,
     setOvertimeApplyModalState: PropTypes.func,
-    createOvertimeApplication: PropTypes.func
+    createOvertimeApplication: PropTypes.func,
+    setOvertimeApplicationStatus: PropTypes.func,
+    filterOvertimeTable: PropTypes.func,
+    resetPTOTable: PropTypes.func
 };
 
 function mapStateToProps(state) {

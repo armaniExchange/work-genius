@@ -35,6 +35,7 @@ const initialState = Map({
         Map({ title: 'Action', key: 'id'})
     ),
     ptoFilterConditions: initialPTOFilterConditions,
+    overtimeFilterConditions: initialPTOFilterConditions,
     sortPTOTableBy: Map({
         category: '',
         status: 0
@@ -56,6 +57,14 @@ const initialState = Map({
             });
         })
     ),
+    overtimeFilterOptions: List(
+        [PENDING, APPROVED, DENIED].map(status => {
+            return Map({
+                name: status,
+                value: status
+            });
+        })
+    ),
     overtimeTitleKeyMap: List.of(
         Map({ title: 'Date', key: 'start_date'}),
         Map({ title: 'Hours', key: 'hours'}),
@@ -70,17 +79,18 @@ const initialState = Map({
 function filterOriginal(state, isOvertime) {
     let nextState = state,
         target = isOvertime ? `overtimeApplications` : `applications`,
-        targetOriginalData = isOvertime ? `overtimeApplicationsOriginalData` : `applicationsOriginalData`;
+        targetOriginalData = isOvertime ? `overtimeApplicationsOriginalData` : `applicationsOriginalData`,
+        targetFilterConditions = isOvertime ? `overtimeFilterConditions` : `ptoFilterConditions`;
 
     nextState = nextState.update(target, () => {
-        let keys = nextState.get(`ptoFilterConditions`).keySeq();
+        let keys = nextState.get(targetFilterConditions).keySeq();
         let isKeyDeprecated = true;
         let filteredResult = nextState.get(targetOriginalData).filter((item) => {
             return keys.reduce((acc, key) => {
-                if (nextState.getIn([`ptoFilterConditions`, key]) === item.get(key)) {
+                if (nextState.getIn([targetFilterConditions, key]) === item.get(key)) {
                     isKeyDeprecated = false;
                 }
-                if (item.get(key) !== nextState.getIn([`ptoFilterConditions`, key]) && nextState.getIn([`ptoFilterConditions`, key]) !== '') {
+                if (item.get(key) !== nextState.getIn([targetFilterConditions, key]) && nextState.getIn([targetFilterConditions, key]) !== '') {
                     return acc && false;
                 }
                 return acc && true;
@@ -142,10 +152,11 @@ function sortOriginal(state, isOvertime) {
     return state;
 }
 
-function filterTable(state, filterConditions) {
-    let nextState = state.set(`ptoFilterConditions`, Map(filterConditions));
-    nextState = filterOriginal(nextState);
-    nextState = sortOriginal(nextState);
+function filterTable(state, filterConditions, isOvertime) {
+    let targetConditions = isOvertime ? `overtimeFilterConditions` : `ptoFilterConditions`,
+        nextState = state.set(targetConditions, Map(filterConditions));
+    nextState = filterOriginal(nextState, isOvertime);
+    nextState = sortOriginal(nextState, isOvertime);
     return nextState;
 }
 
@@ -241,7 +252,11 @@ function resetTable(state) {
         .set(`sortOvertimeTableBy`, Map({
             category: '',
             status: 0
-        }));
+        }))
+        .set(
+            `overtimeFilterConditions`,
+            initialState.get(`ptoFilterConditions`)
+        );
 }
 
 export default function ptoReducer(state = initialState, action) {
@@ -250,13 +265,15 @@ export default function ptoReducer(state = initialState, action) {
         case actionTypes.SET_PTO_APPLY_MODAL_STATE:
             return state.set('showPTOApplyModal', action.state);
         case actionTypes.SET_OVERTIME_APPLY_MODAL_STATE:
-            return state.set('showOvertimeApplyModal', action.state);            
+            return state.set('showOvertimeApplyModal', action.state);
         case actionTypes.SORT_PTO_TABLE_BY_CATEGORY:
             return sortTable(state, action.category);
         case actionTypes.SORT_OVERTIME_TABLE_BY_CATEGORY:
             return sortTable(state, action.category, true);
         case actionTypes.FILTER_PTO_TABLE:
             return filterTable(state, action.filterConditions);
+        case actionTypes.FILTER_OVERTIME_TABLE:
+            return filterTable(state, action.filterConditions, true);
         case actionTypes.RESET_PTO_TABLE:
             return resetTable(state);
         case actionTypes.FETCH_OVERTIME_APPLICATION_SUCCESS:

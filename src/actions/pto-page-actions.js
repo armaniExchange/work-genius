@@ -34,6 +34,13 @@ export function filterPTOTable(filterConditions) {
     };
 };
 
+export function filterOvertimeTable(filterConditions) {
+    return {
+        type: actionTypes.FILTER_OVERTIME_TABLE,
+        filterConditions
+    };
+};
+
 export function sortPTOTableByCategory(category) {
     return {
         type: actionTypes.SORT_PTO_TABLE_BY_CATEGORY,
@@ -332,6 +339,35 @@ export function setPTOApplicationStatus(id, status) {
             .then(() => {
                 dispatch(setLoadingState(false));
                 dispatch(fetchPTOPageData(currentSelectedUserID));
+            })
+            .catch((err) => {
+                dispatch(setLoadingState(false));
+                dispatch(apiFailure(err));
+            });
+    };
+};
+
+export function setOvertimeApplicationStatus(id, status) {
+    return (dispatch, getState) => {
+        let config = {
+                method: 'POST',
+                body: `mutation RootMutationType {
+                    updateOvertimeApplicationStatus(id:"${id}", status:"${status}")
+                }`,
+                headers: {
+                    'Content-Type': 'application/graphql',
+                    'x-access-token': localStorage.token
+                }
+            },
+            currentSelectedUserID = getState().pto.toJS().currentSelectedUserID,
+            currentSelectedYear = getState().pto.toJS().selectedYear;
+
+        dispatch(setLoadingState(true));
+        return fetch(SERVER_API_URL, config)
+            .then((res) => res.json())
+            .then(() => {
+                dispatch(setLoadingState(false));
+                dispatch(fetchOvertimeApplications(currentSelectedUserID, currentSelectedYear));
             })
             .catch((err) => {
                 dispatch(setLoadingState(false));

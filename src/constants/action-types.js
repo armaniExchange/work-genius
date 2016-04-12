@@ -65,6 +65,7 @@ export default keyMirror({
     INCREASE_YEAR: null,
     SORT_OVERTIME_TABLE_BY_CATEGORY: null,
     FETCH_OVERTIME_APPLICATION_SUCCESS: null,
+    FILTER_OVERTIME_TABLE: null,
 
     // Admin page actions
     FETCH_USERS_WITH_PRIVILEGE_SUCCESS: null,
