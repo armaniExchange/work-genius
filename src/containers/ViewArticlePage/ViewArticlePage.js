@@ -74,7 +74,8 @@ class ViewArticlePage extends Component {
       content,
       tags,
       comments,
-      updatedAt
+      updatedAt,
+      createdAt
     } = this.props;
     const {
       isConfirmDeleteArticleDialogVisible
@@ -110,7 +111,7 @@ class ViewArticlePage extends Component {
             <span>Author: {author && author.name}&nbsp;</span>
             &nbsp;&nbsp;
             <span style={{color: 'gray'}}>
-              {moment(updatedAt).format('YYYY-MM-DD')}&nbsp;
+              {moment(updatedAt || createdAt).format('YYYY-MM-DD')}&nbsp;
             </span>
             &nbsp;&nbsp;
             <span>
