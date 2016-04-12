@@ -10,7 +10,6 @@ class ResourceMapCellAddButton extends Component {
 
 	_onClickAddButton() {
 		const { onModalHander } = this.props;
-		console.log('?????????????????????>>>>>>>>>>>>>>>>>>>>');
 		onModalHander(true);
 	}
 
