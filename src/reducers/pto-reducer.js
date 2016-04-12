@@ -22,6 +22,8 @@ const initialPTOFilterConditions = Map({
 const initialState = Map({
     applicationsOriginalData: List.of(),
     applications: List.of(),
+    overtimeApplicationsOriginalData: List.of(),
+    overtimeApplications: List.of(),
     ptoTitleKeyMap: List.of(
         Map({ title: 'Start Date', key: 'start_date'}),
         Map({ title: 'End Date', key: 'end_date'}),
@@ -37,6 +39,10 @@ const initialState = Map({
         category: '',
         status: 0
     }),
+    sortOvertimeTableBy: Map({
+        category: '',
+        status: 0
+    }),
     allUsersWithClosestPTO: List.of(),
     showPTOApplyModal: false,
     currentSelectedUserID: '',
@@ -48,15 +54,27 @@ const initialState = Map({
                 value: status
             });
         })
-    )
+    ),
+    overtimeTitleKeyMap: List.of(
+        Map({ title: 'Date', key: 'start_date'}),
+        Map({ title: 'Hours', key: 'hours'}),
+        Map({ title: 'Apply Date', key: 'apply_date'}),
+        Map({ title: 'Status', key: 'status'}),
+        Map({ title: 'Memo', key: 'memo'}),
+        Map({ title: 'Applicant', key: 'applicant'}),
+        Map({ title: 'Action', key: 'id'})
+    ),
 });
 
-function filterOriginal(state) {
-    let nextState = state;
-    nextState = nextState.update(`applications`, () => {
+function filterOriginal(state, isOvertime) {
+    let nextState = state,
+        target = isOvertime ? `overtimeApplications` : `applications`,
+        targetOriginalData = isOvertime ? `overtimeApplicationsOriginalData` : `applicationsOriginalData`;
+
+    nextState = nextState.update(target, () => {
         let keys = nextState.get(`ptoFilterConditions`).keySeq();
         let isKeyDeprecated = true;
-        let filteredResult = nextState.get(`applicationsOriginalData`).filter((item) => {
+        let filteredResult = nextState.get(targetOriginalData).filter((item) => {
             return keys.reduce((acc, key) => {
                 if (nextState.getIn([`ptoFilterConditions`, key]) === item.get(key)) {
                     isKeyDeprecated = false;
@@ -68,7 +86,7 @@ function filterOriginal(state) {
             }, true);
         });
         if (isKeyDeprecated && filteredResult.isEmpty()) {
-            return nextState.get(`applicationsOriginalData`);
+            return nextState.get(targetOriginalData);
         }
         return filteredResult.isEmpty() ? List.of() : filteredResult;
     });
@@ -90,9 +108,10 @@ function sortAlphaNum(a,b) {
     return aA > bA ? 1 : -1;
 }
 
-function sortOriginal(state) {
-    let category = state.get(`sortPTOTableBy`).get('category');
-    let sortStatus = state.get(`sortPTOTableBy`).get('status');
+function sortOriginal(state, isOvertime) {
+    let category = isOvertime ? state.get(`sortOvertimeTableBy`).get('category') : state.get(`sortPTOTableBy`).get('category'),
+        sortStatus = isOvertime ? state.get(`sortOvertimeTableBy`).get('status') : state.get(`sortPTOTableBy`).get('status'),
+        targetKeyMap = isOvertime ? `overtimeTitleKeyMap` : `ptoTitleKeyMap`;
 
     if (!category || sortStatus === 0) {
         return state;
@@ -101,7 +120,7 @@ function sortOriginal(state) {
         let sorted = data.sort((curr, next) => {
             let result = 0;
             // Get key corresponded to filter title
-            let key = state.get(`ptoTitleKeyMap`).filter((map) => {
+            let key = state.get(targetKeyMap).filter((map) => {
                 return map.get('title') === category;
             }).first().get('key');
             let tempResult = sortAlphaNum(curr.get(key).toString(10), next.get(key).toString(10));
@@ -128,9 +147,9 @@ function filterTable(state, filterConditions) {
     return nextState;
 }
 
-function sortTable(state, newCategory, type) {
-    let oldCategory = state.get(`sortPTOTableBy`).get('category');
-    let oldStatus = state.get(`sortPTOTableBy`).get('status');
+function sortTable(state, newCategory, isOvertime) {
+    let oldCategory = isOvertime ? state.get(`sortOvertimeTableBy`).get('category') : state.get(`sortPTOTableBy`).get('category');
+    let oldStatus = isOvertime ? state.get(`sortOvertimeTableBy`).get('status') : state.get(`sortPTOTableBy`).get('status');
     let newStatus = 0;
     if (oldCategory === newCategory) {
         newStatus = oldStatus === 1 ? -1 : oldStatus === -1 ? 0 : 1;
@@ -141,9 +160,9 @@ function sortTable(state, newCategory, type) {
         category: newCategory,
         status: newStatus
     });
-    state = state.set(`sortPTOTableBy`, category);
-    state = filterOriginal(state, type);
-    state = sortOriginal(state, type);
+    state = isOvertime ? state.set(`sortOvertimeTableBy`, category) : state.set(`sortPTOTableBy`, category);
+    state = filterOriginal(state, isOvertime);
+    state = sortOriginal(state, isOvertime);
     return state;
 }
 
@@ -221,6 +240,8 @@ export default function ptoReducer(state = initialState, action) {
             return state.set('showPTOApplyModal', action.state);
         case actionTypes.SORT_PTO_TABLE_BY_CATEGORY:
             return sortTable(state, action.category);
+        case actionTypes.SORT_OVERTIME_TABLE_BY_CATEGORY:
+            return sortTable(state, action.category, true);
         case actionTypes.FILTER_PTO_TABLE:
             return filterTable(state, action.filterConditions);
         case actionTypes.RESET_PTO_TABLE:

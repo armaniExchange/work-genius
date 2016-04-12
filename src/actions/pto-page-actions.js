@@ -34,6 +34,13 @@ export function sortPTOTableByCategory(category) {
     };
 };
 
+export function sortOvertimeTableByCategory(category) {
+    return {
+        type: actionTypes.SORT_OVERTIME_TABLE_BY_CATEGORY,
+        category
+    };
+};
+
 export function fetchPTOApplicationsSuccess(data) {
     return {
         type: actionTypes.FETCH_PTO_APPLICATION_SUCCESS,

@@ -62,6 +62,7 @@ export default keyMirror({
     RESET_PTO_TABLE: null,
     DECREASE_YEAR: null,
     INCREASE_YEAR: null,
+    SORT_OVERTIME_TABLE_BY_CATEGORY: null,
 
     // Admin page actions
     FETCH_USERS_WITH_PRIVILEGE_SUCCESS: null,
