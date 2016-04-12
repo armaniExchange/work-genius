@@ -153,15 +153,12 @@ export function fetchOvertimeApplications(userId, timeRange) {
                 'x-access-token': localStorage.token
             }
         };
-        dispatch(setLoadingState(true));
         return fetch(SERVER_API_URL, config)
             .then((res) => res.json())
             .then((body) => {
-                dispatch(setLoadingState(false));
                 dispatch(fetchOvertimeApplicationsSuccess(body.data.overtimeApplications));
             })
             .catch((err) => {
-                dispatch(setLoadingState(false));
                 throw new Error(err);
             });
     };
@@ -216,19 +213,49 @@ export function fetchPTOPageData(userId) {
     };
 };
 
-export function goToPreviousYear() {
+export function fetchOvertimePageData(userId) {
     return (dispatch, getState) => {
-        let currentSelectedUserID = getState().pto.toJS().currentSelectedUserID;
-        dispatch(decreaseYearRange());
-        dispatch(fetchPTOPageData(currentSelectedUserID));
+        let timeRange = getState().pto.toJS().selectedYear;
+        dispatch(setLoadingState(true));
+        Promise.all([
+            dispatch(fetchUsersWithPTO()),
+            dispatch(fetchOvertimeApplications(userId, timeRange))
+        ]).then(
+            () => {
+                dispatch(setCurrentSelectedUserId(userId));
+                dispatch(setLoadingState(false));
+            },
+            (err) => {
+                dispatch(setLoadingState(false));
+                dispatch(apiFailure(err));
+            }
+        );
     };
 };
 
-export function goToNextYear() {
+export function goToPreviousYear(isOvertime) {
     return (dispatch, getState) => {
-        let currentSelectedUserID = getState().pto.toJS().currentSelectedUserID;
+        let currentSelectedUserID = getState().pto.toJS().currentSelectedUserID,
+            currentSelectedYear = getState().pto.toJS().selectedYear;
+        dispatch(decreaseYearRange());
+        if (isOvertime) {
+            dispatch(fetchOvertimePageData(currentSelectedUserID, currentSelectedYear));
+        } else {
+            dispatch(fetchPTOPageData(currentSelectedUserID));
+        }
+    };
+};
+
+export function goToNextYear(isOvertime) {
+    return (dispatch, getState) => {
+        let currentSelectedUserID = getState().pto.toJS().currentSelectedUserID,
+            currentSelectedYear = getState().pto.toJS().selectedYear;
         dispatch(increaseYearRange());
-        dispatch(fetchPTOPageData(currentSelectedUserID));
+        if (isOvertime) {
+            dispatch(fetchOvertimePageData(currentSelectedUserID, currentSelectedYear));
+        } else {
+            dispatch(fetchPTOPageData(currentSelectedUserID));
+        }
     };
 };
 
@@ -282,7 +309,7 @@ export function createOvertimeApplication(data) {
             .then((res) => res.json())
             .then(() => {
                 dispatch(setLoadingState(false));
-                dispatch(fetchOvertimeApplications(currentSelectedUserID, currentSelectedYear));
+                dispatch(fetchOvertimePageData(currentSelectedUserID, currentSelectedYear));
             })
             .catch((err) => {
                 dispatch(setLoadingState(false));
@@ -367,7 +394,7 @@ export function setOvertimeApplicationStatus(id, status) {
             .then((res) => res.json())
             .then(() => {
                 dispatch(setLoadingState(false));
-                dispatch(fetchOvertimeApplications(currentSelectedUserID, currentSelectedYear));
+                dispatch(fetchOvertimePageData(currentSelectedUserID, currentSelectedYear));
             })
             .catch((err) => {
                 dispatch(setLoadingState(false));

@@ -18,7 +18,6 @@ import {
 const initialPTOFilterConditions = Map({
     'status': ''
 });
-
 const initialState = Map({
     applicationsOriginalData: List.of(),
     applications: List.of(),
@@ -84,23 +83,19 @@ function filterOriginal(state, isOvertime) {
 
     nextState = nextState.update(target, () => {
         let keys = nextState.get(targetFilterConditions).keySeq();
-        let isKeyDeprecated = true;
         let filteredResult = nextState.get(targetOriginalData).filter((item) => {
             return keys.reduce((acc, key) => {
-                if (nextState.getIn([targetFilterConditions, key]) === item.get(key)) {
-                    isKeyDeprecated = false;
-                }
                 if (item.get(key) !== nextState.getIn([targetFilterConditions, key]) && nextState.getIn([targetFilterConditions, key]) !== '') {
                     return acc && false;
                 }
                 return acc && true;
             }, true);
         });
-        if (isKeyDeprecated && filteredResult.isEmpty()) {
-            return nextState.get(targetOriginalData);
-        }
+
+
         return filteredResult.isEmpty() ? List.of() : filteredResult;
     });
+
     return nextState;
 }
 
@@ -288,6 +283,7 @@ export default function ptoReducer(state = initialState, action) {
         case actionTypes.FETCH_PTO_APPLICATION_SUCCESS:
             nextState = setTableData(state, action.data);
             if (!is(state.get('ptoFilterConditions'), initialPTOFilterConditions)) {
+                console.log('I SHOULD FILTER!~');
                 nextState = filterOriginal(nextState);
             }
             if (state.get('sortPTOTableBy').get('category')) {

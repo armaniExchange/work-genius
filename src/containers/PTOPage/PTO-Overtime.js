@@ -14,14 +14,20 @@ import Space from '../../components/A10-UI/Space.js';
 import RaisedButton from 'material-ui/lib/raised-button';
 import OvertimeApplyModal from '../../components/Overtime-Apply-Modal/Overtime-Apply-Modal';
 import RadioGroup from '../../components/A10-UI/Input/Radio-Group.js';
+import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
+import PTOYearFilter from '../../components/PTO-Year-Filter/PTO-Year-Filter';
 // Constants
 import BREADCRUMB from '../../constants/breadcrumb';
 import * as PTOConstants from '../../constants/pto-constants';
 
 class PTOOvertime extends Component {
     componentWillMount() {
-        const { fetchOvertimeApplications, currentUser, selectedYear } = this.props;
-        fetchOvertimeApplications(currentUser.id, selectedYear);
+        const {
+            fetchOvertimePageData,
+            currentUser,
+            selectedYear
+        } = this.props;
+        fetchOvertimePageData(currentUser.id, selectedYear);
     }
     componentWillUnmount() {
         const { resetPTOTable } = this.props;
@@ -52,6 +58,14 @@ class PTOOvertime extends Component {
         const { setOvertimeApplicationStatus } = this.props;
         setOvertimeApplicationStatus(id, newState);
     }
+    _onUserFilterClickedHandler(id) {
+        const {
+            resetPTOTable,
+            fetchOvertimePageData
+        } = this.props;
+        resetPTOTable();
+        fetchOvertimePageData(id);
+    }
     render() {
         const {
             overtimeApplications,
@@ -61,11 +75,38 @@ class PTOOvertime extends Component {
             showOvertimeApplyModal,
             overtimeFilterOptions,
             overtimeFilterConditions,
-            filterOvertimeTable
+            filterOvertimeTable,
+            allUsersWithClosestPTO,
+            currentSelectedUserID,
+            selectedYear,
+            goToPreviousYear,
+            goToNextYear
         } = this.props;
+        let dropdownTitle = 'All';
+        let curUser = allUsersWithClosestPTO.find(_user => {
+            if (_user.id===currentSelectedUserID) {
+                return _user;
+            }
+        });
+        if (curUser && curUser.name) {
+            dropdownTitle = curUser.name;
+        }
+        
         return (
             <section>
                 <Breadcrumb data={BREADCRUMB.overtime} />
+                <PTOYearFilter
+                    selectedYear={selectedYear}
+                    goToPreviousYear={() => {goToPreviousYear(true);}}
+                    goToNextYear={() => {goToNextYear(true);}} />
+                <Space h="20" />
+                <DropDownList
+                    isNeedAll={true}
+                    onOptionClick={::this._onUserFilterClickedHandler}
+                    title={dropdownTitle}
+                    aryOptionConfig={allUsersWithClosestPTO.map((item) => {
+                        return {title: item.name, value: item.id, subtitle: ''};
+                    })} />
                 <Space h="20" />
                 <RadioGroup
                     title="Status"
@@ -102,19 +143,23 @@ class PTOOvertime extends Component {
 PTOOvertime.propTypes = {
     overtimeApplications: PropTypes.array,
     overtimeTitleKeyMap: PropTypes.array,
+    allUsersWithClosestPTO: PropTypes.array,
     sortOvertimeTableBy: PropTypes.object,
+    currentSelectedUserID: PropTypes.string,
     selectedYear            : PropTypes.number,
     currentUser             : PropTypes.object,
     showOvertimeApplyModal: PropTypes.bool,
     overtimeFilterOptions: PropTypes.array,
     overtimeFilterConditions: PropTypes.object,
     sortOvertimeTableByCategory: PropTypes.func,
-    fetchOvertimeApplications: PropTypes.func,
+    fetchOvertimePageData: PropTypes.func,
     setOvertimeApplyModalState: PropTypes.func,
     createOvertimeApplication: PropTypes.func,
     setOvertimeApplicationStatus: PropTypes.func,
     filterOvertimeTable: PropTypes.func,
-    resetPTOTable: PropTypes.func
+    resetPTOTable: PropTypes.func,
+    goToPreviousYear        : PropTypes.func,
+    goToNextYear            : PropTypes.func
 };
 
 function mapStateToProps(state) {

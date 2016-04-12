@@ -11,8 +11,8 @@ import * as mainActions from '../../actions/main-actions';
 import * as PTOConstants from '../../constants/pto-constants';
 // Components
 import PTOApplyModal from '../../components/PTO-Apply-Modal/PTO-Apply-Modal';
-import PTOTable from '../../components/PTO-Table/PTO-Table.js';
-
+import PTOTable from '../../components/PTO-Table/PTO-Table';
+import PTOYearFilter from '../../components/PTO-Year-Filter/PTO-Year-Filter';
 // import NameFilterGroup from '../../components/Name-Filter-Group/Name-Filter-Group.js';
 import RadioGroup from '../../components/A10-UI/Input/Radio-Group.js';
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
@@ -22,17 +22,6 @@ import RaisedButton from 'material-ui/lib/raised-button';
 
 import Breadcrumb from '../../components/A10-UI/Breadcrumb';
 import BREADCRUMB from '../../constants/breadcrumb';
-
-let PTOYearFilter = ({ selectedYear, goToPreviousYear, goToNextYear }) => {
-    let style = {'minWidth':'25px', 'minHeight':'25px', height:'25px', 'lineHeight':1};
-    return (
-        <div className="pto-year-filter">
-            <RaisedButton label="<" style={style} onClick={goToPreviousYear} />
-            <span style={{margin:'0 6px', display:'inline-block'}}>{selectedYear}</span>
-            <RaisedButton label=">" style={style} onClick={goToNextYear} />
-        </div>
-    );
-};
 
 class PTOApplication extends Component {
     constructor(props) {
@@ -45,7 +34,11 @@ class PTOApplication extends Component {
         this._onUserFilterClickedHandler = ::this._onUserFilterClickedHandler;
     }
     componentWillMount() {
-        const { fetchPTOPageData, currentUser, selectedYear } = this.props;
+        const {
+            fetchPTOPageData,
+            currentUser,
+            selectedYear
+        } = this.props;
         fetchPTOPageData(currentUser.id, selectedYear);
     }
     componentWillUnmount() {
