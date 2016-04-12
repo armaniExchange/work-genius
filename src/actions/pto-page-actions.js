@@ -20,6 +20,13 @@ export function setPTOApplyModalState(state) {
     };
 };
 
+export function setOvertimeApplyModalState(state) {
+    return {
+        type: actionTypes.SET_OVERTIME_APPLY_MODAL_STATE,
+        state
+    };
+};
+
 export function filterPTOTable(filterConditions) {
     return {
         type: actionTypes.FILTER_PTO_TABLE,
@@ -239,6 +246,36 @@ export function createPTOApplication(data) {
             .then(() => {
                 dispatch(setLoadingState(false));
                 dispatch(fetchPTOPageData(currentSelectedUserID));
+            })
+            .catch((err) => {
+                dispatch(setLoadingState(false));
+                dispatch(apiFailure(err));
+            });
+    };
+};
+
+export function createOvertimeApplication(data) {
+    return (dispatch, getState) => {
+        let config = {
+                method: 'POST',
+                body: `mutation RootMutationType {
+                    createOvertimeApplication(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+                }`,
+                headers: {
+                    'Content-Type': 'application/graphql',
+                    'x-access-token': localStorage.token
+                }
+            },
+            currentSelectedUserID = getState().pto.toJS().currentSelectedUserID,
+            currentSelectedYear = getState().pto.toJS().selectedYear;
+
+        dispatch(setOvertimeApplyModalState(false));
+        dispatch(setLoadingState(true));
+        return fetch(SERVER_API_URL, config)
+            .then((res) => res.json())
+            .then(() => {
+                dispatch(setLoadingState(false));
+                dispatch(fetchOvertimeApplications(currentSelectedUserID, currentSelectedYear));
             })
             .catch((err) => {
                 dispatch(setLoadingState(false));

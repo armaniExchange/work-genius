@@ -76,6 +76,7 @@ const schema = new GraphQLSchema({
 			createPTOApplication      : PTOMutation.createPTOApplication,
 			deletePTOApplication      : PTOMutation.deletePTOApplication,
 			updatePTOApplicationStatus: PTOMutation.updatePTOApplicationStatus,
+			createOvertimeApplication : PTOMutation.createOvertimeApplication,
 			// User page
 			updateUserPrivilege       : UserMutation.updateUserPrivilege,
 			// Document page

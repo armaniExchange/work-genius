@@ -55,6 +55,7 @@ export default keyMirror({
 
     // PTO page actions
     SET_PTO_APPLY_MODAL_STATE: null,
+    SET_OVERTIME_APPLY_MODAL_STATE: null,
     FILTER_PTO_TABLE: null,
     SORT_PTO_TABLE_BY_CATEGORY: null,
     FETCH_PTO_APPLICATION_SUCCESS: null,

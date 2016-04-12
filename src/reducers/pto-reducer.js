@@ -45,6 +45,7 @@ const initialState = Map({
     }),
     allUsersWithClosestPTO: List.of(),
     showPTOApplyModal: false,
+    showOvertimeApplyModal: false,
     currentSelectedUserID: '',
     selectedYear: moment().get('year'),
     ptoFilterOptions: List(
@@ -248,6 +249,8 @@ export default function ptoReducer(state = initialState, action) {
     switch (action.type) {
         case actionTypes.SET_PTO_APPLY_MODAL_STATE:
             return state.set('showPTOApplyModal', action.state);
+        case actionTypes.SET_OVERTIME_APPLY_MODAL_STATE:
+            return state.set('showOvertimeApplyModal', action.state);            
         case actionTypes.SORT_PTO_TABLE_BY_CATEGORY:
             return sortTable(state, action.category);
         case actionTypes.SORT_OVERTIME_TABLE_BY_CATEGORY:
