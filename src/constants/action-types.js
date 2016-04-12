@@ -129,5 +129,6 @@ export default keyMirror({
     SET_BUG_REPORT_PROJECT_VERSION: null,
 
     // Resource Map page actions
-    FETCH_RESOURCE_MAP_DATA: null
+    FETCH_RESOURCE_MAP_DATA: null,
+    FETCH_RESOURCE_MAP_MODAL: null
 });
