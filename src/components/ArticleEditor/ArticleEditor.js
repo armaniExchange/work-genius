@@ -105,9 +105,10 @@ class ArticleEditor extends Component {
       <div className="article-editor"
         {...this.props} >
         <TextField
-           hintText="Title"
-           value={title}
-           onChange={onTitleChange} />
+          style={{width: '100%'}}
+          hintText="Title"
+          value={title}
+          onChange={onTitleChange} />
         <br />
         <DropDownMenu
           className="drop-down-menu"

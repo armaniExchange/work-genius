@@ -5,7 +5,6 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { bindActionCreators } from 'redux';
-import TextField from 'material-ui/lib/text-field';
 import RaisedButton from 'material-ui/lib/raised-button';
 import Breadcrumb from '../../components/A10-UI/Breadcrumb';
 import BREADCRUMB from '../../constants/breadcrumb';
@@ -49,12 +48,6 @@ class DocumentPage extends Component {
 
   queryWithTag(tag) {
     this.props.documentActions.fetchArticles({tag});
-  }
-
-  onSearchChange(event) {
-    this.props.documentActions.fetchArticles({
-      q: event.target.value
-    });
   }
 
   onConfirmDeleteArticle(deletingArticle) {
@@ -104,11 +97,7 @@ class DocumentPage extends Component {
               label="+ Create a Document"
               secondary={true} />
           </Link>
-          <br />
-          <TextField
-            hintText="Search..."
-            onChange={::this.onSearchChange} />
-          <br/>
+          <h5>Hot tags</h5>
           <ArticleTagList
             tags={allTags}
             onClick={::this.queryWithTag} />
