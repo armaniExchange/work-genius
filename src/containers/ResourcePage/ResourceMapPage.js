@@ -38,17 +38,15 @@ class ResourceMapPage extends Component{
 	render () {
 		const {
 			startDate,
-			totalDays,
-			data
+			fetchResourceMapModalHandler
 		} = this.props;
 		return (
 			<section>
-        <Breadcrumb data={BREADCRUMB.resourcemap} />
+        		<Breadcrumb data={BREADCRUMB.resourcemap} />
 				<DatePicker defaultDate={String(startDate)} placeholder="Start Date" onChange={this._changeStartDate} />
 				<ResourceMapTable
-					startDate={startDate}
-					totalDay={totalDays}
-					data={data}
+					onModalHander={fetchResourceMapModalHandler}
+					{...this.props}
 				/>
 			</section>
 		);
@@ -58,13 +56,16 @@ class ResourceMapPage extends Component{
 ResourceMapPage.propTypes = {
 	startDate:     PropTypes.string.isRequired,
 	totalDays:     PropTypes.number.isRequired,
+	show:          PropTypes.bool.isRequired,
 	data: 		   PropTypes.array.isRequired,
-	queryResourceMapData: PropTypes.func.isRequired
+	queryResourceMapData: PropTypes.func.isRequired,
+	fetchResourceMapModalHandler: PropTypes.func.isRequired
 };
 
 ResourceMapPage.defaultProps = {
 	startDate: new Date(),
-	totalDays: 14,
+	totalDays: 10,
+	show: false,
 	data: []
 };
 

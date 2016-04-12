@@ -54,7 +54,7 @@ const appRoutes = () => (
 
         {/*Bug Analysis*/}
         <Route path="bug-analysis" component={requireAuth(BugAnalysisPage)}>
-          <Route path="bug-analysis" component={requireAuth(BugReviewPage)} /> {/*-- Bug Root Causes*/}
+          <Route path="bug-analysis" component={requireAuth(BugReviewPage)} /> {/*-- Root Causes*/}
           <Route path="bug-report" component={requireAuth(BugReportPage)} /> {/*-- Analysis Reports*/}
         </Route>
 

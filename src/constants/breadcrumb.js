@@ -11,7 +11,7 @@ let BREADCRUMB = {
   resourcemap: [{txt:'Resource Map', url: BASE_URL + '/resource/resource-map'}],
 
   buganalysis: [{txt:'Bug Analysis', url: BASE_URL + '/bug-analysis/bug-analysis'}],
-  bugrootcause: [{txt:'Bug Root Causes', url: BASE_URL + '/bug-analysis/bug-analysis'}],
+  bugrootcause: [{txt:'Root Causes', url: BASE_URL + '/bug-analysis/bug-analysis'}],
   analysisreport: [{txt:'Analysis Reports', url: BASE_URL + '/bug-analysis/bug-report'}],
 
   pageassignment: [{txt:'Page Assignment', url: BASE_URL + '/feature-analysis'}],

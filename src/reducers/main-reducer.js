@@ -47,7 +47,7 @@ const initialState = Map({
     ),
     'Bug Analysis': List.of(
       {
-        name: 'Bug Root Causes',
+        name: 'Root Causes',
         url: '/main/bug-analysis/bug-analysis'
       },
       {

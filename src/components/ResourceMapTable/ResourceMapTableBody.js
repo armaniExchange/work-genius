@@ -11,14 +11,23 @@ import Td from '../A10-UI/Table/Td';
 
 
 const RESOURCE_MAP_CELLS = {
-    defaults: () => {
-        return (<ResourceMapCellAddButton />);
+    defaults: (config, onModalHander) => {
+        return (
+            <ResourceMapCellAddButton
+                config={config}
+                onModalHander={onModalHander}
+            />
+        );
     },
     pto: () => {
         return (<ResourceMapCellPto />);
     },
-    log: () => {
-        return (<ResourceMapCellWorkLog />);
+    log: (config) => {
+        return (
+            <ResourceMapCellWorkLog
+                config={config}
+            />
+        );
     }
 };
 
@@ -26,9 +35,18 @@ const RESOURCE_MAP_CELLS_DEFAULT_TYPE = 'defaults';
 
 class ResourceMapTableBody extends Component {
 
+    constructor() {
+        super();
+        this._onShowModalHandler = ::this._onShowModalHandler;
+    }
+
+    _onShowModalHandler() {
+        const { onModalHander } = this.props;
+        onModalHander(true);
+    }
+
 	render() {
-		const {data, startDate} = this.props;
-		console.log(data);
+		const {data, startDate, onModalHander} = this.props;
 		let bodyHtml = (
             <tr>
                 <Td
@@ -41,34 +59,45 @@ class ResourceMapTableBody extends Component {
         if (data.length > 0) {
         	bodyHtml = data.map((resource, bodyIndex) => {
                 let items = resource.items;
-                let userHtml = (<Td key={0} colSpan={1} className={'cell-layout-style'}>{resource.name}</Td>);
+                var user = resource.name;
+                let userHtml = (<Td key={0} colSpan={1} className={'cell-layout-style'}>{user}</Td>);
                 let itemsHtml = items.map((itemValue, itemIndex) => {
-                    console.log(startDate, itemIndex);
-                    let day = moment(startDate).add(itemIndex, 'days').isoWeekday();
+                    let currentDay = moment(startDate).add(itemIndex, 'days');
+                    let day = currentDay.isoWeekday();
                     let className = 'cell-layout-style ';
                     if (day === 6 || day === 7) {
                         className += 'weekend-style';
                     }
-                    console.log(day);
                     let item = itemValue.item;
                     let cellFunc = undefined;
                     let config = {};
+                    var cellHtml = '';
                     if (item != null) {
                         let type = item.type;
-                        config = item;
+                        config = item ;
                         cellFunc = RESOURCE_MAP_CELLS[type];
                     }
-                    if (cellFunc === undefined) {
-                        cellFunc = RESOURCE_MAP_CELLS[ RESOURCE_MAP_CELLS_DEFAULT_TYPE ];
+                    config.user = user;
+                    config.date = currentDay;
+                    if (cellFunc !== undefined) {
+                        cellHtml = cellFunc(config);
                     }
+                    var defaultCellHtml = RESOURCE_MAP_CELLS[ RESOURCE_MAP_CELLS_DEFAULT_TYPE ](config, onModalHander);
 
-                    let cellHtml = cellFunc(config);
-
-                    return (<Td key={itemIndex + 1} colSpan={1} className={className}>{cellHtml}</Td>);
+                    return (
+                        <Td
+                            key={itemIndex + 1}
+                            colSpan={1}
+                            className={className}
+                        >
+                            {defaultCellHtml}
+                            {cellHtml}
+                        </Td>
+                    );
                 });
                 itemsHtml.unshift(userHtml);
                 return (
-                    <tr key={bodyIndex}>{itemsHtml}</tr>
+                    <tr className={'table-tr'} key={bodyIndex}>{itemsHtml}</tr>
                 );
         	});
         }
@@ -83,7 +112,8 @@ class ResourceMapTableBody extends Component {
 
 ResourceMapTableBody.propTypes = {
     startDate: PropTypes.string.isRequired,
-	data:  PropTypes.array.isRequired
+	data:  PropTypes.array.isRequired,
+    onModalHander: PropTypes.func.isRequired
 };
 
 export default ResourceMapTableBody;
