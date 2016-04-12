@@ -374,12 +374,12 @@ export function setPTOApplicationStatus(id, status) {
     };
 };
 
-export function setOvertimeApplicationStatus(id, status) {
+export function setOvertimeApplicationStatus(id, status, hours) {
     return (dispatch, getState) => {
         let config = {
                 method: 'POST',
                 body: `mutation RootMutationType {
-                    updateOvertimeApplicationStatus(id:"${id}", status:"${status}")
+                    updateOvertimeApplicationStatus(id:"${id}", status:"${status}", hours:${hours})
                 }`,
                 headers: {
                     'Content-Type': 'application/graphql',

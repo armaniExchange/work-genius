@@ -1,6 +1,7 @@
 // GraphQL
 import {
-	GraphQLString
+	GraphQLString,
+	GraphQLInt
 } from 'graphql';
 // RethinkDB
 import r from 'rethinkdb';
@@ -121,16 +122,40 @@ let TaskMutation = {
 			status: {
 				type: GraphQLString,
 				description: 'new overtime application status'
+			},
+			hours: {
+				type: GraphQLInt,
+				description: 'hours to apply in overtime application'
 			}
 		},
-		resolve: async (root, { id, status }) => {
+		resolve: async (root, { id, status, hours }) => {
 			let connection = null,
-				mutationQuery = null;
+				mutationQuery = null,
+				result, userId;
 			try {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				mutationQuery = r.db('work_genius').table('overtime').get(id).update({
 					status: status
+				}, {
+					returnChanges: true
 				});
+				result = await mutationQuery.run(connection);
+
+				if (status === 'APPROVED') {
+					userId = result.changes[0].new_val.applicant_id;
+					mutationQuery = r.db('work_genius').table('overtime_summary').get(userId);
+					result = await mutationQuery.run(connection);
+					if (!result) {
+						mutationQuery = r.db('work_genius').table('overtime_summary').insert({
+							id: userId,
+							hours
+						});
+					} else {
+						mutationQuery = r.db('work_genius').table('overtime_summary').get(userId).update({
+							hours: result.hours + hours
+						});
+					}
+				}
 				await mutationQuery.run(connection);
 				await connection.close();
 			} catch (err) {
