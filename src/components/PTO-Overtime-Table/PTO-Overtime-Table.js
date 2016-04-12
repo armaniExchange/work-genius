@@ -124,7 +124,7 @@ class PTOTable extends Component {
     }
     render() {
         return (
-            <div className="pto-table">
+            <div className="overtime-table">
                 <Table>
                     <TableHeaders
                         {...this.props}

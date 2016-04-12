@@ -15,6 +15,10 @@ import BREADCRUMB from '../../constants/breadcrumb';
 
 
 class PTOOvertime extends Component {
+    componentWillMount() {
+        const { fetchOvertimeApplications, selectedYear } = this.props;
+        fetchOvertimeApplications('', selectedYear);
+    }
     render() {
         const {
             overtimeApplications,
@@ -41,7 +45,10 @@ PTOOvertime.propTypes = {
     overtimeApplications: PropTypes.array,
     overtimeTitleKeyMap: PropTypes.array,
     sortOvertimeTableBy: PropTypes.object,
-    sortOvertimeTableByCategory: PropTypes.func
+    selectedYear            : PropTypes.number,
+    currentUser             : PropTypes.object,
+    sortOvertimeTableByCategory: PropTypes.func,
+    fetchOvertimeApplications: PropTypes.func
 };
 
 function mapStateToProps(state) {

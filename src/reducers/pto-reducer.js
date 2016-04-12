@@ -111,12 +111,13 @@ function sortAlphaNum(a,b) {
 function sortOriginal(state, isOvertime) {
     let category = isOvertime ? state.get(`sortOvertimeTableBy`).get('category') : state.get(`sortPTOTableBy`).get('category'),
         sortStatus = isOvertime ? state.get(`sortOvertimeTableBy`).get('status') : state.get(`sortPTOTableBy`).get('status'),
-        targetKeyMap = isOvertime ? `overtimeTitleKeyMap` : `ptoTitleKeyMap`;
+        targetKeyMap = isOvertime ? `overtimeTitleKeyMap` : `ptoTitleKeyMap`,
+        targetApplications = isOvertime ? `overtimeApplications` : `applications`;
 
     if (!category || sortStatus === 0) {
         return state;
     }
-    state = state.update(`applications`, (data) => {
+    state = state.update(targetApplications, (data) => {
         let sorted = data.sort((curr, next) => {
             let result = 0;
             // Get key corresponded to filter title
@@ -190,11 +191,13 @@ function formatResponse(data) {
     return result;
 }
 
-function setTableData(state, data) {
-    let formatedData = formatResponse(data);
+function setTableData(state, data, isOvertime) {
+    let formatedData = formatResponse(data),
+        targetOriginalData = isOvertime ? `overtimeApplicationsOriginalData` : `applicationsOriginalData`,
+        targetApplications = isOvertime ? `overtimeApplications` : `applications`;
     return state
-        .set(`applicationsOriginalData`, formatedData)
-        .set(`applications`, formatedData);
+        .set(targetOriginalData, formatedData)
+        .set(targetApplications, formatedData);
 }
 
 function findClosestDateToToday(dates) {
@@ -230,7 +233,14 @@ function resetTable(state) {
         .set(
             `selectedYear`,
             moment().get('year')
-        );
+        )
+        .update(`overtimeApplications`, () => {
+            return state.get(`overtimeApplicationsOriginalData`);
+        })
+        .set(`sortOvertimeTableBy`, Map({
+            category: '',
+            status: 0
+        }));
 }
 
 export default function ptoReducer(state = initialState, action) {
@@ -246,6 +256,15 @@ export default function ptoReducer(state = initialState, action) {
             return filterTable(state, action.filterConditions);
         case actionTypes.RESET_PTO_TABLE:
             return resetTable(state);
+        case actionTypes.FETCH_OVERTIME_APPLICATION_SUCCESS:
+            nextState = setTableData(state, action.data, true);
+            if (!is(state.get('overtimeFilterConditions'), initialPTOFilterConditions)) {
+                nextState = filterOriginal(nextState, true);
+            }
+            if (state.get('sortOvertimeTableBy').get('category')) {
+                nextState = sortOriginal(nextState, true);
+            }
+        return nextState;
         case actionTypes.FETCH_PTO_APPLICATION_SUCCESS:
             nextState = setTableData(state, action.data);
             if (!is(state.get('ptoFilterConditions'), initialPTOFilterConditions)) {

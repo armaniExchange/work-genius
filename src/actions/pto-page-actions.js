@@ -48,6 +48,13 @@ export function fetchPTOApplicationsSuccess(data) {
     };
 };
 
+export function fetchOvertimeApplicationsSuccess(data) {
+    return {
+        type: actionTypes.FETCH_OVERTIME_APPLICATION_SUCCESS,
+        data
+    };
+};
+
 export function fetchUsersWithPTOSuccess(data) {
     return {
         type: actionTypes.FETCH_USERS_WITH_PTO_SUCCESS,
@@ -107,6 +114,40 @@ export function fetchPTOApplications(userId, timeRange) {
                 dispatch(fetchPTOApplicationsSuccess(body.data.ptoApplications));
             })
             .catch((err) => {
+                throw new Error(err);
+            });
+    };
+};
+
+export function fetchOvertimeApplications(userId, timeRange) {
+    return (dispatch) => {
+        let config = {
+            method: 'POST',
+            body: `{
+                overtimeApplications(applicantId: "${userId}", timeRange: ${timeRange}) {
+                    id,
+                    start_date,
+                    hours,
+                    applicant,
+                    apply_date,
+                    status,
+                    memo
+                }
+            }`,
+            headers: {
+                'Content-Type': 'application/graphql',
+                'x-access-token': localStorage.token
+            }
+        };
+        dispatch(setLoadingState(true));
+        return fetch(SERVER_API_URL, config)
+            .then((res) => res.json())
+            .then((body) => {
+                dispatch(setLoadingState(false));
+                dispatch(fetchOvertimeApplicationsSuccess(body.data.overtimeApplications));
+            })
+            .catch((err) => {
+                dispatch(setLoadingState(false));
                 throw new Error(err);
             });
     };
