@@ -44,16 +44,16 @@ let ArticleMutation = {
       }
     },
     resolve: async (root, { data }) => {
-      let connection = null,
-        query = null;
 
       try {
         let article = JSON.parse(data);
-        if (article){
+        const user = root.req.decoded;
+        article.author = Object.assign({}, user);
+        if ( article ){
           article.created_time = moment().format('YYYY/MM/DD');
         }
-        query = r.db('work_genius').table('articles').insert(article);
-        connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+        const query = r.db('work_genius').table('articles').insert(article);
+        const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         let result = await query.run(connection);
         await connection.close();
         let id = '';

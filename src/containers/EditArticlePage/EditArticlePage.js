@@ -22,11 +22,11 @@ class EditArticlePage extends Component {
 
   componentWillMount() {
     const {
-      params,
       articleActions,
+      params,
       documentActions
     } = this.props;
-    articleActions.clearArticle();
+
     if (!this.isCreate()) {
       articleActions.fetchArticle(params.articleId);
     }
@@ -40,6 +40,10 @@ class EditArticlePage extends Component {
     }
     const newState = this.getEditingStateFromProps(nextProps);
     this.setState(newState);
+  }
+
+  componentWillUnmount() {
+    this.props.articleActions.clearArticle();
   }
 
   isCreate() {

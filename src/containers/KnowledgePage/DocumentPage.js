@@ -38,6 +38,9 @@ class DocumentPage extends Component {
     fetchAllTags();
   }
 
+  queryWithTag(tag) {
+    this.props.documentActions.fetchArticles({tag});
+  }
 
   onConfirmDeleteArticleDialogRequestHide() {
     this.setState({
@@ -46,17 +49,9 @@ class DocumentPage extends Component {
     });
   }
 
-  queryWithTag(tag) {
-    this.props.documentActions.fetchArticles({tag});
-  }
-
   onConfirmDeleteArticle(deletingArticle) {
     // console.log(`delete article id:${deletingArticle.id} index:${deletingArticle.index}`);
     this.props.articleActions.deleteArticle(deletingArticle.id);
-  }
-
-  onCancelDeleteArticle() {
-
   }
 
   onArticleDelete(id, index) {
@@ -67,6 +62,10 @@ class DocumentPage extends Component {
         index
       }
     });
+  }
+
+  onCancelDeleteArticle() {
+
   }
 
   render() {

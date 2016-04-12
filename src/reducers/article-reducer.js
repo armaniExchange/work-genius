@@ -23,7 +23,8 @@ const initialState = OrderedMap({
   content: '',
   createdAt: 0,
   updatedAt: 0,
-  isEditing: true
+  isEditing: true,
+  isDeleting: false,
 });
 
 export default function articleReducer(state = initialState, action) {
@@ -53,6 +54,11 @@ export default function articleReducer(state = initialState, action) {
         .set('content', action.content)
         .set('createdAt', action.createdAt)
         .set('updatedAt', action.updatedAt);
+
+    case actionTypes.DELETE_ARTICLE:
+      return state.set('isDeleting', true);
+    case actionTypes.DELETE_ARTICLE_SUCCESS:
+      return state.set('isDeleting', false);
     case actionTypes.UPLOAD_ARTICLE_FILE:
       const uploading_file = Object.assign({}, action.file, {isUploading: true});
       return state.set('files', state.get('files').push(fromJS(uploading_file)));

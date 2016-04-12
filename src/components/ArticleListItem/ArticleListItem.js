@@ -21,7 +21,7 @@ class ArticleListItem extends Component {
       tags,
       files,
       comments,
-      // createdAt,
+      createdAt,
       updatedAt,
       onDelete,
       index
@@ -59,7 +59,7 @@ class ArticleListItem extends Component {
           <span>Author: {author && author.name}&nbsp;</span>
           &nbsp;&nbsp;
           <span style={{color: 'gray'}}>
-            {moment(updatedAt).format('YYYY-MM-DD')}&nbsp;
+            {moment(updatedAt || createdAt).format('YYYY-MM-DD')}&nbsp;
           </span>
           &nbsp;&nbsp;
           <span>
