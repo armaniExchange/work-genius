@@ -37,11 +37,14 @@ const initialState = Map({
     pager: Map({ totalRow: 0, pageRow: 25, rowIndex: 1, pageSize: 0 }),
     resolvedReasonTypes: List.of(
         Map({ label: 'GUI Code Issue', value: 'GUI Code Issue' }),
-        Map({ label: 'AXAPI', value: 'AXAPI' }),
-        // Map({ label: 'AXAPI was changed', value: 'AXAPI was changed' }),
+        // Map({ label: 'AXAPI', value: 'AXAPI' }),
+        Map({ label: 'AXAPI Changed', value: 'AXAPI Changed' }),
         Map({ label: 'Look and Feel', value: 'Look and Feel' }),
         Map({ label: 'Requirement Change', value: 'Requirement Change' }),
         Map({ label: 'Browser Related', value: 'Browser Related' }),
+        Map({ label: 'Cannot be Reproduced', value: 'Cannot be Reproduced' }),
+        Map({ label: 'AXAPI Not Supported”', value: 'AXAPI Not Supported”' }),
+        Map({ label: 'GUI Not Supported', value: 'GUI Not Supported' }),
         Map({ label: 'Others', value: 'Others' })
     ),
     optionsReviewTags: List.of(
