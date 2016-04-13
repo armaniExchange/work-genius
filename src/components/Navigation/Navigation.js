@@ -9,7 +9,7 @@ import LogoutButton from '../Logout-Button/Logout-Button';
 // Stateless functional components
 let HeaderLogo = () => {
 	return (
-		<span className="navigation__header-logo"></span>
+		<span className="navigation__header-logo" title="More Detailed, More Beautiful"></span>
 	);
 };
 

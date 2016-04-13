@@ -69,7 +69,7 @@ class Main extends Component {
 		} = this.props.mainState;
 		const {
 			errorMessage,
-      currentUser
+      		currentUser
 		} = this.props.appState;
 		const { logout } = this.props.appActions;
 
@@ -87,7 +87,7 @@ class Main extends Component {
 				<Navigation
 				    headerTitle={navHeaderTitle}
 				    navItems={navItems}
-            currentUser={currentUser}
+            		currentUser={currentUser}
 				    hasLogo={hasLogo}
 				    onNavItemsClick={this._navItemsClickHandler}
 				    onLogoutHandler={logout} />
