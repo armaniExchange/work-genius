@@ -10,6 +10,8 @@ import ResourceMapCellWorkLog from './ResourceMapCellWorkLog.js';
 import Td from '../A10-UI/Table/Td';
 
 
+
+
 const RESOURCE_MAP_CELLS = {
     defaults: (config, onModalHander) => {
         return (
@@ -18,16 +20,21 @@ const RESOURCE_MAP_CELLS = {
                 onModalHander={onModalHander}
             />
         );
+        // return (<div/>);
     },
     pto: () => {
         return (<ResourceMapCellPto />);
     },
-    log: (config) => {
+    workday: (config, onModalHander) => {
         return (
             <ResourceMapCellWorkLog
                 config={config}
+                onModalHander={onModalHander}
             />
         );
+    },
+    holiday: (config, onModalHander) => {
+        return this.defaults(config, onModalHander);
     }
 };
 
@@ -40,9 +47,9 @@ class ResourceMapTableBody extends Component {
         this._onShowModalHandler = ::this._onShowModalHandler;
     }
 
-    _onShowModalHandler() {
+    _onShowModalHandler(config) {
         const { onModalHander } = this.props;
-        onModalHander(true);
+        onModalHander(true, config);
     }
 
 	render() {
@@ -58,31 +65,37 @@ class ResourceMapTableBody extends Component {
         );
         if (data.length > 0) {
         	bodyHtml = data.map((resource, bodyIndex) => {
-                let items = resource.items;
+                let worklogs = resource.worklogs;
                 var user = resource.name;
+                var userId = resource.id;
                 let userHtml = (<Td key={0} colSpan={1} className={'cell-layout-style'}>{user}</Td>);
-                let itemsHtml = items.map((itemValue, itemIndex) => {
+                let itemsHtml = worklogs.map((itemValue, itemIndex) => {
                     let currentDay = moment(startDate).add(itemIndex, 'days');
                     let day = currentDay.isoWeekday();
                     let className = 'cell-layout-style ';
                     if (day === 6 || day === 7) {
                         className += 'weekend-style';
                     }
-                    let item = itemValue.item;
+                    let item = itemValue.worklog_items;
                     let cellFunc = undefined;
                     let config = {};
                     var cellHtml = '';
                     if (item != null) {
-                        let type = item.type;
-                        config = item ;
+                        let type = itemValue.type;
+                        config = itemValue ;
                         cellFunc = RESOURCE_MAP_CELLS[type];
                     }
                     config.user = user;
+                    config.userId = userId;
                     config.date = currentDay;
                     if (cellFunc !== undefined) {
-                        cellHtml = cellFunc(config);
+                        cellHtml = cellFunc(config, onModalHander);
                     }
                     var defaultCellHtml = RESOURCE_MAP_CELLS[ RESOURCE_MAP_CELLS_DEFAULT_TYPE ](config, onModalHander);
+
+                    // let __onShowModalHandler = () => {
+                    //     this._onShowModalHandler(config);
+                    // };
 
                     return (
                         <Td

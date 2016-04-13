@@ -54,19 +54,23 @@ class ResourceMapPage extends Component{
 }
 
 ResourceMapPage.propTypes = {
-	startDate:     PropTypes.string.isRequired,
-	totalDays:     PropTypes.number.isRequired,
-	show:          PropTypes.bool.isRequired,
-	data: 		   PropTypes.array.isRequired,
-	queryResourceMapData: PropTypes.func.isRequired,
-	fetchResourceMapModalHandler: PropTypes.func.isRequired
+    startDate                      : PropTypes.string.isRequired,
+    totalDays                      : PropTypes.number.isRequired,
+    data                           : PropTypes.array.isRequired,
+    queryResourceMapData           : PropTypes.func.isRequired,
+
+    // Modal handle options.
+    show                           : PropTypes.bool.isRequired,
+    defaultModalInfos              : PropTypes.object.isRequired,
+    upsertWorklogItem              : PropTypes.func.isRequired,
+    fetchResourceMapModalHandler   : PropTypes.func.isRequired
 };
 
 ResourceMapPage.defaultProps = {
-	startDate: new Date(),
-	totalDays: 10,
-	show: false,
-	data: []
+    startDate    : new Date(),
+    totalDays    : 10,
+    show         : false,
+    data         : []
 };
 
 function mapStateToProps(state) {
