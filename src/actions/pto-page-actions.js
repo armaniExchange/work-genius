@@ -346,12 +346,12 @@ export function removePTOApplication(id) {
     };
 };
 
-export function setPTOApplicationStatus(id, status) {
+export function setPTOApplicationStatus(id, status, hours) {
     return (dispatch, getState) => {
         let config = {
                 method: 'POST',
                 body: `mutation RootMutationType {
-                    updatePTOApplicationStatus(id:"${id}", status:"${status}")
+                    updatePTOApplicationStatus(id:"${id}", status:"${status}", hours:${hours})
                 }`,
                 headers: {
                     'Content-Type': 'application/graphql',

@@ -71,9 +71,9 @@ class PTOApplication extends Component {
         const { removePTOApplication } = this.props;
         removePTOApplication(id);
     }
-    _onApplicationStatusUpdate(id, newState) {
+    _onApplicationStatusUpdate(id, newState, hours) {
         const { setPTOApplicationStatus } = this.props;
-        setPTOApplicationStatus(id, newState);
+        setPTOApplicationStatus(id, newState, hours);
     }
     _onUserFilterClickedHandler(id) {
         const {
