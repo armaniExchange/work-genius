@@ -1,5 +1,7 @@
 var Webpack = require('webpack'),
     path = require('path'),
+    autoprefixer = require('autoprefixer'),
+    precss = require('precss'),
     util = require('util'),
     pkg = require('./package.json'),
     HtmlWebpackPlugin = require('html-webpack-plugin'),
@@ -81,7 +83,11 @@ var config = {
     resolve: {
         extensions: ['', '.js', '.jsx', '.css', '.json'],
         modulesDirectories: ['node_modules']
+    },
+    postcss: function () {
+        return [autoprefixer, precss];
     }
 };
+
 
 module.exports = config;

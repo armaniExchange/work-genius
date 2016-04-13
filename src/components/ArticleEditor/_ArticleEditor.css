@@ -5,7 +5,7 @@
   padding: 15px;
   .drop-down-menu {
     margin-left: -25px;
-    width: 300px;
+    width: 100%;
   }
   .codemirror-wrapper {
     border-radius: 5;

@@ -33,6 +33,7 @@ const schema = new GraphQLSchema({
 			// PTO Page
 			allUserWithPto         : UserQuery.allUserWithPto,
 			ptoApplications        : PTOQuery.ptoApplications,
+			overtimeApplications   : PTOQuery.overtimeApplications,
 			// Task Page
 			allUserWithTasks       : UserQuery.allUserWithTasks,
 			tasks                  : TaskQuery.tasks,
@@ -75,6 +76,8 @@ const schema = new GraphQLSchema({
 			createPTOApplication      : PTOMutation.createPTOApplication,
 			deletePTOApplication      : PTOMutation.deletePTOApplication,
 			updatePTOApplicationStatus: PTOMutation.updatePTOApplicationStatus,
+			createOvertimeApplication : PTOMutation.createOvertimeApplication,
+			updateOvertimeApplicationStatus: PTOMutation.updateOvertimeApplicationStatus,
 			// User page
 			updateUserPrivilege       : UserMutation.updateUserPrivilege,
 			// Document page

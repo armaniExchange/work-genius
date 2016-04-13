@@ -40,7 +40,7 @@ let WorkLogQuery = {
 				}
 				let endDate = startDate + (dateRange -1) * 1000 * 3600 * 24;
 				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID)))
-					.pluck('id','name').coerceTo('array');
+					.pluck('id','name','location').coerceTo('array');
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				//get all users
 				let users = await query.run(connection); 
@@ -55,7 +55,7 @@ let WorkLogQuery = {
 					.group('employee_id','date').coerceTo('array');
 				let worklogList = await query.run(connection);
 
-				//get all dates and check if the date is public holiday or not
+				//get all dates and check if the date is weekend or not
 				let dateList = [];
 				for(let i=0; i < dateRange; i++){
 					let tmpDate  = startDate + i * 1000 * 3600 * 24;
@@ -63,7 +63,12 @@ let WorkLogQuery = {
 						date: tmpDate,
 						type: [0,6].includes(moment(tmpDate).day())? 'holiday':'workday'
 					});
-				}   
+				} 
+
+				//get all public holiday
+				query = r.db('work_genius').table('holiday')
+					.filter(r.row('date').ge(startDate).and(r.row('date').le(endDate))).coerceTo('array');  
+				let holidayList = await query.run(connection);
 
 				//construct the result array
 				for(let user of users){
@@ -72,8 +77,8 @@ let WorkLogQuery = {
 						userItem.worklogs.push(Object.assign({},dateItem));
 					}
 
-					//set pto info
 					userItem.worklogs.forEach(dateItem => {
+						//set pto info
 						let findPTO = ptoList.find( pto => {
 							if(moment(pto.start_date).isSame(moment(pto.end_date))){
 								return pto.applicant_id == user.id
@@ -85,6 +90,14 @@ let WorkLogQuery = {
 						});
 						if(!!findPTO){
 							dateItem.type = 'pto';
+						}
+
+						//set public holiday info
+						let findHoliday = holidayList.find( holiday => {
+							return holiday.date == dateItem.date && holiday.location == userItem.location;
+						});
+						if(!!findHoliday){
+							dateItem.type = findHoliday.type;
 						}
 					});
 

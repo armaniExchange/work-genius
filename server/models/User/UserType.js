@@ -109,6 +109,10 @@ let UserType = new GraphQLObjectType({
 				}
 			})),
 			description: 'worklog list'
+		},
+		location: {
+			type: GraphQLString,
+			description: 'location'
 		}
 	})
 });

@@ -100,6 +100,10 @@ class EditArticlePage extends Component {
     this.props.articleActions.removeArticleFile(file.id);
   }
 
+  onCancel() {
+    this.props.history.go(-1);
+  }
+
   onSubmit() {
     const {
       files,
@@ -196,9 +200,14 @@ class EditArticlePage extends Component {
           onClick={::this.onSubmit}
           style={{margin: 10}} />
         <RaisedButton
-          label="Preview"
-          onClick={::this.togglePreviewVisible}
+          label="Cancel"
+          onClick={::this.onCancel}
           style={{margin: 10}} />
+        <RaisedButton
+          label="Preview"
+          secondary={true}
+          onClick={::this.togglePreviewVisible}
+          style={{margin: 10, float: 'right'}} />
       </section>
     );
   }

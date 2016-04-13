@@ -1,0 +1,16 @@
+.overtime-table .pto-table__body {
+	td {
+		text-align: center;
+	}
+	&--empty {
+		text-align: center;
+	}
+}
+
+.overtime-table .hide {
+	display: none;
+}
+
+.overtime-table .pto-table__header {
+	cursor: pointer;
+}

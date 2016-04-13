@@ -20,6 +20,7 @@ class RadioGroup extends Component {
 
         let radios = aryRadioConfig.map((item, index) => {
             let checked = checkRadio === item.value;
+            
             return (
                 <Radio
                     key={index}

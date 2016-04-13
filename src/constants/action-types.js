@@ -55,6 +55,7 @@ export default keyMirror({
 
     // PTO page actions
     SET_PTO_APPLY_MODAL_STATE: null,
+    SET_OVERTIME_APPLY_MODAL_STATE: null,
     FILTER_PTO_TABLE: null,
     SORT_PTO_TABLE_BY_CATEGORY: null,
     FETCH_PTO_APPLICATION_SUCCESS: null,
@@ -62,6 +63,9 @@ export default keyMirror({
     RESET_PTO_TABLE: null,
     DECREASE_YEAR: null,
     INCREASE_YEAR: null,
+    SORT_OVERTIME_TABLE_BY_CATEGORY: null,
+    FETCH_OVERTIME_APPLICATION_SUCCESS: null,
+    FILTER_OVERTIME_TABLE: null,
 
     // Admin page actions
     FETCH_USERS_WITH_PRIVILEGE_SUCCESS: null,
@@ -129,5 +133,6 @@ export default keyMirror({
     SET_BUG_REPORT_PROJECT_VERSION: null,
 
     // Resource Map page actions
-    FETCH_RESOURCE_MAP_DATA: null
+    FETCH_RESOURCE_MAP_DATA: null,
+    FETCH_RESOURCE_MAP_MODAL: null
 });
