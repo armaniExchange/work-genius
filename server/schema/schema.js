@@ -60,7 +60,8 @@ const schema = new GraphQLSchema({
 			getTagSummary		   : BugStats.getBugSummary,
 			getOwnerRootCauseSummary	   : BugStats.getOwnerRootCauseSummary,
 			//worklog
-			getWorkLogList		   : WorkLogQuery.getWorkLogList
+			getWorkLogList		   : WorkLogQuery.getWorkLogList,
+			getWorkLogByEmployeeId : WorkLogQuery.getWorkLogByEmployeeId
 		}
 	}),
 	mutation: new GraphQLObjectType({

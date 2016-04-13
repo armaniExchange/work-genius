@@ -34,6 +34,10 @@ const WorkLog_TYPE = new GraphQLObjectType({
         'type': {
             type: GraphQLString,
             description: 'workday/pto/holiday'
+        },
+        'tag': {
+            type: GraphQLString,
+            description: 'worklog tag'
         }
     })
 });
