@@ -9,12 +9,12 @@ import * as appActions from '../../actions/app-actions';
 import * as mainActions from '../../actions/main-actions';
 // Components
 import Breadcrumb from '../../components/A10-UI/Breadcrumb';
-import PTOOvertimeTable from '../../components/PTO-Overtime-Table/PTO-Overtime-Table.js';
-import Space from '../../components/A10-UI/Space.js';
+import PTOOvertimeTable from '../../components/PTO-Overtime-Table/PTO-Overtime-Table';
+import Space from '../../components/A10-UI/Space';
 import RaisedButton from 'material-ui/lib/raised-button';
 import OvertimeApplyModal from '../../components/Overtime-Apply-Modal/Overtime-Apply-Modal';
-import RadioGroup from '../../components/A10-UI/Input/Radio-Group.js';
-import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
+import RadioGroup from '../../components/A10-UI/Input/Radio-Group';
+import DropDownList from '../../components/A10-UI/Input/Drop-Down-List';
 import PTOYearFilter from '../../components/PTO-Year-Filter/PTO-Year-Filter';
 // Constants
 import BREADCRUMB from '../../constants/breadcrumb';
@@ -117,6 +117,12 @@ class PTOOvertime extends Component {
                         filterOvertimeTable({'status': curVal});
                     }} />
                 <Space h="20" />
+                <RaisedButton
+                    label="Overtime Application"
+                    onClick={::this._onApplyButtonClicked}
+                    labelStyle={{'textTransform':'none'}}
+                    secondary={true} />
+                <Space h="20" />
                 <PTOOvertimeTable
                     data={overtimeApplications}
                     titleKeyMap={overtimeTitleKeyMap}
@@ -124,12 +130,6 @@ class PTOOvertime extends Component {
                     sortBy={sortOvertimeTableBy}
                     onSortHandler={sortOvertimeTableByCategory}
                     onStatusUpdateHandler={::this._onOvertimeStatusUpdate} />
-                <Space h="20" />
-                <RaisedButton
-                    label="Overtime Application"
-                    onClick={::this._onApplyButtonClicked}
-                    labelStyle={{'textTransform':'none'}}
-                    secondary={true} />
                 <OvertimeApplyModal
                     show={showOvertimeApplyModal}
                     onHideHandler={::this._closeOvertimeApplyModal}
@@ -141,25 +141,25 @@ class PTOOvertime extends Component {
 }
 
 PTOOvertime.propTypes = {
-    overtimeApplications: PropTypes.array,
-    overtimeTitleKeyMap: PropTypes.array,
-    allUsersWithClosestPTO: PropTypes.array,
-    sortOvertimeTableBy: PropTypes.object,
-    currentSelectedUserID: PropTypes.string,
-    selectedYear            : PropTypes.number,
-    currentUser             : PropTypes.object,
-    showOvertimeApplyModal: PropTypes.bool,
-    overtimeFilterOptions: PropTypes.array,
-    overtimeFilterConditions: PropTypes.object,
-    sortOvertimeTableByCategory: PropTypes.func,
-    fetchOvertimePageData: PropTypes.func,
-    setOvertimeApplyModalState: PropTypes.func,
-    createOvertimeApplication: PropTypes.func,
+    currentSelectedUserID       : PropTypes.string,
+    selectedYear                : PropTypes.number,
+    showOvertimeApplyModal      : PropTypes.bool,
+    currentUser                 : PropTypes.object,
+    overtimeFilterConditions    : PropTypes.object,
+    sortOvertimeTableBy         : PropTypes.object,
+    overtimeApplications        : PropTypes.array,
+    overtimeTitleKeyMap         : PropTypes.array,
+    allUsersWithClosestPTO      : PropTypes.array,
+    overtimeFilterOptions       : PropTypes.array,
+    sortOvertimeTableByCategory : PropTypes.func,
+    fetchOvertimePageData       : PropTypes.func,
+    setOvertimeApplyModalState  : PropTypes.func,
+    createOvertimeApplication   : PropTypes.func,
     setOvertimeApplicationStatus: PropTypes.func,
-    filterOvertimeTable: PropTypes.func,
-    resetPTOTable: PropTypes.func,
-    goToPreviousYear        : PropTypes.func,
-    goToNextYear            : PropTypes.func
+    filterOvertimeTable         : PropTypes.func,
+    resetPTOTable               : PropTypes.func,
+    goToPreviousYear            : PropTypes.func,
+    goToNextYear                : PropTypes.func
 };
 
 function mapStateToProps(state) {

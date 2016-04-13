@@ -56,6 +56,28 @@ let UserQuery = {
 			}
 		}
 	},
+	'allUserWithOvertime': {
+		type: new GraphQLList(UserType),
+		description: 'Get all users with overtime data',
+		resolve: async () => {
+			let connection = null,
+			    result = [],
+			    query = null;
+			try {
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				query = r.db('work_genius').table('users').merge((user) => {
+					return {
+						overtime_hours: r.db('work_genius').table('overtime_summary').get(user('id')).getField('hours').default(0)
+					};
+				}).coerceTo('array');
+				result = await query.run(connection);
+				await connection.close();
+				return result;
+			} catch (err) {
+				return err;
+			}
+		}
+	},
 	'allUserWithTasks': {
 		type: new GraphQLList(UserType),
 		description: 'Get all users with task data',

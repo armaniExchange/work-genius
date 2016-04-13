@@ -43,7 +43,7 @@ let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort }) => {
         return (
             <Th
                 key={index}
-                className="pto-table__header"
+                className="overtime-table__header"
                 data-name={header}
                 onClick={onSortHandler}>
                 <span data-name={header}>{header}</span>
@@ -65,7 +65,7 @@ let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler }) => {
         <tr>
             <Td
                 colSpan={titleKeyMap.length}
-                className="pto-table__body--empty">
+                className="overtime-table__body--empty">
                 No Match Result!
             </Td>
         </tr>
@@ -107,7 +107,7 @@ let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler }) => {
     }
 
     return (
-        <tbody className="pto-table__body">
+        <tbody className="overtime-table__body">
             {bodyHtml}
         </tbody>
     );
@@ -125,7 +125,7 @@ class PTOTable extends Component {
     render() {
         return (
             <div className="overtime-table">
-                <Table>
+                <Table className="overtime-table__table-content">
                     <TableHeaders
                         {...this.props}
                         onSortHandler={this._onSortHandler} />

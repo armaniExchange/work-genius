@@ -1,0 +1,9 @@
+.pto-summary-table {
+    .pto-summary-table__header, .pto-summary-table__body {
+        text-align: center;
+    }
+    &--highlight {
+        background-color: #fff2a8;
+        font-weight: bold;
+    }
+}

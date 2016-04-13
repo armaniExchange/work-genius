@@ -76,6 +76,13 @@ export function fetchUsersWithPTOSuccess(data) {
     };
 };
 
+export function fetchUsersWithOvertimeSuccess(data) {
+    return {
+        type: actionTypes.FETCH_USERS_WITH_OVERTIME_SUCCESS,
+        data
+    };
+};
+
 export function setApplicantToFilter(applicant) {
     return {
         type: actionTypes.SET_APPLICANT_NAME_TO_FILTER,
@@ -188,6 +195,35 @@ export function fetchUsersWithPTO() {
                 dispatch(fetchUsersWithPTOSuccess(body.data.allUserWithPto));
             })
             .catch((err) => {
+                throw new Error(err);
+            });
+    };
+};
+
+export function fetchUsersWithOvertime() {
+    return (dispatch) => {
+        let config = {
+            method: 'POST',
+            body: `{
+                allUserWithOvertime {
+                    name,
+                    overtime_hours
+                }
+            }`,
+            headers: {
+                'Content-Type': 'application/graphql',
+                'x-access-token': localStorage.token
+            }
+        };
+        dispatch(setLoadingState(true));
+        return fetch(SERVER_API_URL, config)
+            .then((res) => res.json())
+            .then((body) => {
+                dispatch(setLoadingState(false));
+                dispatch(fetchUsersWithOvertimeSuccess(body.data.allUserWithOvertime));
+            })
+            .catch((err) => {
+                dispatch(setLoadingState(false));
                 throw new Error(err);
             });
     };
@@ -346,12 +382,12 @@ export function removePTOApplication(id) {
     };
 };
 
-export function setPTOApplicationStatus(id, status) {
+export function setPTOApplicationStatus(id, status, hours) {
     return (dispatch, getState) => {
         let config = {
                 method: 'POST',
                 body: `mutation RootMutationType {
-                    updatePTOApplicationStatus(id:"${id}", status:"${status}")
+                    updatePTOApplicationStatus(id:"${id}", status:"${status}", hours:${hours})
                 }`,
                 headers: {
                     'Content-Type': 'application/graphql',
