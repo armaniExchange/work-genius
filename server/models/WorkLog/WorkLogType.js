@@ -38,6 +38,10 @@ const WorkLog_TYPE = new GraphQLObjectType({
         'tag': {
             type: GraphQLString,
             description: 'worklog tag'
+        },
+        'status': {
+            type: GraphQLInt,
+            description: 'is completed or not'
         }
     })
 });
