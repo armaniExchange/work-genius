@@ -31,12 +31,17 @@ let WorkLogMutation = {
 
 				query = r.db('work_genius').table('worklog').insert(worklog);
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				await query.run(connection);
+				let result = await query.run(connection);
 				await connection.close();
+
+				let id = '';
+		        if (result && result.generated_keys && result.generated_keys.length > 0){
+		          id = result.generated_keys[0];
+		        }
+		        return id;
 			} catch (err) {
 				return 'Fail to create a worklog!';
 			}
-			return 'Create worklog successfully!';
 		}
 	},
 	'updateWorkLog': {
