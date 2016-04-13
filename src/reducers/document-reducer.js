@@ -8,6 +8,7 @@ import actionTypes from '../constants/action-types';
 
 const initialState = Map({
   articleList: List.of(),
+  articleTotalCount: 0,
   allCategories: List.of(),
   allTags: List.of()
 });
@@ -15,7 +16,8 @@ const initialState = Map({
 export default function documentReducer(state = initialState, action) {
   switch (action.type) {
     case actionTypes.FETCH_ARTICLES_SUCCESS:
-      return state.set('articleList', action.articleList);
+      return state.set('articleList', action.articleList)
+        .set('articleTotalCount', action.count);
     case actionTypes.FETCH_ALL_CATEGORIES_SUCCESS:
       return state.set('allCategories', action.allCategories);
     case actionTypes.FETCH_ALL_TAGS_SUCCESS:

@@ -1,10 +1,14 @@
+import stringifyObject from '../libraries/stringifyObject';
 import actionTypes from '../constants/action-types';
 import {
   SERVER_API_URL,
   SERVER_FILES_URL
 } from '../constants/config';
 import sendFile from '../libraries/sendFile';
-import stringifyObject from '../libraries/stringifyObject';
+import {
+    setLoadingState,
+    apiFailure
+} from './app-actions';
 
 export function fetchArticleSucess(article) {
   return {
@@ -57,7 +61,7 @@ export function fetchArticle(articleId) {
       type: actionTypes.FETCH_ARTICLE,
       id: articleId
     });
-    // fetch from server
+    dispatch(setLoadingState(true));
 
     return _fetchArticle(articleId)
       .then((res) => {
@@ -67,32 +71,12 @@ export function fetchArticle(articleId) {
         return res.json();
       })
       .then((body) => {
-        const {
-          id,
-          title,
-          content,
-          tags,
-          author,
-          category,
-          comments,
-          createdAt,
-          updatedAt
-        } = body.data.getArticle;
-        const article = {
-          id,
-          title,
-          content,
-          tags,
-          author,
-          category,
-          comments,
-          createdAt,
-          updatedAt
-        };
-        dispatch(fetchArticleSucess(article));
+        dispatch(fetchArticleSucess(body.data.getArticle));
+        dispatch(setLoadingState(false));
       })
       .catch((error) => {
         dispatch(fetchArticleFail(error));
+        dispatch(apiFailure(error));
       });
   };
 }
@@ -117,7 +101,7 @@ export function createArticle(newArticle) {
       type: actionTypes.CREATE_ARTICLE,
       ...newArticle
     });
-    // post to server
+    dispatch(setLoadingState(true));
 
     const config = {
       method: 'POST',
@@ -144,10 +128,12 @@ export function createArticle(newArticle) {
       .then((body) => {
         const id = body.data.createArticle.id;
         dispatch(createArticleSuccess({id}));
+        dispatch(setLoadingState(false));
         return _fetchArticle(id);
       })
       .catch((error) => {
         dispatch(createArticleFail(error));
+        dispatch(apiFailure(error));
       });
   };
 }
@@ -172,6 +158,7 @@ export function updateArticle(newArticle) {
     dispatch({
       type: actionTypes.UPDATE_ARTICLE
     });
+    dispatch(setLoadingState(true));
 
     // update to server
     const config = {
@@ -199,9 +186,11 @@ export function updateArticle(newArticle) {
       .then((body) => {
         const id = body.data.updateArticle.id;
         dispatch(updateArticleSuccess({id}));
+        dispatch(setLoadingState(false));
       })
       .catch((error) => {
         dispatch(updateArticleFail(error));
+        dispatch(apiFailure(error));
       });
   };
 }
@@ -245,6 +234,7 @@ export function deleteArticle(id) {
       })
       .catch((error) => {
         dispatch(updateArticleFail(error));
+        dispatch(apiFailure(error));
       });
   };
 }

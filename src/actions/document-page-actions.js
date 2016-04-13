@@ -1,5 +1,9 @@
 import actionTypes from '../constants/action-types';
 import { SERVER_API_URL } from '../constants/config';
+import {
+    setLoadingState,
+    apiFailure
+} from './app-actions';
 
 export function fetchArticlesFail(error) {
   return {
@@ -8,39 +12,48 @@ export function fetchArticlesFail(error) {
   };
 }
 
-export function fetchArticlesSuccess(articleList) {
+export function fetchArticlesSuccess(articleList, count) {
   return {
     type: actionTypes.FETCH_ARTICLES_SUCCESS,
-    articleList
+    articleList,
+    count
   };
 }
 
-export function fetchArticles(query) {
+export function fetchArticles(query = {}) {
   return dispatch => {
     dispatch({
       type: actionTypes.FETCH_ARTICLES
     });
+    dispatch(setLoadingState(true));
 
-    console.log(query);
-    let config = {
+    let queryString = Object.keys(query)
+      .reduce((previous, key) => previous + `${key}: ${query[key]} `, '');
+    if (queryString !== '') {
+      queryString = `(${queryString})`;
+    }
+    const config = {
       method: 'POST',
       body: `{
-        getAllArticles {
-          id,
-          title,
-          content,
-          tags,
-          author {
-            id,
-            name
-          },
-          comments {
+        getAllArticles ${queryString} {
+          articles {
             id,
             title,
-            content
+            content,
+            tags,
+            author {
+              id,
+              name
+            },
+            comments {
+              id,
+              title,
+              content
+            },
+            createdAt,
+            updatedAt
           },
-          createdAt,
-          updatedAt
+          count
         }
       }`,
       headers: {
@@ -56,34 +69,13 @@ export function fetchArticles(query) {
         return res.json();
       })
       .then((body) => {
-        dispatch(fetchArticlesSuccess(body.data.getAllArticles.map(article => {
-          const {
-            id,
-            title,
-            content,
-            tags,
-            author,
-            comments,
-            createdAt,
-            updatedAt
-          } = article;
-          return {
-            id,
-            title,
-            content,
-            tags,
-            author,
-            comments,
-            createdAt,
-            updatedAt
-          };
-        })));
+        dispatch(fetchArticlesSuccess(body.data.getAllArticles.articles, body.data.getAllArticles.count));
+        dispatch(setLoadingState(false));
       })
       .catch((error) => {
         dispatch(fetchArticlesFail(error));
+        dispatch(apiFailure(error));
       });
-
-
 
     // // get data from server
     // if (!query) {
@@ -127,8 +119,9 @@ export function fetchAllCategories() {
     dispatch({
       type: actionTypes.FETCH_ALL_CATEGORIES
     });
+    dispatch(setLoadingState(true));
 
-    let config = {
+    const config = {
       method: 'POST',
       body: `{
         allCategories {
@@ -153,9 +146,11 @@ export function fetchAllCategories() {
       })
       .then((body) => {
         dispatch(fetchAllCategoriesSuccess(body.data.allCategories));
+        dispatch(setLoadingState(false));
       })
       .catch((error) => {
         dispatch(fetchAllCategoriesFail(error));
+        dispatch(apiFailure(error));
       });
   };
 }
@@ -179,8 +174,9 @@ export function fetchAllTags() {
     dispatch({
       type: actionTypes.FETCH_ALL_TAGS
     });
+    dispatch(setLoadingState(true));
     // fetch categoreis from server
-    let config = {
+    const config = {
       method: 'POST',
       body: `{
         tags
@@ -199,9 +195,11 @@ export function fetchAllTags() {
       })
       .then((body) => {
         dispatch(fetchAllTagsSuccess(body.data.tags));
+        dispatch(setLoadingState(true));
       })
       .catch((error) => {
         dispatch(fetchAllTagsFail(error));
+        dispatch(apiFailure(error));
       });
   };
 }

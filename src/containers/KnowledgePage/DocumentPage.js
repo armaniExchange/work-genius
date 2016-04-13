@@ -13,6 +13,7 @@ import ArticleListItem from '../../components/ArticleListItem/ArticleListItem';
 import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
 import CategoryTree from '../../components/CategoryTree/CategoryTree';
 import ConfirmDeleteDialog from '../../components/ConfirmDeleteDialog/ConfirmDeleteDialog';
+import Pagination from 'rc-pagination';
 
 import * as DocumentActions from '../../actions/document-page-actions';
 import * as ArticleActions from '../../actions/article-page-actions';
@@ -22,6 +23,7 @@ class DocumentPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      currentPage: 1,
       isConfirmDeleteArticleDialogVisible: false,
       editingArticle: null
     };
@@ -68,6 +70,15 @@ class DocumentPage extends Component {
 
   }
 
+  onPaginate(page) {
+    this.setState({
+      currentPage: page
+    });
+    this.props.documentActions.fetchArticles({
+      page
+    });
+  }
+
   render() {
     const leftPanelStyle = {
       width: '30%',
@@ -80,11 +91,13 @@ class DocumentPage extends Component {
     const {
       articleList,
       allTags,
-      allCategories
+      allCategories,
+      articleTotalCount
     } = this.props;
     const {
       isConfirmDeleteArticleDialogVisible,
-      editingArticle
+      editingArticle,
+      currentPage
     } = this.state;
 
     return (
@@ -117,6 +130,11 @@ class DocumentPage extends Component {
               );
             })
           }
+          <Pagination
+            onChange={::this.onPaginate}
+            pageSize={5}
+            current={currentPage}
+            total={articleTotalCount} />
         </div>
         <ConfirmDeleteDialog
           open={isConfirmDeleteArticleDialogVisible}
@@ -132,6 +150,7 @@ class DocumentPage extends Component {
 
 DocumentPage.propTypes = {
   articleList            : PropTypes.array,
+  articleTotalCount      : PropTypes.number,
   allCategories          : PropTypes.array,
   allTags                : PropTypes.array,
   documentActions        : PropTypes.object.isRequired,

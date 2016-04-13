@@ -38,7 +38,7 @@ const ArticleInputType = new GraphQLInputObjectType({
       type: GraphQLString,
       description: 'Article\'s title'
     },
-    comments:{
+    comments: {
       type: new GraphQLList(new GraphQLInputObjectType({
         name: 'CommentInputType',
         fields: {
