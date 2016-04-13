@@ -8,6 +8,7 @@ import ResourceMapTableHeader from './ResourceMapTableHeader.js';
 import ResourceMapTableBody from './ResourceMapTableBody.js';
 import ResourceMapModalWorkLog from './ResourceMapModalWorkLog.js';
 
+import Checkbox from 'material-ui/lib/checkbox';
 class ResourceMapTable extends Component {
 
 	render() {
@@ -17,10 +18,13 @@ class ResourceMapTable extends Component {
 			totalDays,
 			data,
 			show,
-			onModalHander
+			onModalHander,
+            upsertWorklogItem,
+            defaultModalInfos
 		} = this.props;
 		return (
 			<div>
+				<Checkbox />
 				<Table className="bug-review-table">
 					<ResourceMapTableHeader
 						startDate={startDate}
@@ -31,6 +35,8 @@ class ResourceMapTable extends Component {
                 <ResourceMapModalWorkLog
                 	show={show}
                 	onModalHander={onModalHander}
+                    onModalSubmit={upsertWorklogItem}
+                    defaultModalInfos={defaultModalInfos}
                 />
             </div>
         );
@@ -42,14 +48,17 @@ ResourceMapTable.propTypes = {
     totalDays          : PropTypes.number.isRequired,
     show               : PropTypes.bool.isRequired,
     data               : PropTypes.array.isRequired,
-    onModalHander : PropTypes.func.isRequired
+    defaultModalInfos  : PropTypes.object.isRequired,
+    upsertWorklogItem  : PropTypes.func.isRequired,
+    onModalHander      : PropTypes.func.isRequired
 };
 
 ResourceMapTable.defaultProps = {
-	startDate: new Date(),
-	totalDays: 10,
-	show: false,
-	data:[]
+	startDate          : new Date(),
+	totalDays          : 10,
+	show               : false,
+	data               : [],
+    defaultModalInfos  : {}
 };
 
 export default ResourceMapTable;

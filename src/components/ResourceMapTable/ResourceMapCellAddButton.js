@@ -9,15 +9,15 @@ class ResourceMapCellAddButton extends Component {
 	}
 
 	_onClickAddButton() {
-		const { onModalHander } = this.props;
-		onModalHander(true);
+		const { onModalHander, config } = this.props;
+		onModalHander(true, config);
 	}
 
 	render() {
-		const {
-			config
-		} = this.props;
-		console.log(config);
+		// const {
+		// 	config
+		// } = this.props;
+		// console.log(config);
 		// return (
 		// 	<button
 		// 		onClick={this._onClickAddButton}
@@ -26,11 +26,10 @@ class ResourceMapCellAddButton extends Component {
 		// 	>
 		// 	  Add
 		// 	</button>
-		// );
+		// );onClick={this._onClickAddButton}
 		return (
 			<div
 				className={'cell-default-item'}
-				onClick={this._onClickAddButton}
 			/>
 		);
 	}
