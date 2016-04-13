@@ -90,6 +90,10 @@ let UserType = new GraphQLObjectType({
 			type: GraphQLString,
 			description: 'User alias'
 		},
+		overtime_hours: {
+			type: GraphQLInt,
+			description: 'User\'s leftover hours'
+		},
 		worklogs: {
 			type: new GraphQLList(new GraphQLObjectType({
 				name: 'UserWorkLog',

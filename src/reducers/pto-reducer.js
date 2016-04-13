@@ -44,6 +44,7 @@ const initialState = Map({
         status: 0
     }),
     allUsersWithClosestPTO: List.of(),
+    allUsersWithOvertime: List.of(),
     showPTOApplyModal: false,
     showOvertimeApplyModal: false,
     currentSelectedUserID: '',
@@ -73,6 +74,10 @@ const initialState = Map({
         Map({ title: 'Applicant', key: 'applicant'}),
         Map({ title: 'Action', key: 'id'})
     ),
+    summaryTitleKeyMap: List.of(
+        Map({ title: 'Name', key: 'name'}),
+        Map({ title: 'Available Overtime Hours', key: 'overtime_hours'})
+    )
 });
 
 function filterOriginal(state, isOvertime) {
@@ -299,6 +304,8 @@ export default function ptoReducer(state = initialState, action) {
                 };
             });
             return nextState.set('allUsersWithClosestPTO', newAllUsersWithClosestPTO);
+        case actionTypes.FETCH_USERS_WITH_OVERTIME_SUCCESS:
+            return nextState.set('allUsersWithOvertime', action.data);
         case actionTypes.SET_CURRENT_SELECTED_USER_ID:
             return nextState.set('currentSelectedUserID', action.id === ADMIN_ID ? '' : action.id);
         case actionTypes.DECREASE_YEAR:

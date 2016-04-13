@@ -11,9 +11,9 @@ export default class Breadcrumb extends Component {
         let isLast = idx===data.length-1;
         let child = isLast ? [item.txt] : [<Link key={idx} to={item.url}>{item.txt}</Link>];
         if (!isLast) {
-          child.push(<span className="a10-breadcrumb__divide" dangerouslySetInnerHTML={{__html:'&raquo;'}}></span>);
+          child.push(<span key={'divide'+idx} className="a10-breadcrumb__divide" dangerouslySetInnerHTML={{__html:'&raquo;'}}></span>);
         }
-        return <li>{child}</li>;
+        return <li key={'li'+idx}>{child}</li>;
       })
     }</ol>);
   }

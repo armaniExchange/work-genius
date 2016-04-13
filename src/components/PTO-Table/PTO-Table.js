@@ -82,21 +82,21 @@ let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler }) => {
                     if (task.status === PENDING) {
                         actionsHTML = (
                             <Td key={cellIndex}>
-                                <ApproveButton onClick={() => {onStatusUpdateHandler(task['id'], APPROVED);}} />
-                                <DenyButton onClick={() => {onStatusUpdateHandler(task['id'], DENIED);}} />
-                                <RestoreButton onClick={() => {onStatusUpdateHandler(task['id'], CANCEL_REQUEST_PENDING);}} />
+                                <ApproveButton onClick={() => {onStatusUpdateHandler(task['id'], APPROVED, task['hours']);}} />
+                                <DenyButton onClick={() => {onStatusUpdateHandler(task['id'], DENIED, task['hours']);}} />
+                                <RestoreButton onClick={() => {onStatusUpdateHandler(task['id'], CANCEL_REQUEST_PENDING, task['hours']);}} />
                             </Td>
                         );
                     } else if (task.status === CANCEL_REQUEST_PENDING) {
                         actionsHTML = (
                             <Td key={cellIndex}>
-                                <ApproveButton onClick={() => {onStatusUpdateHandler(task['id'], CANCEL_REQUEST_APPROVED);}} />
+                                <ApproveButton onClick={() => {onStatusUpdateHandler(task['id'], CANCEL_REQUEST_APPROVED, task['hours']);}} />
                             </Td>
                         );
                     } else if (task.status === APPROVED) {
                         actionsHTML = (
                             <Td key={cellIndex}>
-                                <RestoreButton onClick={() => {onStatusUpdateHandler(task['id'], CANCEL_REQUEST_PENDING);}} />
+                                <RestoreButton onClick={() => {onStatusUpdateHandler(task['id'], CANCEL_REQUEST_PENDING, task['hours']);}} />
                             </Td>
                         );
                     } else {
@@ -141,7 +141,7 @@ class PTOTable extends Component {
     render() {
         return (
             <div className="pto-table">
-                <Table>
+                <Table className="pto-table__table-content">
                     <TableHeaders
                         {...this.props}
                         onSortHandler={this._onSortHandler} />

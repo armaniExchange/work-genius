@@ -66,6 +66,7 @@ export default keyMirror({
     SORT_OVERTIME_TABLE_BY_CATEGORY: null,
     FETCH_OVERTIME_APPLICATION_SUCCESS: null,
     FILTER_OVERTIME_TABLE: null,
+    FETCH_USERS_WITH_OVERTIME_SUCCESS: null,
 
     // Admin page actions
     FETCH_USERS_WITH_PRIVILEGE_SUCCESS: null,
