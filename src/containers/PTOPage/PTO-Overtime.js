@@ -79,6 +79,7 @@ class PTOOvertime extends Component {
             allUsersWithClosestPTO,
             currentSelectedUserID,
             selectedYear,
+            currentUser,
             goToPreviousYear,
             goToNextYear
         } = this.props;
@@ -128,6 +129,7 @@ class PTOOvertime extends Component {
                     titleKeyMap={overtimeTitleKeyMap}
                     enableSort={true}
                     sortBy={sortOvertimeTableBy}
+                    isUserAdmin={currentUser.privilege >= 10}
                     onSortHandler={sortOvertimeTableByCategory}
                     onStatusUpdateHandler={::this._onOvertimeStatusUpdate} />
                 <OvertimeApplyModal
