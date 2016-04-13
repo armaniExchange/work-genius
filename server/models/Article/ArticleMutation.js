@@ -6,7 +6,6 @@ import {
 import ArticleType from './ArticleType.js';
 import ArticleInputType from './ArticleInputType.js';
 
-
 // RethinkDB
 import r from 'rethinkdb';
 // Constants
@@ -49,17 +48,21 @@ let ArticleMutation = {
         const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         let result = null;
 
-        if (article){
-          const user = root.req.decoded;
-          const now = new Date().getTime();
-          article.author = {id: user.id};
-          article.createdAt = now;
-          article.updatedAt = now;
-        }
-
+        const user = root.req.decoded;
+        const now = new Date().getTime();
         result = await r.db('work_genius')
           .table('articles')
-          .insert(article)
+          .insert({
+            authorId: user.id,
+            categoryId: article.category && article.category.id,
+            commentsId: article.comments ? article.comments.map(comment => comment.id) : null,
+            filesId: article.files ? article.files.map(file => file.id) : null,
+            tags: article.tags,
+            content: article.content,
+            title: article.title,
+            createdAt: now,
+            updatedAt: now
+          })
           .run(connection);
 
         if (result && result.generated_keys && result.generated_keys.length > 0) {
@@ -79,6 +82,7 @@ let ArticleMutation = {
       }
     }
   },
+
   updateArticle: {
     type: ArticleType,
     description: 'edit a article ',
@@ -90,14 +94,20 @@ let ArticleMutation = {
         const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         let result = null;
 
-        if (article){
-          article.updatedAt = new Date().getTime();
-        }
-
+        const now = new Date().getTime();
         await r.db('work_genius')
           .table('articles')
           .get(article.id)
-          .update(article)
+          .update({
+            categoryId: article.category && article.category.id,
+            commentsId: article.comments ? article.comments.map(comment => comment.id) : null,
+            filesId: article.files ? article.files.map(file => file.id) : null,
+            tags: article.tags,
+            content: article.content,
+            title: article.title,
+            category: article.category && article.category.id,
+            updatedAt: now
+          })
           .run(connection);
 
          result = await r.db('work_genius')

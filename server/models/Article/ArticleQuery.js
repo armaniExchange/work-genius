@@ -17,16 +17,16 @@ import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 function _getArticleDetail(article){
   const dbWorkGenius = r.db('work_genius');
   return {
-    author: dbWorkGenius.table('users').get(article('author')('id')).default(null),
-    category: dbWorkGenius.table('categories').get(article('category')('id')).default(null),
+    author: dbWorkGenius.table('users').get(article('authorId')).default(null),
+    category: dbWorkGenius.table('categories').get(article('categoryId')).default(null),
     files: dbWorkGenius.table('files')
       .getAll(
-        r.args(article('files')('id').default([]).coerceTo('array').append('prevent-empty-error'))
+        r.args(article('filesId').default([]).coerceTo('array').append('prevent-empty-error'))
       )
       .coerceTo('array'),
     comments: dbWorkGenius.table('comments')
       .getAll(
-        r.args(article('comments')('id').default([]).coerceTo('array').append('prevent-empty-error'))
+        r.args(article('commentsId').default([]).coerceTo('array').append('prevent-empty-error'))
       )
       .coerceTo('array')
   };
