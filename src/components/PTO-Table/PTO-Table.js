@@ -141,7 +141,7 @@ class PTOTable extends Component {
     render() {
         return (
             <div className="pto-table">
-                <Table>
+                <Table className="pto-table__table-content">
                     <TableHeaders
                         {...this.props}
                         onSortHandler={this._onSortHandler} />

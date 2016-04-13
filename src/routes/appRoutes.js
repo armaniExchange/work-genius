@@ -13,6 +13,7 @@ import TaskPage from '../containers/TaskPage/TaskPage';
 import PTOPage from '../containers/PTOPage/PTOPage';
 import PTOApplication from '../containers/PTOPage/PTO-Application';
 import PTOOvertime from '../containers/PTOPage/PTO-Overtime';
+import PTOSummary from '../containers/PTOPage/PTO-Summary';
 import BugAnalysisPage from '../containers/BugAnalysisPage/BugAnalysisPage';
 import BugReviewPage from '../containers/BugAnalysisPage/BugReviewPage';
 import BugReportPage from '../containers/BugAnalysisPage/BugReportPage';
@@ -50,6 +51,7 @@ const appRoutes = () => (
         <Route path="pto" component={requireAuth(PTOPage)}>
           <IndexRoute component={requireAuth(PTOApplication)} />
           <Route path="overtime" component={requireAuth(PTOOvertime)} />
+          <Route path="summary" component={requireAuth(PTOSummary)} />
         </Route>
 
         {/*Bug Analysis*/}

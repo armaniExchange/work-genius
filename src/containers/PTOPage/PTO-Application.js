@@ -135,6 +135,12 @@ class PTOApplication extends Component {
                         filterPTOTable({[KEY]:curVal});
                     }} />
                 <Space h="20" />
+                <RaisedButton
+                    label="PTO Application"
+                    onClick={this._onApplyButtonClicked}
+                    labelStyle={{'textTransform':'none'}}
+                    secondary={true} />
+                <Space h="20" />
                 <PTOTable
                     data={applications}
                     titleKeyMap={ptoTitleKeyMap}
@@ -142,8 +148,6 @@ class PTOApplication extends Component {
                     sortBy={sortPTOTableBy}
                     onSortHandler={sortPTOTableByCategory}
                     onStatusUpdateHandler={this._onApplicationStatusUpdate} />
-                <Space h="20" />
-                <RaisedButton label="PTO Application" onClick={this._onApplyButtonClicked} labelStyle={{'textTransform':'none'}} secondary={true} />
                 <PTOApplyModal
                     show={showPTOApplyModal}
                     onHideHandler={this._closePTOApplyModal}

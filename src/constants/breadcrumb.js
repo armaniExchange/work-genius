@@ -7,7 +7,7 @@ let BREADCRUMB = {
   knowledge: [{txt:'Document', url: BASE_URL + '/knowledge/document'}],
   document: [{txt:'Document', url: BASE_URL + '/knowledge/document'}],
   bugtracking: [{txt:'Bug Tracking', url: BASE_URL + '/knowledge/bug-tracking'}],
-  
+
   resource: [{txt:'Resources', url: BASE_URL + '/resource/resource-map'}],
   resourcemap: [{txt:'Resource Map', url: BASE_URL + '/resource/resource-map'}],
   teammember: [{txt:'Team Member', url: BASE_URL + '/resource/team'}],
@@ -22,7 +22,8 @@ let BREADCRUMB = {
 
   pto: [{txt:'PTO', url: BASE_URL + '/pto/'}],
   ptoapply: [{txt:'Apply', url: BASE_URL + '/pto/'}],
-  overtime: [{txt:'Overtime', url: BASE_URL + '/pto/overtime/'}],
+  overtime: [{txt:'Overtime', url: BASE_URL + '/pto/overtime'}],
+  ptoSummary: [{txt:'Summary', url: BASE_URL + '/pto/summary'}],
 };
 
 // chain
@@ -40,7 +41,7 @@ BREADCRUMB.tablepageassignment = BREADCRUMB.pageassignment.concat(BREADCRUMB.tab
 
 BREADCRUMB.ptoapply = BREADCRUMB.pto.concat(BREADCRUMB.ptoapply);
 BREADCRUMB.overtime = BREADCRUMB.pto.concat(BREADCRUMB.overtime);
+BREADCRUMB.ptoSummary = BREADCRUMB.pto.concat(BREADCRUMB.ptoSummary);
 
 // export!
 export default BREADCRUMB;
-

@@ -14,3 +14,9 @@
 .pto-table .pto-table__header {
 	cursor: pointer;
 }
+
+.pto-table {
+	&__table-content {
+		width: 100%;
+	}
+}

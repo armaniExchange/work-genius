@@ -1,4 +1,4 @@
-.overtime-table .pto-table__body {
+.overtime-table .overtime-table__body {
 	td {
 		text-align: center;
 	}
@@ -11,6 +11,12 @@
 	display: none;
 }
 
-.overtime-table .pto-table__header {
-	cursor: pointer;
+.overtime-table {
+	&__table-content {
+		width: 100%;
+	}
+	.overtime-table__header {
+		text-align: center;
+		cursor: pointer;
+	}
 }

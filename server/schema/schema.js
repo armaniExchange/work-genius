@@ -32,6 +32,7 @@ const schema = new GraphQLSchema({
 		fields: {
 			// PTO Page
 			allUserWithPto         : UserQuery.allUserWithPto,
+			allUserWithOvertime    : UserQuery.allUserWithOvertime,
 			ptoApplications        : PTOQuery.ptoApplications,
 			overtimeApplications   : PTOQuery.overtimeApplications,
 			// Task Page
