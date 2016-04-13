@@ -82,6 +82,7 @@
     "request": "^2.65.0",
     "rethinkdb": "^2.1.1",
     "session-rethinkdb": "^1.0.7",
+    "stringify-object": "^2.3.1",
     "superagent": "^1.4.0",
     "whatwg-fetch": "^0.10.1"
   },

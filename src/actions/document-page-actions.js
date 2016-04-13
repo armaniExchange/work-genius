@@ -39,8 +39,8 @@ export function fetchArticles(query) {
             title,
             content
           },
-          created_at,
-          updated_at
+          createdAt,
+          updatedAt
         }
       }`,
       headers: {
@@ -64,8 +64,8 @@ export function fetchArticles(query) {
             tags,
             author,
             comments,
-            created_at,
-            updated_at
+            createdAt,
+            updatedAt
           } = article;
           return {
             id,
@@ -74,8 +74,8 @@ export function fetchArticles(query) {
             tags,
             author,
             comments,
-            createdAt: parseInt(created_at), // remove this when ready
-            updatedAt: parseInt(updated_at) // remove this when server respond with current
+            createdAt,
+            updatedAt
           };
         })));
       })

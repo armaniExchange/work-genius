@@ -4,7 +4,7 @@ import {
   SERVER_FILES_URL
 } from '../constants/config';
 import sendFile from '../libraries/sendFile';
-
+import stringifyObject from '../libraries/stringifyObject';
 
 export function fetchArticleSucess(article) {
   return {
@@ -29,7 +29,7 @@ function _fetchArticle(id) {
         title,
         content,
         tags,
-        categories_id,
+        category {id},
         author {
           id,
           name
@@ -39,8 +39,8 @@ function _fetchArticle(id) {
           title,
           content
         },
-        created_at,
-        updated_at
+        createdAt,
+        updatedAt
       }
     }`,
     headers: {
@@ -73,10 +73,10 @@ export function fetchArticle(articleId) {
           content,
           tags,
           author,
-          categories_id,
+          category,
           comments,
-          created_at,
-          updated_at
+          createdAt,
+          updatedAt
         } = body.data.getArticle;
         const article = {
           id,
@@ -84,10 +84,10 @@ export function fetchArticle(articleId) {
           content,
           tags,
           author,
-          category: {id: categories_id[0]},
+          category,
           comments,
-          createdAt: parseInt(created_at), // remove this when ready
-          updatedAt: parseInt(updated_at) // remove this when server respond with current
+          createdAt,
+          updatedAt
         };
         dispatch(fetchArticleSucess(article));
       })
@@ -117,14 +117,15 @@ export function createArticle(newArticle) {
       type: actionTypes.CREATE_ARTICLE,
       ...newArticle
     });
-    newArticle.categories_id = [newArticle.category.id];
     // post to server
 
     const config = {
       method: 'POST',
       body: `
         mutation RootMutationType {
-          createArticle ( data: "${JSON.stringify(newArticle).replace(/"/g, '\\"')}")
+          createArticle ( article: ${stringifyObject(newArticle)}) {
+            id
+          }
         }
       `,
       headers: {
@@ -141,7 +142,7 @@ export function createArticle(newArticle) {
         return res.json();
       })
       .then((body) => {
-        const id = body.data.createArticle;
+        const id = body.data.createArticle.id;
         dispatch(createArticleSuccess({id}));
         return _fetchArticle(id);
       })
@@ -171,18 +172,15 @@ export function updateArticle(newArticle) {
     dispatch({
       type: actionTypes.UPDATE_ARTICLE
     });
-    newArticle.categories_id = [newArticle.category.id];
-    newArticle.content = newArticle.content.replace(/\n/g, '\\n');
 
     // update to server
     const config = {
       method: 'POST',
       body: `
         mutation RootMutationType {
-          updateArticle (
-            id: "${newArticle.id}"
-            data: "${JSON.stringify(newArticle).replace(/"/g, '\\"')}"
-          ),
+          updateArticle ( article: ${stringifyObject(newArticle)}) {
+            id
+          }
         }
       `,
       headers: {
@@ -199,7 +197,7 @@ export function updateArticle(newArticle) {
         return res.json();
       })
       .then((body) => {
-        const id = body.data.editArticle;
+        const id = body.data.updateArticle.id;
         dispatch(updateArticleSuccess({id}));
       })
       .catch((error) => {
