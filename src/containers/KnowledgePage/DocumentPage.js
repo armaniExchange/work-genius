@@ -35,9 +35,13 @@ class DocumentPage extends Component {
       fetchAllCategories,
       fetchAllTags
     } = this.props.documentActions;
-    fetchArticles();
+
+    // Todo: find a better way to handle jumpling this page from other page
     fetchAllCategories();
     fetchAllTags();
+    if (this.props.articleList.length === 0) {
+      fetchArticles();
+    }
   }
 
   queryWithTag(tag) {

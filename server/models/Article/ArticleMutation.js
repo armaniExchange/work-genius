@@ -72,6 +72,7 @@ let ArticleMutation = {
             .get(id)
             .run(connection);
           await connection.close();
+          // TODO: join the comments category author files table
           return result;
         } else {
           await connection.close();
@@ -116,6 +117,7 @@ let ArticleMutation = {
             .run(connection);
 
         await connection.close();
+        // TODO: join the comments category author files table
         return result;
       } catch (err) {
         return err;

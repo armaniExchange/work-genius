@@ -47,21 +47,17 @@ let ArticleQuery = {
     }),
     description: 'Get all articles under the selected category',
     args: {
-      category_id: {
+      categoryId: {
         type: GraphQLString,
         description: 'The category id for filtering articles'
-      },
-      tag_id: {
-        type: GraphQLString,
-        description: 'The tag for filtering articles'
-      },
-      last_update_time: {
-        type: GraphQLString,
-        description: 'The last update time of the article'
       },
       authorId: {
         type: GraphQLString,
         description: 'The author of the article'
+      },
+      tag: {
+        type: GraphQLString,
+        description: 'The tag of the article'
       },
       page: {
         type: GraphQLInt,
@@ -72,42 +68,23 @@ let ArticleQuery = {
         description: 'argument specifies the number of pages you’d like to get.'
       }
     },
-    resolve: async (root, { category_id, tag_id ,last_update_time, authorId, page, pageLimit}) => {
-      let connection = null,
+    resolve: async (root, { categoryId, authorId, tag, page, pageLimit}) => {
+      let  result,
         count = 0,
         filterFunc = article => {
-          let haveCategoryId = !!category_id ,
-            haveTag = !!tag_id;
-          if (haveCategoryId && !haveTag){
-            return article('category_ids').contains(category_id);
-          } else if (!haveCategoryId && haveTag){
-            return article('tags').contains(tag_id);
-          } else if (haveCategoryId && haveTag){
-            return article('category_ids').contains(category_id).and(article('tags').contains(tag_id));
-          } else {
-            return true;
-          }
-
-        },
-          result = null,
-          filterCondition = {};
-        if (authorId){
-          filterCondition = {'authorId' : authorId};
-        }
-
-        if (last_update_time){
-          filterCondition.updated_time = last_update_time;
-        }
+          return (!authorId || article('authorId') === authorId)
+            && (!categoryId || article('categoryId') === categoryId)
+            && (!tag || article('tags').contains(tag));
+        };
 
       try {
+        const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         page = page || 1;
         pageLimit = pageLimit || 5;
         let query = r.db('work_genius')
           .table('articles')
           .filter(filterFunc)
-          .filter(filterCondition)
           .orderBy('updatedAt');
-        connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         result = await query
           .slice((page-1) * pageLimit, page * pageLimit)
           .merge(_getArticleDetail).run(connection);

@@ -28,7 +28,7 @@ export function fetchArticles(query = {}) {
     dispatch(setLoadingState(true));
 
     let queryString = Object.keys(query)
-      .reduce((previous, key) => previous + `${key}: ${query[key]} `, '');
+      .reduce((previous, key) => previous + `${key}: ${JSON.stringify(query[key])} `, '');
     if (queryString !== '') {
       queryString = `(${queryString})`;
     }
@@ -119,8 +119,6 @@ export function fetchAllCategories() {
     dispatch({
       type: actionTypes.FETCH_ALL_CATEGORIES
     });
-    dispatch(setLoadingState(true));
-
     const config = {
       method: 'POST',
       body: `{
@@ -146,7 +144,6 @@ export function fetchAllCategories() {
       })
       .then((body) => {
         dispatch(fetchAllCategoriesSuccess(body.data.allCategories));
-        dispatch(setLoadingState(false));
       })
       .catch((error) => {
         dispatch(fetchAllCategoriesFail(error));
@@ -174,8 +171,7 @@ export function fetchAllTags() {
     dispatch({
       type: actionTypes.FETCH_ALL_TAGS
     });
-    dispatch(setLoadingState(true));
-    // fetch categoreis from server
+
     const config = {
       method: 'POST',
       body: `{
@@ -195,7 +191,6 @@ export function fetchAllTags() {
       })
       .then((body) => {
         dispatch(fetchAllTagsSuccess(body.data.tags));
-        dispatch(setLoadingState(true));
       })
       .catch((error) => {
         dispatch(fetchAllTagsFail(error));
