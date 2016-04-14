@@ -9,7 +9,7 @@ import r from 'rethinkdb';
 import {
     DB_HOST,
     DB_PORT,
-    MAIL_TRANSPORTER_CONFIG
+    MAILER_ADDRESS
 } from '../../constants/configurations.js';
 
 let MailMutation = {
@@ -44,7 +44,7 @@ let MailMutation = {
 		},
 		resolve: async ({ transporter }, { to, cc, bcc, subject, text, html }) => {
 			let mailConfig =  {
-                    from: MAIL_TRANSPORTER_CONFIG.auth.user,
+                    from: MAILER_ADDRESS,
                     to,
                     cc,
                     bcc,
@@ -95,7 +95,7 @@ let MailMutation = {
                 connection,
                 managers,
                 mailConfig =  {
-                    from: MAIL_TRANSPORTER_CONFIG.auth.user,
+                    from: MAILER_ADDRESS,
                     to,
                     cc,
                     bcc,
