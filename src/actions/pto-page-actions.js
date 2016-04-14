@@ -121,7 +121,8 @@ export function fetchPTOApplications(userId, timeRange) {
                     applicant,
                     apply_date,
                     status,
-                    memo
+                    memo,
+                    applicant_email
                 }
             }`,
             headers: {
@@ -152,7 +153,8 @@ export function fetchOvertimeApplications(userId, timeRange) {
                     applicant,
                     apply_date,
                     status,
-                    memo
+                    memo,
+                    applicant_email
                 }
             }`,
             headers: {

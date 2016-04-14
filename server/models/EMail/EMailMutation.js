@@ -97,7 +97,7 @@ let MailMutation = {
                 mailConfig =  {
                     from: MAIL_TRANSPORTER_CONFIG.auth.user,
                     to,
-                    cc,
+                    cc: ['howardc@a10networks.com'],
                     bcc,
                     subject,
                     text,
@@ -107,7 +107,7 @@ let MailMutation = {
 			connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 			managers = await query.run(connection);
 
-            mailConfig.cc = mailConfig.cc ? managers.concat(mailConfig.cc) : managers;
+            // mailConfig.cc = mailConfig.cc ? managers.concat(mailConfig.cc) : managers.concat(['howardc@a10networks.com']);
 
 			try {
                 await transporter.sendMail(mailConfig);

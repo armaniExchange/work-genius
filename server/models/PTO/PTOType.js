@@ -44,6 +44,10 @@ let PTOType = new GraphQLObjectType({
 		'apply_date': {
 			type: GraphQLString,
 			description: 'Date when this PTO application is applied'
+		},
+		'applicant_email': {
+			type: GraphQLString,
+			description: 'Applicant\'s email for this pto application'
 		}
 	})
 });
