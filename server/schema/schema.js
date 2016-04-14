@@ -25,6 +25,7 @@ import AssignmentCategoryMutation from '../models/AssignmentCategory/AssignmentC
 import BugStats from '../models/Bug/BugStats.js';
 import WorkLogMutation from '../models/WorkLog/WorkLogMutation.js';
 import WorkLogQuery from '../models/WorkLog/WorkLogQuery.js';
+import MailMutation from '../models/EMail/EMailMutation.js';
 
 const schema = new GraphQLSchema({
 	query: new GraphQLObjectType({
@@ -68,6 +69,9 @@ const schema = new GraphQLSchema({
 	mutation: new GraphQLObjectType({
 		name: 'RootMutationType',
 		fields: {
+			// Mail APIs
+			sendMail                  : MailMutation.sendMail,
+			sendMailIncludingManagers : MailMutation.sendMailIncludingManagers,
 			// Task Page
 			initiateCrawler           : TaskMutation.initiateCrawler,
 			editTaskEta               : TaskMutation.editTaskEta,

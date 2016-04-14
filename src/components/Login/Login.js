@@ -44,7 +44,7 @@ class LoginForm extends Component {
 		});
 		return (
 	        <form className="form-signin" onSubmit={this._onSubmitHandle}>
-		        <h4 className="form-signin-heading">Sign in Work Genius</h4>
+		        <h4 className="form-signin-heading">Sign in Knowlege Base</h4>
 		        <input
 		            type="text"
 		            className="input-block-level"

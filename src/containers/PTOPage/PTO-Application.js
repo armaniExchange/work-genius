@@ -52,7 +52,7 @@ class PTOApplication extends Component {
         setPTOApplyModalState(false);
     }
     _onPTOApplySubmitClicked(data) {
-        const { createPTOApplication, currentUser } = this.props;
+        const { createPTOApplication, currentUser, sendMail } = this.props;
         let finalData = {
             start_date: data.startDate,
             end_date: data.endDate,
@@ -62,16 +62,64 @@ class PTOApplication extends Component {
             applicant: currentUser.name,
             applicant_id: currentUser.id,
             status: PTOConstants.PENDING
-        };
+        }, mailingConfig;
         createPTOApplication(finalData);
+        mailingConfig = {
+            subject: `[KB-PTO] ${finalData.applicant} has a New PTO Application`,
+            text: '*** This is an automatically generated email, please do not reply ***\\n\\n' + finalData.applicant
+                + ' has applied for ' + finalData.hours + ' hours of PTO from ' + finalData.start_date + ' to ' + finalData.end_date + '.\\nPlease update status on KB.',
+            includeManagers: true
+        };
+        let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
+        sendMail(to, cc, bcc, subject, text, html, includeManagers);
     }
     _onPTORemoveClicked(id) {
         const { removePTOApplication } = this.props;
         removePTOApplication(id);
     }
-    _onApplicationStatusUpdate(id, newState, hours) {
-        const { setPTOApplicationStatus } = this.props;
-        setPTOApplicationStatus(id, newState, hours);
+    _onApplicationStatusUpdate(updatedPtoApplication) {
+        const {
+            setPTOApplicationStatus,
+            currentUser,
+            sendMail
+        } = this.props;
+        const {
+            id,
+            status,
+            hours,
+            start_date,
+            applicant,
+            end_date,
+            applicant_email
+        } = updatedPtoApplication;
+
+        let mailingConfig = {
+            to: [applicant_email],
+            subject: '[KB-PTO] Your PTO Application has been updated',
+            text: '*** This is an automatically generated email, please do not reply ***\\n\\n' + currentUser.name
+                + ' has ' + status + ' your ' + hours + ' hours of PTO application from ' + start_date + ' to ' + end_date + '.'
+        };
+
+        setPTOApplicationStatus(id, status, hours);
+
+        if (status === PTOConstants.APPROVED || status === PTOConstants.DENIED || status === PTOConstants.CANCEL_REQUEST_APPROVED) {
+            if (status === PTOConstants.CANCEL_REQUEST_APPROVED) {
+                mailingConfig.text = '*** This is an automatically generated email, please do not reply ***\\n\\n' + currentUser.name
+                    + ' has APPROVED your CANCEL REQUEST on ' + hours + ' hours PTO application from ' + start_date + ' to ' + end_date + '.';
+            }
+            mailingConfig.includeManagers = false;
+        } else {
+            mailingConfig = {
+                to: [applicant_email],
+                subject: `[KB-PTO] ${applicant} has a New PTO Application`,
+                text: '*** This is an automatically generated email, please do not reply ***\\n\\n' + applicant
+                    + ' has CANCELED the application for ' + hours + ' hours of PTO from ' + start_date + ' to ' + end_date + '.\\nPlease update status on KB.'
+            };
+            mailingConfig.includeManagers = true;
+        }
+
+        let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
+        sendMail(to, cc, bcc, subject, text, html, includeManagers);
     }
     _onUserFilterClickedHandler(id) {
         const {
@@ -107,7 +155,7 @@ class PTOApplication extends Component {
         if (curUser && curUser.name) {
             dropdownTitle = curUser.name + (curUser.subtitle ? ' - ' + curUser.subtitle : '');
         }
-        
+
         return (
             <section>
                 <Breadcrumb data={BREADCRUMB.ptoapply} />
@@ -182,7 +230,8 @@ PTOApplication.propTypes = {
     fetchPTOPageData        : PropTypes.func,
     resetPTOTable           : PropTypes.func,
     goToPreviousYear        : PropTypes.func,
-    goToNextYear            : PropTypes.func
+    goToNextYear            : PropTypes.func,
+    sendMail                : PropTypes.func
 };
 
 function mapStateToProps(state) {

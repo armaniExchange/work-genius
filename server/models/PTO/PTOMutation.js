@@ -21,10 +21,14 @@ let TaskMutation = {
 		},
 		resolve: async (root, { data }) => {
 			let connection = null,
-				mutationQuery = null;
+				mutationQuery = null,
+				finalData = JSON.parse(data),
+				applicant_email;
 			try {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				mutationQuery = r.db('work_genius').table('pto').insert(JSON.parse(data));
+				mutationQuery = r.db('work_genius').table('users').filter(r.row('name').eq(finalData.applicant)).getField('email').coerceTo('array');
+				applicant_email = await mutationQuery.run(connection);
+				mutationQuery = r.db('work_genius').table('pto').insert({...finalData, applicant_email: applicant_email[0]});
 				await mutationQuery.run(connection);
 				await connection.close();
 			} catch (err) {
@@ -141,10 +145,14 @@ let TaskMutation = {
 		},
 		resolve: async (root, { data }) => {
 			let connection = null,
-				mutationQuery = null;
+				mutationQuery = null,
+				finalData = JSON.parse(data),
+				applicant_email;
 			try {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				mutationQuery = r.db('work_genius').table('overtime').insert(JSON.parse(data));
+				mutationQuery = r.db('work_genius').table('users').filter(r.row('name').eq(finalData.applicant)).getField('email').coerceTo('array');
+				applicant_email = await mutationQuery.run(connection);
+				mutationQuery = r.db('work_genius').table('overtime').insert({...finalData, applicant_email: applicant_email[0]});
 				await mutationQuery.run(connection);
 				await connection.close();
 			} catch (err) {
