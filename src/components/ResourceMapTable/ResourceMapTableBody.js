@@ -34,11 +34,16 @@ const RESOURCE_MAP_CELLS = {
         );
     },
     holiday: (config, onModalHander) => {
-        return this.defaults(config, onModalHander);
+        return (
+            <ResourceMapCellAddButton
+                config={config}
+                onModalHander={onModalHander}
+            />
+        );
     }
 };
 
-const RESOURCE_MAP_CELLS_DEFAULT_TYPE = 'defaults';
+// const RESOURCE_MAP_CELLS_DEFAULT_TYPE = 'defaults';
 
 class ResourceMapTableBody extends Component {
 
@@ -91,7 +96,7 @@ class ResourceMapTableBody extends Component {
                     if (cellFunc !== undefined) {
                         cellHtml = cellFunc(config, onModalHander);
                     }
-                    var defaultCellHtml = RESOURCE_MAP_CELLS[ RESOURCE_MAP_CELLS_DEFAULT_TYPE ](config, onModalHander);
+                    // var defaultCellHtml = RESOURCE_MAP_CELLS[ RESOURCE_MAP_CELLS_DEFAULT_TYPE ](config, onModalHander);
 
                     let __onShowModalHandler = () => {
                         this._onShowModalHandler(config);
@@ -104,7 +109,6 @@ class ResourceMapTableBody extends Component {
                             className={className}
                             onClick={__onShowModalHandler}
                         >
-                            {defaultCellHtml}
                             {cellHtml}
                         </Td>
                     );

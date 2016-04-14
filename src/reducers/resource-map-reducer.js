@@ -90,10 +90,10 @@ function checkWorkLogsData(worklogs, item) {
     });
 
     let worklogItems = worklog.worklog_items;
-
     if (worklogItems === undefined || worklogItems === null) {
         worklogItems = [];
         worklogItems.push(worklogItem);
+        worklog.worklog_items = worklogItems;
         return worklogs;
     }
 
@@ -101,9 +101,7 @@ function checkWorkLogsData(worklogs, item) {
         return log.id === item.id;
     });
 
-    console.log(logItem);
     if (logItem === undefined) {
-        console.log('............................');
         worklogItems.push(worklogItem);
     } else {
         logItem.content = item.content;

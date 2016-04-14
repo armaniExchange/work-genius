@@ -1,6 +1,9 @@
 import './ResourceMapTable.css';
 import React, { Component, PropTypes } from 'react';
 import Checkbox from 'material-ui/lib/checkbox';
+import Tooltip from 'rc-tooltip';
+
+import 'rc-tooltip/assets/bootstrap_white.css';
 
 // class ResourceMapCellWorkLog extends Component {
 
@@ -64,7 +67,7 @@ class ResourceMapCellWorkLog extends Component {
 
 			let className = 'worklog-layout--text ';
 
-			className += item.tag ? item.tag : TAG;
+			className += (item.tag && item.tag !== '') ? item.tag : TAG;
 			item.process = item.process ? item.process : 0;
 
 			return (
@@ -73,7 +76,23 @@ class ResourceMapCellWorkLog extends Component {
 						<Checkbox className="checkbox-layout" />
 					</div>
 					<div className={className} onClick={__onClickWorkLogItem}>
-					    <span className="label-default-style c-white">{item.process}% {item.content}</span>
+						<Tooltip
+							placement="top"
+							overlay={
+								(
+									<div>
+										<label>Process: </label>
+										<span>{item.process}%</span>
+										<br />
+										<label>Work Log: </label>
+										<span>{item.content}</span>
+									</div>
+								)
+							}
+							arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+						>
+					    	<span className="label-default-style c-white">{item.process}% {item.content}</span>
+					    </Tooltip>
 					</div>
 				</div>
 			);
