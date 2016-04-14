@@ -103,6 +103,37 @@ let WorkLogMutation = {
 			}
 			return 'Delete worklog successfully!';
 		}
+	},
+	'createWorkLogBatch': {
+		type: GraphQLString,
+		description: 'create a batch of worklog ',
+        args: {
+			data: {
+				type: GraphQLString,
+				description: 'new worklog array'
+			}
+		},
+		resolve: async (root, { data }) => {
+			let connection = null,
+				query = null;
+
+			try {
+				
+				let worklogObj = JSON.parse(data);
+
+				query = r.db('work_genius').table('worklog').insert(worklogObj.worklog);
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				let result = await query.run(connection);
+				await connection.close();
+				let idList = [];
+		        if (result && result.generated_keys){
+		          idList = result.generated_keys;
+		        }
+		        return idList;
+			} catch (err) {
+				return 'Fail to create a batch of worklog!';
+			}
+		}
 	}
 
 };
