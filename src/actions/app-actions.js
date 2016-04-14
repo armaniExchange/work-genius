@@ -120,3 +120,40 @@ export function getCurrentUser() {
 			});
 	};
 };
+
+
+
+export function sendMail(to, cc, bcc, subject, text, html, includeManagers = false) {
+    return (dispatch) => {
+		let query = `${to ? 'to:[' + to.map(n => '\"' + n + '\"').join(',') + '],' : ''}${cc ? 'cc:' + cc + ',' : ''}${bcc ? 'bcc:' + bcc + ',' : ''}${subject ? 'subject:"' + subject + '",' : ''}${text ? 'text:"' + text + '",' : ''}${html ? 'html:"' + html + '",' : ''}`;
+        let config = includeManagers ?
+		    {
+				method: 'POST',
+                body: `mutation RootMutationType {
+                    sendMailIncludingManagers(${query.slice(0, -1)})
+                }`,
+                headers: {
+                    'Content-Type': 'application/graphql',
+                    'x-access-token': localStorage.token
+                }
+			}
+			:
+			{
+                method: 'POST',
+                body: `mutation RootMutationType {
+                    sendMail(${query.slice(0, -1)})
+                }`,
+                headers: {
+                    'Content-Type': 'application/graphql',
+                    'x-access-token': localStorage.token
+                }
+            };
+
+        return fetch(SERVER_API_URL, config)
+            .then((res) => res.json())
+            .then(() => {})
+            .catch((err) => {
+                dispatch(apiFailure(err));
+            });
+    };
+};

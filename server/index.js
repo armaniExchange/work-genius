@@ -2,16 +2,15 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import graphqlHTTP from 'express-graphql';
-import { CronJob } from 'cron';
 import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
 // GraphQL and schema
 import schema from './schema/schema.js';
 import { loginHandler } from './models/User/UserMutation.js';
-// Crawler
-import { crawlGK2 } from './crawler/crawler.js';
 // Constants
 import {
-    SECURE_KEY
+    SECURE_KEY,
+    MAIL_TRANSPORTER_CONFIG
 } from './constants/configurations.js';
 
 const PORT = 3000;
@@ -62,14 +61,11 @@ app.use((req, res, next) => {
     }
 });
 
-// Crawling GK2 every 10 minutes
-// new CronJob('30 */10 * * * *', () => {
-// 	crawlGK2();
-// }, null, true);
+let transporter = nodemailer.createTransport(MAIL_TRANSPORTER_CONFIG);
 
 app.use('/graphql', graphqlHTTP(request => ({
     schema: schema,
-    rootValue: { req: request },
+    rootValue: { req: request, transporter },
     pretty: true,
     graphiql: true
 })));
