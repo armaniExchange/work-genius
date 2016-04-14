@@ -16,7 +16,13 @@ export const ADMIN_ID = '00000';
 export const TESTER_ID = '99999';
 
 
-
+export const MAIL_TRANSPORTER_CONFIG = {
+    service: 'Gmail',
+    auth: {
+        user: 'a10webgui@gmail.com',
+        pass: '!@#a10webgui'
+    }
+};
 
 
 
