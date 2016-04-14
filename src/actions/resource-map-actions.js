@@ -7,11 +7,12 @@ import {
     apiFailure
 } from './app-actions';
 
-function fetchResourceMapData(data, startDate) {
+function fetchResourceMapData(data, startDate, userId) {
 	return {
 		type: actionTypes.FETCH_RESOURCE_MAP_DATA,
 		data,
-		startDate
+		startDate,
+        userId
 	};
 }
 
@@ -68,10 +69,7 @@ export function fetchAllUsersRequest(){
 
 
 function queryResourceMapDataFromServer(startDate) {
-    console.log('......................');
-    console.log(startDate);
     let date = parseInt(moment(startDate).format('X')) * 1000;
-    console.log(date);
     return (dispatch) => {
         let config = {
             method: 'POST',
@@ -97,11 +95,13 @@ function queryResourceMapDataFromServer(startDate) {
         return fetch(SERVER_API_URL, config)
             .then((res) => res.json())
             .then((body) => {
+                dispatch(setLoadingState(false));
             	let data = body.data.getWorkLogList;
             	data = data === undefined ? [] : data;
             	dispatch(fetchResourceMapData(data, startDate));
             })
             .catch((err) => {
+                dispatch(setLoadingState(false));
                 throw new Error(err);
             });
     };
@@ -121,7 +121,10 @@ function queryResourceMapDataFromServerByUser(startDate, userId) {
                         type,
                         worklog_items{
                             id,
-                            content
+                            content,
+                            progress,
+                            tag,
+                            status
                         }
                     }
                 }
@@ -134,11 +137,13 @@ function queryResourceMapDataFromServerByUser(startDate, userId) {
         return fetch(SERVER_API_URL, config)
             .then((res) => res.json())
             .then((body) => {
+                dispatch(setLoadingState(false));
                 let data = body.data.getWorkLogByEmployeeId;
                 data = data === undefined ? [] : data;
-                dispatch(fetchResourceMapData(data, startDate));
+                dispatch(fetchResourceMapData(data, startDate, userId));
             })
             .catch((err) => {
+                dispatch(setLoadingState(false));
                 throw new Error(err);
             });
     };
@@ -149,9 +154,11 @@ function workLogItemCreate(item) {
         let date = parseInt(item.date.format('X')) * 1000;
         var createData = {
             employee_id: item.employee_id,
-            date: date,
             content: item.content,
-            tag: item.tag
+            progress: parseInt(item.progress),
+            date: date,
+            tag: item.tag,
+            status: item.status ? item.status : 0
         };
         let config = {
             method: 'POST',
@@ -168,7 +175,6 @@ function workLogItemCreate(item) {
             .then((res) => res.json())
             .then((body) => {
                 let id = body.data.createWorkLog;
-                console.log(id);
                 if (id !== undefined && id !== '' && id !== 0) {
                     item.id = id;
                     dispatch(fetchWorklogItem(item));
@@ -180,15 +186,17 @@ function workLogItemCreate(item) {
     };
 }
 
-function workLogItemUpdate(item) {
+function workLogItemUpdate(item, fetchState) {
 
     return (dispatch) => {
         let date = parseInt(item.date.format('X')) * 1000;
         var updateData = {
             employee_id: item.employee_id,
-            date: date,
             content: item.content,
-            tag: item.tag
+            progress: parseInt(item.progress),
+            date: date,
+            tag: item.tag,
+            status: item.status ? item.status : 0
         };
         let config = {
             method: 'POST',
@@ -201,6 +209,34 @@ function workLogItemUpdate(item) {
             }
         };
 
+        return fetch(SERVER_API_URL, config)
+            .then((res) => res.json())
+            .then(() => {
+                if (fetchState) {
+                    dispatch(fetchWorklogItem(item));
+                }
+            })
+            .catch((err) => {
+                throw new Error(err);
+            });
+    };
+}
+
+function workLogItemDelete(item) {
+    console.log(item.id);
+    return (dispatch) => {
+        let config = {
+            method: 'POST',
+            body: `mutation RootMutationType {
+                deleteWorkLog(id:"` + item.id + `")
+            }`,
+            headers: {
+                'Content-Type': 'application/graphql',
+                'x-access-token': localStorage.token
+            }
+        };
+
+        console.log(config);
         return fetch(SERVER_API_URL, config)
             .then((res) => res.json())
             .then(() => {
@@ -219,7 +255,7 @@ function workLogItemUpsert(item) {
         };
     } else {
         return (dispatch) => {
-            dispatch(workLogItemUpdate(item));
+            dispatch(workLogItemUpdate(item, true));
         };
     }
 }
@@ -227,13 +263,47 @@ function workLogItemUpsert(item) {
 function queryResourceMapDataByUser(startDate, userId) {
     return (dispatch, getState) => {
         if (userId === 0) {
-            userId = getState().app.toJS().currentUser.id;
+            let user = getState().app.toJS().currentUser;
+            if (user.name === 'Craig Huang' || user.name ==='Zuoping Li') {
+                userId = '';
+            } else {
+                userId = user.id;
+            }
         }
-        if (userId === 1) {
+        if (userId === '') {
             dispatch(queryResourceMapDataFromServer(startDate));
         } else {
             dispatch(queryResourceMapDataFromServerByUser(startDate, userId));
         }
+    };
+}
+
+export function fetchResourceMapDeleteItem(item) {
+    console.log('..................>>>>>>>>>>>>>>>>>>>>>>>');
+    return (dispatch) => {
+        Promise.all([
+            dispatch(workLogItemDelete(item))
+        ]).then(
+            () => {
+            },
+            (err) => {
+                dispatch(apiFailure(err));
+            }
+        );
+    };
+}
+
+export function fetchResourceMapStatus(item) {
+    return (dispatch) => {
+        Promise.all([
+            dispatch(workLogItemUpdate(item, false))
+        ]).then(
+            () => {
+            },
+            (err) => {
+                dispatch(apiFailure(err));
+            }
+        );
     };
 }
 
@@ -247,7 +317,7 @@ export function queryResourceMapData(startDate, userId) {
 			dispatch(queryResourceMapDataByUser(startDate, userId))
 		]).then(
             () => {
-                dispatch(setLoadingState(false));
+                // dispatch(setLoadingState(false));
             },
             (err) => {
                 dispatch(setLoadingState(false));

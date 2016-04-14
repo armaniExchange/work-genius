@@ -36,27 +36,35 @@ class ResourceMapPage extends Component{
 
 	_changeStartDate(date) {
 		const {
+            currentUserId,
 			queryResourceMapData
 		} = this.props;
-		queryResourceMapData(date);
+		queryResourceMapData(date, currentUserId);
 	}
 
     _selectUser(user) {
-        console.log(user);
+        const {
+            startDate,
+            queryResourceMapData
+        } = this.props;
+        let defaultStartDate = moment(startDate).format('YYYY-MM-DD');
+        queryResourceMapData(defaultStartDate, user);
     }
 
 	render () {
 		const {
 			startDate,
             allUsers,
-			fetchResourceMapModalHandler
+            currentUserId,
+			fetchResourceMapModalHandler,
+            fetchResourceMapStatus,
+            fetchResourceMapDeleteItem
 		} = this.props;
-        let userId = 569587;
         let userObj = allUsers.find((user) => {
-            return String(user.id) === String(userId);
+            return String(user.id) === String(currentUserId);
         });
 
-        let username = userObj ? userObj.name : '';
+        let username = userObj ? userObj.name : 'All';
 		return (
 			<section>
         		<Breadcrumb data={BREADCRUMB.resourcemap} />
@@ -71,6 +79,8 @@ class ResourceMapPage extends Component{
 				<DatePicker className="option-layout" defaultDate={String(startDate)} placeholder="Start Date" onChange={this._changeStartDate} />
 				<ResourceMapTable
 					onModalHander={fetchResourceMapModalHandler}
+                    onSubmitStatus={fetchResourceMapStatus}
+                    onDeleteItemHander={fetchResourceMapDeleteItem}
 					{...this.props}
 				/>
 			</section>
@@ -83,8 +93,12 @@ ResourceMapPage.propTypes = {
     totalDays                      : PropTypes.number.isRequired,
     data                           : PropTypes.array.isRequired,
     allUsers                       : PropTypes.array.isRequired,
+    currentUserId                  : PropTypes.string.isRequired,
     queryResourceMapData           : PropTypes.func.isRequired,
     fetchAllUsersRequest           : PropTypes.func.isRequired,
+
+    fetchResourceMapDeleteItem     : PropTypes.func.isRequired,
+    fetchResourceMapStatus         : PropTypes.func.isRequired,
 
     // Modal handle options.
     show                           : PropTypes.bool.isRequired,
@@ -94,10 +108,11 @@ ResourceMapPage.propTypes = {
 };
 
 ResourceMapPage.defaultProps = {
-    startDate    : new Date(),
-    totalDays    : 10,
-    show         : false,
-    data         : []
+    startDate     : moment().isoWeekday(1).format('YYYY-MM-DD'),
+    totalDays     : 10,
+    show          : false,
+    data          : [],
+    currentUserId : ''
 };
 
 function mapStateToProps(state) {

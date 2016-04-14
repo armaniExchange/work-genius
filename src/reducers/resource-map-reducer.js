@@ -8,7 +8,7 @@ import moment from 'moment';
 //     'status': ''
 // });
 const initialState = Map({
-	startDate: moment().isoWeekday(0).format('YYYY-MM-DD'),
+	startDate: moment().isoWeekday(1).format('YYYY-MM-DD'),
 	totalDays: 10,
 	// data: List.of(
 	// 	Map({'name': 'Ruiz', 'items': List.of(
@@ -26,6 +26,7 @@ const initialState = Map({
 	// ),
 	data: List.of(),
     allUsers: List.of(),
+    currentUserId: '',
 	show: false,
     defaultModalInfos: Map({})
 });
@@ -79,7 +80,7 @@ function checkWorkLogsData(worklogs, item) {
     let worklogItem = {
         content: item.content,
         id: item.id,
-        process: item.process,
+        progress: item.progress,
         tag: item.tag
     };
 
@@ -105,37 +106,11 @@ function checkWorkLogsData(worklogs, item) {
         worklogItems.push(worklogItem);
     } else {
         logItem.content = item.content;
-        logItem.process = item.process;
+        logItem.progress = item.progress;
         logItem.tag = item.tag;
     }
 
     return worklogs;
-
-    // worklogs.map((log) => {
-    //     // worklog_items
-    //     let millisecond = parseInt(item.date.format('X'));
-    //     if (log.date === millisecond * 1000 ||
-    //         (typeof log.date === 'object' && parseInt(log.date.format('X')) === millisecond)) {
-    //         var worklogItems = log.worklog_items;
-    //         if (worklogItems === undefined || worklogItems === null) {
-    //             worklogItems = [];
-    //             worklogItems.push(worklogItem);
-    //         }
-    //         else if (item.id === undefined || item.id === null) {
-    //             worklogItems.push(worklogItem);
-    //         } else {
-    //             worklogItems.map((logItem) => {
-    //                 if (logItem.id === item.id) {
-    //                     logItem.content = item.content;
-    //                     logItem.process = item.process;
-    //                     logItem.tag = item.tag;
-    //                 }
-    //             });
-    //         }
-    //     }
-    // });
-    // return worklogs;
-
 }
 
 function upsertUserItemData(state, item) {
@@ -162,6 +137,7 @@ export default function resourceMapReducer(state = initialState, action) {
 	case actionTypes.FETCH_RESOURCE_MAP_DATA:
 		nextState = setTableData(nextState, action.data);
 		nextState = setStartDate(nextState, action.startDate);
+        nextState = nextState.set('currentUserId', String(action.userId));
 		return nextState;
 	case actionTypes.FETCH_RESOURCE_MAP_MODAL:
 		nextState = nextState.set('show', action.show);

@@ -1,39 +1,11 @@
 import './ResourceMapTable.css';
 import React, { Component, PropTypes } from 'react';
 import Checkbox from 'material-ui/lib/checkbox';
+import Dialog from 'material-ui/lib/dialog';
+import FlatButton from 'material-ui/lib/flat-button';
 import Tooltip from 'rc-tooltip';
 
 import 'rc-tooltip/assets/bootstrap_white.css';
-
-// class ResourceMapCellWorkLog extends Component {
-
-// 	render() {
-// 		const {
-// 			config
-// 		} = this.props;
-// 		console.log(config);
-// 		var items = config.worklog_items;
-// 		var worklogHtml = items.map((item, index) => {
-// 			console.log(index);
-// 			console.log(item);
-// 			return (
-// 				<div className="cell-top-item-inner-text bgm-deeppurple">
-// 					<label className="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" htmlFor="checkbox-3">
-// 					  <input type="checkbox" id="checkbox-3" className="mdl-checkbox__input" />
-// 					  <span className="label-default-style mdl-checkbox__label c-white">{item.content}</span>
-// 					</label>
-// 				</div>
-// 			);
-// 		});
-// 		return (
-// 			<div className="cell-top-item" >
-// 				{worklogHtml}
-// 				<br/>
-// 			</div>
-// 		);
-// 	}
-// }
-
 
 const TAG = 'bgm-teal';
 
@@ -42,6 +14,10 @@ class ResourceMapCellWorkLog extends Component {
 	constructor() {
 		super();
 		this._onClickWorkLogItem = ::this._onClickWorkLogItem;
+		this._onSubmitCheckBoxItem = ::this._onSubmitCheckBoxItem;
+		this._onCancelDialogHander = ::this._onCancelDialogHander;
+		this._onDeleteItemHander = ::this._onDeleteItemHander;
+		this.state = {open: false, selectedItem: undefined};
 	}
 
 	_onClickWorkLogItem(item) {
@@ -51,38 +27,90 @@ class ResourceMapCellWorkLog extends Component {
 		onModalHander(true, item);
 	}
 
+	_onSubmitCheckBoxItem(item) {
+		const { config, onSubmitStatus } = this.props;
+		// onSubmitStatus(item);
+		item.employee_id = config.userId;
+		item.date = config.date;
+		onSubmitStatus(item);
+	}
+
+	_onCancelDialogHander() {
+		this.setState({open: false, selectedItem: undefined});
+	}
+
+	_onDeleteItemHander() {
+		let item = this.state.selectedItem;
+		this.setState({open: false, selectedItem: undefined});
+		console.log(item);
+
+		const { config, onDeleteItemHander } = this.props;
+		item.employee_id = config.userId;
+		item.date = config.date;
+		item.isDelete = true;
+		onDeleteItemHander(item);
+	};
+
 
 	render() {
 		const {
 			config
 		} = this.props;
 		var items = config.worklog_items;
+		var timer = undefined;
+		var doubleEvent = false;
 		var worklogHtml = items.map((item, index) => {
 
 			let __onClickWorkLogItem = (e) => {
 				e.stopPropagation();
-				console.log(item);
-				this._onClickWorkLogItem(item);
+				doubleEvent = false;
+				clearTimeout(timer);
+	            timer = setTimeout(() => {
+	            	if (!doubleEvent) {
+	            		this._onClickWorkLogItem(item);
+	            	}
+	            }, 300);
+				// this._onClickWorkLogItem(item);
 			};
 
+			let __onClickCheckBox = (e) => {
+				e.stopPropagation();
+			};
+
+			let __onChangeCheckBox = (e, checked) => {
+				e.stopPropagation();
+
+				item.status = checked ? 1 : 0;
+				this._onSubmitCheckBoxItem(item);
+			};
+
+			let __onDblclickWorkLogItem = (e) => {
+				e.stopPropagation();
+				doubleEvent = true;
+				this.setState({open: true, selectedItem: item});
+			};
 			let className = 'worklog-layout--text ';
 
 			className += (item.tag && item.tag !== '') ? item.tag : TAG;
-			item.process = item.process ? item.process : 0;
-
+			item.progress = item.progress ? item.progress : 0;
 			return (
 				<div className="cell-top-item-inner-text" key={index}>
 					<div className="worklog-layout--checkbox">
-						<Checkbox className="checkbox-layout" />
+						<Checkbox
+							className="checkbox-layout"
+							defaultChecked={item.status === 1}
+							onClick={__onClickCheckBox}
+							onCheck={__onChangeCheckBox}
+						/>
 					</div>
-					<div className={className} onClick={__onClickWorkLogItem}>
+					<div className={className} onClick={__onClickWorkLogItem} onDoubleClick={__onDblclickWorkLogItem}>
 						<Tooltip
 							placement="top"
 							overlay={
 								(
 									<div>
-										<label>Process: </label>
-										<span>{item.process}%</span>
+										<label>Progress: </label>
+										<span>{item.progress}%</span>
 										<br />
 										<label>Work Log: </label>
 										<span>{item.content}</span>
@@ -91,16 +119,36 @@ class ResourceMapCellWorkLog extends Component {
 							}
 							arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
 						>
-					    	<span className="label-default-style c-white">{item.process}% {item.content}</span>
+					    	<span className="label-default-style c-white">{item.progress}% {item.content}</span>
 					    </Tooltip>
 					</div>
 				</div>
 			);
 		});
+		const actions = [
+		      <FlatButton
+		        label="Cancel"
+		        secondary={true}
+		        onTouchTap={this._onCancelDialogHander}
+		      />,
+		      <FlatButton
+		        label="Delete"
+		        primary={true}
+        		keyboardFocused={true}
+		        onTouchTap={this._onDeleteItemHander}
+		      />,
+		    ];
 		return (
 			<div className="cell-top-item" >
 				{worklogHtml}
 				<br/>
+				<Dialog
+		          title="Dialog With Actions"
+		          actions={actions}
+		          modal={true}
+		          open={this.state.open}
+		          onRequestClose={this._onCancelDialogHander}
+		        >Delete this work log.</Dialog>
 			</div>
 		);
 	}
@@ -108,12 +156,15 @@ class ResourceMapCellWorkLog extends Component {
 
 ResourceMapCellWorkLog.propTypes = {
 	config: PropTypes.object.isRequired,
-	onModalHander: PropTypes.func.isRequired
+	onModalHander: PropTypes.func.isRequired,
+	onSubmitStatus: PropTypes.func.isRequired,
+	onDeleteItemHander: PropTypes.func.isRequired
 };
 
 ResourceMapCellWorkLog.defaultProps = {
 	config: {},
-	onModalHander: () => {}
+	onModalHander: () => {},
+	onSubmitStatus: () => {}
 };
 
 export default ResourceMapCellWorkLog;

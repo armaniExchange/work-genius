@@ -30,6 +30,8 @@ class ResourceMapModalWorkLog extends Component {
 		// this.setState({});
 		this._onCloseModelHandler = ::this._onCloseModelHandler;
 		this._onSubmitFormData = ::this._onSubmitFormData;
+		this._onSelectTagColor = ::this._onSelectTagColor;
+		this.state = {tag: ''};
 	}
 
 	_onCloseModelHandler() {
@@ -38,21 +40,20 @@ class ResourceMapModalWorkLog extends Component {
 	}
 
 	_onSubmitFormData() {
-		const { workLogField, processField } = this.refs;
+		const { workLogField, progressField } = this.refs;
 		const { defaultModalInfos, onModalSubmit } = this.props;
 
 		let worklogValue = workLogField.getValue();
-		let processValue = processField.getValue();
-		// let tag = this.state.tag;
-		// console.log(tag);
-		let tag = '';
+		let progressValue = progressField.getValue();
+		let tag = this.state.tag;
 		let newItem = {
 			tag: tag,
 			content: worklogValue,
-			process: processValue,
+			progress: progressValue,
 			id: defaultModalInfos.id,
 			employee_id: defaultModalInfos.userId,
-			date: defaultModalInfos.date
+			date: defaultModalInfos.date,
+			status: defaultModalInfos.status
 		};
 
 		onModalSubmit(newItem);
@@ -61,7 +62,7 @@ class ResourceMapModalWorkLog extends Component {
 
 	_onSelectTagColor(e) {
 		let tag = e.target.getAttribute('data-tag');
-		console.log(tag);
+		this.setState({tag: tag});
 	}
 
 
@@ -71,8 +72,9 @@ class ResourceMapModalWorkLog extends Component {
 			defaultModalInfos
 		} = this.props;
 
-		defaultModalInfos.process = defaultModalInfos.process ? defaultModalInfos.process : 0;
-
+		defaultModalInfos.progress = defaultModalInfos.progress ? defaultModalInfos.progress : 0;
+		let showDoneClassName = 'material-icons icon-layout';
+		let hideDoneClassName = 'material-icons icon-layout icon-layou-display';
 		return (
 			<Modal show={show} onHide={this._onCloseModelHandler}>
 				<ModalHeader />
@@ -92,15 +94,15 @@ class ResourceMapModalWorkLog extends Component {
 						</div>
 					</div>
 					<div className="form-group">
-						<label className="col-xs-3 control-label">Process</label>
+						<label className="col-xs-3 control-label">Progress</label>
 						<div className="col-xs-9">
 							<TextField
 								type="number"
 								min="0"
 								max="100"
 								className="text-area-style"
-								defaultValue={defaultModalInfos.process}
-								ref="processField"
+								defaultValue={defaultModalInfos.progress}
+								ref="progressField"
 							/>
 						</div>
 					</div>
@@ -108,18 +110,36 @@ class ResourceMapModalWorkLog extends Component {
 						<label className="col-xs-3 control-label">Tag Color</label>
 						<div className="col-xs-9">
 							<div className="event-tag">
-							<span><i className="material-icons">done</i></span>
-	                        	<span onClick={this._onSelectTagColor} data-tag="bgm-teal"   className="bgm-teal"/>
-	                            <span onClick={this._onSelectTagColor} data-tag="bgm-red"    className="bgm-red"/>
-	                            <span onClick={this._onSelectTagColor} data-tag="bgm-pink"   className="bgm-pink"/>
-	                            <span onClick={this._onSelectTagColor} data-tag="bgm-blue"   className="bgm-blue"/>
-	                            <span onClick={this._onSelectTagColor} data-tag="bgm-lime"   className="bgm-lime"/>
-	                            <span onClick={this._onSelectTagColor} data-tag="bgm-green"  className="bgm-green"/>
-	                            <span onClick={this._onSelectTagColor} data-tag="bgm-cyan"   className="bgm-cyan"/>
-	                            <span onClick={this._onSelectTagColor} data-tag="bgm-orange" className="bgm-orange"/>
-	                            <span onClick={this._onSelectTagColor} data-tag="bgm-purple" className="bgm-purple"/>
-	                            <span onClick={this._onSelectTagColor} data-tag="bgm-gray"   className="bgm-gray"/>
-	                            <span onClick={this._onSelectTagColor} data-tag="bgm-black"  className="bgm-black"/>
+	                        	<span onClick={this._onSelectTagColor} data-tag="bgm-teal"   className="bgm-teal">
+	                        		<i className={this.state.tag === 'bgm-teal' ? showDoneClassName : hideDoneClassName}>done</i>
+	                        	</span>
+	                            <span onClick={this._onSelectTagColor} data-tag="bgm-red"    className="bgm-red">
+	                        		<i className={this.state.tag === 'bgm-red' ? showDoneClassName : hideDoneClassName}>done</i>
+	                        	</span>
+	                            <span onClick={this._onSelectTagColor} data-tag="bgm-pink"   className="bgm-pink">
+	                        		<i className={this.state.tag === 'bgm-pink' ? showDoneClassName : hideDoneClassName}>done</i>
+	                        	</span>
+	                            <span onClick={this._onSelectTagColor} data-tag="bgm-blue"   className="bgm-blue">
+	                        		<i className={this.state.tag === 'bgm-blue' ? showDoneClassName : hideDoneClassName}>done</i>
+	                        	</span>
+	                            <span onClick={this._onSelectTagColor} data-tag="bgm-lime"   className="bgm-lime">
+	                        		<i className={this.state.tag === 'bgm-lime' ? showDoneClassName : hideDoneClassName}>done</i>
+	                        	</span>
+	                            <span onClick={this._onSelectTagColor} data-tag="bgm-green"  className="bgm-green">
+	                        		<i className={this.state.tag === 'bgm-green' ? showDoneClassName : hideDoneClassName}>done</i>
+	                        	</span>
+	                            <span onClick={this._onSelectTagColor} data-tag="bgm-cyan"   className="bgm-cyan">
+	                        		<i className={this.state.tag === 'bgm-cyan' ? showDoneClassName : hideDoneClassName}>done</i>
+	                        	</span>
+	                            <span onClick={this._onSelectTagColor} data-tag="bgm-orange" className="bgm-orange">
+	                        		<i className={this.state.tag === 'bgm-orange' ? showDoneClassName : hideDoneClassName}>done</i>
+	                        	</span>
+	                            <span onClick={this._onSelectTagColor} data-tag="bgm-purple" className="bgm-purple">
+	                        		<i className={this.state.tag === 'bgm-purple' ? showDoneClassName : hideDoneClassName}>done</i>
+	                        	</span>
+	                            <span onClick={this._onSelectTagColor} data-tag="bgm-black"  className="bgm-black">
+	                        		<i className={this.state.tag === 'bgm-black' ? showDoneClassName : hideDoneClassName}>done</i>
+	                        	</span>
 	                        </div>
 						</div>
                     </div>

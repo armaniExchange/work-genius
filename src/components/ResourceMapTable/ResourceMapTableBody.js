@@ -9,9 +9,6 @@ import ResourceMapCellWorkLog from './ResourceMapCellWorkLog.js';
 
 import Td from '../A10-UI/Table/Td';
 
-
-
-
 const RESOURCE_MAP_CELLS = {
     defaults: (config, onModalHander) => {
         return (
@@ -25,11 +22,13 @@ const RESOURCE_MAP_CELLS = {
     pto: () => {
         return (<ResourceMapCellPto />);
     },
-    workday: (config, onModalHander) => {
+    workday: (config, onModalHander, onSubmitStatus, onDeleteItemHander) => {
         return (
             <ResourceMapCellWorkLog
                 config={config}
                 onModalHander={onModalHander}
+                onSubmitStatus={onSubmitStatus}
+                onDeleteItemHander={onDeleteItemHander}
             />
         );
     },
@@ -58,7 +57,7 @@ class ResourceMapTableBody extends Component {
     }
 
 	render() {
-		const {data, startDate, onModalHander} = this.props;
+		const {data, startDate, onModalHander, onSubmitStatus, onDeleteItemHander} = this.props;
 		let bodyHtml = (
             <tr>
                 <Td
@@ -94,7 +93,7 @@ class ResourceMapTableBody extends Component {
                     config.userId = userId;
                     config.date = currentDay;
                     if (cellFunc !== undefined) {
-                        cellHtml = cellFunc(config, onModalHander);
+                        cellHtml = cellFunc(config, onModalHander, onSubmitStatus, onDeleteItemHander);
                     }
                     // var defaultCellHtml = RESOURCE_MAP_CELLS[ RESOURCE_MAP_CELLS_DEFAULT_TYPE ](config, onModalHander);
 
@@ -131,7 +130,9 @@ class ResourceMapTableBody extends Component {
 ResourceMapTableBody.propTypes = {
     startDate: PropTypes.string.isRequired,
 	data:  PropTypes.array.isRequired,
-    onModalHander: PropTypes.func.isRequired
+    onModalHander: PropTypes.func.isRequired,
+    onSubmitStatus: PropTypes.func.isRequired,
+    onDeleteItemHander: PropTypes.func.isRequired
 };
 
 export default ResourceMapTableBody;

@@ -51,6 +51,16 @@
 	margin-right: 35px !important;
 }
 
+.icon-layout {
+  position: absolute;
+  margin: -10px 0 0 -10px;
+  color: #fff;
+}
+
+.icon-layou-display {
+  display: none;
+}
+
 .worklog-layout--text {
     width: 100%;
     z-index: 2 !important;
