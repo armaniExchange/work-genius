@@ -1,6 +1,5 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
-import Codemirror from 'react-codemirror';
 import TextField from 'material-ui/lib/text-field';
 import SelectField from 'material-ui/lib/SelectField';
 import MenuItem from 'material-ui/lib/menus/menu-item';
@@ -8,19 +7,11 @@ import Select from 'react-select';
 import Dropzone from 'react-dropzone';
 
 import ArticleFileList from '../../components/ArticleFileList/ArticleFileList';
+import Editor from '../../components/Editor/Editor';
 import ConfirmDeleteDialog from '../../components/ConfirmDeleteDialog/ConfirmDeleteDialog';
 
 // Styles
 import './_ArticleEditor.css';
-import 'codemirror/mode/gfm/gfm';
-import 'codemirror/mode/markdown/markdown';
-import 'codemirror/mode/javascript/javascript';
-import 'codemirror/mode/css/css';
-import 'codemirror/mode/xml/xml';
-import 'codemirror/mode/htmlembedded/htmlembedded';
-import 'codemirror/mode/sass/sass';
-import 'codemirror/mode/python/python';
-import 'codemirror/lib/codemirror.css';
 
 class ArticleEditor extends Component {
 
@@ -126,12 +117,9 @@ class ArticleEditor extends Component {
         <br />
         <br />
         <label>Content</label>
-        <div className="codemirror-wrapper">
-          <Codemirror
-            value={content}
-            onChange={onContentChange}
-            options={{mode: 'gfm'}} />
-        </div>
+        <Editor
+          value={content}
+          onChange={onContentChange} />
         <br />
         <label>Tags</label>
         <Select

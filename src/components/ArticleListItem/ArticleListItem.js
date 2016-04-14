@@ -58,7 +58,7 @@ class ArticleListItem extends Component {
           <span>Author: {author && author.name}&nbsp;</span>
           &nbsp;&nbsp;
           <span style={{color: 'gray'}}>
-            {moment(updatedAt || createdAt).format('YYYY-MM-DD')}&nbsp;
+            {moment(updatedAt).format('YYYY-MM-DD')}&nbsp;
           </span>
           &nbsp;&nbsp;
           <span>
