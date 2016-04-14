@@ -125,7 +125,7 @@ export function getCurrentUser() {
 
 export function sendMail(to, cc, bcc, subject, text, html, includeManagers = false) {
     return (dispatch) => {
-		let query = `${to ? 'to:[' + to.map(n => '\"' + n + '\"').join(',') + '],' : ''}${cc ? 'cc:' + cc + ',' : ''}${bcc ? 'bcc:' + bcc + ',' : ''}${subject ? 'subject:"' + subject + '",' : ''}${text ? 'text:"' + text + '",' : ''}${html ? 'html:"' + html + '",' : ''}`;
+		let query = `${to ? 'to:[' + to.map(n => '\"' + n + '\"').join(',') + '],' : ''}${cc ? 'cc:[' + cc.map(n => '\"' + n + '\"').join(',') + '],' : ''}${bcc ? 'bcc:[' + bcc.map(n => '\"' + n + '\"').join(',') + '],' : ''}${subject ? 'subject:"' + subject + '",' : ''}${text ? 'text:"' + text + '",' : ''}${html ? 'html:"' + html + '",' : ''}`;
         let config = includeManagers ?
 		    {
 				method: 'POST',

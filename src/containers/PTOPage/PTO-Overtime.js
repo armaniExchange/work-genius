@@ -42,21 +42,49 @@ class PTOOvertime extends Component {
         setOvertimeApplyModalState(false);
     }
     _onOvertimeApplySubmitClicked(data) {
-        const { createOvertimeApplication, currentUser } = this.props;
+        const {
+            createOvertimeApplication,
+            currentUser,
+            sendMail
+        } = this.props;
         let finalData = {
-            start_date: data.startDate,
-            memo: data.memo,
-            hours: data.hours,
-            apply_date: moment().format('YYYY-MM-DD'),
-            applicant: currentUser.name,
-            applicant_id: currentUser.id,
-            status: PTOConstants.PENDING
-        };
+                start_date: data.startDate,
+                memo: data.memo,
+                hours: data.hours,
+                apply_date: moment().format('YYYY-MM-DD'),
+                applicant: currentUser.name,
+                applicant_id: currentUser.id,
+                status: PTOConstants.PENDING
+            },
+            mailingConfig;
+
         createOvertimeApplication(finalData);
+        mailingConfig = {
+            subject: `[KB-PTO] ${finalData.applicant} has a New Overtime Application`,
+            text: '*** This is an automatically generated email, please do not reply ***\\n\\n' + finalData.applicant
+                + ' has applied for ' + finalData.hours + ' hours of Overtime on ' + finalData.start_date + '.\\nPlease update status on KB.',
+            includeManagers: true
+        };
+        let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
+        sendMail(to, cc, bcc, subject, text, html, includeManagers);
     }
-    _onOvertimeStatusUpdate(id, newState, hours) {
-        const { setOvertimeApplicationStatus } = this.props;
-        setOvertimeApplicationStatus(id, newState, hours);
+    _onOvertimeStatusUpdate(updatedOvertime) {
+        const {
+            setOvertimeApplicationStatus,
+            currentUser,
+            sendMail
+        } = this.props;
+        const { id, status, hours, start_date, applicant_email } = updatedOvertime;
+        let mailingConfig = {
+            to: [applicant_email],
+            subject: '[KB-PTO] Your Overtime Application has been updated',
+            text: '*** This is an automatically generated email, please do not reply ***\\n\\n' + currentUser.name
+                + ' has ' + status + ' your ' + hours + ' hours overtime application on ' + start_date + '.'
+        };
+
+        setOvertimeApplicationStatus(id, status, hours);
+        let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
+        sendMail(to, cc, bcc, subject, text, html, includeManagers);
     }
     _onUserFilterClickedHandler(id) {
         const {
@@ -161,7 +189,8 @@ PTOOvertime.propTypes = {
     filterOvertimeTable         : PropTypes.func,
     resetPTOTable               : PropTypes.func,
     goToPreviousYear            : PropTypes.func,
-    goToNextYear                : PropTypes.func
+    goToNextYear                : PropTypes.func,
+    sendMail                    : PropTypes.func
 };
 
 function mapStateToProps(state) {
