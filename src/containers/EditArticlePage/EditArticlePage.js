@@ -82,9 +82,9 @@ class EditArticlePage extends Component {
     });
   }
 
-  onTagsChange(tags) {
+  onTagsChange(val, tags) {
     this.setState({
-      editingTags: tags
+      editingTags: tags.map(tag => tag.value)
     });
   }
 
