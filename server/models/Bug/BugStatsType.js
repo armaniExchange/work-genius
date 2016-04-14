@@ -56,6 +56,18 @@ const BUG_STATS_TYPE = new GraphQLObjectType({
         'item9': {
             type: GraphQLInt,
             description: 'stats item 8'
+        },
+        'item10': {
+            type: GraphQLInt,
+            description: 'stats item 10'
+        },
+        'item11': {
+            type: GraphQLInt,
+            description: 'stats item 11'
+        },
+        'item12': {
+            type: GraphQLInt,
+            description: 'stats item 12'
         }
     })
 });

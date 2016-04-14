@@ -103,7 +103,10 @@ let BugStats = {
 				'Others',
 				'Cannot be Reproduced',
 				'AXAPI Not Supported',
-				'GUI Not Supported'
+				'GUI Not Supported',
+				'Duplicate',
+				'NAB/By Design',
+				'Working in current build'
 			];
 
 			try {
