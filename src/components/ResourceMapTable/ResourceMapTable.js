@@ -8,7 +8,6 @@ import ResourceMapTableHeader from './ResourceMapTableHeader.js';
 import ResourceMapTableBody from './ResourceMapTableBody.js';
 import ResourceMapModalWorkLog from './ResourceMapModalWorkLog.js';
 
-import Checkbox from 'material-ui/lib/checkbox';
 class ResourceMapTable extends Component {
 
 	render() {
@@ -24,7 +23,6 @@ class ResourceMapTable extends Component {
 		} = this.props;
 		return (
 			<div>
-				<Checkbox />
 				<Table className="bug-review-table">
 					<ResourceMapTableHeader
 						startDate={startDate}

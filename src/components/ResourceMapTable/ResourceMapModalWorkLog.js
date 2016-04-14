@@ -52,6 +52,7 @@ class ResourceMapModalWorkLog extends Component {
 			date: defaultModalInfos.date
 		};
 
+		console.log(newItem);
 		onModalSubmit(newItem);
 		this._onCloseModelHandler();
 	}

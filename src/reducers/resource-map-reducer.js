@@ -25,6 +25,7 @@ const initialState = Map({
 	// 	)})
 	// ),
 	data: List.of(),
+    allUsers: List.of(),
 	show: false,
     defaultModalInfos: Map({})
 });
@@ -64,6 +65,12 @@ function setTableData(state, data) {
         .set(`data`, formatedData);
 }
 
+function setAllUsers(state, data) {
+    let formatedData = formatResponse(data);
+    return state
+        .set(`allUsers`, formatedData);
+}
+
 function setStartDate(state, startDate) {
 	return state.set('startDate', startDate);
 }
@@ -76,30 +83,60 @@ function checkWorkLogsData(worklogs, item) {
         tag: item.tag
     };
 
-    worklogs.map((log) => {
-        // worklog_items
-        let millisecond = parseInt(item.date.format('X'));
-        if (log.date === millisecond * 1000 ||
-            (typeof log.date === 'object' && parseInt(log.date.format('X')) === millisecond)) {
-            var worklogItems = log.worklog_items;
-            if (worklogItems === undefined || worklogItems === null) {
-                worklogItems = [];
-                worklogItems.push(worklogItem);
-            }
-            else if (item.id === undefined || item.id === null) {
-                worklogItems.push(worklogItem);
-            } else {
-                worklogItems.map((logItem) => {
-                    if (logItem.id === item.id) {
-                        logItem.content = item.content;
-                        logItem.process = item.process;
-                        logItem.tag = item.tag;
-                    }
-                });
-            }
-        }
+    let millisecond = parseInt(item.date.format('X'));
+    let worklog = worklogs.find((log) => {
+        return (log.date === millisecond * 1000 ||
+            (typeof log.date === 'object' && parseInt(log.date.format('X')) === millisecond));
     });
+
+    let worklogItems = worklog.worklog_items;
+
+    if (worklogItems === undefined || worklogItems === null) {
+        worklogItems = [];
+        worklogItems.push(worklogItem);
+        return worklogs;
+    }
+
+    let logItem = worklogItems.find((log) => {
+        return log.id === item.id;
+    });
+
+    console.log(logItem);
+    if (logItem === undefined) {
+        console.log('............................');
+        worklogItems.push(worklogItem);
+    } else {
+        logItem.content = item.content;
+        logItem.process = item.process;
+        logItem.tag = item.tag;
+    }
+
     return worklogs;
+
+    // worklogs.map((log) => {
+    //     // worklog_items
+    //     let millisecond = parseInt(item.date.format('X'));
+    //     if (log.date === millisecond * 1000 ||
+    //         (typeof log.date === 'object' && parseInt(log.date.format('X')) === millisecond)) {
+    //         var worklogItems = log.worklog_items;
+    //         if (worklogItems === undefined || worklogItems === null) {
+    //             worklogItems = [];
+    //             worklogItems.push(worklogItem);
+    //         }
+    //         else if (item.id === undefined || item.id === null) {
+    //             worklogItems.push(worklogItem);
+    //         } else {
+    //             worklogItems.map((logItem) => {
+    //                 if (logItem.id === item.id) {
+    //                     logItem.content = item.content;
+    //                     logItem.process = item.process;
+    //                     logItem.tag = item.tag;
+    //                 }
+    //             });
+    //         }
+    //     }
+    // });
+    // return worklogs;
 
 }
 
@@ -134,6 +171,9 @@ export default function resourceMapReducer(state = initialState, action) {
 		return nextState;
     case actionTypes.FETCH_RESOURCE_MAP_WORKLOG_UPSERT:
         nextState = upsertUserItemData(nextState, action.item);
+        return nextState;
+    case actionTypes.FETCH_RESOURCE_MAP_ALL_USERS:
+        nextState = setAllUsers(nextState, action.data);
         return nextState;
 	default:
 		return nextState;

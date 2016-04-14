@@ -1,7 +1,9 @@
+import './_ResourceMapPage.css';
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 
 import * as ResourceMapActions from '../../actions/resource-map-actions';
 import * as appActions from '../../actions/app-actions';
@@ -18,14 +20,18 @@ class ResourceMapPage extends Component{
 	constructor(){
 		super();
 		this._changeStartDate = ::this._changeStartDate;
+        this._selectUser = ::this._selectUser;
 	}
 
 	componentWillMount() {
 		let defaultStartDate = moment().isoWeekday(1).format('YYYY-MM-DD');
 		const {
-			queryResourceMapData
+			queryResourceMapData,
+            fetchAllUsersRequest
 		} = this.props;
-		queryResourceMapData(defaultStartDate);
+        // User id default is 0, current user.
+		queryResourceMapData(defaultStartDate, 0);
+        fetchAllUsersRequest();
 	}
 
 	_changeStartDate(date) {
@@ -35,15 +41,34 @@ class ResourceMapPage extends Component{
 		queryResourceMapData(date);
 	}
 
+    _selectUser(user) {
+        console.log(user);
+    }
+
 	render () {
 		const {
 			startDate,
+            allUsers,
 			fetchResourceMapModalHandler
 		} = this.props;
+        let userId = 569587;
+        let userObj = allUsers.find((user) => {
+            return String(user.id) === String(userId);
+        });
+
+        let username = userObj ? userObj.name : '';
 		return (
 			<section>
         		<Breadcrumb data={BREADCRUMB.resourcemap} />
-				<DatePicker defaultDate={String(startDate)} placeholder="Start Date" onChange={this._changeStartDate} />
+                <DropDownList
+                    isNeedAll={true}
+                    title={username}
+                    onOptionClick={this._selectUser}
+                    aryOptionConfig={allUsers.map((user) => {
+                            return {title: user.name, value: user.id};
+                        })}
+                />
+				<DatePicker className="option-layout" defaultDate={String(startDate)} placeholder="Start Date" onChange={this._changeStartDate} />
 				<ResourceMapTable
 					onModalHander={fetchResourceMapModalHandler}
 					{...this.props}
@@ -57,7 +82,9 @@ ResourceMapPage.propTypes = {
     startDate                      : PropTypes.string.isRequired,
     totalDays                      : PropTypes.number.isRequired,
     data                           : PropTypes.array.isRequired,
+    allUsers                       : PropTypes.array.isRequired,
     queryResourceMapData           : PropTypes.func.isRequired,
+    fetchAllUsersRequest           : PropTypes.func.isRequired,
 
     // Modal handle options.
     show                           : PropTypes.bool.isRequired,

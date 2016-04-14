@@ -136,5 +136,6 @@ export default keyMirror({
     // Resource Map page actions
     FETCH_RESOURCE_MAP_DATA: null,
     FETCH_RESOURCE_MAP_MODAL: null,
-    FETCH_RESOURCE_MAP_WORKLOG_UPSERT: null
+    FETCH_RESOURCE_MAP_WORKLOG_UPSERT: null,
+    FETCH_RESOURCE_MAP_ALL_USERS: null
 });

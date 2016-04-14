@@ -24,7 +24,9 @@
 	font-weight: 100;
 	font-size: 8px;
   z-index: -1;
+    white-space: nowrap;
 }
+
 
 .add-button {
 	background-color: #42bd41 !important;

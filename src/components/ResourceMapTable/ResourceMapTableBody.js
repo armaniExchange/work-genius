@@ -93,15 +93,16 @@ class ResourceMapTableBody extends Component {
                     }
                     var defaultCellHtml = RESOURCE_MAP_CELLS[ RESOURCE_MAP_CELLS_DEFAULT_TYPE ](config, onModalHander);
 
-                    // let __onShowModalHandler = () => {
-                    //     this._onShowModalHandler(config);
-                    // };
+                    let __onShowModalHandler = () => {
+                        this._onShowModalHandler(config);
+                    };
 
                     return (
                         <Td
                             key={itemIndex + 1}
                             colSpan={1}
                             className={className}
+                            onClick={__onShowModalHandler}
                         >
                             {defaultCellHtml}
                             {cellHtml}

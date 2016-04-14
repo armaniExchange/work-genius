@@ -45,6 +45,9 @@ const initialState = Map({
         Map({ label: 'Cannot be Reproduced', value: 'Cannot be Reproduced' }),
         Map({ label: 'AXAPI Not Supported', value: 'AXAPI Not Supported' }),
         Map({ label: 'GUI Not Supported', value: 'GUI Not Supported' }),
+        Map({ label: 'Duplicate', value: 'Duplicate' }),
+        Map({ label: 'NAB/By Design', value: 'NAB/By Design' }),
+        Map({ label: 'Working in current build', value: 'Working in current build' }),
         Map({ label: 'Others', value: 'Others' })
     ),
     optionsReviewTags: List.of(

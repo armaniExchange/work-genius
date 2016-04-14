@@ -32,6 +32,8 @@ import Checkbox from 'material-ui/lib/checkbox';
 // }
 
 
+const TAG = 'bgm-teal';
+
 class ResourceMapCellWorkLog extends Component {
 
 	constructor() {
@@ -54,17 +56,24 @@ class ResourceMapCellWorkLog extends Component {
 		var items = config.worklog_items;
 		var worklogHtml = items.map((item, index) => {
 
-			let __onClickWorkLogItem = () => {
+			let __onClickWorkLogItem = (e) => {
+				e.stopPropagation();
+				console.log(item);
 				this._onClickWorkLogItem(item);
 			};
+
+			let className = 'worklog-layout--text ';
+
+			className += item.tag ? item.tag : TAG;
+			item.process = item.process ? item.process : 0;
 
 			return (
 				<div className="cell-top-item-inner-text" key={index}>
 					<div className="worklog-layout--checkbox">
 						<Checkbox className="checkbox-layout" />
 					</div>
-					<div className="worklog-layout--text bgm-deeppurple" onClick={__onClickWorkLogItem}>
-					    <span className="label-default-style c-white">{item.content}</span>
+					<div className={className} onClick={__onClickWorkLogItem}>
+					    <span className="label-default-style c-white">{item.process}% {item.content}</span>
 					</div>
 				</div>
 			);
