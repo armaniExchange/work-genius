@@ -60,7 +60,7 @@ let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort }) => {
     );
 };
 
-let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler }) => {
+let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler, isUserAdmin }) => {
     let bodyHtml = (
         <tr>
             <Td
@@ -76,7 +76,7 @@ let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler }) => {
             const cellHtml = titleKeyMap.map((header, cellIndex) => {
                 let actionsHTML;
                 if (header['key'] === 'id') {
-                    if (task.status === PENDING) {
+                    if (task.status === PENDING && isUserAdmin) {
                         actionsHTML = (
                             <Td key={cellIndex}>
                                 <ApproveButton onClick={() => {onStatusUpdateHandler(task['id'], APPROVED, task['hours']);}} />
@@ -140,6 +140,7 @@ PTOTable.propTypes = {
     data                 : PropTypes.array.isRequired,
     titleKeyMap          : PropTypes.array.isRequired,
     enableSort           : PropTypes.bool,
+    isUserAdmin          : PropTypes.bool,
     sortBy               : PropTypes.object,
     onSortHandler        : PropTypes.func,
     onStatusUpdateHandler: PropTypes.func,

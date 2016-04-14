@@ -63,7 +63,7 @@ let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort }) => {
     );
 };
 
-let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler }) => {
+let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler, isUserAdmin, currentUserName }) => {
     let bodyHtml = (
         <tr>
             <Td
@@ -80,20 +80,41 @@ let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler }) => {
                 let actionsHTML;
                 if (header['key'] === 'id') {
                     if (task.status === PENDING) {
-                        actionsHTML = (
-                            <Td key={cellIndex}>
-                                <ApproveButton onClick={() => {onStatusUpdateHandler(task['id'], APPROVED, task['hours']);}} />
-                                <DenyButton onClick={() => {onStatusUpdateHandler(task['id'], DENIED, task['hours']);}} />
-                                <RestoreButton onClick={() => {onStatusUpdateHandler(task['id'], CANCEL_REQUEST_PENDING, task['hours']);}} />
-                            </Td>
-                        );
-                    } else if (task.status === CANCEL_REQUEST_PENDING) {
+                        if (isUserAdmin && task['applicant'] === currentUserName) {
+                            actionsHTML = (
+                                <Td key={cellIndex}>
+                                    <ApproveButton onClick={() => {onStatusUpdateHandler(task['id'], APPROVED, task['hours']);}} />
+                                    <DenyButton onClick={() => {onStatusUpdateHandler(task['id'], DENIED, task['hours']);}} />
+                                    <RestoreButton onClick={() => {onStatusUpdateHandler(task['id'], CANCEL_REQUEST_PENDING, task['hours']);}} />
+                                </Td>
+                            );
+                        } else if (isUserAdmin) {
+                            actionsHTML = (
+                                <Td key={cellIndex}>
+                                    <ApproveButton onClick={() => {onStatusUpdateHandler(task['id'], APPROVED, task['hours']);}} />
+                                    <DenyButton onClick={() => {onStatusUpdateHandler(task['id'], DENIED, task['hours']);}} />
+                                </Td>
+                            );
+                        } else if (task['applicant'] === currentUserName) {
+                            actionsHTML = (
+                                <Td key={cellIndex}>
+                                    <RestoreButton onClick={() => {onStatusUpdateHandler(task['id'], CANCEL_REQUEST_PENDING, task['hours']);}} />
+                                </Td>
+                            );
+                        } else {
+                            actionsHTML = (
+                                <Td key={cellIndex}>
+                                    No actions!
+                                </Td>
+                            );
+                        }
+                    } else if (task.status === CANCEL_REQUEST_PENDING && isUserAdmin) {
                         actionsHTML = (
                             <Td key={cellIndex}>
                                 <ApproveButton onClick={() => {onStatusUpdateHandler(task['id'], CANCEL_REQUEST_APPROVED, task['hours']);}} />
                             </Td>
                         );
-                    } else if (task.status === APPROVED) {
+                    } else if (task.status === APPROVED && task['applicant'] === currentUserName) {
                         actionsHTML = (
                             <Td key={cellIndex}>
                                 <RestoreButton onClick={() => {onStatusUpdateHandler(task['id'], CANCEL_REQUEST_PENDING, task['hours']);}} />
@@ -156,6 +177,7 @@ PTOTable.propTypes = {
     data                 : PropTypes.array.isRequired,
     titleKeyMap          : PropTypes.array.isRequired,
     enableSort           : PropTypes.bool,
+    isUserAdmin          : PropTypes.bool,
     sortBy               : PropTypes.object,
     onSortHandler        : PropTypes.func,
     onStatusUpdateHandler: PropTypes.func,
