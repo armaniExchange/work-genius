@@ -79,8 +79,8 @@ let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler, isUserAdmin }) => {
                     if (task.status === PENDING && isUserAdmin) {
                         actionsHTML = (
                             <Td key={cellIndex}>
-                                <ApproveButton onClick={() => {onStatusUpdateHandler(task['id'], APPROVED, task['hours']);}} />
-                                <DenyButton onClick={() => {onStatusUpdateHandler(task['id'], DENIED, task['hours']);}} />
+                                <ApproveButton onClick={() => {onStatusUpdateHandler({...task, status: APPROVED});}} />
+                                <DenyButton onClick={() => {onStatusUpdateHandler({...task, status: DENIED});}} />
                             </Td>
                         );
                     } else {

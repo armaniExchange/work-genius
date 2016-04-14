@@ -65,9 +65,9 @@ class PTOApplication extends Component {
         }, mailingConfig;
         createPTOApplication(finalData);
         mailingConfig = {
-            subject: `[WG-PTO] ${finalData.applicant} has a New PTO Application`,
+            subject: `[KB-PTO] ${finalData.applicant} has a New PTO Application`,
             text: '*** This is an automatically generated email, please do not reply ***\\n\\n' + finalData.applicant
-                + ' has applied for ' + finalData.hours + ' hours of PTO from ' + finalData.start_date + ' to ' + finalData.end_date + '.\\nPlease update status on WG.',
+                + ' has applied for ' + finalData.hours + ' hours of PTO from ' + finalData.start_date + ' to ' + finalData.end_date + '.\\nPlease update status on KB.',
             includeManagers: true
         };
         let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
@@ -95,7 +95,7 @@ class PTOApplication extends Component {
 
         let mailingConfig = {
             to: [applicant_email],
-            subject: '[WG-PTO] Your PTO Application has been updated',
+            subject: '[KB-PTO] Your PTO Application has been updated',
             text: '*** This is an automatically generated email, please do not reply ***\\n\\n' + currentUser.name
                 + ' has ' + status + ' your ' + hours + ' hours of PTO application from ' + start_date + ' to ' + end_date + '.'
         };
@@ -111,9 +111,9 @@ class PTOApplication extends Component {
         } else {
             mailingConfig = {
                 to: [applicant_email],
-                subject: `[WG-PTO] ${applicant} has a New PTO Application`,
+                subject: `[KB-PTO] ${applicant} has a New PTO Application`,
                 text: '*** This is an automatically generated email, please do not reply ***\\n\\n' + applicant
-                    + ' has CANCELED the application for ' + hours + ' hours of PTO from ' + start_date + ' to ' + end_date + '.\\nPlease update status on WG.'
+                    + ' has CANCELED the application for ' + hours + ' hours of PTO from ' + start_date + ' to ' + end_date + '.\\nPlease update status on KB.'
             };
             mailingConfig.includeManagers = true;
         }
