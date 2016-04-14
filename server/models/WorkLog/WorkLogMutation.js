@@ -33,7 +33,6 @@ let WorkLogMutation = {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				let result = await query.run(connection);
 				await connection.close();
-
 				let id = '';
 		        if (result && result.generated_keys && result.generated_keys.length > 0){
 		          id = result.generated_keys[0];
@@ -78,6 +77,31 @@ let WorkLogMutation = {
 				return 'Fail to update a worklog!';
 			}
 			return 'Update worklog successfully!';
+		}
+	},
+	'deleteWorkLog': {
+		type: GraphQLString,
+		description: 'delete a worklog ',
+        args: {
+        	id: {
+				type: GraphQLID,
+				description: 'worklog id'
+        	}
+		},
+		resolve: async (root, { id }) => {
+			let connection = null,
+				query = null;
+
+			try {
+				
+				query = r.db('work_genius').table('worklog').get(id).delete();
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				await query.run(connection);
+				await connection.close();
+			} catch (err) {
+				return 'Fail to delete a worklog!';
+			}
+			return 'Delete worklog successfully!';
 		}
 	}
 

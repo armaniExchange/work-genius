@@ -94,7 +94,8 @@ const schema = new GraphQLSchema({
 			createBugTag			  : BugTagMutation.createBugTag,
 			//work log page
 			createWorkLog			  : WorkLogMutation.createWorkLog,
-			updateWorkLog			  : WorkLogMutation.updateWorkLog
+			updateWorkLog			  : WorkLogMutation.updateWorkLog,
+			deleteWorkLog			  : WorkLogMutation.deleteWorkLog
 		}
 	})
 });
