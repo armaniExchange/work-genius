@@ -9,6 +9,7 @@ import * as appActions from '../../actions/app-actions';
 import * as mainActions from '../../actions/main-actions';
 // Constants
 import * as PTOConstants from '../../constants/pto-constants';
+import BREADCRUMB from '../../constants/breadcrumb';
 // Components
 import PTOApplyModal from '../../components/PTO-Apply-Modal/PTO-Apply-Modal';
 import PTOTable from '../../components/PTO-Table/PTO-Table';
@@ -17,11 +18,8 @@ import PTOYearFilter from '../../components/PTO-Year-Filter/PTO-Year-Filter';
 import RadioGroup from '../../components/A10-UI/Input/Radio-Group.js';
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 import Space from '../../components/A10-UI/Space.js';
-
 import RaisedButton from 'material-ui/lib/raised-button';
-
 import Breadcrumb from '../../components/A10-UI/Breadcrumb';
-import BREADCRUMB from '../../constants/breadcrumb';
 
 class PTOApplication extends Component {
     constructor(props) {
@@ -93,6 +91,7 @@ class PTOApplication extends Component {
             ptoFilterOptions,
             currentSelectedUserID,
             filterPTOTable,
+            currentUser,
             sortPTOTableByCategory,
             sortPTOTableBy
         } = this.props;
@@ -108,6 +107,7 @@ class PTOApplication extends Component {
         if (curUser && curUser.name) {
             dropdownTitle = curUser.name + (curUser.subtitle ? ' - ' + curUser.subtitle : '');
         }
+        
         return (
             <section>
                 <Breadcrumb data={BREADCRUMB.ptoapply} />
@@ -147,7 +147,9 @@ class PTOApplication extends Component {
                     enableSort={true}
                     sortBy={sortPTOTableBy}
                     onSortHandler={sortPTOTableByCategory}
-                    onStatusUpdateHandler={this._onApplicationStatusUpdate} />
+                    onStatusUpdateHandler={this._onApplicationStatusUpdate}
+                    isUserAdmin={currentUser.privilege >= 10}
+                    currentUserName={currentUser.name} />
                 <PTOApplyModal
                     show={showPTOApplyModal}
                     onHideHandler={this._closePTOApplyModal}
