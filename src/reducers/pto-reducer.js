@@ -52,7 +52,7 @@ const initialState = Map({
     ptoFilterOptions: List(
         [PENDING, APPROVED, DENIED, CANCEL_REQUEST_PENDING, CANCEL_REQUEST_APPROVED].map(status => {
             return Map({
-                name: status,
+                title: status,
                 value: status
             });
         })
@@ -60,7 +60,7 @@ const initialState = Map({
     overtimeFilterOptions: List(
         [PENDING, APPROVED, DENIED].map(status => {
             return Map({
-                name: status,
+                title: status,
                 value: status
             });
         })
