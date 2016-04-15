@@ -86,7 +86,7 @@ let ArticleQuery = {
           .filter(filterFunc)
           .orderBy('updatedAt');
         result = await query
-          .slice((page-1) * pageLimit, page * pageLimit)
+          .slice((page - 1) * pageLimit, page * pageLimit)
           .merge(_getArticleDetail).run(connection);
 
         if (!result ){
@@ -104,7 +104,6 @@ let ArticleQuery = {
         count
       };
     }
-
   },
 
   getArticle:{

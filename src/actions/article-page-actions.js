@@ -1,4 +1,5 @@
 import stringifyObject from '../libraries/stringifyObject';
+
 import actionTypes from '../constants/action-types';
 import {
   SERVER_API_URL,
@@ -77,6 +78,9 @@ export function fetchArticle(articleId) {
         return res.json();
       })
       .then((body) => {
+        if (body.errors) {
+          throw new Error(JSON.stringify(body.errors));
+        }
         dispatch(fetchArticleSucess(body.data.getArticle));
         dispatch(setLoadingState(false));
       })
@@ -132,6 +136,9 @@ export function createArticle(newArticle) {
         return res.json();
       })
       .then((body) => {
+        if (body.errors) {
+          throw new Error(JSON.stringify(body.errors));
+        }
         const id = body.data.createArticle.id;
         dispatch(createArticleSuccess({id}));
         dispatch(setLoadingState(false));
@@ -189,6 +196,9 @@ export function updateArticle(newArticle) {
         return res.json();
       })
       .then((body) => {
+        if (body.errors) {
+          throw new Error(JSON.stringify(body.errors));
+        }
         const id = body.data.updateArticle.id;
         dispatch(updateArticleSuccess({id}));
         dispatch(setLoadingState(false));
@@ -234,7 +244,10 @@ export function deleteArticle(id) {
         }
         return res.json();
       })
-      .then(() => {
+      .then((body) => {
+        if (body.errors) {
+          throw new Error(JSON.stringify(body.errors));
+        }
         dispatch(deleteArticleSuccess(id));
       })
       .catch((error) => {
@@ -323,6 +336,12 @@ export function uploadArticleFile({articleId, file, files}) {
           if (res.status >= 400) {
             throw new Error(res.statusText);
           }
+          return res.json();
+        })
+        .then((body) => {
+          if (body.errors) {
+            throw new Error(JSON.stringify(body.errors));
+          }
           dispatch(uploadArticleFileSuccess(tempId, uploadedFile));
         });
     })
@@ -394,6 +413,12 @@ export function removeArticleFile({articleId, file, files}) {
           .then((res2)=> {
             if (res2.status >= 400) {
               throw new Error(res.statusText);
+            }
+            return res2.json();
+          })
+          .then((body) => {
+            if (body.errors) {
+              throw new Error(JSON.stringify(body.errors));
             }
             dispatch(removeArticleFileSuccess(fileId));
           });

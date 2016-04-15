@@ -50,6 +50,11 @@ let ArticleMutation = {
     resolve: async (root, { id }) => {
       try {
         const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+
+        // TODO:
+        // when delete articles
+        // delete all attachments files
+
         await r.db('work_genius')
           .table('articles')
           .get(id)
