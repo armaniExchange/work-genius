@@ -11,6 +11,8 @@ import {
 } from 'graphql';
 // RethinkDB
 import r from 'rethinkdb';
+
+import { getChildren } from '../AssignmentCategory/utils.js';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 
@@ -69,32 +71,46 @@ let ArticleQuery = {
       }
     },
     resolve: async (root, { categoryId, authorId, tag, page, pageLimit}) => {
-      let  result,
+      let result,
         count = 0,
+        allChildrenCategory = null,
         filterFunc = article => {
-          return (!authorId || article('authorId') === authorId)
-            && (!categoryId || article('categoryId') === categoryId)
-            && (!tag || article('tags').contains(tag));
+          let predicate = true;
+          predicate = predicate && (!authorId || article('authorId').eq(authorId));
+          predicate = predicate && (!tag || article('tags').contains(tag));
+          if (categoryId) {
+            predicate = predicate && r.expr([categoryId, ...allChildrenCategory]).contains(article('categoryId'));
+          }
+          return predicate;
         };
 
       try {
         const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+        const query = r.db('work_genius').table('articles');
+
         page = page || 1;
         pageLimit = pageLimit || 5;
-        let query = r.db('work_genius')
-          .table('articles')
-          .filter(filterFunc)
-          .orderBy('updatedAt');
-        result = await query
+
+        if (categoryId){
+          const queryCategories = r.db('work_genius')
+            .table('categories')
+            .coerceTo('array');
+          result = await queryCategories.run(connection);
+          allChildrenCategory = getChildren(result, {id: categoryId})
+            .map(category => category.id);
+        }
+
+        result = await query.filter(filterFunc)
+          .orderBy('updatedAt')
           .slice((page - 1) * pageLimit, page * pageLimit)
-          .merge(_getArticleDetail).run(connection);
+          .merge(_getArticleDetail)
+          .run(connection);
 
         if (!result ){
           throw 'No result';
         }
 
         count = await query.count().run(connection);
-
         await connection.close();
       } catch (err) {
         return err;
