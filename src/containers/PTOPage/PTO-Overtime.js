@@ -1,5 +1,6 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
+import ReactDOMServer from 'react-dom/server';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -14,9 +15,11 @@ import RaisedButton from 'material-ui/lib/raised-button';
 import OvertimeApplyModal from '../../components/Overtime-Apply-Modal/Overtime-Apply-Modal';
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List';
 import PTOYearFilter from '../../components/PTO-Year-Filter/PTO-Year-Filter';
+import PTOMailCard from '../../components/PTO-Mail-Card/PTO-Mail-Card';
 // Constants
 import BREADCRUMB from '../../constants/breadcrumb';
 import * as PTOConstants from '../../constants/pto-constants';
+import {  OVERTIME_URL } from '../../constants/config.js';
 
 class PTOOvertime extends Component {
     componentWillMount() {
@@ -45,6 +48,7 @@ class PTOOvertime extends Component {
             currentUser,
             sendMail
         } = this.props;
+
         let finalData = {
                 start_date: data.startDate,
                 memo: data.memo,
@@ -56,8 +60,14 @@ class PTOOvertime extends Component {
             },
             mailingConfig = {
                 subject: `[KB-PTO] ${finalData.applicant} has a New Overtime Application`,
-                text: '*** This is an automatically generated email, please do not reply ***\\n\\n' + finalData.applicant
-                    + ' has applied for ' + finalData.hours + ' hours of Overtime on ' + finalData.start_date + '.\\nPlease update status on KB.',
+                html: ReactDOMServer.renderToStaticMarkup(
+                    <PTOMailCard
+                        type={'OVERTIME_' + finalData.status}
+                        applicant={finalData.applicant}
+                        startDate={finalData.apply_date}
+                        hours={finalData.hours}
+                        link={OVERTIME_URL} />
+                ).replace(/"/g, '\\"'),
                 includeManagers: true
             };
         let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
@@ -79,12 +89,21 @@ class PTOOvertime extends Component {
             currentUser,
             sendMail
         } = this.props;
-        const { id, status, hours, start_date, applicant_email } = updatedOvertime;
+        const { id, status, hours, start_date, applicant_email, applicant } = updatedOvertime;
         let mailingConfig = {
             to: [applicant_email],
             subject: '[KB-PTO] Your Overtime Application has been updated',
-            text: '*** This is an automatically generated email, please do not reply ***\\n\\n' + currentUser.name
-                + ' has ' + status + ' your ' + hours + ' hours overtime application on ' + start_date + '.'
+            html: ReactDOMServer.renderToStaticMarkup(
+                <PTOMailCard
+                    type={'OVERTIME_' + status}
+                    startDate={start_date}
+                    manager={currentUser.name}
+                    status={status}
+                    hours={hours}
+                    applicant={applicant}
+                    link={OVERTIME_URL} />
+            ).replace(/"/g, '\\"'),
+            includeManagers: true
         };
         let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
 

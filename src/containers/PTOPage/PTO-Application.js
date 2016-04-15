@@ -1,5 +1,6 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
+import ReactDOMServer from 'react-dom/server';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -10,6 +11,7 @@ import * as mainActions from '../../actions/main-actions';
 // Constants
 import * as PTOConstants from '../../constants/pto-constants';
 import BREADCRUMB from '../../constants/breadcrumb';
+import {  PTO_URL } from '../../constants/config.js';
 // Components
 import PTOApplyModal from '../../components/PTO-Apply-Modal/PTO-Apply-Modal';
 import PTOTable from '../../components/PTO-Table/PTO-Table';
@@ -18,6 +20,7 @@ import PTOYearFilter from '../../components/PTO-Year-Filter/PTO-Year-Filter';
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 import RaisedButton from 'material-ui/lib/raised-button';
 import Breadcrumb from '../../components/A10-UI/Breadcrumb';
+import PTOMailCard from '../../components/PTO-Mail-Card/PTO-Mail-Card';
 
 class PTOApplication extends Component {
     componentWillMount() {
@@ -54,8 +57,15 @@ class PTOApplication extends Component {
             },
             mailingConfig = {
                 subject: `[KB-PTO] ${finalData.applicant} has a New PTO Application`,
-                text: '*** This is an automatically generated email, please do not reply ***\\n\\n' + finalData.applicant
-                    + ' has applied for ' + finalData.hours + ' hours of PTO from ' + finalData.start_date + ' to ' + finalData.end_date + '.\\nPlease update status on KB.',
+                html: ReactDOMServer.renderToStaticMarkup(
+                    <PTOMailCard
+                        type={'PTO_' + finalData.status}
+                        applicant={finalData.applicant}
+                        startDate={finalData.start_date}
+                        endDate={finalData.end_date}
+                        hours={finalData.hours}
+                        link={PTO_URL} />
+                ).replace(/"/g, '\\"'),
                 includeManagers: true
             };
         let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
@@ -92,30 +102,23 @@ class PTOApplication extends Component {
 
         let mailingConfig = {
             to: [applicant_email],
-            subject: '[KB-PTO] Your PTO Application has been updated',
-            text: '*** This is an automatically generated email, please do not reply ***\\n\\n' + currentUser.name
-                + ' has ' + status + ' your ' + hours + ' hours of PTO application from ' + start_date + ' to ' + end_date + '.'
+            subject: status === PTOConstants.CANCEL_REQUEST_PENDING ? `[KB-PTO] ${applicant} has canceld a PTO Application` : '[KB-PTO] Your PTO Application has been updated',
+            html: ReactDOMServer.renderToStaticMarkup(
+                <PTOMailCard
+                    type={'PTO_' + status}
+                    applicant={applicant}
+                    startDate={start_date}
+                    endDate={end_date}
+                    status={status}
+                    manager={currentUser.name}
+                    hours={hours}
+                    link={PTO_URL} />
+            ).replace(/"/g, '\\"'),
+            includeManagers: true
         };
+        let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
 
         setPTOApplicationStatus(id, status, hours);
-
-        if (status === PTOConstants.APPROVED || status === PTOConstants.DENIED || status === PTOConstants.CANCEL_REQUEST_APPROVED) {
-            if (status === PTOConstants.CANCEL_REQUEST_APPROVED) {
-                mailingConfig.text = '*** This is an automatically generated email, please do not reply ***\\n\\n' + currentUser.name
-                    + ' has APPROVED your CANCEL REQUEST on ' + hours + ' hours PTO application from ' + start_date + ' to ' + end_date + '.';
-            }
-            mailingConfig.includeManagers = false;
-        } else {
-            mailingConfig = {
-                to: [applicant_email],
-                subject: `[KB-PTO] ${applicant} has a New PTO Application`,
-                text: '*** This is an automatically generated email, please do not reply ***\\n\\n' + applicant
-                    + ' has CANCELED the application for ' + hours + ' hours of PTO from ' + start_date + ' to ' + end_date + '.\\nPlease update status on KB.'
-            };
-            mailingConfig.includeManagers = true;
-        }
-
-        let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
         sendMail(to, cc, bcc, subject, text, html, includeManagers);
     }
     _onUserFilterClickedHandler(id) {
