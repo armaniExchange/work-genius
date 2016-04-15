@@ -10,7 +10,32 @@ import ArticleInputType from './ArticleInputType.js';
 import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
-// import moment from 'moment';
+
+function parseArticle(article) {
+  let result = {};
+
+  Object.keys(article)
+    .map( key => {
+      switch (key) {
+        case 'category':
+          result.categoryId = article.category.id;
+          break;
+        case 'comments':
+          result.commentsId = article.comments.map(comment => comment.id);
+          break;
+        case 'files':
+          result.filesId = article.files.map(file => file.id);
+          break;
+        case 'tags':
+          result.tags = article.tags || [];
+          break;
+        default:
+          result[key] = article[key];
+          break;
+      }
+    });
+  return result;
+}
 
 let ArticleMutation = {
   deleteArticle: {
@@ -37,6 +62,7 @@ let ArticleMutation = {
       return 'Deleted successfully!';
     }
   },
+
   createArticle: {
     type: ArticleType,
     description: 'Create a new article ',
@@ -47,22 +73,17 @@ let ArticleMutation = {
       try {
         const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         let result = null;
-
         const user = root.req.decoded;
         const now = new Date().getTime();
+        const parsedArticle = Object.assign({}, parseArticle(article), {
+          authorId: user.id,
+          createdAt: now,
+          updatedAt: now
+        });
+
         result = await r.db('work_genius')
           .table('articles')
-          .insert({
-            authorId: user.id,
-            categoryId: article.category && article.category.id,
-            commentsId: article.comments ? article.comments.map(comment => comment.id) : null,
-            filesId: article.files ? article.files.map(file => file.id) : null,
-            tags: article.tags,
-            content: article.content,
-            title: article.title,
-            createdAt: now,
-            updatedAt: now
-          })
+          .insert(parsedArticle)
           .run(connection);
 
         if (result && result.generated_keys && result.generated_keys.length > 0) {
@@ -95,20 +116,13 @@ let ArticleMutation = {
         const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         let result = null;
 
-        const now = new Date().getTime();
+        const parsedArticle = Object.assign({}, parseArticle(article), {
+          updatedAt: new Date().getTime()
+        });
         await r.db('work_genius')
           .table('articles')
           .get(article.id)
-          .update({
-            categoryId: article.category && article.category.id,
-            commentsId: article.comments ? article.comments.map(comment => comment.id) : null,
-            filesId: article.files ? article.files.map(file => file.id) : null,
-            tags: article.tags,
-            content: article.content,
-            title: article.title,
-            category: article.category && article.category.id,
-            updatedAt: now
-          })
+          .update(parsedArticle)
           .run(connection);
 
          result = await r.db('work_genius')

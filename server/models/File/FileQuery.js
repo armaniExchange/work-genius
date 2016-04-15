@@ -15,6 +15,8 @@ export const fileDownloadHandler = async (req, res) => {
       }
     });
   } catch (err) {
-    res.status(err.status).end();
+    res.status(err.status).send({
+      error: err
+    });
   }
 };

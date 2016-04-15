@@ -7,7 +7,10 @@ import nodemailer from 'nodemailer';
 // GraphQL and schema
 import schema from './schema/schema.js';
 import { loginHandler } from './models/User/UserMutation';
-import { fileUploadHandler } from './models/File/FileMutation';
+import {
+  fileUploadHandler,
+  fileDeleteHandler
+} from './models/File/FileMutation';
 import { fileDownloadHandler } from './models/File/FileQuery';// Constants
 import {
     SECURE_KEY,
@@ -78,6 +81,7 @@ app.use('/graphql', graphqlHTTP(request => ({
 
 app.post('/files', fileUploadHandler);
 app.get('/files/:id', fileDownloadHandler);
+app.delete('/files/:id', fileDeleteHandler);
 app.listen(PORT, () => {
   console.log(`Server is listening at port: ${PORT}`);
 });

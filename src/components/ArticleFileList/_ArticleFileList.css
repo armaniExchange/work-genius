@@ -1,4 +1,5 @@
 .file-list {
+  display: inline-block;
   & > span {
     margin-right: 10px;
     .remove-button {

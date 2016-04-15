@@ -50,6 +50,12 @@ export function fetchArticles(query = {}) {
               title,
               content
             },
+            files {
+              id,
+              type,
+              name,
+              url
+            },
             createdAt,
             updatedAt
           },

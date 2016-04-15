@@ -43,6 +43,12 @@ function _fetchArticle(id) {
           title,
           content
         },
+        files {
+          id,
+          type,
+          name,
+          url
+        },
         createdAt,
         updatedAt
       }
@@ -160,7 +166,6 @@ export function updateArticle(newArticle) {
     });
     dispatch(setLoadingState(true));
 
-    // update to server
     const config = {
       method: 'POST',
       body: `
@@ -247,6 +252,13 @@ export function uploadArticleFileSuccess(tempId, file) {
   };
 }
 
+export function uploadArticleFileFail(error) {
+  return {
+    type: actionTypes.UPLOAD_ARTICLE_FILE_FAIL,
+    error
+  };
+}
+
 export function uploadArticleFileProgress(tempId, event) {
   return {
     type: actionTypes.UPLOAD_ARTICLE_FILE_PROGRESS,
@@ -256,7 +268,8 @@ export function uploadArticleFileProgress(tempId, event) {
 }
 
 let _tempArticleFileId = 0;
-export function uploadArticleFile(file) {
+export function uploadArticleFile({articleId, file, files}) {
+  let uploadedFile;
   return dispatch => {
     _tempArticleFileId++;
     const tempId = _tempArticleFileId;
@@ -282,9 +295,40 @@ export function uploadArticleFile(file) {
         }));
       },
     })
-    .then((xhr)=> {
-      const data = JSON.parse(xhr.responseText);
-      dispatch(uploadArticleFileSuccess(tempId, data));
+    .then((xhr) => {
+      uploadedFile = JSON.parse(xhr.responseText);
+      if (!articleId) { // new article
+        dispatch(uploadArticleFileSuccess(tempId, uploadedFile));
+        return;
+      }
+
+      const updatedArticle = {
+        id: articleId,
+        files: [...files, uploadedFile].map(eachFile => {return {id: eachFile.id};})
+      };
+      const config = {
+        method: 'POST',
+        body: `
+          mutation RootMutationType {
+            updateArticle ( article: ${stringifyObject(updatedArticle)}) {id}
+          }
+         `,
+         headers: {
+          'Content-Type': 'application/graphql',
+          'x-access-token': localStorage.token
+         }
+      };
+      return fetch(SERVER_API_URL, config)
+        .then((res) => {
+          if (res.status >= 400) {
+            throw new Error(res.statusText);
+          }
+          dispatch(uploadArticleFileSuccess(tempId, uploadedFile));
+        });
+    })
+    .catch((error) => {
+      dispatch(uploadArticleFileFail(error));
+      dispatch(apiFailure(error));
     });
   };
 }
@@ -296,13 +340,68 @@ export function removeArticleFileSuccess(fileId) {
   };
 }
 
-export function removeArticleFile(fileId) {
+export function removeArticleFileFail(error) {
+  return {
+    type: actionTypes.REMOVE_ARTICLE_FILE_FAIL,
+    error
+  };
+}
+
+export function removeArticleFile({articleId, file, files}) {
   return dispatch => {
+    const fileId = file.id;
+
     dispatch({
       type: actionTypes.REMOVE_ARTICLE_FILE,
       id: fileId
     });
-    dispatch(removeArticleFileSuccess(fileId));
+
+    fetch(`${SERVER_FILES_URL}/${fileId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/graphql',
+          'x-access-token': localStorage.token
+        }
+      })
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        if (!articleId) {
+          dispatch(removeArticleFileSuccess(fileId));
+          return;
+        }
+        const updatedArticle = {
+          id: articleId,
+          files: files.filter((eachFile) => {
+            return eachFile.id !== file.id;
+          })
+          .map(eachFile => {return {id: eachFile.id};})
+        };
+        const config = {
+          method: 'POST',
+          body: `
+            mutation RootMutationType {
+              updateArticle ( article: ${stringifyObject(updatedArticle)}) {id}
+            }
+           `,
+           headers: {
+            'Content-Type': 'application/graphql',
+            'x-access-token': localStorage.token
+           }
+        };
+        fetch(SERVER_API_URL, config)
+          .then((res2)=> {
+            if (res2.status >= 400) {
+              throw new Error(res.statusText);
+            }
+            dispatch(removeArticleFileSuccess(fileId));
+          });
+      })
+      .catch((error) => {
+        dispatch(removeArticleFileFail(error));
+        dispatch(apiFailure(error));
+      });
   };
 }
 

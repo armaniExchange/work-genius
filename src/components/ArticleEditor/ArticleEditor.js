@@ -131,6 +131,7 @@ class ArticleEditor extends Component {
             options={{mode: 'gfm'}} />
         </div>
         <br />
+        <label>Tags</label>
         <Select
           multi={true}
           allowCreate={true}
@@ -139,11 +140,13 @@ class ArticleEditor extends Component {
           onChange={onTagsChange}
         />
         <br />
+        <label>Attachments</label>
         <br />
         <ArticleFileList
           files={files}
           enableRemove={true}
           onRemove={::this.onFileRemove} />
+        <br />
         <br />
         <Dropzone
           style={dropzoneStyle}
