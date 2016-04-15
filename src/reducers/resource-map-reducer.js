@@ -9,7 +9,7 @@ import moment from 'moment';
 // });
 const initialState = Map({
 	startDate: moment().isoWeekday(1).format('YYYY-MM-DD'),
-	totalDays: 10,
+	totalDays: 7,
 	// data: List.of(
 	// 	Map({'name': 'Ruiz', 'items': List.of(
 	// 		Map({'item': Map({ 'type': '1', 'date': '1' }) }),

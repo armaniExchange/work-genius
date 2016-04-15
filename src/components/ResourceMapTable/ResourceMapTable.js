@@ -66,7 +66,7 @@ ResourceMapTable.propTypes = {
 
 ResourceMapTable.defaultProps = {
 	startDate          : new Date(),
-	totalDays          : 10,
+	totalDays          : 7,
 	show               : false,
 	data               : [],
     defaultModalInfos  : {}

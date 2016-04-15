@@ -85,7 +85,6 @@ class ResourceMapModalWorkLog extends Component {
 		} else {
 			let dates = this._dateList(startMoment, endMoment);
 			var tag = this.state.tag;
-			console.log(tag);
 			let items = dates.map((date) => {
 				let newItem = this._createNewItem(defaultModalInfos, date, tag, worklogValue, progressValue);
 				return newItem;

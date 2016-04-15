@@ -69,16 +69,15 @@ class ResourceMapPage extends Component{
 		return (
 			<section>
         		<Breadcrumb data={BREADCRUMB.resourcemap} />
-                <DatePicker className="option-layout" defaultDate={String(startDate)} placeholder="Start Date" onChange={this._changeStartDate} />
-
-                <DropDownList
-                    isNeedAll={true}
-                    title={username}
-                    onOptionClick={this._selectUser}
-                    aryOptionConfig={allUsers.map((user) => {
-                            return {title: user.name, value: user.id};
-                        })}
-                />
+                    <DatePicker className="option-layout" defaultDate={String(startDate)} placeholder="Start Date" onChange={this._changeStartDate} />
+                    <DropDownList
+                        isNeedAll={true}
+                        title={username}
+                        onOptionClick={this._selectUser}
+                        aryOptionConfig={allUsers.map((user) => {
+                                return {title: user.name, value: user.id};
+                            })}
+                    />
 				<ResourceMapTable
 					onModalHander={fetchResourceMapModalHandler}
                     onSubmitStatus={fetchResourceMapStatus}
@@ -113,7 +112,7 @@ ResourceMapPage.propTypes = {
 
 ResourceMapPage.defaultProps = {
     startDate     : moment().isoWeekday(1).format('YYYY-MM-DD'),
-    totalDays     : 10,
+    totalDays     : 7,
     show          : false,
     data          : [],
     currentUserId : ''

@@ -6,7 +6,7 @@ import 'rc-checkbox/assets/index.css';
 import React, { Component, PropTypes } from 'react';
 import Dialog from 'material-ui/lib/dialog';
 import FlatButton from 'material-ui/lib/flat-button';
-// import Tooltip from 'rc-tooltip';
+import Tooltip from 'rc-tooltip';
 import Checkbox from 'rc-checkbox';
 
 const TAG = 'bgm-teal';
@@ -106,33 +106,31 @@ class ResourceMapCellWorkLog extends Component {
 					<div className={'worklog-layout--text'} onClick={__onClickWorkLogItem} onDoubleClick={__onDblclickWorkLogItem}>
 					    <div className="progress progress--active">
 							  <b className={className} style={{ width: item.progress + '%' }}>
-							    <span className="label-default-style c-black">
-							      <em>{item.progress}%</em> {item.content}
-							    </span>
+							  	<Tooltip
+									placement="top"
+									overlay={
+										(
+											<div>
+												<label>Progress: </label>
+												<span><em>{item.progress}%</em></span>
+												<br />
+												<label>Work Log: </label>
+												<span>{item.content}</span>
+											</div>
+										)
+									}
+									arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+								>
+								    <span className="label-default-style c-white">
+								      <span >{item.progress}%</span> {item.content}
+								    </span>
+							    </Tooltip>
 							  </b>
 							</div>
 					</div>
 				</div>
 			);
 		});
-// <Tooltip
-						// 	placement="top"
-						// 	overlay={
-						// 		(
-						// 			<div>
-						// 				<label>Progress: </label>
-						// 				<span><em>{item.progress}%</em></span>
-						// 				<br />
-						// 				<label>Work Log: </label>
-						// 				<span>{item.content}</span>
-						// 			</div>
-						// 		)
-						// 	}
-						// 	arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
-						// >
-
-					 //    	<span className="label-default-style c-white">{item.progress}% {item.content}</span>
-					 //    </Tooltip>
 		const actions = [
 		      <FlatButton
 		        label="Cancel"

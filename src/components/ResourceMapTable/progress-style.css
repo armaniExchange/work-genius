@@ -1,9 +1,10 @@
 @import url(http://fonts.useso.com/css?family=Roboto:100italic,100,300italic,300,700italic,700);
 .progress {
-  font-size: 1.2em;
+  font-size: 10px;
   height: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 2px;
+  line-height: 20px;
+  background-color: #AAA !important;
+  border-radius: 0;
 }
 .progress--active .progress__bar {
   opacity: 1;
@@ -20,8 +21,6 @@
   color: white;
   font-size: 12px;
   font-weight: normal;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6);
-  line-height: 19px;
   display: block;
   position: relative;
   top: -1px;
@@ -29,7 +28,6 @@
   width: 0%;
   height: 100%;
   opacity: 0;
-  border: 1px solid;
   border-radius: 2px 0 0 2px;
   background-size: 100px 30px, 130px 30px, 130px 30px;
   background-position: -20% center, right center, left center;

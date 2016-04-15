@@ -32,11 +32,14 @@ const RESOURCE_MAP_CELLS = {
             />
         );
     },
-    holiday: (config, onModalHander) => {
+    holiday: (config, onModalHander, onSubmitStatus, onDeleteItemHander) => {
         return (
-            <ResourceMapCellAddButton
+            <ResourceMapCellWorkLog
                 config={config}
+                className={'holiday-style'}
                 onModalHander={onModalHander}
+                onSubmitStatus={onSubmitStatus}
+                onDeleteItemHander={onDeleteItemHander}
             />
         );
     }
@@ -61,7 +64,7 @@ class ResourceMapTableBody extends Component {
 		let bodyHtml = (
             <tr>
                 <Td
-                    colSpan={15}
+                    colSpan={7}
                     className="pto-table__body--empty">
                     No Match Result!
                 </Td>
