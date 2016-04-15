@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import moment from 'moment';
 
 // Components
 import {
@@ -6,6 +7,7 @@ import {
 } from 'react-bootstrap';
 import RaisedButton from 'material-ui/lib/raised-button';
 import TextField from 'material-ui/lib/text-field';
+import DatePicker from '../../components/A10-UI/Input/Date-Picker.js';
 
 let ModalHeader = () => {
 	return (
@@ -31,6 +33,10 @@ class ResourceMapModalWorkLog extends Component {
 		this._onCloseModelHandler = ::this._onCloseModelHandler;
 		this._onSubmitFormData = ::this._onSubmitFormData;
 		this._onSelectTagColor = ::this._onSelectTagColor;
+		this._onSubmitSingleItem = ::this._onSubmitSingleItem;
+		this._onSubmitMultiItems = ::this._onSubmitMultiItems;
+		this._changeStartDate = ::this._changeStartDate;
+		this._changeEndDate = ::this._changeEndDate;
 		this.state = {tag: ''};
 	}
 
@@ -40,29 +46,91 @@ class ResourceMapModalWorkLog extends Component {
 	}
 
 	_onSubmitFormData() {
+		const { defaultModalInfos } = this.props;
+		if (defaultModalInfos.id) {
+			this._onSubmitSingleItem();
+		} else {
+			this._onSubmitMultiItems();
+		}
+		this._onCloseModelHandler();
+	}
+
+	_onSubmitSingleItem() {
 		const { workLogField, progressField } = this.refs;
 		const { defaultModalInfos, onModalSubmit } = this.props;
 
 		let worklogValue = workLogField.getValue();
 		let progressValue = progressField.getValue();
-		let tag = this.state.tag;
+		if (worklogValue !== undefined && worklogValue !== '') {
+			let tag = this.state.tag;
+			let date = defaultModalInfos.date.format('YYYY-MM-DD');
+			let newItem = this._createNewItem(defaultModalInfos, date, tag, worklogValue, progressValue);
+
+			onModalSubmit(newItem);
+		}
+	}
+
+	_onSubmitMultiItems() {
+		const { startDate, endDate, workLogField, progressField } = this.refs;
+		let worklogValue = workLogField.getValue();
+		let progressValue = progressField.getValue();
+		if (worklogValue === undefined || worklogValue === '') {
+			return;
+		}
+		const { defaultModalInfos, onModalSubmitMulti} = this.props;
+		let startMoment = moment(startDate.value);
+		let endMoment = moment(endDate.value);
+		if (parseInt(startMoment.format('X')) >= parseInt(endMoment.format('X'))) {
+			this._onSubmitSingleItem();
+		} else {
+			let dates = this._dateList(startMoment, endMoment);
+			var tag = this.state.tag;
+			console.log(tag);
+			let items = dates.map((date) => {
+				let newItem = this._createNewItem(defaultModalInfos, date, tag, worklogValue, progressValue);
+				return newItem;
+			});
+			onModalSubmitMulti(items);
+		}
+	}
+
+	_createNewItem(defaultModalInfos, date, tag, worklogValue, progressValue) {
+		progressValue = progressValue > 100 ? 100 : progressValue;
 		let newItem = {
 			tag: tag,
 			content: worklogValue,
 			progress: progressValue,
 			id: defaultModalInfos.id,
 			employee_id: defaultModalInfos.userId,
-			date: defaultModalInfos.date,
-			status: defaultModalInfos.status
+			date: date,
+			status: defaultModalInfos.status ? defaultModalInfos.status : 0
 		};
+		return newItem;
+	}
 
-		onModalSubmit(newItem);
-		this._onCloseModelHandler();
+	_dateList(startMoment, endMoment) {
+		let duration = moment.duration({'days' : 1});
+		let dateList = [];
+		for (let i = 0; parseInt(startMoment.format('X')) <= parseInt(endMoment.format('X')); i ++) {
+			dateList.push(startMoment.format('YYYY-MM-DD'));
+			startMoment.add(duration);
+		}
+		return dateList;
 	}
 
 	_onSelectTagColor(e) {
 		let tag = e.target.getAttribute('data-tag');
 		this.setState({tag: tag});
+	}
+
+	_changeStartDate(date) {
+		const { startDate } = this.refs;
+		startDate.value = date;
+	}
+
+	_changeEndDate(date) {
+		const { endDate } = this.refs;
+		endDate.value = date;
 	}
 
 
@@ -71,10 +139,41 @@ class ResourceMapModalWorkLog extends Component {
 			show,
 			defaultModalInfos
 		} = this.props;
-
 		defaultModalInfos.progress = defaultModalInfos.progress ? defaultModalInfos.progress : 0;
 		let showDoneClassName = 'material-icons icon-layout';
 		let hideDoneClassName = 'material-icons icon-layout icon-layou-display';
+		let startEndDate = '';
+		if (defaultModalInfos.id === undefined) {
+			let nowDate = defaultModalInfos.date;
+			if (nowDate) {
+				nowDate = nowDate.format('YYYY-MM-DD');
+			}
+			startEndDate = (
+				<div>
+				<div className="form-group">
+					<label className="col-xs-3 control-label">Start Date</label>
+					<div className="col-xs-9">
+						<input
+					        className="hidden"
+					        defaultValue={nowDate}
+					        ref="startDate" />
+						<DatePicker className="option-layout" onChange={this._changeStartDate} defaultDate={nowDate} placeholder="Start Date" />
+					</div>
+				</div>
+				<div className="form-group">
+					<label className="col-xs-3 control-label">End Date</label>
+					<div className="col-xs-9">
+						<input
+					        className="hidden"
+					        defaultValue={nowDate}
+					        ref="endDate" />
+						<DatePicker className="option-layout" onChange={this._changeEndDate} defaultDate={nowDate} placeholder="End Date" />
+					</div>
+				</div>
+				</div>
+			);
+		}
+
 		return (
 			<Modal show={show} onHide={this._onCloseModelHandler}>
 				<ModalHeader />
@@ -93,6 +192,7 @@ class ResourceMapModalWorkLog extends Component {
 							/>
 						</div>
 					</div>
+					{startEndDate}
 					<div className="form-group">
 						<label className="col-xs-3 control-label">Progress</label>
 						<div className="col-xs-9">
@@ -155,14 +255,16 @@ ResourceMapModalWorkLog.propTypes = {
 	show               : PropTypes.bool.isRequired,
 	defaultModalInfos  : PropTypes.object.isRequired,
 	onModalSubmit      : PropTypes.func.isRequired,
-	onModalHander      : PropTypes.func.isRequired
+	onModalHander      : PropTypes.func.isRequired,
+	onModalSubmitMulti : PropTypes.func.isRequired
 };
 
 ResourceMapModalWorkLog.defaultProps = {
 	show                   : false,
 	defaultModalInfos      : {},
 	onModalSubmit          : () => {},
-	onCancelHandler        : () => {}
+	onCancelHandler        : () => {},
+	onModalSubmitMulti     : () => {}
 };
 
 export default ResourceMapModalWorkLog;

@@ -30,6 +30,13 @@ function fetchWorklogItem(item) {
     };
 }
 
+function fetchWorklogItems(items) {
+    return {
+        type: actionTypes.FETCH_RESOURCE_MAP_WORKLOG_ADD_MULTI,
+        items
+    };
+}
+
 export function fetchResourceMapModalHandler(show, info){
 	return {
 		type: actionTypes.FETCH_RESOURCE_MAP_MODAL,
@@ -149,9 +156,10 @@ function queryResourceMapDataFromServerByUser(startDate, userId) {
     };
 }
 
+
 function workLogItemCreate(item) {
     return (dispatch) => {
-        let date = parseInt(item.date.format('X')) * 1000;
+        let date = parseInt(moment(item.date).format('X')) * 1000;
         var createData = {
             employee_id: item.employee_id,
             content: item.content,
@@ -186,10 +194,55 @@ function workLogItemCreate(item) {
     };
 }
 
+function workLogItemCreateMulti(items) {
+    return (dispatch) => {
+        let createDatas = items.map((item) => {
+            let date = parseInt(moment(item.date).format('X')) * 1000;
+            let data = {
+                employee_id: item.employee_id,
+                content: item.content,
+                progress: parseInt(item.progress),
+                date: date,
+                tag: item.tag,
+                status: item.status ? item.status : 0
+            };
+            return data;
+        });
+        let worklogs = {
+            worklog: createDatas
+        };
+        let config = {
+            method: 'POST',
+            body: `mutation RootMutationType {
+                createWorkLogBatch(data:"${JSON.stringify(worklogs).replace(/\"/gi, '\\"')}")
+            }`,
+            headers: {
+                'Content-Type': 'application/graphql',
+                'x-access-token': localStorage.token
+            }
+        };
+
+        return fetch(SERVER_API_URL, config)
+            .then((res) => res.json())
+            .then((body) => {
+                let workLogBatchIds = body.data.createWorkLogBatch;
+                workLogBatchIds = workLogBatchIds.split(',');
+                let newItems = items.map((item, index) => {
+                    item.id = workLogBatchIds[index];
+                    return item;
+                });
+                dispatch(fetchWorklogItems(newItems));
+            })
+            .catch((err) => {
+                throw new Error(err);
+            });
+    };
+}
+
 function workLogItemUpdate(item, fetchState) {
 
     return (dispatch) => {
-        let date = parseInt(item.date.format('X')) * 1000;
+        let date = parseInt(moment(item.date).format('X')) * 1000;
         var updateData = {
             employee_id: item.employee_id,
             content: item.content,
@@ -223,20 +276,16 @@ function workLogItemUpdate(item, fetchState) {
 }
 
 function workLogItemDelete(item) {
-    console.log(item.id);
     return (dispatch) => {
         let config = {
             method: 'POST',
-            body: `mutation RootMutationType {
-                deleteWorkLog(id:"` + item.id + `")
-            }`,
+            body: `mutation RootMutationType {deleteWorkLog(id:\"` + item.id + `\")}`,
             headers: {
                 'Content-Type': 'application/graphql',
                 'x-access-token': localStorage.token
             }
         };
 
-        console.log(config);
         return fetch(SERVER_API_URL, config)
             .then((res) => res.json())
             .then(() => {
@@ -278,8 +327,22 @@ function queryResourceMapDataByUser(startDate, userId) {
     };
 }
 
+export function fetchResourceMapAddMulti(items) {
+    return (dispatch) => {
+        Promise.all([
+            dispatch(workLogItemCreateMulti(items))
+        ]).then(
+            () => {
+            },
+            (err) => {
+                dispatch(apiFailure(err));
+            }
+        );
+    };
+}
+
+
 export function fetchResourceMapDeleteItem(item) {
-    console.log('..................>>>>>>>>>>>>>>>>>>>>>>>');
     return (dispatch) => {
         Promise.all([
             dispatch(workLogItemDelete(item))

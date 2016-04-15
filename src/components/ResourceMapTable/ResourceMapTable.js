@@ -19,6 +19,7 @@ class ResourceMapTable extends Component {
 			show,
 			onModalHander,
             onSubmitStatus,
+            onSubmitMulti,
             onDeleteItemHander,
             upsertWorklogItem,
             defaultModalInfos
@@ -42,6 +43,7 @@ class ResourceMapTable extends Component {
                 	show={show}
                 	onModalHander={onModalHander}
                     onModalSubmit={upsertWorklogItem}
+                    onModalSubmitMulti={onSubmitMulti}
                     defaultModalInfos={defaultModalInfos}
                 />
             </div>
@@ -58,6 +60,7 @@ ResourceMapTable.propTypes = {
     upsertWorklogItem  : PropTypes.func.isRequired,
     onModalHander      : PropTypes.func.isRequired,
     onSubmitStatus     : PropTypes.func.isRequired,
+    onSubmitMulti      : PropTypes.func.isRequired,
     onDeleteItemHander : PropTypes.func.isRequired
 };
 

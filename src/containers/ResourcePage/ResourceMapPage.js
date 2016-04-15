@@ -58,6 +58,7 @@ class ResourceMapPage extends Component{
             currentUserId,
 			fetchResourceMapModalHandler,
             fetchResourceMapStatus,
+            fetchResourceMapAddMulti,
             fetchResourceMapDeleteItem
 		} = this.props;
         let userObj = allUsers.find((user) => {
@@ -68,6 +69,8 @@ class ResourceMapPage extends Component{
 		return (
 			<section>
         		<Breadcrumb data={BREADCRUMB.resourcemap} />
+                <DatePicker className="option-layout" defaultDate={String(startDate)} placeholder="Start Date" onChange={this._changeStartDate} />
+
                 <DropDownList
                     isNeedAll={true}
                     title={username}
@@ -76,10 +79,10 @@ class ResourceMapPage extends Component{
                             return {title: user.name, value: user.id};
                         })}
                 />
-				<DatePicker className="option-layout" defaultDate={String(startDate)} placeholder="Start Date" onChange={this._changeStartDate} />
 				<ResourceMapTable
 					onModalHander={fetchResourceMapModalHandler}
                     onSubmitStatus={fetchResourceMapStatus}
+                    onSubmitMulti={fetchResourceMapAddMulti}
                     onDeleteItemHander={fetchResourceMapDeleteItem}
 					{...this.props}
 				/>
@@ -99,6 +102,7 @@ ResourceMapPage.propTypes = {
 
     fetchResourceMapDeleteItem     : PropTypes.func.isRequired,
     fetchResourceMapStatus         : PropTypes.func.isRequired,
+    fetchResourceMapAddMulti       : PropTypes.func.isRequired,
 
     // Modal handle options.
     show                           : PropTypes.bool.isRequired,

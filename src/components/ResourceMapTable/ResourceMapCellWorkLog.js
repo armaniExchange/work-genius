@@ -1,11 +1,13 @@
 import './ResourceMapTable.css';
+import './progress-style.css';
+import 'rc-tooltip/assets/bootstrap_white.css';
+import 'rc-checkbox/assets/index.css';
+
 import React, { Component, PropTypes } from 'react';
-import Checkbox from 'material-ui/lib/checkbox';
 import Dialog from 'material-ui/lib/dialog';
 import FlatButton from 'material-ui/lib/flat-button';
-import Tooltip from 'rc-tooltip';
-
-import 'rc-tooltip/assets/bootstrap_white.css';
+// import Tooltip from 'rc-tooltip';
+import Checkbox from 'rc-checkbox';
 
 const TAG = 'bgm-teal';
 
@@ -42,7 +44,6 @@ class ResourceMapCellWorkLog extends Component {
 	_onDeleteItemHander() {
 		let item = this.state.selectedItem;
 		this.setState({open: false, selectedItem: undefined});
-		console.log(item);
 
 		const { config, onDeleteItemHander } = this.props;
 		item.employee_id = config.userId;
@@ -77,10 +78,10 @@ class ResourceMapCellWorkLog extends Component {
 				e.stopPropagation();
 			};
 
-			let __onChangeCheckBox = (e, checked) => {
+			let __onChangeCheckBox = (e) => {
 				e.stopPropagation();
 
-				item.status = checked ? 1 : 0;
+				item.status = e.target.checked ? 1 : 0;
 				this._onSubmitCheckBoxItem(item);
 			};
 
@@ -89,42 +90,49 @@ class ResourceMapCellWorkLog extends Component {
 				doubleEvent = true;
 				this.setState({open: true, selectedItem: item});
 			};
-			let className = 'worklog-layout--text ';
-
+			let className = 'progress__bar ';
+			// console.log(TAG);
 			className += (item.tag && item.tag !== '') ? item.tag : TAG;
 			item.progress = item.progress ? item.progress : 0;
 			return (
 				<div className="cell-top-item-inner-text" key={index}>
 					<div className="worklog-layout--checkbox">
 						<Checkbox
-							className="checkbox-layout"
-							defaultChecked={item.status === 1}
 							onClick={__onClickCheckBox}
-							onCheck={__onChangeCheckBox}
+							defaultChecked = {item.status}
+							onChange={__onChangeCheckBox}
 						/>
 					</div>
-					<div className={className} onClick={__onClickWorkLogItem} onDoubleClick={__onDblclickWorkLogItem}>
-						<Tooltip
-							placement="top"
-							overlay={
-								(
-									<div>
-										<label>Progress: </label>
-										<span>{item.progress}%</span>
-										<br />
-										<label>Work Log: </label>
-										<span>{item.content}</span>
-									</div>
-								)
-							}
-							arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
-						>
-					    	<span className="label-default-style c-white">{item.progress}% {item.content}</span>
-					    </Tooltip>
+					<div className={'worklog-layout--text'} onClick={__onClickWorkLogItem} onDoubleClick={__onDblclickWorkLogItem}>
+					    <div className="progress progress--active">
+							  <b className={className} style={{ width: item.progress + '%' }}>
+							    <span className="label-default-style c-black">
+							      <em>{item.progress}%</em> {item.content}
+							    </span>
+							  </b>
+							</div>
 					</div>
 				</div>
 			);
 		});
+// <Tooltip
+						// 	placement="top"
+						// 	overlay={
+						// 		(
+						// 			<div>
+						// 				<label>Progress: </label>
+						// 				<span><em>{item.progress}%</em></span>
+						// 				<br />
+						// 				<label>Work Log: </label>
+						// 				<span>{item.content}</span>
+						// 			</div>
+						// 		)
+						// 	}
+						// 	arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+						// >
+
+					 //    	<span className="label-default-style c-white">{item.progress}% {item.content}</span>
+					 //    </Tooltip>
 		const actions = [
 		      <FlatButton
 		        label="Cancel"
@@ -143,12 +151,12 @@ class ResourceMapCellWorkLog extends Component {
 				{worklogHtml}
 				<br/>
 				<Dialog
-		          title="Dialog With Actions"
+		          title="Delete Work Log"
 		          actions={actions}
 		          modal={true}
 		          open={this.state.open}
 		          onRequestClose={this._onCancelDialogHander}
-		        >Delete this work log.</Dialog>
+		        >Do you want to delete this work log item?</Dialog>
 			</div>
 		);
 	}

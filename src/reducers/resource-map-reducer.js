@@ -76,6 +76,21 @@ function setStartDate(state, startDate) {
 	return state.set('startDate', startDate);
 }
 
+function checkWorkLogsDataDelete(worklogItems, item) {
+    if (worklogItems === undefined || worklogItems === null) {
+        return worklogItems;
+    }
+
+    worklogItems.filter((value, index) => {
+        if (value.id === item.id) {
+            delete worklogItems[index];
+        }
+    });
+
+    worklogItems = worklogItems.filter(() => true);
+    return worklogItems;
+}
+
 function checkWorkLogsData(worklogs, item) {
     let worklogItem = {
         content: item.content,
@@ -83,14 +98,20 @@ function checkWorkLogsData(worklogs, item) {
         progress: item.progress,
         tag: item.tag
     };
-
-    let millisecond = parseInt(item.date.format('X'));
-    let worklog = worklogs.find((log) => {
+    let millisecond = parseInt(moment(item.date).format('X'));
+    var worklog = worklogs.find((log) => {
         return (log.date === millisecond * 1000 ||
-            (typeof log.date === 'object' && parseInt(log.date.format('X')) === millisecond));
+            (typeof log.date === 'object' && parseInt(moment(log.date).format('X')) === millisecond));
     });
-
     let worklogItems = worklog.worklog_items;
+
+    if (item.isDelete) {
+        worklogItems = checkWorkLogsDataDelete(worklogItems, item);
+        worklog.worklog_items = worklogItems;
+        return worklogs;
+    }
+
+
     if (worklogItems === undefined || worklogItems === null) {
         worklogItems = [];
         worklogItems.push(worklogItem);
@@ -113,17 +134,41 @@ function checkWorkLogsData(worklogs, item) {
     return worklogs;
 }
 
+function checkWorkLogWithNewItem(worklogs, item) {
+    if (item.length === undefined) {
+        worklogs = checkWorkLogsData(worklogs, item);
+        return worklogs;
+    }
+
+    for (let it of item) {
+        worklogs = checkWorkLogsData(worklogs, it);
+    }
+    return worklogs;
+}
+
+function getItemEmployeeId(item) {
+    if (item === undefined) {
+        return -1;
+    }
+
+    if (item.length > 0) {
+        return item[0].employee_id;
+    } else {
+        return item.employee_id;
+    }
+}
+
 function upsertUserItemData(state, item) {
-    if (item === undefined || item.employee_id === undefined) {
+    var employeeId = getItemEmployeeId(item);
+    if (employeeId === undefined || employeeId === -1) {
         return state;
     }
     var newData = List.of(),
         oldData = state.get('data');
-    var employeeId = item.employee_id;
     oldData.map((data) => {
         if (data.get('id') === employeeId) {
             let worklogs = data.get('worklogs');
-            worklogs = checkWorkLogsData(worklogs, item);
+            worklogs = checkWorkLogWithNewItem(worklogs, item);
             data = data.set('worklogs', worklogs);
         }
         newData = newData.push(data);
@@ -145,6 +190,9 @@ export default function resourceMapReducer(state = initialState, action) {
 		return nextState;
     case actionTypes.FETCH_RESOURCE_MAP_WORKLOG_UPSERT:
         nextState = upsertUserItemData(nextState, action.item);
+        return nextState;
+    case actionTypes.FETCH_RESOURCE_MAP_WORKLOG_ADD_MULTI:
+        nextState = upsertUserItemData(nextState, action.items);
         return nextState;
     case actionTypes.FETCH_RESOURCE_MAP_ALL_USERS:
         nextState = setAllUsers(nextState, action.data);
