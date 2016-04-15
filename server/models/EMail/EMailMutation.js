@@ -19,27 +19,27 @@ let MailMutation = {
         args: {
 			to: {
 				type: new GraphQLList(GraphQLString),
-				description: 'target email address'
+				description: 'target email addresses'
 			},
             cc: {
 				type: new GraphQLList(GraphQLString),
-				description: 'target email address'
+				description: 'cc email addresses'
 			},
             bcc: {
 				type: new GraphQLList(GraphQLString),
-				description: 'target email address'
+				description: 'bcc email addresses'
 			},
             subject: {
 				type: GraphQLString,
-				description: 'target email address'
+				description: 'email subject'
 			},
             text: {
 				type: GraphQLString,
-				description: 'target email address'
+				description: 'email text content'
 			},
             html: {
 				type: GraphQLString,
-				description: 'target email address'
+				description: 'email html content'
 			}
 		},
 		resolve: async ({ transporter }, { to, cc, bcc, subject, text, html }) => {
@@ -67,27 +67,27 @@ let MailMutation = {
         args: {
 			to: {
 				type: new GraphQLList(GraphQLString),
-				description: 'target email address'
+				description: 'target email addresses'
 			},
             cc: {
 				type: new GraphQLList(GraphQLString),
-				description: 'target email address'
+				description: 'cc email addresses'
 			},
             bcc: {
 				type: new GraphQLList(GraphQLString),
-				description: 'target email address'
+				description: 'bcc email addresses'
 			},
             subject: {
 				type: GraphQLString,
-				description: 'target email address'
+				description: 'email subject'
 			},
             text: {
 				type: GraphQLString,
-				description: 'target email address'
+				description: 'email text content'
 			},
             html: {
 				type: GraphQLString,
-				description: 'target email address'
+				description: 'email html content'
 			}
 		},
 		resolve: async ({ transporter }, { to, cc, bcc, subject, text, html }) => {
