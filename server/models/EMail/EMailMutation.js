@@ -9,7 +9,7 @@ import r from 'rethinkdb';
 import {
     DB_HOST,
     DB_PORT,
-    MAIL_TRANSPORTER_CONFIG
+    MAILER_ADDRESS
 } from '../../constants/configurations.js';
 
 let MailMutation = {
@@ -19,32 +19,32 @@ let MailMutation = {
         args: {
 			to: {
 				type: new GraphQLList(GraphQLString),
-				description: 'target email address'
+				description: 'target email addresses'
 			},
             cc: {
 				type: new GraphQLList(GraphQLString),
-				description: 'target email address'
+				description: 'cc email addresses'
 			},
             bcc: {
 				type: new GraphQLList(GraphQLString),
-				description: 'target email address'
+				description: 'bcc email addresses'
 			},
             subject: {
 				type: GraphQLString,
-				description: 'target email address'
+				description: 'email subject'
 			},
             text: {
 				type: GraphQLString,
-				description: 'target email address'
+				description: 'email text content'
 			},
             html: {
 				type: GraphQLString,
-				description: 'target email address'
+				description: 'email html content'
 			}
 		},
 		resolve: async ({ transporter }, { to, cc, bcc, subject, text, html }) => {
 			let mailConfig =  {
-                    from: MAIL_TRANSPORTER_CONFIG.auth.user,
+                    from: MAILER_ADDRESS,
                     to,
                     cc,
                     bcc,
@@ -67,27 +67,27 @@ let MailMutation = {
         args: {
 			to: {
 				type: new GraphQLList(GraphQLString),
-				description: 'target email address'
+				description: 'target email addresses'
 			},
             cc: {
 				type: new GraphQLList(GraphQLString),
-				description: 'target email address'
+				description: 'cc email addresses'
 			},
             bcc: {
 				type: new GraphQLList(GraphQLString),
-				description: 'target email address'
+				description: 'bcc email addresses'
 			},
             subject: {
 				type: GraphQLString,
-				description: 'target email address'
+				description: 'email subject'
 			},
             text: {
 				type: GraphQLString,
-				description: 'target email address'
+				description: 'email text content'
 			},
             html: {
 				type: GraphQLString,
-				description: 'target email address'
+				description: 'email html content'
 			}
 		},
 		resolve: async ({ transporter }, { to, cc, bcc, subject, text, html }) => {
@@ -95,7 +95,7 @@ let MailMutation = {
                 connection,
                 managers,
                 mailConfig =  {
-                    from: MAIL_TRANSPORTER_CONFIG.auth.user,
+                    from: MAILER_ADDRESS,
                     to,
                     cc,
                     bcc,
@@ -107,7 +107,13 @@ let MailMutation = {
 			connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 			managers = await query.run(connection);
 
-            mailConfig.cc = mailConfig.cc ? managers.concat(mailConfig.cc) : managers;
+            if (!mailConfig.to || mailConfig.to.length === 0) {
+                mailConfig.to = managers;
+                // mailConfig.to = 'howardc@a10networks.com';
+            } else {
+                mailConfig.cc = mailConfig.cc ? managers.concat(mailConfig.cc) : managers;
+                // mailConfig.cc = 'howardc@a10networks.com';
+            }
 
 			try {
                 await transporter.sendMail(mailConfig);

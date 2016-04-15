@@ -16,12 +16,10 @@ export const ADMIN_ID = '00000';
 export const TESTER_ID = '99999';
 
 
+export const MAILER_ADDRESS = 'kb@a10networks.com';
 export const MAIL_TRANSPORTER_CONFIG = {
-    service: 'Gmail',
-    auth: {
-        user: 'a10webgui@gmail.com',
-        pass: '!@#a10webgui'
-    }
+    host: '192.168.1.100',
+    port: 25
 };
 
 
@@ -59,3 +57,6 @@ export const GK2_FEATURE_URLS = [
 	GK2_BJ_4_0_3_FEATURE_URL,
 	GK2_SJ_4_0_3_FEATURE_URL
 ];
+
+// file upload
+export const UPLOAD_FILE_LOCATION = './files';

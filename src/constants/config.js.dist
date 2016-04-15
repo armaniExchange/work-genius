@@ -1,9 +1,14 @@
-const SERVERR_HOST = '192.168.95.29';
-export const SERVER_API_URL = 'http://'+SERVERR_HOST+':3000/graphql';
-export const SERVER_LOGIN_URL = 'http://'+SERVERR_HOST+':3000/login';
+const SERVER_HOST = '192.168.95.29';
+
+export const SERVER_API_URL = `http://${SERVER_HOST}:3000/graphql`;
+export const SERVER_LOGIN_URL = `http://${SERVER_HOST}:3000/login`;
+export const SERVER_FILES_URL = `http://${SERVER_HOST}:3000/files`;
 
 export const PRIVILEGE = {
-	ADMIN: 10,
-	GUI_TEAM_MEMBER: 5,
-	OTHERS: 1
+  ADMIN: 10,
+  GUI_TEAM_MEMBER: 5,
+  OTHERS: 1
 };
+
+export const PTO_URL = 'http://'+SERVERR_HOST+'/main/pto';
+export const OVERTIME_URL = 'http://'+SERVERR_HOST+'/main/pto/overtime';

@@ -1,6 +1,7 @@
 # Logs
 logs
 *.log
+npm-debug.log*
 
 # Runtime data
 pids
@@ -30,3 +31,4 @@ node_modules
 .idea
 config.js
 configurations.js
+/files

@@ -1,3 +1,5 @@
+// Styles
+import './PTO-Year-Filter.css';
 // Library
 import React from 'react';
 // Components

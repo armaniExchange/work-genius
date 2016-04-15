@@ -1,5 +1,6 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
+import ReactDOMServer from 'react-dom/server';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -10,15 +11,15 @@ import * as mainActions from '../../actions/main-actions';
 // Components
 import Breadcrumb from '../../components/A10-UI/Breadcrumb';
 import PTOOvertimeTable from '../../components/PTO-Overtime-Table/PTO-Overtime-Table';
-import Space from '../../components/A10-UI/Space';
 import RaisedButton from 'material-ui/lib/raised-button';
 import OvertimeApplyModal from '../../components/Overtime-Apply-Modal/Overtime-Apply-Modal';
-import RadioGroup from '../../components/A10-UI/Input/Radio-Group';
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List';
 import PTOYearFilter from '../../components/PTO-Year-Filter/PTO-Year-Filter';
+import PTOMailCard from '../../components/PTO-Mail-Card/PTO-Mail-Card';
 // Constants
 import BREADCRUMB from '../../constants/breadcrumb';
 import * as PTOConstants from '../../constants/pto-constants';
+import {  OVERTIME_URL } from '../../constants/config.js';
 
 class PTOOvertime extends Component {
     componentWillMount() {
@@ -47,6 +48,7 @@ class PTOOvertime extends Component {
             currentUser,
             sendMail
         } = this.props;
+
         let finalData = {
                 start_date: data.startDate,
                 memo: data.memo,
@@ -56,17 +58,30 @@ class PTOOvertime extends Component {
                 applicant_id: currentUser.id,
                 status: PTOConstants.PENDING
             },
-            mailingConfig;
+            mailingConfig = {
+                subject: `[KB-PTO] ${finalData.applicant} has a New Overtime Application`,
+                html: ReactDOMServer.renderToStaticMarkup(
+                    <PTOMailCard
+                        type={'OVERTIME_' + finalData.status}
+                        applicant={finalData.applicant}
+                        startDate={finalData.apply_date}
+                        hours={finalData.hours}
+                        link={OVERTIME_URL} />
+                ).replace(/"/g, '\\"'),
+                includeManagers: true
+            };
+        let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
 
         createOvertimeApplication(finalData);
-        mailingConfig = {
-            subject: `[KB-PTO] ${finalData.applicant} has a New Overtime Application`,
-            text: '*** This is an automatically generated email, please do not reply ***\\n\\n' + finalData.applicant
-                + ' has applied for ' + finalData.hours + ' hours of Overtime on ' + finalData.start_date + '.\\nPlease update status on KB.',
-            includeManagers: true
-        };
-        let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
         sendMail(to, cc, bcc, subject, text, html, includeManagers);
+    }
+    _onGoToPreviousYearClicked() {
+        const { goToPreviousYear } = this.props;
+        goToPreviousYear(true);
+    }
+    _onGoToNextYearClicked() {
+        const { goToNextYear } = this.props;
+        goToNextYear(true);
     }
     _onOvertimeStatusUpdate(updatedOvertime) {
         const {
@@ -74,16 +89,25 @@ class PTOOvertime extends Component {
             currentUser,
             sendMail
         } = this.props;
-        const { id, status, hours, start_date, applicant_email } = updatedOvertime;
+        const { id, status, hours, start_date, applicant_email, applicant } = updatedOvertime;
         let mailingConfig = {
             to: [applicant_email],
             subject: '[KB-PTO] Your Overtime Application has been updated',
-            text: '*** This is an automatically generated email, please do not reply ***\\n\\n' + currentUser.name
-                + ' has ' + status + ' your ' + hours + ' hours overtime application on ' + start_date + '.'
+            html: ReactDOMServer.renderToStaticMarkup(
+                <PTOMailCard
+                    type={'OVERTIME_' + status}
+                    startDate={start_date}
+                    manager={currentUser.name}
+                    status={status}
+                    hours={hours}
+                    applicant={applicant}
+                    link={OVERTIME_URL} />
+            ).replace(/"/g, '\\"'),
+            includeManagers: true
         };
+        let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
 
         setOvertimeApplicationStatus(id, status, hours);
-        let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
         sendMail(to, cc, bcc, subject, text, html, includeManagers);
     }
     _onUserFilterClickedHandler(id) {
@@ -94,6 +118,9 @@ class PTOOvertime extends Component {
         resetPTOTable();
         fetchOvertimePageData(id);
     }
+    _onOvertimeStatusFilterChange(newStatus) {
+        this.props.filterOvertimeTable({'status': newStatus});
+    }
     render() {
         const {
             overtimeApplications,
@@ -103,55 +130,44 @@ class PTOOvertime extends Component {
             showOvertimeApplyModal,
             overtimeFilterOptions,
             overtimeFilterConditions,
-            filterOvertimeTable,
             allUsersWithClosestPTO,
             currentSelectedUserID,
             selectedYear,
-            currentUser,
-            goToPreviousYear,
-            goToNextYear
+            currentUser
         } = this.props;
-        let dropdownTitle = 'All';
-        let curUser = allUsersWithClosestPTO.find(_user => {
-            if (_user.id===currentSelectedUserID) {
-                return _user;
-            }
-        });
-        if (curUser && curUser.name) {
-            dropdownTitle = curUser.name;
-        }
+        let curUser = allUsersWithClosestPTO.find(
+            _user => _user.id === currentSelectedUserID
+        );
 
         return (
-            <section>
+            <section className="pto-overtime">
                 <Breadcrumb data={BREADCRUMB.overtime} />
-                <PTOYearFilter
-                    selectedYear={selectedYear}
-                    goToPreviousYear={() => {goToPreviousYear(true);}}
-                    goToNextYear={() => {goToNextYear(true);}} />
-                <Space h="20" />
-                <DropDownList
-                    isNeedAll={true}
-                    onOptionClick={::this._onUserFilterClickedHandler}
-                    title={dropdownTitle}
-                    aryOptionConfig={allUsersWithClosestPTO.map((item) => {
-                        return {title: item.name, value: item.id, subtitle: ''};
-                    })} />
-                <Space h="20" />
-                <RadioGroup
-                    title="Status"
-                    isNeedAll={true}
-                    aryRadioConfig={overtimeFilterOptions}
-                    checkRadio={overtimeFilterConditions.status}
-                    onRadioChange={(curVal)=>{
-                        filterOvertimeTable({'status': curVal});
-                    }} />
-                <Space h="20" />
-                <RaisedButton
-                    label="Overtime Application"
-                    onClick={::this._onApplyButtonClicked}
-                    labelStyle={{'textTransform':'none'}}
-                    secondary={true} />
-                <Space h="20" />
+                <div className="pto-overtime__filter">
+                    <PTOYearFilter
+                        selectedYear={selectedYear}
+                        goToPreviousYear={::this._onGoToPreviousYearClicked}
+                        goToNextYear={::this._onGoToNextYearClicked} />
+                    <label>Name:&nbsp;</label>
+                    <DropDownList
+                        isNeedAll={true}
+                        onOptionClick={::this._onUserFilterClickedHandler}
+                        title={curUser ? curUser.name : 'All'}
+                        aryOptionConfig={allUsersWithClosestPTO.map((item) => {
+                            return {title: item.name, value: item.id, subtitle: ''};
+                        })} />
+                    <label>Status:&nbsp;</label>
+                    <DropDownList
+                        isNeedAll={true}
+                        title={overtimeFilterConditions.status ? overtimeFilterConditions.status : 'All'}
+                        onOptionClick={::this._onOvertimeStatusFilterChange}
+                        aryOptionConfig={overtimeFilterOptions}
+                    />
+                    <RaisedButton
+                        label="Overtime Application"
+                        onClick={::this._onApplyButtonClicked}
+                        labelStyle={{'textTransform':'none'}}
+                        secondary={true} />
+                </div>
                 <PTOOvertimeTable
                     data={overtimeApplications}
                     titleKeyMap={overtimeTitleKeyMap}
