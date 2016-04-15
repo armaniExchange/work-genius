@@ -1,0 +1,23 @@
+@define-extend pto-filter {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 20px;    
+}
+
+.pto-application {
+    &__filter {
+        @extend pto-filter;
+        div:last-child {
+            margin-left: auto
+        }
+    }
+}
+
+.pto-overtime {
+    &__filter {
+        @extend pto-filter;
+        div:last-child {
+            margin-left: auto
+        }
+    }
+}
