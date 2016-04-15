@@ -1,5 +1,9 @@
 import actionTypes from '../constants/action-types';
-import { SERVER_API_URL } from '../constants/config';
+import {
+  SERVER_API_URL,
+  SERVER_FILES_URL
+} from '../constants/config';
+import sendFile from '../libraries/sendFile';
 
 
 export function fetchArticleSucess(article) {
@@ -243,20 +247,53 @@ export function deleteArticle(articleId) {
   };
 }
 
-export function uploadArticleFileSuccess(file) {
+export function uploadArticleFileSuccess(tempId, file) {
   return {
     type: actionTypes.UPLOAD_ARTICLE_FILE_SUCCESS,
+    tempId,
     file
   };
 }
 
+export function uploadArticleFileProgress(tempId, event) {
+  return {
+    type: actionTypes.UPLOAD_ARTICLE_FILE_PROGRESS,
+    tempId,
+    event
+  };
+}
+
+let _tempArticleFileId = 0;
 export function uploadArticleFile(file) {
   return dispatch => {
+    _tempArticleFileId++;
+    const tempId = _tempArticleFileId;
     dispatch({
-      type: actionTypes.UPLOAD_ARTICLE_FILE
+      type: actionTypes.UPLOAD_ARTICLE_FILE,
+      file: {
+        tempId,
+        name: file.name,
+        type: file.type
+      }
     });
     // server response with true id and file detailed without data
-    dispatch(uploadArticleFileSuccess(Object.assign({}, file, {id: file.name})));
+    sendFile({
+      file,
+      url: SERVER_FILES_URL,
+      headers: {
+        'x-access-token': localStorage.token
+      },
+      progress(event) {
+        dispatch(uploadArticleFileProgress(tempId, {
+          loaded: event.loaded || event.position,
+          total: event.total
+        }));
+      },
+    })
+    .then((xhr)=> {
+      const data = JSON.parse(xhr.responseText);
+      dispatch(uploadArticleFileSuccess(tempId, data));
+    });
   };
 }
 
