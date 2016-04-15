@@ -107,7 +107,13 @@ let MailMutation = {
 			connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 			managers = await query.run(connection);
 
-            mailConfig.cc = mailConfig.cc ? managers.concat(mailConfig.cc) : managers;
+            if (!mailConfig.to || mailConfig.to.length === 0) {
+                mailConfig.to = managers;
+                // mailConfig.to = 'howardc@a10networks.com';
+            } else {
+                mailConfig.cc = mailConfig.cc ? managers.concat(mailConfig.cc) : managers;
+                // mailConfig.cc = 'howardc@a10networks.com';
+            }
 
 			try {
                 await transporter.sendMail(mailConfig);
