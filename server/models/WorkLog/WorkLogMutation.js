@@ -25,9 +25,6 @@ let WorkLogMutation = {
 			try {
 				
 				let worklog = JSON.parse(data);
-				if(!Number.isInteger(worklog.date)){
-					return 'Fail to create a worklog!';
-				}
 
 				query = r.db('work_genius').table('worklog').insert(worklog);
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
@@ -63,9 +60,6 @@ let WorkLogMutation = {
 			try {
 				
 				let worklog = JSON.parse(data);
-				if(!(worklog.employee_id && worklog.date && Number.isInteger(worklog.date))){
-					return 'Fail to update a worklog!';
-				}
 				if(worklog.id){
 					delete worklog.id;
 				}

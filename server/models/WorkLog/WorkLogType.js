@@ -19,7 +19,7 @@ const WorkLog_TYPE = new GraphQLObjectType({
             type: GraphQLString,
             description: 'employee ID'
         },
-        'date': {
+        'start_date': {
         	type: GraphQLFloat,
         	description: 'date'
         },
@@ -42,6 +42,22 @@ const WorkLog_TYPE = new GraphQLObjectType({
         'status': {
             type: GraphQLInt,
             description: 'is completed or not'
+        },
+        'task': {
+            type: GraphQLString,
+            description: 'task title'
+        },
+        'duration': {
+            type: GraphQLInt,
+            description: 'task duration'
+        },
+        'release': {
+            type: GraphQLString,
+            description: 'release name'
+        },
+        'creater': {
+            type: GraphQLString,
+            description: 'task creater'
         }
     })
 });
