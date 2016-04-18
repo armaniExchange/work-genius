@@ -19,7 +19,7 @@ const WorkLog_TYPE = new GraphQLObjectType({
             type: GraphQLString,
             description: 'employee ID'
         },
-        'start_date': {
+        'date': {
         	type: GraphQLFloat,
         	description: 'date'
         },
