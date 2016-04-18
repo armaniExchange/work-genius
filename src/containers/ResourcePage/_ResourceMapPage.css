@@ -1,3 +1,12 @@
 .options-layout {
 
 }
+.top-selector{
+	float: right;
+	height: 48px;
+	line-height: 48px;
+	display: block;
+}
+.pull-left{
+	float: left;
+}

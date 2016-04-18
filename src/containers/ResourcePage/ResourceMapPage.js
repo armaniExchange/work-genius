@@ -69,15 +69,19 @@ class ResourceMapPage extends Component{
 		return (
 			<section>
         		<Breadcrumb data={BREADCRUMB.resourcemap} />
-                    <DatePicker className="option-layout" defaultDate={String(startDate)} placeholder="Start Date" onChange={this._changeStartDate} />
-                    <DropDownList
-                        isNeedAll={true}
-                        title={username}
-                        onOptionClick={this._selectUser}
-                        aryOptionConfig={allUsers.map((user) => {
-                                return {title: user.name, value: user.id};
-                            })}
-                    />
+                    <div className = "pull-left">
+                        <DatePicker className="option-layout" defaultDate={String(startDate)} placeholder="Start Date" onChange={this._changeStartDate} />
+                    </div>
+                    <div className = "top-selector">
+                        <DropDownList
+                            isNeedAll={true}
+                            title={username}
+                            onOptionClick={this._selectUser}
+                            aryOptionConfig={allUsers.map((user) => {
+                                    return {title: user.name, value: user.id};
+                                })}
+                        />
+                    </div>
 				<ResourceMapTable
 					onModalHander={fetchResourceMapModalHandler}
                     onSubmitStatus={fetchResourceMapStatus}
