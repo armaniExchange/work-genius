@@ -28,6 +28,17 @@ class CommentListItem extends Component {
     this.setState({isHovered: false});
   }
 
+  onEditClick() {
+    const { id, onEditClick } = this.props;
+    onEditClick(id);
+  }
+
+  onDeleteClick() {
+    const { id, onDeleteClick } = this.props;
+    onDeleteClick(id);
+  }
+
+
   render() {
     const {
       author,
@@ -54,9 +65,11 @@ class CommentListItem extends Component {
               <div className="toolbar">
                 <FlatButton
                   label="Edit"
-                  primary={true} />
+                  primary={true}
+                  onClick={::this.onEditClick} />
                 <FlatButton
-                  label="Delete" />
+                  label="Delete"
+                  onClick={::this.onDeleteClick} />
               </div>
             )
           }
@@ -81,9 +94,12 @@ class CommentListItem extends Component {
 }
 
 CommentListItem.propTypes = {
-  content         : PropTypes.string,
-  author          : PropTypes.object,
-  currentUserId   : PropTypes.string
+  id            : PropTypes.string,
+  content       : PropTypes.string,
+  author        : PropTypes.object,
+  currentUserId : PropTypes.string,
+  onEditClick   : PropTypes.func,
+  onDeleteClick : PropTypes.func,
 };
 
 

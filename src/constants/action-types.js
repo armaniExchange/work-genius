@@ -96,6 +96,9 @@ export default keyMirror({
     CREATE_COMMENT: null,
     CREATE_COMMENT_SUCCESS: null,
     CREATE_COMMENT_FAIL: null,
+    DELETE_COMMENT: null,
+    DELETE_COMMENT_SUCCESS: null,
+    DELETE_COMMENT_FAIL: null,
 
     // Document page actions
     FETCH_ARTICLES: null,

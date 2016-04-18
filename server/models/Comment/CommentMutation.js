@@ -19,12 +19,24 @@ const CommentMutation = {
       id: {
         type: GraphQLID,
         description: 'The comment ID'
+      },
+      articleId: {
+        type: GraphQLID,
+        description: 'The article ID'
       }
     },
-    resolve: async (root, { id }) => {
+    resolve: async (root, { id, articleId }) => {
+      let connection = null, query = null;
+
       try {
-        const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-        const query = r.db('work_genius').table('comments').get(id).delete();
+        connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+
+        if (articleId) {
+          await r.db('work_genius').table('articles').get(articleId).update({
+            comments: r.row('comments').filter(comment => comment.id !== id )
+          });
+        }
+        query = r.db('work_genius').table('comments').get(id).delete();
         await query.run(connection);
         await connection.close();
       } catch (err) {

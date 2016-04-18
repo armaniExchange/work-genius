@@ -23,7 +23,9 @@ class ViewArticlePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isConfirmDeleteArticleDialogVisible: false
+      isConfirmDeleteArticleDialogVisible: false,
+      isConfirmDeleteCommentDialogVisible: false,
+      deletingCommentId: null
     };
   }
 
@@ -74,6 +76,32 @@ class ViewArticlePage extends Component {
     });
   }
 
+
+  onConfirmDeleteCommentDialogRequestHide() {
+    this.setState({
+      isConfirmDeleteCommentDialogVisible: false,
+      deletingCommentId: null
+    });
+  }
+
+  onConfirmDeleteComment() {
+    this.props.articleActions.deleteComment({
+      id: this.state.deletingCommentId,
+      articleId: this.props.id
+    });
+  }
+
+  onCommentDelete(id) {
+    this.setState({
+      isConfirmDeleteCommentDialogVisible: true,
+      deletingCommentId: id
+    });
+  }
+
+  onCancelDeleteComment() {
+
+  }
+
   render() {
     const {
       id,
@@ -88,8 +116,10 @@ class ViewArticlePage extends Component {
       currentUser
     } = this.props;
     const {
-      isConfirmDeleteArticleDialogVisible
+      isConfirmDeleteArticleDialogVisible,
+      isConfirmDeleteCommentDialogVisible
     } = this.state;
+
     const paperStyle = {
       position: 'relative',
       padding: 15,
@@ -146,10 +176,10 @@ class ViewArticlePage extends Component {
           comments.map(comment => {
             return (
               <CommentListItem
+                {...comment}
                 key={comment.id}
                 currentUserId={currentUser.id}
-                author={comment.author}
-                content={comment.content} />
+                onDeleteClick={::this.onCommentDelete} />
             );
           })
         }
@@ -162,6 +192,12 @@ class ViewArticlePage extends Component {
           onConfirm={::this.onConfirmDeleteArticle}
           onCancel={::this.onCancelDeleteArticle}
           onRequestClose={::this.onConfirmDeleteArticleDialogRequestHide}
+        />
+        <ConfirmDeleteDialog
+          open={isConfirmDeleteCommentDialogVisible}
+          onConfirm={::this.onConfirmDeleteComment}
+          onCancel={::this.onCancelDeleteComment}
+          onRequestClose={::this.onConfirmDeleteCommentDialogRequestHide}
         />
       </section>
     );
