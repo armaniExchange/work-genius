@@ -1,7 +1,7 @@
 // GraphQL
 import {
 	GraphQLString,
-	GraphQLInt
+	GraphQLFloat
 } from 'graphql';
 // RethinkDB
 import r from 'rethinkdb';
@@ -75,7 +75,7 @@ let TaskMutation = {
 				description: 'new pto application status'
 			},
 			hours: {
-				type: GraphQLInt,
+				type: GraphQLFloat,
 				description: 'hours to apply in overtime application'
 			}
 		},
@@ -175,7 +175,7 @@ let TaskMutation = {
 				description: 'new overtime application status'
 			},
 			hours: {
-				type: GraphQLInt,
+				type: GraphQLFloat,
 				description: 'hours to apply in overtime application'
 			}
 		},
