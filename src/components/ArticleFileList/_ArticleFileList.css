@@ -1,6 +1,9 @@
 .file-list {
+  display: inline-block;
   & > span {
+    display: inline-block;
     margin-right: 10px;
+    margin-bottom: 15px;
     .remove-button {
       cursor: pointer;
       color: gray;

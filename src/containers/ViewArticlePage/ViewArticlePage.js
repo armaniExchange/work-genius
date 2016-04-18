@@ -12,10 +12,18 @@ import Paper from 'material-ui/lib/paper';
 import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
 import ArticleFileList from '../../components/ArticleFileList/ArticleFileList';
 import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
+import ConfirmDeleteDialog from '../../components/ConfirmDeleteDialog/ConfirmDeleteDialog';
 
 import * as ArticleActions from '../../actions/article-page-actions';
 
 class ViewArticlePage extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      isConfirmDeleteArticleDialogVisible: false
+    };
+  }
 
   componentWillMount() {
     const {
@@ -27,7 +35,33 @@ class ViewArticlePage extends Component {
     }
   }
 
-  onDelete() {
+  componentWillReceiveProps(nextProps) {
+    if (this.props.isDeleting && !nextProps.isDeleting) {
+      this.props.history.replace('/main/knowledge/document');
+    }
+  }
+
+  componentWillUnmount() {
+    this.props.articleActions.clearArticle();
+  }
+
+  onConfirmDeleteArticleDialogRequestHide() {
+    this.setState({
+      isConfirmDeleteArticleDialogVisible: false,
+    });
+  }
+
+  onConfirmDeleteArticle() {
+    this.props.articleActions.deleteArticle(this.props.id);
+  }
+
+  onArticleDelete() {
+    this.setState({
+      isConfirmDeleteArticleDialogVisible: true,
+    });
+  }
+
+  onCancelDeleteArticle() {
 
   }
 
@@ -42,6 +76,9 @@ class ViewArticlePage extends Component {
       comments,
       updatedAt
     } = this.props;
+    const {
+      isConfirmDeleteArticleDialogVisible
+    } = this.state;
     const paperStyle = {
       position: 'relative',
       padding: 15,
@@ -66,7 +103,7 @@ class ViewArticlePage extends Component {
             <RaisedButton
               style={{margin: 10}}
               label="Delete"
-              onClick={::this.onDelete} />
+              onClick={::this.onArticleDelete} />
           </div>
           <hr />
           <div>
@@ -93,6 +130,12 @@ class ViewArticlePage extends Component {
         <Paper style={paperStyle} zDepth={1}>
           <HighlightMarkdown source={content} />
         </Paper>
+        <ConfirmDeleteDialog
+          open={isConfirmDeleteArticleDialogVisible}
+          onConfirm={::this.onConfirmDeleteArticle}
+          onCancel={::this.onCancelDeleteArticle}
+          onRequestClose={::this.onConfirmDeleteArticleDialogRequestHide}
+        />
       </section>
     );
   }
@@ -109,6 +152,8 @@ ViewArticlePage.propTypes = {
   createdAt           : PropTypes.number,
   updatedAt           : PropTypes.number,
   params              : PropTypes.object,
+  isDeleting          : PropTypes.bool,
+  history             : PropTypes.object,
   articleActions      : PropTypes.object.isRequired
 };
 

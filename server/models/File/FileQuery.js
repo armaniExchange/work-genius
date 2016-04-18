@@ -9,12 +9,18 @@ export const fileDownloadHandler = async (req, res) => {
           .get(fileId);
     const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
     const result = await query.run(connection);
-    res.download(`files/${fileId}`, result.name, downloadErr => {
+    const {
+      name,
+      path
+    } = result;
+    res.download(path, name, downloadErr => {
       if (downloadErr) {
         throw downloadErr;
       }
     });
   } catch (err) {
-    res.status(err.status).end();
+    res.status(err.status).send({
+      error: err
+    });
   }
 };

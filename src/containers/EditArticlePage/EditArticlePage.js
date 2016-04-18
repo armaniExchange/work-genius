@@ -22,11 +22,11 @@ class EditArticlePage extends Component {
 
   componentWillMount() {
     const {
-      params,
       articleActions,
+      params,
       documentActions
     } = this.props;
-    articleActions.clearArticle();
+
     if (!this.isCreate()) {
       articleActions.fetchArticle(params.articleId);
     }
@@ -40,6 +40,10 @@ class EditArticlePage extends Component {
     }
     const newState = this.getEditingStateFromProps(nextProps);
     this.setState(newState);
+  }
+
+  componentWillUnmount() {
+    this.props.articleActions.clearArticle();
   }
 
   isCreate() {
@@ -78,9 +82,9 @@ class EditArticlePage extends Component {
     });
   }
 
-  onTagsChange(tags) {
+  onTagsChange(val, tags) {
     this.setState({
-      editingTags: tags
+      editingTags: tags.map(tag => tag.value)
     });
   }
 
@@ -90,14 +94,22 @@ class EditArticlePage extends Component {
     });
   }
 
-  onFileUpload(dataUri) {
-    this.props.articleActions.uploadArticleFile(dataUri);
+  onFileUpload(file) {
+    const { id, files } = this.props;
+    this.props.articleActions.uploadArticleFile({
+      articleId: id,
+      file,
+      files
+    });
   }
 
-  onFileRemove(file, index) {
-    console.log(`file id ${file.id}, index: ${index}`);
-    // const answer = confirm('Are you sure you want to remove the file?');
-    this.props.articleActions.removeArticleFile(file.id);
+  onFileRemove(file) {
+    const { id, files } = this.props;
+    this.props.articleActions.removeArticleFile({
+      articleId: id,
+      file,
+      files
+    });
   }
 
   onCancel() {
@@ -127,7 +139,7 @@ class EditArticlePage extends Component {
       tags: editingTags,
       category: editingCategory,
       content: editingContent,
-      files
+      files: files.map(file => {return {id: file.id};})
     }, idField));
   }
 

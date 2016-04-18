@@ -11,7 +11,7 @@ class CategoryTree extends Component {
     };
 
     let legacyCategories = categories.filter(category => {
-      
+
       if (category.hasOwnProperty('parentId') && category['parentId']) {
         let isFound = this.traversalCategoryTree(root, category);
         return ! isFound;
@@ -69,11 +69,12 @@ class CategoryTree extends Component {
 
   render() {
 
-    const { categories } = this.props;
-    const tree = this.buildCategoryTree(categories);
+    // const { categories } = this.props;
+    // const tree = this.buildCategoryTree(categories);
 
     return (
-      <div>{this.renderTree(tree)}</div>
+      <div />
+      // <div>{this.renderTree(tree)}</div>
     );
   }
 }

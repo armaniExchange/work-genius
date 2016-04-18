@@ -1,16 +1,34 @@
 // GraphQL
 import {
-    GraphQLID,
-    GraphQLString
+  GraphQLID,
+  GraphQLString,
 } from 'graphql';
+import ArticleType from './ArticleType.js';
+import ArticleInputType from './ArticleInputType.js';
+
 // RethinkDB
 import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
-import moment from 'moment';
+
+function parseArticle(article) {
+  let result = {
+      ...article,
+      categoryId: article.category.id,
+      commentsId: article.comments.map(comment => comment.id),
+      filesId: article.files.map(file => file.id),
+      tags: article.tags || []
+  };
+
+  delete result.category;
+  delete result.comment ;
+  delete result.files;
+
+  return result;
+}
 
 let ArticleMutation = {
-  'deleteArticle': {
+  deleteArticle: {
     type: GraphQLString,
     description: 'Delete a article by its ID',
     args: {
@@ -20,13 +38,18 @@ let ArticleMutation = {
       }
     },
     resolve: async (root, { id }) => {
-      let connection = null,
-        query = null;
-
       try {
-        query = r.db('work_genius').table('articles').get(id).delete();
-        connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-        await query.run(connection);
+        const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+
+        // TODO:
+        // when delete articles
+        // delete all attachments files
+
+        await r.db('work_genius')
+          .table('articles')
+          .get(id)
+          .delete()
+          .run(connection);
         await connection.close();
       } catch (err) {
         return err;
@@ -34,72 +57,83 @@ let ArticleMutation = {
       return 'Deleted successfully!';
     }
   },
-  'createArticle': {
-    type: GraphQLString,
-    description: 'Create a article ',
-    args: {
-      data: {
-        type: GraphQLString,
-        description: 'new article data'
-      }
-    },
-    resolve: async (root, { data }) => {
-      let connection = null,
-        query = null;
 
+  createArticle: {
+    type: ArticleType,
+    description: 'Create a new article ',
+    args: {
+      article: { type: ArticleInputType }
+    },
+    resolve: async (root, { article }) => {
       try {
-        let article = JSON.parse(data);
-        if(article){
-          article.created_time = moment().format('YYYY/MM/DD');
+        const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+        let result = null;
+        const user = root.req.decoded;
+        const now = new Date().getTime();
+        const parsedArticle = Object.assign({}, parseArticle(article), {
+          authorId: user.id,
+          createdAt: now,
+          updatedAt: now
+        });
+
+        result = await r.db('work_genius')
+          .table('articles')
+          .insert(parsedArticle)
+          .run(connection);
+
+        if (result && result.generated_keys && result.generated_keys.length > 0) {
+          const id = result.generated_keys[0];
+          result = await r.db('work_genius')
+            .table('articles')
+            .get(id)
+            .run(connection);
+          await connection.close();
+          // TODO: join the comments category author files table
+          return result;
+        } else {
+          await connection.close();
+          throw 'No generated_keys found';
         }
-        query = r.db('work_genius').table('articles').insert(article);
-        connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-        let result = await query.run(connection);
-        await connection.close();
-        let id = '';
-        if (result && result.generated_keys && result.generated_keys.length > 0){
-          id = result.generated_keys[0];
-        }
-        return id;
       } catch (err) {
         return err;
       }
     }
   },
-  'updateArticle': {
-    type: GraphQLString,
+
+  updateArticle: {
+    type: ArticleType,
     description: 'edit a article ',
     args: {
-      data: {
-        type: GraphQLString,
-        description: 'new article data'
-      },
-      id: {
-        type: GraphQLID,
-        description: 'the article id'
-      }
+      article: { type: ArticleInputType }
     },
-    resolve: async (root, { data , id }) => {
-      let connection = null,
-        query = null;
-
+    resolve: async (root, { article }) => {
       try {
-        let article = JSON.parse(data);
-        if(article){
-          article.updated_time = moment().format('YYYY/MM/DD');
-        }
-        query = r.db('work_genius').table('articles').get(id).update(article);
-        connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-        await query.run(connection);
+        const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+        let result = null;
+
+        const parsedArticle = Object.assign({}, parseArticle(article), {
+          updatedAt: new Date().getTime()
+        });
+        await r.db('work_genius')
+          .table('articles')
+          .get(article.id)
+          .update(parsedArticle)
+          .run(connection);
+
+         result = await r.db('work_genius')
+            .table('articles')
+            .get(article.id)
+            .run(connection);
+
         await connection.close();
-        return id;
+        // TODO: join the comments category author files table
+        return result;
       } catch (err) {
         return err;
       }
       return 'Edited successfully!';
     }
   }
-
 };
 
 export default ArticleMutation;
