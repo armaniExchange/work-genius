@@ -33,7 +33,38 @@ let BugTagQuery = {
 				query = null;
 
 			try {
-				query = r.db('work_genius').table('bugtags').filter(func).coerceTo('array');
+				query = r.db('work_genius').table('bugtags').filter(func).filter({type:'bug'}).coerceTo('array');
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				result = await query.run(connection);             
+				await connection.close();
+			} catch (err) {
+				return err;
+			}
+			return result;
+		}
+	},
+	'getAllRelease': {
+		type: new GraphQLList(BUG_TAG_TYPE),
+		description: 'Get all release',
+        args: {
+			name: {
+				type: GraphQLString,
+				description: 'release name'
+			}
+		},
+		resolve: async (root, { name}) => {
+			let connection = null,
+			    result = null,
+			    func = tag => {
+			    	if(!!name){
+			    		return tag('tag_name').match(name);
+			    	}
+			    	return true;
+			    },
+				query = null;
+
+			try {
+				query = r.db('work_genius').table('bugtags').filter(func).filter({type:'release'}).coerceTo('array');
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				result = await query.run(connection);             
 				await connection.close();
