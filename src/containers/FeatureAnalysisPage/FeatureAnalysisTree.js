@@ -35,8 +35,11 @@ class FeatureAnalysisTreePage extends Component {
         setCurrentTreeSelectedUser(currentUser.id);
         fetchAnalysisPageData(currentUser.id);
     }
-    _onNodeClick() {
-        this.props.setCurrentLeafNode(undefined);
+    _onNodeClick(item) {
+        this.props.setCurrentLeafNode({...item, isLeaf: false});
+    }
+    _onLeafClick(item) {
+        this.props.setCurrentLeafNode({...item, isLeaf: true});
     }
     _onTreeFilterChange(id) {
         const {
@@ -54,7 +57,6 @@ class FeatureAnalysisTreePage extends Component {
             currentLeaf,
             treeDataSource,
             updateOneAssignmentCategory,
-            setCurrentLeafNode,
             currentTreeSelectedUserId
         } = this.props;
         let select_owner1_value = '', select_owner2_value='', select_difficulty_value='',
@@ -93,7 +95,7 @@ class FeatureAnalysisTreePage extends Component {
                             owners={aryOwners}
                             selectedId={currentLeaf.id}
                             onNodeClick={::this._onNodeClick}
-                            onLeafClick={setCurrentLeafNode}/>
+                            onLeafClick={::this._onLeafClick}/>
                 </div>
                 <div className="col-md-8">
                     <div style={{display:displayHint, fontSize:'30px', margin:'90px 0', textDecoration:'underline'}}>

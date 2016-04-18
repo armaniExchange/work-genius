@@ -40,7 +40,10 @@ class AssignmentCategoryTree extends Component {
             return (
                 <TreeView
                     nodeLabel={label}
-                    defaultCollapsed={data.id === 'root' ? false : true}
+                    collapsed={data.isCollapsed}
+                    onClick={() => {
+                        onNodeClick(data);
+                    }}
                     key={index}>
                     {childTrees}
                 </TreeView>

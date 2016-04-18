@@ -30,6 +30,7 @@ function generateTree(dataArr, root) {
     });
     return {
         ...root,
+        isCollapsed: root.id === 'root' ? false : true,
         children: subTree
     };
 }
@@ -53,6 +54,24 @@ function findLeaf(root, leafId) {
     return result.length === 0 ? undefined : result[0];
 }
 
+function updateCollpaseStatus(root, id) {
+    if (root.id === id) {
+        return {
+            ...root,
+            isCollapsed: !root.isCollapsed
+        };
+    }
+    if (!root.children || root.children.length === 0) {
+        return root;
+    }
+    let newChildren = root.children.map((child) => updateCollpaseStatus(child, id));
+
+    return {
+        ...root,
+        children: newChildren
+    };
+}
+
 export default function featureAnalysisReducer(state = initialState, action) {
 	switch (action.type) {
 		case actionTypes.FETCH_ASSIGNMENT_CATEGORIES_SUCCESS:
@@ -66,7 +85,13 @@ export default function featureAnalysisReducer(state = initialState, action) {
         case actionTypes.SET_CURRENT_TREE_SELECTED_USER:
 		    return state.set('currentTreeSelectedUserId', action.id);
 		case actionTypes.SET_CURRENT_LEAF_NODE:
-		    return !action.data ? state.set('currentLeaf', undefined) : state.set('currentLeaf', action.data);
+            let updatedTree;
+            if (action.data && action.data.isLeaf) {
+                return state.set('currentLeaf', action.data);
+            } else {
+                updatedTree = updateCollpaseStatus(state.get('treeDataSource'), action.data.id);
+                return state.set('currentLeaf', undefined).set('treeDataSource', updatedTree);
+            }
         case actionTypes.FETCH_OWNERS_SUCCESS:
             return state.set('aryOwners', action.data);
         case actionTypes.FETCH_DIFFICULTIES_SUCCESS:
