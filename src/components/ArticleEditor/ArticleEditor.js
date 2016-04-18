@@ -2,12 +2,12 @@
 import React, { Component, PropTypes } from 'react';
 import Codemirror from 'react-codemirror';
 import TextField from 'material-ui/lib/text-field';
-import DropDownMenu from 'material-ui/lib/DropDownMenu';
+import SelectField from 'material-ui/lib/SelectField';
 import MenuItem from 'material-ui/lib/menus/menu-item';
+import Select from 'react-select';
 import Dropzone from 'react-dropzone';
 
 import ArticleFileList from '../../components/ArticleFileList/ArticleFileList';
-import TagsInput from '../../components/TagsInput/TagsInput';
 import ConfirmDeleteDialog from '../../components/ConfirmDeleteDialog/ConfirmDeleteDialog';
 
 // Styles
@@ -102,6 +102,7 @@ class ArticleEditor extends Component {
           />
         );
       });
+    const categoryErrorText = !category.id ? 'Category is required' : null;
 
     return (
       <div className="article-editor"
@@ -112,14 +113,15 @@ class ArticleEditor extends Component {
           value={title}
           onChange={onTitleChange} />
         <br />
-        <DropDownMenu
-          className="drop-down-menu"
+        <SelectField
+          errorText={categoryErrorText}
+          style={{width: '100%'}}
           autoWidth={false}
           maxHeight={allCategoriesMaxHeight}
-          value={category && category.id}
+          value={category.id}
           onChange={onCategoryChange} >
           {allCategoryItems}
-        </DropDownMenu>
+        </SelectField>
         <br />
         <br />
         <label>Content</label>
@@ -130,17 +132,21 @@ class ArticleEditor extends Component {
             options={{mode: 'gfm'}} />
         </div>
         <br />
-        <TagsInput
-          tags={tags}
-          suggestions={tagSuggestions}
-          onTagsChange={onTagsChange} />
+        <label>Tags</label>
+        <Select
+          multi={true}
+          allowCreate={true}
+          value={tags.map(tag => {return {value: tag, label: tag};})}
+          options={tagSuggestions.map(tag => {return {value: tag, label: tag};})}
+          onChange={onTagsChange}
+        />
         <br />
+        <label>Attachments</label>
         <br />
         <ArticleFileList
           files={files}
           enableRemove={true}
           onRemove={::this.onFileRemove} />
-        <br />
         <Dropzone
           style={dropzoneStyle}
           onDrop={::this.onFileChange}>
@@ -178,6 +184,7 @@ ArticleEditor.propTypes = {
 ArticleEditor.defaultProps = {
   title               : '',
   content             : '',
+  category            : {},
   tags                : [],
   files               : [],
   allCategorie        : []

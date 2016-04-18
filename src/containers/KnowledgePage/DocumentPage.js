@@ -13,6 +13,7 @@ import ArticleListItem from '../../components/ArticleListItem/ArticleListItem';
 import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
 import CategoryTree from '../../components/CategoryTree/CategoryTree';
 import ConfirmDeleteDialog from '../../components/ConfirmDeleteDialog/ConfirmDeleteDialog';
+import Pagination from 'rc-pagination';
 
 import * as DocumentActions from '../../actions/document-page-actions';
 import * as ArticleActions from '../../actions/article-page-actions';
@@ -22,6 +23,7 @@ class DocumentPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      currentPage: 1,
       isConfirmDeleteArticleDialogVisible: false,
       editingArticle: null
     };
@@ -33,11 +35,18 @@ class DocumentPage extends Component {
       fetchAllCategories,
       fetchAllTags
     } = this.props.documentActions;
-    fetchArticles();
+
+    // Todo: find a better way to handle jumpling this page from other page
     fetchAllCategories();
     fetchAllTags();
+    if (this.props.articleList.length === 0) {
+      fetchArticles();
+    }
   }
 
+  queryWithTag(tag) {
+    this.props.documentActions.fetchArticles({tag});
+  }
 
   onConfirmDeleteArticleDialogRequestHide() {
     this.setState({
@@ -46,17 +55,9 @@ class DocumentPage extends Component {
     });
   }
 
-  queryWithTag(tag) {
-    this.props.documentActions.fetchArticles({tag});
-  }
-
   onConfirmDeleteArticle(deletingArticle) {
     // console.log(`delete article id:${deletingArticle.id} index:${deletingArticle.index}`);
     this.props.articleActions.deleteArticle(deletingArticle.id);
-  }
-
-  onCancelDeleteArticle() {
-
   }
 
   onArticleDelete(id, index) {
@@ -66,6 +67,19 @@ class DocumentPage extends Component {
         id,
         index
       }
+    });
+  }
+
+  onCancelDeleteArticle() {
+
+  }
+
+  onPaginate(page) {
+    this.setState({
+      currentPage: page
+    });
+    this.props.documentActions.fetchArticles({
+      page
     });
   }
 
@@ -81,11 +95,13 @@ class DocumentPage extends Component {
     const {
       articleList,
       allTags,
-      allCategories
+      allCategories,
+      articleTotalCount
     } = this.props;
     const {
       isConfirmDeleteArticleDialogVisible,
-      editingArticle
+      editingArticle,
+      currentPage
     } = this.state;
 
     return (
@@ -118,6 +134,11 @@ class DocumentPage extends Component {
               );
             })
           }
+          <Pagination
+            onChange={::this.onPaginate}
+            pageSize={5}
+            current={currentPage}
+            total={articleTotalCount} />
         </div>
         <ConfirmDeleteDialog
           open={isConfirmDeleteArticleDialogVisible}
@@ -133,6 +154,7 @@ class DocumentPage extends Component {
 
 DocumentPage.propTypes = {
   articleList            : PropTypes.array,
+  articleTotalCount      : PropTypes.number,
   allCategories          : PropTypes.array,
   allTags                : PropTypes.array,
   documentActions        : PropTypes.object.isRequired,

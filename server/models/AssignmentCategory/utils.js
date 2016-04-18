@@ -64,6 +64,18 @@ function getParents(categories, target) {
     return [directParent, ...getParents(categories, directParent)];
 }
 
+function getChildren(categories, target) {
+    let directChildren = categories.filter(
+        category => category.parentId === target.id
+    );
+    return [
+      ...directChildren,
+      ...directChildren
+        .map(child => getChildren(categories, child))
+        .reduce((prev, value) => prev.concat(value) ,[])
+    ];
+}
+
 function filterByUserId(categories, userId) {
     let filterCategoriesWithoutParent = categories.filter(
         category => category.primary_owner === +userId || category.secondary_owner === +userId
@@ -73,4 +85,4 @@ function filterByUserId(categories, userId) {
     ).reduce((acc, next) => acc.concat(next), []));
 }
 
-export { transformToTree, generatePath, dedupe, filterByUserId };
+export { transformToTree, generatePath, dedupe, filterByUserId, getChildren };

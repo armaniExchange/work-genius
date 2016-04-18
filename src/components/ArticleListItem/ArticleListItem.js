@@ -21,7 +21,6 @@ class ArticleListItem extends Component {
       tags,
       files,
       comments,
-      // createdAt,
       updatedAt,
       onDelete,
       index

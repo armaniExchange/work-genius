@@ -8,5 +8,6 @@
     margin: 0 5px 5px 5px;
     border-radius: 0;
     padding:.2em .5em;
+    cursor: pointer;
   }
 }
