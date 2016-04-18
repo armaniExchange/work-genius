@@ -31,10 +31,10 @@ const CommentType = new GraphQLObjectType({
       type: GraphQLFloat,
       description: 'Comment\'s updated time'
     },
-    title: {
-      type: GraphQLString,
-      description: 'Comment\'s title'
-    }
+    // title: {
+    //   type: GraphQLString,
+    //   description: 'Comment\'s title'
+    // }
   })
 });
 

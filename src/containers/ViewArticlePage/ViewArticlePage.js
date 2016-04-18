@@ -12,6 +12,8 @@ import Paper from 'material-ui/lib/paper';
 import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
 import ArticleFileList from '../../components/ArticleFileList/ArticleFileList';
 import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
+import CommentEditor from '../../components/CommentEditor/CommentEditor';
+import CommentListItem from '../../components/CommentListItem/CommentListItem';
 import ConfirmDeleteDialog from '../../components/ConfirmDeleteDialog/ConfirmDeleteDialog';
 
 import * as ArticleActions from '../../actions/article-page-actions';
@@ -65,6 +67,13 @@ class ViewArticlePage extends Component {
 
   }
 
+  onCommentCreate(newCommentContent) {
+    this.props.articleActions.createComment({
+      articleId: this.props.id,
+      comment: { content: newCommentContent }
+    });
+  }
+
   render() {
     const {
       id,
@@ -75,7 +84,8 @@ class ViewArticlePage extends Component {
       tags,
       comments,
       updatedAt,
-      createdAt
+      createdAt,
+      currentUser
     } = this.props;
     const {
       isConfirmDeleteArticleDialogVisible
@@ -131,6 +141,22 @@ class ViewArticlePage extends Component {
         <Paper style={paperStyle} zDepth={1}>
           <HighlightMarkdown source={content} />
         </Paper>
+        <h5>Comments</h5>
+        {
+          comments.map(comment => {
+            return (
+              <CommentListItem
+                key={comment.id}
+                currentUserId={currentUser.id}
+                author={comment.author}
+                content={comment.content} />
+            );
+          })
+        }
+        <CommentEditor
+          currentUser={currentUser}
+          onSubmit={::this.onCommentCreate}
+        />
         <ConfirmDeleteDialog
           open={isConfirmDeleteArticleDialogVisible}
           onConfirm={::this.onConfirmDeleteArticle}
@@ -155,6 +181,7 @@ ViewArticlePage.propTypes = {
   params              : PropTypes.object,
   isDeleting          : PropTypes.bool,
   history             : PropTypes.object,
+  currentUser         : PropTypes.object,
   articleActions      : PropTypes.object.isRequired
 };
 
@@ -171,7 +198,9 @@ ViewArticlePage.defaultProps = {
 };
 
 function mapStateToProps(state) {
-  return state.article.toJS();
+  return Object.assign({}, state.article.toJS(), {
+    currentUser: state.app.toJS().currentUser
+  });
 }
 
 function mapDispatchToProps(dispatch) {

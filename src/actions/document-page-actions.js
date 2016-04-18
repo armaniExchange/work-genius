@@ -47,7 +47,6 @@ export function fetchArticles(query = {}) {
             },
             comments {
               id,
-              title,
               content
             },
             files {

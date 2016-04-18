@@ -14,19 +14,19 @@ let CategoryQuery = {
 		type: CommentType,
 		description: 'Get a comment by it\'s ID',
       args: {
-  			commentId: {
+  			id: {
   				type: GraphQLID,
   				description: 'The comment id'
   			}
 		},
-		resolve: async (root, { commentId }) => {
+		resolve: async (root, { id }) => {
 			let connection = null,
 			    result = null,
           author = null,
 				  query = null;
 
 			try {
-				query = r.db('work_genius').table('comments').get(commentId);
+				query = r.db('work_genius').table('comments').get(id);
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				result = await query.run(connection);
                 query = r.db('work_genius').table('users').get(result['author_id']);

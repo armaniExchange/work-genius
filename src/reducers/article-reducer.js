@@ -60,7 +60,7 @@ export default function articleReducer(state = initialState, action) {
       return state.set('isDeleting', false);
     case actionTypes.UPLOAD_ARTICLE_FILE:
       const uploading_file = Object.assign({}, action.file, {isUploading: true});
-      return state.set('files', state.get('files').push(fromJS(uploading_file)));
+      return state.set('files', files.push(fromJS(uploading_file)));
     case actionTypes.UPLOAD_ARTICLE_FILE_PROGRESS:
       return state.set('files', files.update(files.findIndex((item) => {
           return item.get('tempId') === action.tempId;
@@ -88,6 +88,8 @@ export default function articleReducer(state = initialState, action) {
       return state.set('files', files.filter(removedFile => {
         return removedFile.get('id') !== action.id;
       }));
+    case actionTypes.CREATE_COMMENT_SUCCESS:
+      return state.set('comments', state.get('comments').push(fromJS(action.comment)));
     case actionTypes.CLEAR_ARTICLE:
       return initialState;
     default:

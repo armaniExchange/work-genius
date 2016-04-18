@@ -41,7 +41,7 @@ const parseArticle = (article) => {
   return result;
 };
 
-let ArticleMutation = {
+const ArticleMutation = {
   deleteArticle: {
     type: GraphQLString,
     description: 'Delete a article by its ID',

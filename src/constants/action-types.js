@@ -93,6 +93,9 @@ export default keyMirror({
     REMOVE_ARTICLE_FILE_SUCCESS: null,
     REMOVE_ARTICLE_FILE_FAIL: null,
     CLEAR_ARTICLE: null,
+    CREATE_COMMENT: null,
+    CREATE_COMMENT_SUCCESS: null,
+    CREATE_COMMENT_FAIL: null,
 
     // Document page actions
     FETCH_ARTICLES: null,

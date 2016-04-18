@@ -30,6 +30,11 @@ export const getArticleDetail = article => {
       .getAll(
         r.args(article('commentsId').default([]).coerceTo('array').append('prevent-empty-error'))
       )
+      .merge(comment => {
+        return {
+          author: dbWorkGenius.table('users').get(comment('authorId')).default(null),
+        };
+      })
       .coerceTo('array')
   };
 };
