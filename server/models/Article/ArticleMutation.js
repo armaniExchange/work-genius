@@ -12,28 +12,18 @@ import r from 'rethinkdb';
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 
 function parseArticle(article) {
-  let result = {};
+  let result = {
+      ...article,
+      categoryId: article.category.id,
+      commentsId: article.comments.map(comment => comment.id),
+      filesId: article.files.map(file => file.id),
+      tags: article.tags || []
+  };
 
-  Object.keys(article)
-    .map( key => {
-      switch (key) {
-        case 'category':
-          result.categoryId = article.category.id;
-          break;
-        case 'comments':
-          result.commentsId = article.comments.map(comment => comment.id);
-          break;
-        case 'files':
-          result.filesId = article.files.map(file => file.id);
-          break;
-        case 'tags':
-          result.tags = article.tags || [];
-          break;
-        default:
-          result[key] = article[key];
-          break;
-      }
-    });
+  delete result.category;
+  delete result.comment ;
+  delete result.files;
+
   return result;
 }
 

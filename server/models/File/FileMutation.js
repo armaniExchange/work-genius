@@ -57,25 +57,14 @@ export const fileDeleteHandler = async (req, res) => {
       .table('files')
       .get(fileId);
     result = await query.run(connection);
-
-    fs.unlink(result.path, async (deleteErr) => {
-      if (deleteErr) {
-      // not sure why catch didn't handle this throw deleteError
-      // throw deleteErr;
-        await connection.close();
-        res.status(deleteErr.status).send({
-          error: deleteErr
-        });
-        return;
-      }
-      query = r.db('work_genius')
-        .table('files')
-        .get(fileId)
-        .delete();
-      await query.run(connection);
-      await connection.close();
-      res.status(204).end();
-    });
+    fs.unlinkSync(result.path);
+    query = r.db('work_genius')
+      .table('files')
+      .get(fileId)
+      .delete();
+    await query.run(connection);
+    await connection.close();
+    res.status(204).end();
   } catch (err) {
     res.status(err.status).send({
       error: err
