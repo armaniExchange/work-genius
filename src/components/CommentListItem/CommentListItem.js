@@ -35,8 +35,6 @@ class CommentListItem extends Component {
       currentUserId
     } = this.props;
     const isAuthorCurrentUser = author && (author.id === currentUserId);
-    // const triangleClassName = `avatar-triangle ${isAuthorCurrentUser ? 'left' : 'right'}`;
-
     const renderAuthor = (
       <div
         key="renderAuthor"
@@ -47,26 +45,26 @@ class CommentListItem extends Component {
     );
 
     const renderContent = (
-      <Paper
-        key="renderContent"
+      <div key="renderContent"
         className="content">
-        <HighlightMarkdown source={content} />
-        {
-          this.state.isHovered && (
-            <div style={{
-              position: 'absolute',
-              top: 5,
-              right: 5
-            }}>
-              <FlatButton
-                label="Edit"
-                primary={true} />
-              <FlatButton
-                label="Delete" />
-            </div>
-          )
-        }
-      </Paper>
+        <Paper className="message">
+          <HighlightMarkdown source={content} />
+          {
+            this.state.isHovered && (
+              <div className="toolbar">
+                <FlatButton
+                  label="Edit"
+                  primary={true} />
+                <FlatButton
+                  label="Delete" />
+              </div>
+            )
+          }
+        </Paper>
+        <div className="time">
+          {moment().format('YYYY-MM-DD hh:mm a')}
+        </div>
+      </div>
     );
 
     return (
@@ -76,9 +74,7 @@ class CommentListItem extends Component {
         <div className="component-comment-list-item-wrapper">
           { isAuthorCurrentUser ? [renderContent, renderAuthor] : [renderAuthor, renderContent]}
         </div>
-        <div style={{textAlign: 'right', color: 'gray'}}>
-          {moment().format('YYYY-MM-DD hh:mm a')}
-        </div>
+
       </div>
     );
   }

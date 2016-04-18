@@ -50,17 +50,20 @@ class CommentEditor extends Component {
       <div
         className="component-comment-list-item">
         <div className="component-comment-list-item-wrapper">
-          <Paper className="content">
-            <Editor
-              style={{height: 100}}
-              value={editingContent}
-              onChange={::this.onContentChange} />
+          <div className="content">
+            <Paper className="message">
+              <Editor
+                style={{height: 100}}
+                value={editingContent}
+                onChange={::this.onContentChange} />
+            </Paper>
             <RaisedButton
               style={commentButtonStyle}
               label="Comment"
               primary={true}
               onClick={::this.onSubmit} />
-          </Paper>
+          </div>
+
           <div className="author right">
             <Avatar user={currentUser} />
             <div className="avatar-triangle" />

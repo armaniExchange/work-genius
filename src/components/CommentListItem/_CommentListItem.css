@@ -39,7 +39,18 @@
     .content {
       flex: 1;
       position: relative;
-      padding: 15px;
+      .toolbar {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+      }
+      .message {
+        padding: 15px;
+      }
+      .time {
+        text-align: right;
+        color: gray;
+      }
     }
   }
 }
