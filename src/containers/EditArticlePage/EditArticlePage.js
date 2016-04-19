@@ -59,14 +59,20 @@ class EditArticlePage extends Component {
       title,
       content,
       tags,
-      category
+      category,
+      documentType,
+      priority,
+      milestone
     } = props;
 
     return {
       editingTitle: title,
       editingContent: content,
       editingTags: tags,
-      editingCategory: category
+      editingCategory: category,
+      editingDocumentType: documentType,
+      editingPriority: priority,
+      editingMilestone: milestone
     };
   }
 
@@ -169,12 +175,41 @@ class EditArticlePage extends Component {
     }, idField));
   }
 
+  onDocumentTypeChange(event, index, value) {
+    console.log('onDocumentTypeChange');
+    this.setState({
+      editingDocumentType:value
+    });
+  }
+
+  onPriorityChange(event, index, value) {
+    this.setState({
+      editingPriority: value
+    });
+  }
+
+  onMilestoneChange(event, index, value) {
+    this.setState({
+      editingMilestone: value
+    });
+  }
+
+  onReportToChange(val, items) {
+    this.setState({
+      editingReportTo: items.map(item => item.value)
+    });
+  }
+
   render() {
     const {
       editingContent,
       editingTitle,
       editingTags,
       editingCategory,
+      editingDocumentType,
+      editingPriority,
+      editingMilestone,
+      editingReportTo,
       isPreviewVisible
     } = this.state;
 
@@ -216,12 +251,21 @@ class EditArticlePage extends Component {
             files={files}
             tagSuggestions={allTags}
             allCategoriesOptions={::this._transformToOptions(allCategories)}
+            documentType={editingDocumentType}
+            priority={editingPriority}
+            milestone={editingMilestone}
+            reportTo={editingReportTo}
             onTagsChange={::this.onTagsChange}
             onTitleChange={::this.onTitleChange}
             onCategoryChange={::this.onCategoryChange}
             onContentChange={::this.onContentChange}
             onFileUpload={::this.onFileUpload}
-            onFileRemove={::this.onFileRemove}/>
+            onFileRemove={::this.onFileRemove}
+            onDocumentTypeChange={::this.onDocumentTypeChange}
+            onPriorityChange={::this.onPriorityChange}
+            onMilestoneChange={::this.onMilestoneChange}
+            onReportToChange={::this.onReportToChange}
+          />
         </div>
         {
           isPreviewVisible ? (
@@ -260,6 +304,10 @@ EditArticlePage.propTypes = {
   category            : PropTypes.object,
   comments            : PropTypes.array,
   content             : PropTypes.string,
+  documentType        : PropTypes.string,
+  priority            : PropTypes.number,
+  milestone           : PropTypes.string,
+  reportTo            : PropTypes.arrayOf(PropTypes.string),
   createdAt           : PropTypes.number,
   updatedAt           : PropTypes.number,
   params              : PropTypes.object,

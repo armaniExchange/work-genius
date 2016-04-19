@@ -7,4 +7,10 @@
     margin-left: -25px;
     width: 100%;
   }
+  .dropzone {
+    width: 100%;
+    border: 2px dashed gray;
+    padding: 2em 1em;
+    box-sizing: border-box;
+  }
 }

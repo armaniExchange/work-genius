@@ -19,6 +19,18 @@ const ArticleType = new GraphQLObjectType({
       type: GraphQLID,
       description: 'Article ID'
     },
+    documentType: {
+      type: GraphQLString,
+      description: 'Article\'s document type'
+    },
+    priority: {
+      type: GraphQLString,
+      description: 'Article\'s priority'
+    },
+    milestone: {
+      type: GraphQLString,
+      description: 'Article\'s milestone'
+    },
     tags: {
       type: new GraphQLList(GraphQLString),
       description: 'Article\'s tags'

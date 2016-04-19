@@ -57,7 +57,19 @@ const ArticleInputType = new GraphQLInputObjectType({
         }
       })),
       description: 'File List'
-    }
+    },
+    documentType: {
+      type: GraphQLString,
+      description: 'Article\'s document type'
+    },
+    priority: {
+      type: GraphQLString,
+      description: 'Article\'s priority'
+    },
+    milestone: {
+      type: GraphQLString,
+      description: 'Article\'s milestone'
+    },
   })
 });
 
