@@ -9,6 +9,9 @@ import Dropzone from 'react-dropzone';
 import ArticleFileList from '../../components/ArticleFileList/ArticleFileList';
 import Editor from '../../components/Editor/Editor';
 import ConfirmDeleteDialog from '../../components/ConfirmDeleteDialog/ConfirmDeleteDialog';
+import ArticleDocumentTypeSelect from '../../components/ArticleDocumentTypeSelect/ArticleDocumentTypeSelect';
+import ArticlePrioritySelect from '../../components/ArticlePrioritySelect/ArticlePrioritySelect';
+import ArticleMilestoneSelect from '../../components/ArticleMilestoneSelect/ArticleMilestoneSelect';
 
 // Styles
 import './_ArticleEditor.css';
@@ -69,8 +72,12 @@ class ArticleEditor extends Component {
       files,
       allCategoriesOptions,
       tagSuggestions,
-      onContentChange,
       onTitleChange,
+      onDocumentTypeChange,
+      onPriorityChange,
+      onMilestoneChange,
+      onReportToChange,
+      onContentChange,
       onTagsChange,
       onCategoryChange
     } = this.props;
@@ -78,6 +85,8 @@ class ArticleEditor extends Component {
       isConfirmDeleteFileDialogVisible,
       editingFile
     } = this.state;
+
+    const isPriorityAndMilestoneSelectShow =  documentType && documentType !== 'knowledges';
 
     return (
       <div className="article-editor"
@@ -88,6 +97,30 @@ class ArticleEditor extends Component {
           value={title}
           onChange={onTitleChange} />
         <br />
+        {this.renderCategorySelectField()}
+        <div className="select-field-group">
+          <ArticleDocumentTypeSelect
+            value={documentType}
+            onChange={onDocumentTypeChange}
+          />
+          {
+            isPriorityAndMilestoneSelectShow && (
+              <ArticlePrioritySelect
+                value={priority}
+                onChange={onPriorityChange}
+              />
+            )
+          }
+
+          {
+            isPriorityAndMilestoneSelectShow && (
+              <ArticleMilestoneSelect
+                value={milestone}
+                onChange={onMilestoneChange}
+              />
+            )
+          }
+        </div>
         <br />
         <label>Category</label>
         <Select
