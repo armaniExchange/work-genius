@@ -38,8 +38,12 @@ class EditArticlePage extends Component {
     if (this.props.isEditing && !nextProps.isEditing) {
       this.props.history.replace(`/main/knowledge/document/${nextProps.id}`);
     }
-    const newState = this.getEditingStateFromProps(nextProps);
-    this.setState(newState);
+    if (this.props.id === nextProps.id && this.props.files.length !== nextProps.files.lengh) {
+      // fiile upload change files, but skip to set new state 
+    } else {
+      const newState = this.getEditingStateFromProps(nextProps);
+      this.setState(newState);
+    }
   }
 
   componentWillUnmount() {
