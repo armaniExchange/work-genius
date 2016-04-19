@@ -94,11 +94,12 @@ class ArticleEditor extends Component {
         return item.name !== 'root';
       })
       .map((item, index) => {
+        const path = item.path.replace('/root/', '').replace(/\//g, ' > ');
         return (
           <MenuItem
             key={index}
             value={item.id}
-            primaryText={item.name}
+            primaryText={path}
           />
         );
       });
@@ -187,7 +188,7 @@ ArticleEditor.defaultProps = {
   category            : {},
   tags                : [],
   files               : [],
-  allCategorie        : [],
+  allCategories        : [],
   tagSuggestions      : [],
 };
 

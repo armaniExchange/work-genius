@@ -11,6 +11,7 @@ import r from 'rethinkdb';
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 // Utils
 import { transformToTree, generatePath, dedupe } from './utils.js';
+import _ from 'lodash';
 
 let CategoryQuery = {
 	'getAllCategories': {
@@ -31,6 +32,10 @@ let CategoryQuery = {
 						path: generatePath(arr, category.id)
 					};
 				});
+
+        result = _.sortBy(result, category => {
+          return category.path;
+        });
 				await connection.close();
 			} catch (err) {
 				return err;
