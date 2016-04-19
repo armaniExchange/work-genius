@@ -26,29 +26,32 @@ class ResourceMapPage extends Component{
 	componentWillMount() {
 		let defaultStartDate = moment().isoWeekday(1).format('YYYY-MM-DD');
 		const {
+            totalDays,
 			queryResourceMapData,
             fetchAllUsersRequest
 		} = this.props;
         // User id default is 0, current user.
-		queryResourceMapData(defaultStartDate, 0);
+		queryResourceMapData(defaultStartDate, totalDays, 0);
         fetchAllUsersRequest();
 	}
 
 	_changeStartDate(date) {
 		const {
+            totalDays,
             currentUserId,
 			queryResourceMapData
 		} = this.props;
-		queryResourceMapData(date, currentUserId);
+		queryResourceMapData(date, totalDays, currentUserId);
 	}
 
     _selectUser(user) {
         const {
+            totalDays,
             startDate,
             queryResourceMapData
         } = this.props;
         let defaultStartDate = moment(startDate).format('YYYY-MM-DD');
-        queryResourceMapData(defaultStartDate, user);
+        queryResourceMapData(defaultStartDate, totalDays, user);
     }
 
 	render () {

@@ -75,13 +75,13 @@ export function fetchAllUsersRequest(){
 }
 
 
-function queryResourceMapDataFromServer(startDate) {
+function queryResourceMapDataFromServer(startDate, days) {
     let date = parseInt(moment(startDate).format('X')) * 1000;
     return (dispatch) => {
         let config = {
             method: 'POST',
             body: `{
-                getWorkLogList(startDate:` + date + `,dateRange:10){
+                getWorkLogList(startDate:` + date + `,dateRange:` + days +`){
 			        id,
 			        name,
 			        worklogs{
@@ -89,7 +89,10 @@ function queryResourceMapDataFromServer(startDate) {
 			            type,
 			            worklog_items{
 			                id,
-			                content
+                            content,
+                            progress,
+                            tag,
+                            status
 			            }
 			        }
 			    }
@@ -114,13 +117,13 @@ function queryResourceMapDataFromServer(startDate) {
     };
 }
 
-function queryResourceMapDataFromServerByUser(startDate, userId) {
+function queryResourceMapDataFromServerByUser(startDate, days, userId) {
     let date = parseInt(moment(startDate).format('X')) * 1000;
     return (dispatch) => {
         let config = {
             method: 'POST',
             body: `{
-                getWorkLogByEmployeeId(startDate:` + date + `,dateRange:10,employeeId:\"` + userId + `\"){
+                getWorkLogByEmployeeId(startDate:` + date + `,dateRange:` + days +`,employeeId:\"` + userId + `\"){
                     id,
                     name,
                     worklogs{
@@ -309,7 +312,7 @@ function workLogItemUpsert(item) {
     }
 }
 
-function queryResourceMapDataByUser(startDate, userId) {
+function queryResourceMapDataByUser(startDate, days, userId) {
     return (dispatch, getState) => {
         if (userId === 0) {
             let user = getState().app.toJS().currentUser;
@@ -320,9 +323,9 @@ function queryResourceMapDataByUser(startDate, userId) {
             }
         }
         if (userId === '') {
-            dispatch(queryResourceMapDataFromServer(startDate));
+            dispatch(queryResourceMapDataFromServer(startDate, days));
         } else {
-            dispatch(queryResourceMapDataFromServerByUser(startDate, userId));
+            dispatch(queryResourceMapDataFromServerByUser(startDate, days, userId));
         }
     };
 }
@@ -370,14 +373,14 @@ export function fetchResourceMapStatus(item) {
     };
 }
 
-export function queryResourceMapData(startDate, userId) {
+export function queryResourceMapData(startDate, days, userId) {
 	// return (dispatch) => {
 	// 	dispatch(fetchResourceMapData(startDate));
 	// };
 	return (dispatch) => {
 		dispatch(setLoadingState(true));
         Promise.all([
-			dispatch(queryResourceMapDataByUser(startDate, userId))
+			dispatch(queryResourceMapDataByUser(startDate, days, userId))
 		]).then(
             () => {
                 // dispatch(setLoadingState(false));

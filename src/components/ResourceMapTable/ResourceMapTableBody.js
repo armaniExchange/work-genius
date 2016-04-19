@@ -60,12 +60,12 @@ class ResourceMapTableBody extends Component {
     }
 
 	render() {
-		const {data, startDate, onModalHander, onSubmitStatus, onDeleteItemHander} = this.props;
+		const {data, startDate, totalDays, onModalHander, onSubmitStatus, onDeleteItemHander} = this.props;
 		let bodyHtml = (
             <tr>
                 <Td
-                    colSpan={7}
-                    className="pto-table__body--empty">
+                    colSpan={ totalDays + 1 }
+                    className="table_header_style">
                     No Match Result!
                 </Td>
             </tr>
@@ -132,10 +132,15 @@ class ResourceMapTableBody extends Component {
 
 ResourceMapTableBody.propTypes = {
     startDate: PropTypes.string.isRequired,
+    totalDays: PropTypes.number.isRequired,
 	data:  PropTypes.array.isRequired,
     onModalHander: PropTypes.func.isRequired,
     onSubmitStatus: PropTypes.func.isRequired,
     onDeleteItemHander: PropTypes.func.isRequired
+};
+
+ResourceMapTableBody.defaultProps = {
+    totalDays: 7
 };
 
 export default ResourceMapTableBody;

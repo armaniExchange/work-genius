@@ -9,18 +9,18 @@ import RaisedButton from 'material-ui/lib/raised-button';
 import TextField from 'material-ui/lib/text-field';
 import DatePicker from '../../components/A10-UI/Input/Date-Picker.js';
 
-let ModalHeader = () => {
+let ModalHeader = ({isEdit}) => {
 	return (
 		<Modal.Header closeButton>
-            <Modal.Title>Append A Work Log</Modal.Title>
+            <Modal.Title>{isEdit ? 'Edit Work Log' : 'Add Work Log'}</Modal.Title>
         </Modal.Header>
 	);
 };
 
-let ModalFooter = ({onSubmit, onCancelHandler}) => {
+let ModalFooter = ({isEdit, onSubmit, onCancelHandler}) => {
 	return (
 		<Modal.Footer>
-            <RaisedButton label="Apply" secondary={true} onClick={onSubmit} />
+            <RaisedButton label={ isEdit ? 'Update' : 'Apply' } secondary={true} onClick={onSubmit} />
             <RaisedButton label="Cancel" onClick={onCancelHandler} />
         </Modal.Footer>
 	);
@@ -175,7 +175,7 @@ class ResourceMapModalWorkLog extends Component {
 
 		return (
 			<Modal show={show} onHide={this._onCloseModelHandler}>
-				<ModalHeader />
+				<ModalHeader isEdit={defaultModalInfos.id !== undefined} />
 				<Modal.Body>
 				<form className="form-horizontal">
 					<div className="form-group">
@@ -244,7 +244,7 @@ class ResourceMapModalWorkLog extends Component {
                     </div>
                 </form>
 				</Modal.Body>
-				<ModalFooter onSubmit={this._onSubmitFormData} onCancelHandler={this._onCloseModelHandler}/>
+				<ModalFooter onSubmit={this._onSubmitFormData} isEdit={defaultModalInfos.id !== undefined} onCancelHandler={this._onCloseModelHandler}/>
 			</Modal>
 		);
 	}
