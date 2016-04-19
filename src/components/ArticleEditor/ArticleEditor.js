@@ -187,7 +187,8 @@ ArticleEditor.defaultProps = {
   category            : {},
   tags                : [],
   files               : [],
-  allCategorie        : []
+  allCategorie        : [],
+  tagSuggestions      : [],
 };
 
 export default ArticleEditor;

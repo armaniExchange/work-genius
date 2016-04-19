@@ -3,29 +3,43 @@ import {
   GraphQLID,
   GraphQLString,
 } from 'graphql';
+// RethinkDB
+import r from 'rethinkdb';
+
 import ArticleType from './ArticleType.js';
 import ArticleInputType from './ArticleInputType.js';
 
-// RethinkDB
-import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 
-function parseArticle(article) {
-  let result = {
-      ...article,
-      categoryId: article.category.id,
-      commentsId: article.comments.map(comment => comment.id),
-      filesId: article.files.map(file => file.id),
-      tags: article.tags || []
-  };
+import { deleteFile } from '../File/FileMutation';
+import { getArticleDetail } from './ArticleQuery';
 
-  delete result.category;
-  delete result.comment ;
-  delete result.files;
+const parseArticle = (article) => {
+  let result = {};
 
+  Object.keys(article)
+    .map( key => {
+      switch (key) {
+        case 'category':
+          result.categoryId = article.category.id;
+          break;
+        case 'comments':
+          result.commentsId = article.comments.map(comment => comment.id);
+          break;
+        case 'files':
+          result.filesId = article.files.map(file => file.id);
+          break;
+        case 'tags':
+          result.tags = article.tags || [];
+          break;
+        default:
+          result[key] = article[key];
+          break;
+      }
+    });
   return result;
-}
+};
 
 let ArticleMutation = {
   deleteArticle: {
@@ -38,12 +52,19 @@ let ArticleMutation = {
       }
     },
     resolve: async (root, { id }) => {
+      let connection = null;
       try {
-        const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+        connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+        let deletingFiles = await r.db('work_genius')
+          .table('articles')
+          .get(id)
+          .getField('filesId')
+          .run(connection);
 
-        // TODO:
-        // when delete articles
-        // delete all attachments files
+        // TODO: rewrite this into parallel form
+        for (let i = 0, l = deletingFiles.length; i < l ; i++) {
+          await deleteFile(deletingFiles[i]);
+        }
 
         await r.db('work_genius')
           .table('articles')
@@ -52,6 +73,7 @@ let ArticleMutation = {
           .run(connection);
         await connection.close();
       } catch (err) {
+        await connection.close();
         return err;
       }
       return 'Deleted successfully!';
@@ -65,8 +87,9 @@ let ArticleMutation = {
       article: { type: ArticleInputType }
     },
     resolve: async (root, { article }) => {
+      let connection = null;
       try {
-        const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+        connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         let result = null;
         const user = root.req.decoded;
         const now = new Date().getTime();
@@ -86,15 +109,15 @@ let ArticleMutation = {
           result = await r.db('work_genius')
             .table('articles')
             .get(id)
+            .merge(getArticleDetail)
             .run(connection);
           await connection.close();
-          // TODO: join the comments category author files table
           return result;
         } else {
-          await connection.close();
           throw 'No generated_keys found';
         }
       } catch (err) {
+        await connection.close();
         return err;
       }
     }
@@ -107,28 +130,32 @@ let ArticleMutation = {
       article: { type: ArticleInputType }
     },
     resolve: async (root, { article }) => {
+      let connection = null;
+
       try {
-        const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+        connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         let result = null;
 
         const parsedArticle = Object.assign({}, parseArticle(article), {
           updatedAt: new Date().getTime()
         });
+
         await r.db('work_genius')
           .table('articles')
           .get(article.id)
           .update(parsedArticle)
           .run(connection);
 
-         result = await r.db('work_genius')
-            .table('articles')
-            .get(article.id)
-            .run(connection);
+        result = await r.db('work_genius')
+          .table('articles')
+          .get(article.id)
+          .merge(getArticleDetail)
+          .run(connection);
 
         await connection.close();
-        // TODO: join the comments category author files table
         return result;
       } catch (err) {
+        await connection.close();
         return err;
       }
       return 'Edited successfully!';

@@ -14,9 +14,10 @@ export const fileUploadHandler = async (req, res) => {
 
   upload(req, res, async (err) => {
     if (err) {
-      res.status(err.status).send({
-        error: err
-      });
+      res.status(err.status)
+        .send({
+          error: err
+        });
       return;
     }
     const {
@@ -48,10 +49,10 @@ export const fileUploadHandler = async (req, res) => {
   });
 };
 
-export const fileDeleteHandler = async (req, res) => {
+export const deleteFile = async (fileId) => {
+  let connection = null;
   try {
-    const fileId = req.params.id;
-    const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+    connection = await r.connect({ host: DB_HOST, port: DB_PORT });
     let query = null, result = null;
     query = r.db('work_genius')
       .table('files')
@@ -64,6 +65,16 @@ export const fileDeleteHandler = async (req, res) => {
       .delete();
     await query.run(connection);
     await connection.close();
+  } catch (err) {
+    await connection.close();
+    throw err;
+  }
+};
+
+export const fileDeleteHandler = async (req, res) => {
+  const fileId = req.params.id;
+  try {
+    await deleteFile(fileId);
     res.status(204).end();
   } catch (err) {
     res.status(err.status).send({
@@ -71,3 +82,4 @@ export const fileDeleteHandler = async (req, res) => {
     });
   }
 };
+

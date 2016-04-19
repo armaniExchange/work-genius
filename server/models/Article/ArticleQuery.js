@@ -16,7 +16,7 @@ import { getChildren } from '../AssignmentCategory/utils.js';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 
-function _getArticleDetail(article){
+export const getArticleDetail = article => {
   const dbWorkGenius = r.db('work_genius');
   return {
     author: dbWorkGenius.table('users').get(article('authorId')).default(null),
@@ -32,7 +32,7 @@ function _getArticleDetail(article){
       )
       .coerceTo('array')
   };
-}
+};
 
 let ArticleQuery = {
   getAllArticles : {
@@ -103,7 +103,7 @@ let ArticleQuery = {
         result = await query.filter(filterFunc)
           .orderBy('updatedAt')
           .slice((page - 1) * pageLimit, page * pageLimit)
-          .merge(_getArticleDetail)
+          .merge(getArticleDetail)
           .run(connection);
 
         if (!result ){
@@ -139,7 +139,7 @@ let ArticleQuery = {
         query = r.db('work_genius')
           .table('articles')
           .get(id);
-        result = await query.merge(_getArticleDetail).run(connection);
+        result = await query.merge(getArticleDetail).run(connection);
         await connection.close();
       } catch (err) {
         return err;
