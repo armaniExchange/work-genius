@@ -53,7 +53,7 @@ class CommentEditor extends Component {
           <div className="content">
             <Paper className="message">
               <Editor
-                style={{height: 100}}
+                placeholder="Write a comment..."
                 value={editingContent}
                 onChange={::this.onContentChange} />
             </Paper>

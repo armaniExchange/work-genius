@@ -475,7 +475,11 @@ export function createComment({articleId, comment}) {
           createComment( comment: ${stringifyObject(comment)} articleId: "${articleId}") {
             id,
             content,
-            updatedAt
+            updatedAt,
+            author {
+              id,
+              name
+            }
           }
         }
       `,

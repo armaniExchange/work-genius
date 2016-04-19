@@ -32,9 +32,12 @@ const CommentMutation = {
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 
         if (articleId) {
-          await r.db('work_genius').table('articles').get(articleId).update({
-            comments: r.row('comments').filter(comment => comment.id !== id )
-          });
+          await r.db('work_genius')
+            .table('articles')
+            .get(articleId)
+            .update({
+              comments: r.row('comments').filter(comment => comment.id !== id )
+            });
         }
         query = r.db('work_genius').table('comments').get(id).delete();
         await query.run(connection);
@@ -85,12 +88,18 @@ const CommentMutation = {
               })
               .run(connection);
           }
+
           result = await r.db('work_genius')
             .table('comments')
             .get(id)
+            .merge(commentItem => {
+              return {
+                author: r.db('work_genius').table('users').get(commentItem('authorId')).default(null),
+              };
+            })
             .run(connection);
           await connection.close();
-          // TODO: join the author table
+
           return result;
         } else {
           await connection.close();

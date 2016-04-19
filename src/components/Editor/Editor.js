@@ -35,7 +35,6 @@ class Editor extends Component {
               <div className="placeholder">{placeholder}</div>
             )
           }
-        }
       </div>
     );
   }
