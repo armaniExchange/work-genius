@@ -19,15 +19,23 @@ class Editor extends Component {
     const {
       value,
       onChange,
-      options
+      options,
+      placeholder
     } = this.props;
     return (
-      <div className="component-editor" {...this.props}>
-        <Codemirror
-          options={options}
-          value={value}
-          onChange={onChange}
-        />
+      <div className="component-editor"
+        {...this.props}>
+          <Codemirror
+            options={options}
+            value={value}
+            onChange={onChange}
+          />
+          {
+            (placeholder && !value) && (
+              <div className="placeholder">{placeholder}</div>
+            )
+          }
+        }
       </div>
     );
   }
@@ -37,6 +45,7 @@ Editor.propTypes = {
   value                : PropTypes.string.isRequired,
   options              : PropTypes.object,
   onChange             : PropTypes.func.isRequired,
+  placeholder          : PropTypes.string
 };
 
 Editor.defaultProps = {

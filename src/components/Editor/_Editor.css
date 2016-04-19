@@ -1,7 +1,15 @@
-.component-editor{
+.component-editor {
   border-radius: 5px;
   border: 1px solid lightgray;
   background: none;
   overflow: hidden;
   -webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC);
+  position: relative;
+  .placeholder {
+    color: gray;
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    z-index: 1;
+  }
 }
