@@ -14,6 +14,8 @@ import BREADCRUMB from '../../constants/breadcrumb';
 
 import ResourceMapTable from '../../components/ResourceMapTable/ResourceMapTable.js';
 import DatePicker from '../../components/A10-UI/Input/Date-Picker.js';
+import Tooltip from 'rc-tooltip';
+import 'rc-tooltip/assets/bootstrap_white.css';
 
 class ResourceMapPage extends Component{
 
@@ -72,10 +74,15 @@ class ResourceMapPage extends Component{
 		return (
 			<section>
         		<Breadcrumb data={BREADCRUMB.resourcemap} />
+                    <div className = "top-selector pull-left">
+                        <label>Date:&nbsp;</label>
+                    </div>
                     <div className = "pull-left">
                         <DatePicker className="option-layout" defaultDate={String(startDate)} placeholder="Start Date" onChange={this._changeStartDate} />
                     </div>
-                    <div className = "top-selector">
+                    <div className = "top-selector pull-left">
+                        &nbsp;&nbsp;&nbsp;
+                        <label>Owner:&nbsp;</label>
                         <DropDownList
                             isNeedAll={true}
                             title={username}
@@ -84,6 +91,29 @@ class ResourceMapPage extends Component{
                                     return {title: user.name, value: user.id};
                                 })}
                         />
+                    </div>
+                    <div className = "top-selector pull-right">
+                        <button className="mdl-button mdl-js-button mdl-button--icon">
+                            <Tooltip
+                                placement="left"
+                                overlay={
+                                    (
+                                        <div>
+                                            <label>Help:</label>
+                                            <br />
+                                            <span>1. Click on the blanks to create work log.</span>
+                                            <br />
+                                            <span>2. Click item to edit work log.</span>
+                                            <br />
+                                            <span>3. Double click item to delete work log.</span>
+                                        </div>
+                                    )
+                                }
+                                arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+                            >
+                                <i className="material-icons">help_outline</i>
+                            </Tooltip>
+                        </button>
                     </div>
 				<ResourceMapTable
 					onModalHander={fetchResourceMapModalHandler}

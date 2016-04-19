@@ -150,6 +150,7 @@ function queryResourceMapDataFromServerByUser(startDate, days, userId) {
                 dispatch(setLoadingState(false));
                 let data = body.data.getWorkLogByEmployeeId;
                 data = data === undefined ? [] : data;
+                console.log(JSON.stringify(data, 4));
                 dispatch(fetchResourceMapData(data, startDate, userId));
             })
             .catch((err) => {

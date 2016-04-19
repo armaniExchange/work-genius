@@ -97,9 +97,9 @@
 }
 
 .event-tag span {
-    padding: 15px 15px 0px 15px;
+    padding: 11px 14px 0;
     margin-right: 5px;
-    border-radius: 90px;
+    border-radius: 15px;
     cursor: pointer;
 }
 
