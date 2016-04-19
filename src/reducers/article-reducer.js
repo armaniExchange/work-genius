@@ -10,6 +10,10 @@ const initialState = OrderedMap({
   // data of article
   id: '',
   title: '',
+  documentType: '',
+  priority: '',
+  milestone: '',
+  content: '',
   author: OrderedMap({
     id: '',
     name: ''
@@ -20,48 +24,48 @@ const initialState = OrderedMap({
   tags: List(),
   files: List(),
   comments: List(),
-  content: '',
+  reportTo: List(),
   createdAt: 0,
   updatedAt: 0,
   isEditing: true,
   isDeleting: false,
 });
 
+const articleToState = (state, action) => {
+  return state.set('id', action.id)
+    .set('title', action.title)
+    .set('documentType', action.documentType)
+    .set('priority', action.priority)
+    .set('milestone', action.milestone)
+    .set('author', OrderedMap(action.author))
+    .set('category', OrderedMap(action.category))
+    .set('tags', List(action.tags || []))
+    .set('files', fromJS(action.files || []))
+    .set('comments', fromJS(action.comments || []))
+    .set('reportTo', List(action.reportTo || []))
+    .set('content', action.content)
+    .set('createdAt', action.createdAt)
+    .set('updatedAt', action.updatedAt);
+};
+
+
 export default function articleReducer(state = initialState, action) {
-  let files = state.get('files');
+  const files = state.get('files');
+
   let comments = state.get('comments');
 
   switch (action.type) {
     case actionTypes.CREATE_ARTICLE_SUCCESS:
     case actionTypes.UPDATE_ARTICLE_SUCCESS:
-      return state.set('id', action.id)
-        .set('title', action.title)
-        .set('author', OrderedMap(action.author))
-        .set('category', OrderedMap(action.category))
-        .set('tags', List(action.tags || []))
-        .set('files', fromJS(action.files || []))
-        .set('comments', fromJS(action.comments || []))
-        .set('content', action.content)
-        .set('createdAt', action.createdAt)
-        .set('updatedAt', action.updatedAt)
-        .set('isEditing', false);
+      return articleToState(state, action).set('isEditing', false);
     case actionTypes.FETCH_ARTICLE_SUCCESS:
-      return state.set('id', action.id)
-        .set('title', action.title)
-        .set('author', OrderedMap(action.author))
-        .set('category', OrderedMap(action.category))
-        .set('tags', fromJS(action.tags || []))
-        .set('files', fromJS(action.files || []))
-        .set('comments', fromJS(action.comments || []))
-        .set('content', action.content)
-        .set('createdAt', action.createdAt)
-        .set('updatedAt', action.updatedAt);
+      return articleToState(state, action);
     case actionTypes.DELETE_ARTICLE:
       return state.set('isDeleting', true);
     case actionTypes.DELETE_ARTICLE_SUCCESS:
       return state.set('isDeleting', false);
     case actionTypes.UPLOAD_ARTICLE_FILE:
-      const uploading_file = Object.assign({}, action.file, {isUploading: true});
+      const uploading_file = Object.assign({}, action.file, { isUploading: true });
       return state.set('files', files.push(fromJS(uploading_file)));
     case actionTypes.UPLOAD_ARTICLE_FILE_PROGRESS:
       return state.set('files', files.update(files.findIndex((item) => {

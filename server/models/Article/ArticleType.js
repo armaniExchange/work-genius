@@ -65,6 +65,10 @@ const ArticleType = new GraphQLObjectType({
     files: {
       type: new GraphQLList(FileType),
       description: 'File List'
+    },
+    reportTo: {
+      type: new GraphQLList(GraphQLString),
+      description: 'Article\'s report to'
     }
   })
 });

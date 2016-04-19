@@ -70,6 +70,10 @@ const ArticleInputType = new GraphQLInputObjectType({
       type: GraphQLString,
       description: 'Article\'s milestone'
     },
+    reportTo: {
+      type: new GraphQLList(GraphQLString),
+      description: 'Article\'s report to'
+    },
   })
 });
 

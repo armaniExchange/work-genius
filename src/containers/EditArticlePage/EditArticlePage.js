@@ -62,7 +62,8 @@ class EditArticlePage extends Component {
       category,
       documentType,
       priority,
-      milestone
+      milestone,
+      reportTo
     } = props;
 
     return {
@@ -72,7 +73,8 @@ class EditArticlePage extends Component {
       editingCategory: category,
       editingDocumentType: documentType,
       editingPriority: priority,
-      editingMilestone: milestone
+      editingMilestone: milestone,
+      editingReportTo: reportTo
     };
   }
 
@@ -158,7 +160,11 @@ class EditArticlePage extends Component {
       editingTitle,
       editingTags,
       editingCategory,
-      editingContent
+      editingContent,
+      editingDocumentType,
+      editingPriority,
+      editingMilestone,
+      editingReportTo,
     } = this.state;
     const {
       createArticle,
@@ -171,6 +177,10 @@ class EditArticlePage extends Component {
       tags: editingTags,
       category: editingCategory,
       content: editingContent,
+      documentType: editingDocumentType,
+      priority: editingPriority,
+      milestone: editingMilestone,
+      reportTo: editingReportTo,
       files: files.map(file => {return {id: file.id};})
     }, idField));
   }
@@ -188,7 +198,7 @@ class EditArticlePage extends Component {
     });
   }
 
-  onMilestoneChange(event, index, value) {
+  onMilestoneChange(value) {
     this.setState({
       editingMilestone: value
     });
@@ -222,27 +232,15 @@ class EditArticlePage extends Component {
 
     const editorStyle = {
       width: isPreviewVisible ? '50%' : '100%',
-      float: 'left',
-      paddingRight: 10
-    };
-
-    const previewStyle = {
-      width: '50%',
-      float: 'left',
-      borderRadius: 5,
-      border: '1px solid lightgray',
-      background: 'white',
-      padding: 15,
-      overflowX: 'scroll'
     };
 
     const pageTitle = params.articleId === 'new' ?
       'Create Document' : 'Update Document';
 
     return (
-      <section>
+      <section className="edit-article-page">
         <h3>{pageTitle}</h3>
-        <div style={editorStyle}>
+        <div className="article-editor-wrapper" style={editorStyle}>
           <ArticleEditor
             title={editingTitle}
             tags={editingTags}
@@ -269,7 +267,7 @@ class EditArticlePage extends Component {
         </div>
         {
           isPreviewVisible ? (
-            <div style={previewStyle}>
+            <div className="article-editor-preview">
               <HighlightMarkdown source={editingContent} />
             </div>
           ) : null
@@ -305,7 +303,7 @@ EditArticlePage.propTypes = {
   comments            : PropTypes.array,
   content             : PropTypes.string,
   documentType        : PropTypes.string,
-  priority            : PropTypes.number,
+  priority            : PropTypes.string,
   milestone           : PropTypes.string,
   reportTo            : PropTypes.arrayOf(PropTypes.string),
   createdAt           : PropTypes.number,

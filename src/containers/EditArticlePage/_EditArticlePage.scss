@@ -1,0 +1,15 @@
+.edit-article-page {
+  .article-editor-wrapper {
+    float: left;
+    padding-right: 10px;
+  }
+  .article-editor-preview {
+    width: 50%;
+    float: left;
+    border-radius: 5px;
+    border: 1px solid lightgray;
+    background: white;
+    padding: 15;
+    overflow-x: scroll;
+  }
+}
