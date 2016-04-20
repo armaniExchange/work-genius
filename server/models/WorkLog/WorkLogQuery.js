@@ -60,9 +60,13 @@ let WorkLogQuery = {
 					let tmpDate  = startDate + i * 1000 * 3600 * 24;
 					dateList.push({
 						date: tmpDate,
-						type: [0,6].includes(moment(tmpDate).day())? 'holiday':'workday'
+						day_type: [0,6].includes(moment(tmpDate).day())? 'holiday':'workday'
 					});
 				} 
+
+				console.log('dateList:');
+				console.log(dateList);
+				console.log();
 
 				//get all public holiday
 				let holidayStartDate = startDate;
@@ -92,7 +96,7 @@ let WorkLogQuery = {
 							}
 						});
 						if(!!findPTO){
-							dateItem.type = 'pto';
+							dateItem.day_type = 'pto';
 						}
 
 						//set public holiday info
@@ -100,7 +104,7 @@ let WorkLogQuery = {
 							return holiday.date == dateItem.date && holiday.location == userItem.location;
 						});
 						if(!!findHoliday){
-							dateItem.type = findHoliday.type;
+							dateItem.day_type = findHoliday.type;
 						}
 					});
 
@@ -138,7 +142,7 @@ let WorkLogQuery = {
 										let targetItem = userItem.worklogs.find(dateItem => {
 											return moment(dateItem.date).isSame(tmpDate,'day');
 										});
-										if(!!targetItem && targetItem.type != 'pto' && targetItem.type != 'holiday'){
+										if(!!targetItem && targetItem.day_type != 'pto' && targetItem.day_type != 'holiday'){
 											targetItem.worklog_items = targetItem.worklog_items || [];
 											targetItem.worklog_items.push(log);
 											duration -= 8;
@@ -228,7 +232,7 @@ let WorkLogQuery = {
 					let tmpDate  = startDate + i * 1000 * 3600 * 24;
 					dateList.push({
 						date: tmpDate,
-						type: [0,6].includes(moment(tmpDate).day())? 'holiday':'workday'
+						day_type: [0,6].includes(moment(tmpDate).day())? 'holiday':'workday'
 					});
 				} 
 
@@ -259,7 +263,7 @@ let WorkLogQuery = {
 						}
 					});
 					if(!!findPTO){
-						dateItem.type = 'pto';
+						dateItem.day_type = 'pto';
 					}
 
 					//set public holiday info
@@ -267,7 +271,7 @@ let WorkLogQuery = {
 						return holiday.date == dateItem.date && holiday.location == userItem.location;
 					});
 					if(!!findHoliday){
-						dateItem.type = findHoliday.type;
+						dateItem.day_type = findHoliday.type;
 					}
 				});
 
@@ -305,7 +309,7 @@ let WorkLogQuery = {
 									let targetItem = userItem.worklogs.find(dateItem => {
 										return moment(dateItem.date).isSame(tmpDate,'day');
 									});
-									if(!!targetItem && targetItem.type != 'pto' && targetItem.type != 'holiday'){
+									if(!!targetItem && targetItem.day_type != 'pto' && targetItem.day_type != 'holiday'){
 										targetItem.worklog_items = targetItem.worklog_items || [];
 										targetItem.worklog_items.push(log);
 										duration -= 8;

@@ -98,11 +98,11 @@ let UserType = new GraphQLObjectType({
 			type: new GraphQLList(new GraphQLObjectType({
 				name: 'UserWorkLog',
 				fields:{
-						date: {
+					date: {
 			        	type: GraphQLFloat,
 			        	description: 'date'
 			        },
-			        type: {
+			        day_type: {
 			            type: GraphQLString,
 			            description: 'workday/pto/holiday'
 			        },
