@@ -56,9 +56,9 @@ const WorkLog_TYPE = new GraphQLObjectType({
             type: GraphQLString,
             description: 'release name'
         },
-        'creater': {
+        'creator': {
             type: GraphQLString,
-            description: 'task creater'
+            description: 'task creator'
         },
         'tags': {
             type: new GraphQLList(GraphQLString),
