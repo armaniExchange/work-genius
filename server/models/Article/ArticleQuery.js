@@ -77,6 +77,7 @@ let ArticleQuery = {
     },
     resolve: async (root, { categoryId, authorId, tag, page, pageLimit}) => {
       let result,
+        connection = null,
         count = 0,
         allChildrenCategory = null,
         filterFunc = article => {
@@ -90,7 +91,7 @@ let ArticleQuery = {
         };
 
       try {
-        const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+        connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         const query = r.db('work_genius').table('articles');
 
         page = page || 1;
@@ -117,13 +118,14 @@ let ArticleQuery = {
 
         count = await query.count().run(connection);
         await connection.close();
+        return {
+          articles: result,
+          count
+        };
       } catch (err) {
+        await connection.close();
         return err;
       }
-      return {
-        articles: result,
-        count
-      };
     }
   },
 
@@ -137,19 +139,21 @@ let ArticleQuery = {
       }
     },
     resolve: async (root, {id}) => {
-      const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+      let connection = null;
       let query = null, result = null;
 
       try {
+        connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         query = r.db('work_genius')
           .table('articles')
           .get(id);
         result = await query.merge(getArticleDetail).run(connection);
         await connection.close();
+        return result;
       } catch (err) {
+        await connection.close();
         return err;
       }
-      return result;
     }
   }
 };

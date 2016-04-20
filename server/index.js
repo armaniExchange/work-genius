@@ -79,9 +79,12 @@ app.use('/graphql', graphqlHTTP(request => ({
     graphiql: true
 })));
 
-app.post('/files', fileUploadHandler);
-app.get('/files/:id', fileDownloadHandler);
-app.delete('/files/:id', fileDeleteHandler);
+app.route('/files')
+  .post(fileUploadHandler);
+app.route('/files/:id')
+ .get(fileDownloadHandler)
+ .delete(fileDeleteHandler);
+
 app.listen(PORT, () => {
   console.log(`Server is listening at port: ${PORT}`);
 });

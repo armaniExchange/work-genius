@@ -16,6 +16,9 @@ import { deleteFile } from '../File/FileMutation';
 import { getArticleDetail } from './ArticleQuery';
 
 const parseArticle = (article) => {
+  // only update give article property, if it didn't pass, keep original property
+  // ex: article = {id: '123', files: ['567']}
+  // didn't provided category, then result shouldn't contain category property
   let result = {};
 
   Object.keys(article)
@@ -87,10 +90,9 @@ const ArticleMutation = {
       article: { type: ArticleInputType }
     },
     resolve: async (root, { article }) => {
-      let connection = null;
+      let connection = null, result = null;
       try {
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-        let result = null;
         const user = root.req.decoded;
         const now = new Date().getTime();
         const parsedArticle = Object.assign({}, parseArticle(article), {
@@ -130,11 +132,10 @@ const ArticleMutation = {
       article: { type: ArticleInputType }
     },
     resolve: async (root, { article }) => {
-      let connection = null;
+      let connection = null, result = null;
 
       try {
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-        let result = null;
 
         const parsedArticle = Object.assign({}, parseArticle(article), {
           updatedAt: new Date().getTime()

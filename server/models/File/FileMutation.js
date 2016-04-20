@@ -8,9 +8,18 @@ import { SERVER_FILES_URL } from '../../../src/constants/config';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 
+
+// upload file
+//
+// POST http://server/files
+// multer will save the file instance into disk
+// add metadata into db files
+
 export const fileUploadHandler = async (req, res) => {
   const targetDir = `${UPLOAD_FILE_LOCATION}/${moment().format('YYYYMM')}`;
   const upload = multer({dest: targetDir}).single('file');
+
+  let connection = null;
 
   upload(req, res, async (err) => {
     if (err) {
@@ -36,15 +45,17 @@ export const fileUploadHandler = async (req, res) => {
         path: `${targetDir}/${filename}`,
         createdAt
       };
-      const query = r.db('work_genius').table('files').insert(fileMetadata);
-      const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-      await query.run(connection);
+      connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+      await r.db('work_genius')
+        .table('files')
+        .insert(fileMetadata)
+        .run(connection);
       await connection.close();
       res.status(200).send(fileMetadata);
     } catch (dbErr) {
-      res.status(dbErr.status).send({
-        error: dbErr
-      });
+      await connection.close();
+      res.status(dbErr.status)
+      .send({ error: dbErr });
     }
   });
 };
@@ -71,15 +82,19 @@ export const deleteFile = async (fileId) => {
   }
 };
 
+
+// Delete file
+// now you can delete file by
+// DELETE http://server/files/uniquefileid
+
 export const fileDeleteHandler = async (req, res) => {
   const fileId = req.params.id;
   try {
     await deleteFile(fileId);
     res.status(204).end();
   } catch (err) {
-    res.status(err.status).send({
-      error: err
-    });
+    res.status(err.status)
+      .send({ error: err });
   }
 };
 
