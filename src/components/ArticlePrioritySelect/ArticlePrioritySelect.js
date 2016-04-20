@@ -21,6 +21,7 @@ class ArticlePrioritySelect extends Component {
         {...this.props}
         floatingLabelText="Priority"
         autoWidth={false} >
+        <MenuItem value="" primaryText="&nbsp;" />
         {priorityOptions.map((item, index) => {
           return(
             <MenuItem

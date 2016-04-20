@@ -21,6 +21,7 @@ class ArticleDocumentTypeSelect extends Component {
         {...this.props}
         floatingLabelText="Document Type"
         autoWidth={false} >
+        <MenuItem value="" primaryText="&nbsp;" />
         {documentTypeOptions.map((item, index) => {
           return(
             <MenuItem

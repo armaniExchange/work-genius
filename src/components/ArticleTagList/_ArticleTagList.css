@@ -9,5 +9,11 @@
     border-radius: 0;
     padding:.2em .5em;
     cursor: pointer;
+
+    &.active {
+        background: #283593;
+        color: white;
+        border: 1px solid #283593;
+    }
   }
 }

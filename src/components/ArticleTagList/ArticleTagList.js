@@ -7,14 +7,18 @@ import './_ArticleTagList.css';
 class ArticleTagList extends Component {
 
   onClick(tag) {
-    const {onClick} = this.props;
-    if (onClick) {
-      onClick(tag);
-    }
+    const {
+      onChange,
+      value
+    } = this.props;
+    onChange(value === tag ? '' : tag);
   }
 
   render() {
-    const {tags} = this.props;
+    const {
+      tags,
+      value
+    } = this.props;
 
     return (
       <span className="component-article-tag-list">
@@ -22,7 +26,7 @@ class ArticleTagList extends Component {
           (tags || []).map((tag, index) => {
             return (
               <span
-                className="tag"
+                className={`tag ${value === tag ? 'active': ''}`}
                 key={index}
                 onClick={this.onClick.bind(this, tag)}>
                 {tag}
@@ -38,12 +42,14 @@ class ArticleTagList extends Component {
 
 ArticleTagList.propTypes = {
   tags           : PropTypes.arrayOf(PropTypes.string),
-  onClick        : PropTypes.func
+  value          : PropTypes.string,
+  onChange       : PropTypes.func
 };
 
 
 ArticleTagList.defaultProps = {
-  tags           : []
+  tags           : [],
+  value          : ''
 };
 
 export default ArticleTagList;

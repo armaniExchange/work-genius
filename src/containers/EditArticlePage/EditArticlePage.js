@@ -106,6 +106,30 @@ class EditArticlePage extends Component {
     });
   }
 
+  onDocumentTypeChange(event, index, value) {
+    this.setState({
+      editingDocumentType:value
+    });
+  }
+
+  onPriorityChange(event, index, value) {
+    this.setState({
+      editingPriority: value
+    });
+  }
+
+  onMilestoneChange(value) {
+    this.setState({
+      editingMilestone: value
+    });
+  }
+
+  onReportToChange(val, items) {
+    this.setState({
+      editingReportTo: items.map(item => item.value)
+    });
+  }
+
   onFileUpload(file) {
     const { id, files } = this.props;
     this.props.articleActions.uploadArticleFile({
@@ -183,31 +207,6 @@ class EditArticlePage extends Component {
       reportTo: editingReportTo,
       files: files.map(file => {return {id: file.id};})
     }, idField));
-  }
-
-  onDocumentTypeChange(event, index, value) {
-    console.log('onDocumentTypeChange');
-    this.setState({
-      editingDocumentType:value
-    });
-  }
-
-  onPriorityChange(event, index, value) {
-    this.setState({
-      editingPriority: value
-    });
-  }
-
-  onMilestoneChange(value) {
-    this.setState({
-      editingMilestone: value
-    });
-  }
-
-  onReportToChange(val, items) {
-    this.setState({
-      editingReportTo: items.map(item => item.value)
-    });
   }
 
   render() {
