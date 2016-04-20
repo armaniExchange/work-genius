@@ -119,7 +119,7 @@ class DocumentPage extends Component {
             onClick={::this.queryWithTag} />
           <div>
             <h5>Tree</h5>
-            <CategoryTree categories={allCategories} />
+            <CategoryTree data={allCategories} />
           </div>
         </div>
         <div style={rightPanelStyle}>
@@ -155,7 +155,7 @@ class DocumentPage extends Component {
 DocumentPage.propTypes = {
   articleList            : PropTypes.array,
   articleTotalCount      : PropTypes.number,
-  allCategories          : PropTypes.array,
+  allCategories          : PropTypes.object,
   allTags                : PropTypes.array,
   documentActions        : PropTypes.object.isRequired,
   articleActions         : PropTypes.object.isRequired

@@ -1,4 +1,4 @@
-var obj = {
+export const MENU = {
    'root': {
       '3.2': {
          'App': {},
@@ -6,561 +6,561 @@ var obj = {
       },
       '4.1': {
          'App': {
-            "AAM" : {
-               "Accounts" : {
-                  "Kerberos" : {}
+            'AAM' : {
+               'Accounts' : {
+                  'Kerberos' : {}
                },
-               "Auth Clients" : {
-                  "Logon Form Based" : {},
-                  "Logon HTTP Auth" : {},
-                  "Portal" : {},
-                  "SAML Identity Providers" : {},
-                  "SAML Service Providers" : {}
+               'Auth Clients' : {
+                  'Logon Form Based' : {},
+                  'Logon HTTP Auth' : {},
+                  'Portal' : {},
+                  'SAML Identity Providers' : {},
+                  'SAML Service Providers' : {}
                },
-               "Auth Relays" : {
-                  "Form Based" : {},
-                  "HTTP Basic" : {},
-                  "Kerberos" : {},
-                  "NTLM" : {}
+               'Auth Relays' : {
+                  'Form Based' : {},
+                  'HTTP Basic' : {},
+                  'Kerberos' : {},
+                  'NTLM' : {}
                },
-               "Auth Servers" : {
-                  "LDAP" : {},
-                  "OCSP" : {},
-                  "RADIUS" : {},
-                  "Windows" : {}
+               'Auth Servers' : {
+                  'LDAP' : {},
+                  'OCSP' : {},
+                  'RADIUS' : {},
+                  'Windows' : {}
                },
-               "Log Settings" : {
-                  "Log Settings" : {}
+               'Log Settings' : {
+                  'Log Settings' : {}
                },
-               "Policies and Templates" : {
-                  "AAA Policies" : {},
-                  "Authentication Files" : {
-                     "Auth Portal Images" : {},
-                     "Auth Portals" : {},
-                     "SAML Identity Providers" : {}
+               'Policies and Templates' : {
+                  'AAA Policies' : {},
+                  'Authentication Files' : {
+                     'Auth Portal Images' : {},
+                     'Auth Portals' : {},
+                     'SAML Identity Providers' : {}
                   },
-                  "Authentication Templates" : {},
-                  "Authorization Policies" : {},
-                  "Global Stats" : {}
+                  'Authentication Templates' : {},
+                  'Authorization Policies' : {},
+                  'Global Stats' : {}
                },
-               "Service Groups" : {
-                  "Service Groups" : {}
+               'Service Groups' : {
+                  'Service Groups' : {}
                }
             },
-            "ADC" : {
-               "BW-LIsts" : {
-                  "Black-White LIsts" : {}
+            'ADC' : {
+               'BW-LIsts' : {
+                  'Black-White LIsts' : {}
                },
-               "Health Monitors" : {
-                  "External Programs" : {},
-                  "Gateway" : {},
-                  "Global Setting" : {},
-                  "HTTP Post Files" : {},
-                  "Health Monitors" : {},
-                  "Statistics" : {}
+               'Health Monitors' : {
+                  'External Programs' : {},
+                  'Gateway' : {},
+                  'Global Setting' : {},
+                  'HTTP Post Files' : {},
+                  'Health Monitors' : {},
+                  'Statistics' : {}
                },
-               "IP Source NAT" : {
-                  "ACL Bind" : {
-                     "IPv4" : {},
-                     "IPv6" : {}
+               'IP Source NAT' : {
+                  'ACL Bind' : {
+                     'IPv4' : {},
+                     'IPv6' : {}
                   },
-                  "Groups" : {},
-                  "IPv4 Pools" : {},
-                  "IPv6 Pools" : {},
-                  "NAT Global" : {},
-                  "NAT Interfaces" : {
-                     "Ethernets" : {},
-                     "Virtual Ethernets" : {}
+                  'Groups' : {},
+                  'IPv4 Pools' : {},
+                  'IPv6 Pools' : {},
+                  'NAT Global' : {},
+                  'NAT Interfaces' : {
+                     'Ethernets' : {},
+                     'Virtual Ethernets' : {}
                   },
-                  "NAT Range" : {},
-                  "Static NAT" : {},
-                  "Templates" : {
-                     "Logging" : {}
+                  'NAT Range' : {},
+                  'Static NAT' : {},
+                  'Templates' : {
+                     'Logging' : {}
                   }
                },
-               "SLB" : {
-                  "Application" : {},
-                  "Class Lists" : {
-                     "Configuration" : {},
-                     "Import" : {}
+               'SLB' : {
+                  'Application' : {},
+                  'Class Lists' : {
+                     'Configuration' : {},
+                     'Import' : {}
                   },
-                  "Global" : {},
-                  "Policy Limits" : {},
-                  "Servers" : {},
-                  "Service Groups" : {},
-                  "Session" : {
-                     "Session" : {},
-                     "Session Filter" : {}
+                  'Global' : {},
+                  'Policy Limits' : {},
+                  'Servers' : {},
+                  'Service Groups' : {},
+                  'Session' : {
+                     'Session' : {},
+                     'Session Filter' : {}
                   },
-                  "Virtual Servers" : {},
-                  "Virtual Services" : {}
+                  'Virtual Servers' : {},
+                  'Virtual Services' : {}
                },
-               "SSL Management" : {
-                  "Cert Revocation List" : {},
-                  "Expiration Email" : {},
-                  "SSL Certificates" : {}
+               'SSL Management' : {
+                  'Cert Revocation List' : {},
+                  'Expiration Email' : {},
+                  'SSL Certificates' : {}
                },
-               "Statistics" : {
-                  "Application" : {
-                     "RAM Caching": {},
-                     "Compression": {},
-                     "Connection Reuse": {},
-                     "Persistence": {},
-                     "DBLB": {
-                        "MYSQL":{},
-                        "MSSQL": {}
+               'Statistics' : {
+                  'Application' : {
+                     'RAM Caching': {},
+                     'Compression': {},
+                     'Connection Reuse': {},
+                     'Persistence': {},
+                     'DBLB': {
+                        'MYSQL':{},
+                        'MSSQL': {}
                      },
-                     "aFlow": {}
+                     'aFlow': {}
                   },
-                  "L4" : {},
-                  "L7" : {
-                     "HTTP Proxy": {},
-                     "Fast HTTP": {},
-                     "Generic Proxy": {},
-                     "Diameter": {},
-                     "DNS": {},
-                     "Fix": {},
-                     "FTP": {
-                        "FTP CTL": {},
-                        "FTP Data": {},
-                        "FTP Proxy": {}
+                  'L4' : {},
+                  'L7' : {
+                     'HTTP Proxy': {},
+                     'Fast HTTP': {},
+                     'Generic Proxy': {},
+                     'Diameter': {},
+                     'DNS': {},
+                     'Fix': {},
+                     'FTP': {
+                        'FTP CTL': {},
+                        'FTP Data': {},
+                        'FTP Proxy': {}
                      },
-                     "SPDY Proxy": {},
-                     "SIP": {},
-                     "SMTP": {},
-                     "SMPP": {},
-                     "SSL": {}
+                     'SPDY Proxy': {},
+                     'SIP': {},
+                     'SMTP': {},
+                     'SMPP': {},
+                     'SSL': {}
                   },
-                  "System" : {
-                     "Performance": {},
-                     "Switch": {},
-                     "Geo-Location": {},
-                     "Rate Limit Logging": {},
-                     "TCP": {}
+                  'System' : {
+                     'Performance': {},
+                     'Switch': {},
+                     'Geo-Location': {},
+                     'Rate Limit Logging': {},
+                     'TCP': {}
                   }
                },
-               "Templates" : {
-                  "Application" : {
-                     "RAM Caching": {},
-                     "DBLB": {},
-                     "Connection Re-Use": {}
+               'Templates' : {
+                  'Application' : {
+                     'RAM Caching': {},
+                     'DBLB': {},
+                     'Connection Re-Use': {}
                   },
-                  "General" : {
-                     "External Service": {},
-                     "Logging": {}
+                  'General' : {
+                     'External Service': {},
+                     'Logging': {}
                   },
-                  "L4 Protocols" : {
-                     "TCP": {},
-                     "UDP": {}
+                  'L4 Protocols' : {
+                     'TCP': {},
+                     'UDP': {}
                   },
-                  "L7 Protocols" : {
-                     "Diameter": {},
-                     "TCP Proxy": {},
-                     "DNS": {},
-                     "FIX": {},
-                     "FTP": {},
-                     "Policy": {},
-                     "HTTP": {},
-                     "SMTP": {},
-                     "SMPP": {},
-                     "SIP": {},
-                     "IMAP POP3": {},
+                  'L7 Protocols' : {
+                     'Diameter': {},
+                     'TCP Proxy': {},
+                     'DNS': {},
+                     'FIX': {},
+                     'FTP': {},
+                     'Policy': {},
+                     'HTTP': {},
+                     'SMTP': {},
+                     'SMPP': {},
+                     'SIP': {},
+                     'IMAP POP3': {},
                   },
-                  "Persistence" : {
-                     "Persistence Cookie": {},
-                     "Persistence Destination IP": {},
-                     "Persistence Source IP": {},
-                     "Persistence SSL SID": {},
+                  'Persistence' : {
+                     'Persistence Cookie': {},
+                     'Persistence Destination IP': {},
+                     'Persistence Source IP': {},
+                     'Persistence SSL SID': {},
                   },
-                  "SLB" : {
-                     "Port": {},
-                     "Virtual Port": {},
-                     "Server": {},
-                     "Virtual Server": {}
+                  'SLB' : {
+                     'Port': {},
+                     'Virtual Port': {},
+                     'Server': {},
+                     'Virtual Server': {}
                   },
-                  "SSL" : {
-                     "SSL Cipher": {},
-                     "Client SSL": {},
-                     "Server SSL": {}
+                  'SSL' : {
+                     'SSL Cipher': {},
+                     'Client SSL': {},
+                     'Server SSL': {}
                   }
                },
-               "aFleX" : {
-                  "aFleX" : {}
+               'aFleX' : {
+                  'aFleX' : {}
                }
             },
-            "CGN" : {
-               "DDOS Protection" : {
-                  "DDOS Protection" : {}
+            'CGN' : {
+               'DDOS Protection' : {
+                  'DDOS Protection' : {}
                },
-               "DNS64" : {
-                  "Stats" : {},
-                  "Templates" : {
-                     "DNS" : {},
-                     "Policy" : {}
+               'DNS64' : {
+                  'Stats' : {},
+                  'Templates' : {
+                     'DNS' : {},
+                     'Policy' : {}
                   },
-                  "Virtual Servers" : {}
+                  'Virtual Servers' : {}
                },
-               "DS-Lite" : {
-                  "Global" : {},
-                  "Port Reservation" : {},
-                  "Stats" : {
-                     "Full Cone Sessions" : {},
-                     "Global" : {},
-                     "Port Reservations" : {},
-                     "User Quota Sessions" : {}
+               'DS-Lite' : {
+                  'Global' : {},
+                  'Port Reservation' : {},
+                  'Stats' : {
+                     'Full Cone Sessions' : {},
+                     'Global' : {},
+                     'Port Reservations' : {},
+                     'User Quota Sessions' : {}
                   }
                },
-               "Fixed NAT" : {
-                  "Fixed NAT" : {},
-                  "Global" : {},
-                  "IP Lists" : {},
-                  "Stats" : {
-                     "ALG" : {},
-                     "Full Cone Session" : {},
-                     "Global" : {}
+               'Fixed NAT' : {
+                  'Fixed NAT' : {},
+                  'Global' : {},
+                  'IP Lists' : {},
+                  'Stats' : {
+                     'ALG' : {},
+                     'Full Cone Session' : {},
+                     'Global' : {}
                   }
                },
-               "Fragmentation" : {
-                  "IP Frag" : {},
-                  "IPv4 in Ipv6 Frag" : {},
-                  "IPv6 Frag" : {},
-                  "IPv6 in IPV4 Frag" : {}
+               'Fragmentation' : {
+                  'IP Frag' : {},
+                  'IPv4 in Ipv6 Frag' : {},
+                  'IPv6 Frag' : {},
+                  'IPv6 in IPV4 Frag' : {}
                },
-               "LSN" : {
-                  "Class Lists" : {},
-                  "Full Cone" : {},
-                  "Global" : {},
-                  "Interfaces" : {},
-                  "LSN LID" : {},
-                  "LSN Pool Groups" : {},
-                  "LSN Pools" : {},
-                  "Port-Reservations" : {},
-                  "Radius Profile" : {},
-                  "Rule Lists" : {},
-                  "Stats" : {},
-                  "Templates" : {
-                     "HTTP-ALG" : {},
-                     "Logging" : {},
-                     "PCP" : {}
+               'LSN' : {
+                  'Class Lists' : {},
+                  'Full Cone' : {},
+                  'Global' : {},
+                  'Interfaces' : {},
+                  'LSN LID' : {},
+                  'LSN Pool Groups' : {},
+                  'LSN Pools' : {},
+                  'Port-Reservations' : {},
+                  'Radius Profile' : {},
+                  'Rule Lists' : {},
+                  'Stats' : {},
+                  'Templates' : {
+                     'HTTP-ALG' : {},
+                     'Logging' : {},
+                     'PCP' : {}
                   }
                },
-               "LW-4over6" : {
-                  "Binding Table" : {},
-                  "LW-4over6 Global" : {},
-                  "Stats" : {
-                     "Binding Table Stats" : {},
-                     "Global" : {}
+               'LW-4over6' : {
+                  'Binding Table' : {},
+                  'LW-4over6 Global' : {},
+                  'Stats' : {
+                     'Binding Table Stats' : {},
+                     'Global' : {}
                   }
                },
-               "NAT64" : {
-                  "NAT64" : {},
-                  "Stats" : {
-                     "Full Cone Sessions" : {},
-                     "Global" : {},
-                     "User Quota Sessions" : {}
+               'NAT64' : {
+                  'NAT64' : {},
+                  'Stats' : {
+                     'Full Cone Sessions' : {},
+                     'Global' : {},
+                     'User Quota Sessions' : {}
                   }
                },
-               "One-to-One NAT" : {
-                  "Mappings" : {},
-                  "One To One Global" : {},
-                  "One to One Pool Groups" : {},
-                  "One to One Pools" : {},
-                  "Stats" : {}
+               'One-to-One NAT' : {
+                  'Mappings' : {},
+                  'One To One Global' : {},
+                  'One to One Pool Groups' : {},
+                  'One to One Pools' : {},
+                  'Stats' : {}
                },
-               "Services" : {
-                  "Servers" : {},
-                  "Service Groups" : {}
+               'Services' : {
+                  'Servers' : {},
+                  'Service Groups' : {}
                },
-               "Session" : {
-                  "Global Settings" : {},
-                  "Session Table" : {}
+               'Session' : {
+                  'Global Settings' : {},
+                  'Session Table' : {}
                },
-               "SixRD" : {
-                  "SixRD" : {},
-                  "Stats" : {}
+               'SixRD' : {
+                  'SixRD' : {},
+                  'Stats' : {}
                },
-               "Stateful Firewall" : {
-                  "Stateful Firewall" : {},
-                  "Stats" : {
-                     "Alg" : {},
-                     "Global" : {}
+               'Stateful Firewall' : {
+                  'Stateful Firewall' : {},
+                  'Stats' : {
+                     'Alg' : {},
+                     'Global' : {}
                   }
                },
-               "Stateless NAT46" : {
-                  "Global" : {},
-                  "Static Mappings" : {},
-                  "Stats" : {}
+               'Stateless NAT46' : {
+                  'Global' : {},
+                  'Static Mappings' : {},
+                  'Stats' : {}
                },
-               "Static NAT" : {
-                  "Range List" : {},
-                  "Source Static" : {}
+               'Static NAT' : {
+                  'Range List' : {},
+                  'Source Static' : {}
                }
             },
-            "Dashboard" : {
-               "ADC" : {},
-               "Services Map" : {},
-               "System" : {}
+            'Dashboard' : {
+               'ADC' : {},
+               'Services Map' : {},
+               'System' : {}
             },
-            "GSLB" : {
-               "FQDNs" : {},
-               "Geo Locations" : {},
-               "Global" : {},
-               "Groups" : {},
-               "IP Lists" : {},
-               "Policies" : {},
-               "Service Groups" : {},
-               "Service IPs" : {},
-               "Sites" : {},
-               "Templates" : {}
+            'GSLB' : {
+               'FQDNs' : {},
+               'Geo Locations' : {},
+               'Global' : {},
+               'Groups' : {},
+               'IP Lists' : {},
+               'Policies' : {},
+               'Service Groups' : {},
+               'Service IPs' : {},
+               'Sites' : {},
+               'Templates' : {}
             },
-            "Network" : {
-               "ARP" : {
-                  "Global" : {},
-                  "IPv4" : {
-                     "IPv4 Dynamic" : {},
-                     "IPv4 Static" : {}
+            'Network' : {
+               'ARP' : {
+                  'Global' : {},
+                  'IPv4' : {
+                     'IPv4 Dynamic' : {},
+                     'IPv4 Static' : {}
                   },
-                  "IPv6" : {
-                     "IPv6 Dynamic" : {},
-                     "IPv6 Static" : {}
+                  'IPv6' : {
+                     'IPv6 Dynamic' : {},
+                     'IPv6 Static' : {}
                   }
                },
-               "BPDU Fwd Groups" : {
-                  "BPDU Fwd Groups" : {}
+               'BPDU Fwd Groups' : {
+                  'BPDU Fwd Groups' : {}
                },
-               "Interfaces" : {
-                  "Interface Global" : {},
-                  "LAN" : {},
-                  "LLDP" : {},
-                  "Management" : {},
-                  "Transparent" : {},
-                  "Trunks" : {},
-                  "Virtual Ethernets" : {}
+               'Interfaces' : {
+                  'Interface Global' : {},
+                  'LAN' : {},
+                  'LLDP' : {},
+                  'Management' : {},
+                  'Transparent' : {},
+                  'Trunks' : {},
+                  'Virtual Ethernets' : {}
                },
-               "LACP" : {
-                  "Lacp" : {}
+               'LACP' : {
+                  'Lacp' : {}
                },
-               "MDLB" : {
-                  "Scaleout" : {}
+               'MDLB' : {
+                  'Scaleout' : {}
                },
-               "Routes" : {
-                  "IPv4 Static Routes" : {
-                     "IPv4 Bfd" : {},
-                     "IPv4 Rib" : {}
+               'Routes' : {
+                  'IPv4 Static Routes' : {
+                     'IPv4 Bfd' : {},
+                     'IPv4 Rib' : {}
                   },
-                  "IPv6 Static Routes" : {
-                     "IPv6 Bfd" : {},
-                     "IPv6 Rib" : {}
+                  'IPv6 Static Routes' : {
+                     'IPv6 Bfd' : {},
+                     'IPv6 Rib' : {}
                   }
                },
-               "Trunk" : {
-                  "Trunks" : {}
+               'Trunk' : {
+                  'Trunks' : {}
                },
-               "VLAN" : {
-                  "Global" : {},
-                  "MAC" : {
-                     "Configured" : {},
-                     "Discovered" : {}
+               'VLAN' : {
+                  'Global' : {},
+                  'MAC' : {
+                     'Configured' : {},
+                     'Discovered' : {}
                   },
-                  "VLAN" : {}
+                  'VLAN' : {}
                }
             },
-            "Security" : {
-               "Access List" : {
-                  "Extended" : {},
-                  "IPv4" : {},
-                  "IPv6" : {},
-                  "Standard" : {}
+            'Security' : {
+               'Access List' : {
+                  'Extended' : {},
+                  'IPv4' : {},
+                  'IPv6' : {},
+                  'Standard' : {}
                },
-               "DC Firewall" : {
-                  "Global" : {},
-                  "Rulesets" : {},
-                  "Templates" : {},
-                  "Zones" : {}
+               'DC Firewall' : {
+                  'Global' : {},
+                  'Rulesets' : {},
+                  'Templates' : {},
+                  'Zones' : {}
                },
-               "DDos" : {
-                  "DDos" : {}
+               'DDos' : {
+                  'DDos' : {}
                },
-               "Forward Proxy" : {
-                  "Class Lists" : {
-                     "Configuration" : {},
-                     "Import" : {}
+               'Forward Proxy' : {
+                  'Class Lists' : {
+                     'Configuration' : {},
+                     'Import' : {}
                   },
-                  "Servers" : {},
-                  "Service Groups" : {},
-                  "Services" : {},
-                  "Statistics" : {},
-                  "Templates" : {}
+                  'Servers' : {},
+                  'Service Groups' : {},
+                  'Services' : {},
+                  'Statistics' : {},
+                  'Templates' : {}
                },
-               "IPsec VPN" : {
-                  "IKE Gateway" : {},
-                  "Settings" : {},
-                  "Statistics" : {},
-                  "VPN Tunnels" : {}
+               'IPsec VPN' : {
+                  'IKE Gateway' : {},
+                  'Settings' : {},
+                  'Statistics' : {},
+                  'VPN Tunnels' : {}
                },
-               "Object" : {
-                  "Object" : {}
+               'Object' : {
+                  'Object' : {}
                },
-               "Object Group" : {
-                  "Object Group" : {}
+               'Object Group' : {
+                  'Object Group' : {}
                },
-               "SSLi" : {
-                  "Class Lists" : {
-                     "Configuration" : {},
-                     "Import" : {}
+               'SSLi' : {
+                  'Class Lists' : {
+                     'Configuration' : {},
+                     'Import' : {}
                   },
-                  "Info" : {},
-                  "SSL Certs" : {},
-                  "Servers" : {},
-                  "Service Group" : {},
-                  "Services" : {},
-                  "Templates" : {}
+                  'Info' : {},
+                  'SSL Certs' : {},
+                  'Servers' : {},
+                  'Service Group' : {},
+                  'Services' : {},
+                  'Templates' : {}
                },
-               "WAF" : {
-                  "Global Stats" : {},
-                  "HTTP Policies" : {},
-                  "Reporting" : {},
-                  "WAF Bindings" : {},
-                  "WAF Files" : {},
-                  "WAF Templates" : {}
+               'WAF' : {
+                  'Global Stats' : {},
+                  'HTTP Policies' : {},
+                  'Reporting' : {},
+                  'WAF Bindings' : {},
+                  'WAF Files' : {},
+                  'WAF Templates' : {}
                },
-               "Web Categories" : {
-                  "Configure" : {},
-                  "License" : {},
-                  "Statistics" : {}
+               'Web Categories' : {
+                  'Configure' : {},
+                  'License' : {},
+                  'Statistics' : {}
                }
             },
-            "System" : {
-               "Admin" : {
-                  "External Authentication" : {
-                     "LDAP" : {},
-                     "RADIUS" : {},
-                     "Settings" : {},
-                     "TACACS Host" : {},
-                     "TACACS Monitor" : {}
+            'System' : {
+               'Admin' : {
+                  'External Authentication' : {
+                     'LDAP' : {},
+                     'RADIUS' : {},
+                     'Settings' : {},
+                     'TACACS Host' : {},
+                     'TACACS Monitor' : {}
                   },
-                  "Licensing" : {},
-                  "Lockout" : {},
-                  "Partitions" : {},
-                  "Partitions Group" : {},
-                  "RBA" : {
-                     "Groups" : {},
-                     "Roles" : {},
-                     "Settings" : {},
-                     "Users" : {}
+                  'Licensing' : {},
+                  'Lockout' : {},
+                  'Partitions' : {},
+                  'Partitions Group' : {},
+                  'RBA' : {
+                     'Groups' : {},
+                     'Roles' : {},
+                     'Settings' : {},
+                     'Users' : {}
                   },
-                  "Users" : {}
+                  'Users' : {}
                },
-               "Diagnostics" : {
-                  "AXDebug Config Files" : {},
-                  "Http Log Files" : {},
-                  "Show AXCore Files" : {},
-                  "Show AXDebug Files" : {},
-                  "Show Tech Files" : {}
+               'Diagnostics' : {
+                  'AXDebug Config Files' : {},
+                  'Http Log Files' : {},
+                  'Show AXCore Files' : {},
+                  'Show AXDebug Files' : {},
+                  'Show Tech Files' : {}
                },
-               "Getting Started" : {
-                  "Application" : {},
-                  "Network" : {},
-                  "System" : {}
+               'Getting Started' : {
+                  'Application' : {},
+                  'Network' : {},
+                  'System' : {}
                },
-               "Maintenance" : {
-                  "BAckup" : {
-                     "Log" : {},
-                     "Periodic Backup" : {},
-                     "System" : {}
+               'Maintenance' : {
+                  'Backup' : {
+                     'Log' : {},
+                     'Periodic Backup' : {},
+                     'System' : {}
                   },
-                  "Licenses" : {},
-                  "Restore" : {},
-                  "Upgrade" : {}
+                  'Licenses' : {},
+                  'Restore' : {},
+                  'Upgrade' : {}
                },
-               "Monitoring" : {
-                  "Netflow Monitors" : {
-                     "Netflow Monitor Global" : {},
-                     "Netflow Monitor Stats" : {},
-                     "Netflow Monitors" : {}
+               'Monitoring' : {
+                  'Netflow Monitors' : {
+                     'Netflow Monitor Global' : {},
+                     'Netflow Monitor Stats' : {},
+                     'Netflow Monitors' : {}
                   },
-                  "SNMP" : {
-                     "SNMP" : {},
-                     "SNMP Groups" : {},
-                     "SNMP MIB Download" : {},
-                     "SNMP Views" : {},
-                     "SNMPv1-v2c Users" : {},
-                     "SNMPv3 Users" : {}
+                  'SNMP' : {
+                     'SNMP' : {},
+                     'SNMP Groups' : {},
+                     'SNMP MIB Download' : {},
+                     'SNMP Views' : {},
+                     'SNMPv1-v2c Users' : {},
+                     'SNMPv3 Users' : {}
                   },
-                  "sFlow" : {
-                     "sFlow" : {},
-                     "sFlow Stats" : {}
+                  'sFlow' : {
+                     'sFlow' : {},
+                     'sFlow Stats' : {}
                   }
                },
-               "Settings" : {
-                  "Access Control" : {},
-                  "Actions" : {},
-                  "Boot Image" : {},
-                  "Certificate" : {},
-                  "DNS" : {},
-                  "General" : {},
-                  "Logging" : {},
-                  "Resource Usage" : {},
-                  "SMTP" : {},
-                  "Sync Settings" : {},
-                  "Terminal" : {},
-                  "Time" : {},
-                  "Web" : {}
+               'Settings' : {
+                  'Access Control' : {},
+                  'Actions' : {},
+                  'Boot Image' : {},
+                  'Certificate' : {},
+                  'DNS' : {},
+                  'General' : {},
+                  'Logging' : {},
+                  'Resource Usage' : {},
+                  'SMTP' : {},
+                  'Sync Settings' : {},
+                  'Terminal' : {},
+                  'Time' : {},
+                  'Web' : {}
                },
-               "System Log" : {
-                  "Audit" : {},
-                  "System" : {}
+               'System Log' : {
+                  'Audit' : {},
+                  'System' : {}
                },
-               "VRRP-A" : {
-                  "Failover Policy Template" : {},
-                  "Settings" : {
-                     "Global" : {},
-                     "Vrid" : {}
+               'VRRP-A' : {
+                  'Failover Policy Template' : {},
+                  'Settings' : {
+                     'Global' : {},
+                     'Vrid' : {}
                   },
-                  "Statistics" : {
-                     "Global Statistics" : {},
-                     "Vrid Statistics" : {}
+                  'Statistics' : {
+                     'Global Statistics' : {},
+                     'Vrid Statistics' : {}
                   },
-                  "VRRP-A Interface" : {
-                     "Ethernet" : {},
-                     "Trunk" : {}
+                  'VRRP-A Interface' : {
+                     'Ethernet' : {},
+                     'Trunk' : {}
                   }
                },
-               "aVCS" : {
-                  "Device" : {},
-                  "Settings" : {},
-                  "Statistics" : {
-                     "Device Statistics" : {},
-                     "aVCS Detail Stats" : {},
-                     "aVCS Summary" : {}
+               'aVCS' : {
+                  'Device' : {},
+                  'Settings' : {},
+                  'Statistics' : {
+                     'Device Statistics' : {},
+                     'aVCS Detail Stats' : {},
+                     'aVCS Summary' : {}
                   },
-                  "aVCS Debug File" : {},
-                  "aVCS Deployment Summary" : {}
+                  'aVCS Debug File' : {},
+                  'aVCS Deployment Summary' : {}
                }
             }
          },
          'Framework': {}
       }
    }
-}
+};
 
-var s='';
-var record = {};
-function f(o, parentKey){
-  for(var k in o){
-    if(!o.hasOwnProperty(k)){continue;}
-    var suffix = record[k] ? (record[k]+'') : '';
-    var k_and_suffix = k+suffix;
-     s+="r.db('work_genius').table('assignment_categories').insert({id:'"+k_and_suffix+"',name:'"+k+"',parentId:'"+parentKey+"'});" + "\r\n";
-    if (record.hasOwnProperty(k)){
-      record[k]++;
-    } else {
-      record[k] = 1;
-    }
-    if(typeof o[k]==='object'){
-      f(o[k], k_and_suffix);
-    }
-  }
-}
-f(obj, 'root');
-console.log(s);
+// var s='';
+// var record = {};
+// function f(o, parentKey){
+//   for(var k in o){
+//     if(!o.hasOwnProperty(k)){continue;}
+//     var suffix = record[k] ? (record[k]+'') : '';
+//     var k_and_suffix = k+suffix;
+//      s+="r.db('work_genius').table('assignment_categories').insert({id:'"+k_and_suffix+"',name:'"+k+"',parentId:'"+parentKey+"'});" + "\r\n";
+//     if (record.hasOwnProperty(k)){
+//       record[k]++;
+//     } else {
+//       record[k] = 1;
+//     }
+//     if(typeof o[k]==='object'){
+//       f(o[k], k_and_suffix);
+//     }
+//   }
+// }
+// f(obj, 'root');
+// console.log(s);
