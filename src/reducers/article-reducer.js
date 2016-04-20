@@ -5,6 +5,7 @@
 import { List , OrderedMap, fromJS} from 'immutable';
 // Constants
 import actionTypes from '../constants/action-types';
+import { SERVER_FILES_URL } from '../constants/config';
 
 const initialState = OrderedMap({
   // data of article
@@ -31,7 +32,14 @@ const initialState = OrderedMap({
   isDeleting: false,
 });
 
+const getFileUrl = (id) => {
+  return `${SERVER_FILES_URL}/${id}`;
+};
+
 const articleToState = (state, action) => {
+  const withUrlFiles = action.files ? action.files.map(file => {
+    return Object.assign({}, file, {url: getFileUrl(file.id)});
+  }) : [];
   return state.set('id', action.id)
     .set('title', action.title)
     .set('documentType', action.documentType)
@@ -40,14 +48,13 @@ const articleToState = (state, action) => {
     .set('author', OrderedMap(action.author))
     .set('category', OrderedMap(action.category))
     .set('tags', List(action.tags || []))
-    .set('files', fromJS(action.files || []))
+    .set('files', fromJS(withUrlFiles || []))
     .set('comments', fromJS(action.comments || []))
     .set('reportTo', List(action.reportTo || []))
     .set('content', action.content)
     .set('createdAt', action.createdAt)
     .set('updatedAt', action.updatedAt);
 };
-
 
 export default function articleReducer(state = initialState, action) {
   const files = state.get('files');
@@ -84,10 +91,9 @@ export default function articleReducer(state = initialState, action) {
           return item.get('tempId') === action.tempId;
         }), (item) => {
           return item.delete('loaded')
-            .delete('tempId')
             .delete('total')
             .delete('isUploading')
-            .set('url', action.file.url)
+            .set('url', getFileUrl(action.file.id))
             .set('id', action.file.id);
       }));
     case actionTypes.REMOVE_ARTICLE_FILE_SUCCESS:

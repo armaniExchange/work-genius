@@ -9,7 +9,12 @@
     border-radius: 5px;
     border: 1px solid lightgray;
     background: white;
-    padding: 15;
     overflow-x: scroll;
+    padding: 15px;
+    img {
+      max-width: 100%;
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
   }
 }
