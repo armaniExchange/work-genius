@@ -50,9 +50,8 @@ let WorkLogQuery = {
 					.pluck('applicant_id','start_date','end_date','hours').coerceTo('array');
 				let ptoList = await query.run(connection);
 
-				//get all worklog list in current date range
-				query = r.db('work_genius').table('worklog').filter(r.row('date').ge(startDate).and(r.row('date').le(endDate)))
-					.group('employee_id','date').coerceTo('array');
+				//get all uncompleted worklog list
+				query = r.db('work_genius').table('worklog').filter({status:0}).orderBy('start_date').coerceTo('array');
 				let worklogList = await query.run(connection);
 
 				//get all dates and check if the date is weekend or not
@@ -66,8 +65,12 @@ let WorkLogQuery = {
 				} 
 
 				//get all public holiday
+				let holidayStartDate = startDate;
+				if(worklogList && worklogList.length>0 && worklogList[0].start_date){
+					holidayStartDate = worklogList[0].start_date;
+				}
 				query = r.db('work_genius').table('holiday')
-					.filter(r.row('date').ge(startDate).and(r.row('date').le(endDate))).coerceTo('array');  
+					.filter(r.row('date').ge(holidayStartDate)).coerceTo('array');  
 				let holidayList = await query.run(connection);
 
 				//construct the result array
@@ -101,16 +104,71 @@ let WorkLogQuery = {
 						}
 					});
 
-					//set the worklog items of current day
-					userItem.worklogs.forEach(dateItem => {
-						let logObj = worklogList.find(log =>{
-							return log.group.includes(user.id) && log.group.includes(dateItem.date);
-						});
-
-						if(logObj){
-							dateItem.worklog_items = logObj.reduction;
-						}
+					//get all my worklog list 
+					let myWorkLogList = worklogList.filter(log => {
+						return log.employee_id === userItem.id;
 					});
+					//assign the worklog to proper date
+					// According to UI layer's requirement, we should display the worklog every day in its duration.
+					// For example, worklog {start_date: '2016-04-01',duration:16}, we should return this worklog in 
+					// ['2016-04-01','2016-04-02']
+					// Note: 1. we should jump over the pto and pulbic holiday when assigning the worklog
+					// 2. the duration of worklog means work hours.
+					if(myWorkLogList && myWorkLogList.length>0){
+						for(let log of myWorkLogList){
+							if(log.duration <= 8){
+								// if the duartion of work log is lower than 8,
+								// we just assign it to its start date
+								if(log.start_date < startDate){
+									continue;
+								}else{
+									let targetItem = userItem.worklogs.find(dateItem => {
+										return moment(dateItem.date).isSame(log.start_date,'day');
+									});
+									if(targetItem){
+										targetItem.worklog_items = targetItem.worklog_items || [];
+										targetItem.worklog_items.push(log);
+									}
+								}
+							}else{
+								let duration = log.duration;
+								let tmpDate = log.start_date;
+								while(duration > 0 && tmpDate <= endDate){
+									if(tmpDate >= startDate){
+										let targetItem = userItem.worklogs.find(dateItem => {
+											return moment(dateItem.date).isSame(tmpDate,'day');
+										});
+										if(!!targetItem && targetItem.type != 'pto' && targetItem.type != 'holiday'){
+											targetItem.worklog_items = targetItem.worklog_items || [];
+											targetItem.worklog_items.push(log);
+											duration -= 8;
+										}
+										
+									}else{
+										//check if pto
+										let findPto = ptoList.find(pto => {
+											if(moment(pto.start_date).isSame(moment(pto.end_date))){
+												return pto.applicant_id == userItem.id
+													&& moment(tmpDate).isSame(moment(pto.start_date,'day'));
+											}else{
+												return pto.applicant_id == userItem.id
+													&& moment(tmpDate).isBetween(pto.start_date,pto.end_date);
+											}
+										});
+										// check if public holiday
+										let findHoliday = holidayList.find( holiday => {
+											return holiday.date == tmpDate && holiday.location == userItem.location;
+										});
+										if(![0,6].includes(moment(tmpDate).day()) && !findPto && !findHoliday){
+											duration -= 8;
+										}
+		
+									}
+									tmpDate = tmpDate + 1000*60*60*24;
+								}
+							}
+						}
+					}
 					result.push(userItem);
 				}
 				await connection.close();
@@ -150,17 +208,18 @@ let WorkLogQuery = {
 				let endDate = startDate + (dateRange -1) * 1000 * 3600 * 24;
 				query = r.db('work_genius').table('users').get(employeeId).pluck('id','name','location');
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				//get user info
+				//get all users
 				let user = await query.run(connection); 
 
 				//get all PTO data
-				query = r.db('work_genius').table('pto').filter({status:'APPROVED',applicant_id: employeeId}).filter(r.row('hours').coerceTo('number').ge(8))
+				query = r.db('work_genius').table('pto').filter({status:'APPROVED',applicant_id:employeeId})
+					.filter(r.row('hours').coerceTo('number').ge(8))
 					.pluck('applicant_id','start_date','end_date','hours').coerceTo('array');
 				let ptoList = await query.run(connection);
 
-				//get all worklog list in current date range
-				query = r.db('work_genius').table('worklog').filter(r.row('date').ge(startDate).and(r.row('date').le(endDate)))
-					.filter({employee_id : employeeId}).group('date').coerceTo('array');
+				//get all uncompleted worklog list
+				query = r.db('work_genius').table('worklog').filter({status:0,employee_id:employeeId})
+					.orderBy('start_date').coerceTo('array');
 				let worklogList = await query.run(connection);
 
 				//get all dates and check if the date is weekend or not
@@ -174,8 +233,12 @@ let WorkLogQuery = {
 				} 
 
 				//get all public holiday
-				query = r.db('work_genius').table('holiday').filter({location : user.location})
-					.filter(r.row('date').ge(startDate).and(r.row('date').le(endDate))).coerceTo('array');  
+				let holidayStartDate = startDate;
+				if(worklogList && worklogList.length>0 && worklogList[0].start_date){
+					holidayStartDate = worklogList[0].start_date;
+				}
+				query = r.db('work_genius').table('holiday').filter({location:user.location})
+					.filter(r.row('date').ge(holidayStartDate)).coerceTo('array');  
 				let holidayList = await query.run(connection);
 
 				//construct the result array
@@ -183,13 +246,16 @@ let WorkLogQuery = {
 				for(let dateItem of dateList){
 					userItem.worklogs.push(Object.assign({},dateItem));
 				}
+
 				userItem.worklogs.forEach(dateItem => {
 					//set pto info
 					let findPTO = ptoList.find( pto => {
 						if(moment(pto.start_date).isSame(moment(pto.end_date))){
-							return moment(dateItem.date).isSame(moment(pto.start_date));
+							return pto.applicant_id == user.id
+								&& moment(dateItem.date).isSame(moment(pto.start_date));
 						}else{
-							return moment(dateItem.date).isBetween(pto.start_date,pto.end_date);
+							return pto.applicant_id == user.id
+								&& moment(dateItem.date).isBetween(pto.start_date,pto.end_date);
 						}
 					});
 					if(!!findPTO){
@@ -198,23 +264,78 @@ let WorkLogQuery = {
 
 					//set public holiday info
 					let findHoliday = holidayList.find( holiday => {
-						return holiday.date == dateItem.date;
+						return holiday.date == dateItem.date && holiday.location == userItem.location;
 					});
 					if(!!findHoliday){
 						dateItem.type = findHoliday.type;
 					}
 				});
 
-				//set the worklog items of current day
-				userItem.worklogs.forEach(dateItem => {
-					let logObj = worklogList.find(log =>{
-						return log.group == dateItem.date;
-					});
-
-					if(logObj){
-						dateItem.worklog_items = logObj.reduction;
-					}
+				//get all my worklog list 
+				let myWorkLogList = worklogList.filter(log => {
+					return log.employee_id === userItem.id;
 				});
+				//assign the worklog to proper date
+				// According to UI layer's requirement, we should display the worklog every day in its duration.
+				// For example, worklog {start_date: '2016-04-01',duration:16}, we should return this worklog in 
+				// ['2016-04-01','2016-04-02']
+				// Note: 1. we should jump over the pto and pulbic holiday when assigning the worklog
+				// 2. the duration of worklog means work hours.
+				if(myWorkLogList && myWorkLogList.length>0){
+					for(let log of myWorkLogList){
+						if(log.duration <= 8){
+							// if the duartion of work log is lower than 8,
+							// we just assign it to its start date
+							if(log.start_date < startDate){
+								continue;
+							}else{
+								let targetItem = userItem.worklogs.find(dateItem => {
+									return moment(dateItem.date).isSame(log.start_date,'day');
+								});
+								if(targetItem){
+									targetItem.worklog_items = targetItem.worklog_items || [];
+									targetItem.worklog_items.push(log);
+								}
+							}
+						}else{
+							let duration = log.duration;
+							let tmpDate = log.start_date;
+							while(duration > 0 && tmpDate <= endDate){
+								if(tmpDate >= startDate){
+									let targetItem = userItem.worklogs.find(dateItem => {
+										return moment(dateItem.date).isSame(tmpDate,'day');
+									});
+									if(!!targetItem && targetItem.type != 'pto' && targetItem.type != 'holiday'){
+										targetItem.worklog_items = targetItem.worklog_items || [];
+										targetItem.worklog_items.push(log);
+										duration -= 8;
+									}
+									
+								}else{
+									//check if pto
+									let findPto = ptoList.find(pto => {
+										if(moment(pto.start_date).isSame(moment(pto.end_date))){
+											return pto.applicant_id == userItem.id
+												&& moment(tmpDate).isSame(moment(pto.start_date,'day'));
+										}else{
+											return pto.applicant_id == userItem.id
+												&& moment(tmpDate).isBetween(pto.start_date,pto.end_date);
+										}
+									});
+									// check if public holiday
+									let findHoliday = holidayList.find( holiday => {
+										return holiday.date == tmpDate && holiday.location == userItem.location;
+									});
+									if(![0,6].includes(moment(tmpDate).day()) && !findPto && !findHoliday){
+										duration -= 8;
+									}
+	
+								}
+								tmpDate = tmpDate + 1000*60*60*24;
+							}
+						}
+					}
+				}
 				result.push(userItem);
 				
 				await connection.close();
