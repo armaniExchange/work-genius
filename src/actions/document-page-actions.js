@@ -5,6 +5,13 @@ import {
     apiFailure
 } from './app-actions';
 
+export function setSelectedCategory(data) {
+	return {
+		type: actionTypes.SET_SELECTED_CATEGORY,
+		data
+	};
+}
+
 export function fetchArticlesFail(error) {
   return {
     type: actionTypes.FETCH_ARTICLES_FAIL,
