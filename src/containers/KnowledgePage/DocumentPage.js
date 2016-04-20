@@ -83,6 +83,13 @@ class DocumentPage extends Component {
     });
   }
 
+  _onNodeClick(item) {
+    this.props.documentActions.setSelectedCategory({...item, isLeaf: false});
+  }
+  _onLeafClick(item) {
+    this.props.documentActions.setSelectedCategory({...item, isLeaf: true});
+  }
+
   render() {
     const leftPanelStyle = {
       width: '30%',
@@ -96,7 +103,8 @@ class DocumentPage extends Component {
       articleList,
       allTags,
       allCategories,
-      articleTotalCount
+      articleTotalCount,
+      currentSelectedCategory
     } = this.props;
     const {
       isConfirmDeleteArticleDialogVisible,
@@ -119,7 +127,11 @@ class DocumentPage extends Component {
             onClick={::this.queryWithTag} />
           <div>
             <h5>Tree</h5>
-            <CategoryTree data={allCategories} />
+            <CategoryTree
+                data={allCategories}
+                selectedPath={currentSelectedCategory.path}
+                onNodeClick={::this._onNodeClick}
+                onLeafClick={::this._onLeafClick} />
           </div>
         </div>
         <div style={rightPanelStyle}>
@@ -156,6 +168,7 @@ DocumentPage.propTypes = {
   articleList            : PropTypes.array,
   articleTotalCount      : PropTypes.number,
   allCategories          : PropTypes.object,
+  currentSelectedCategory: PropTypes.object,
   allTags                : PropTypes.array,
   documentActions        : PropTypes.object.isRequired,
   articleActions         : PropTypes.object.isRequired
