@@ -83,22 +83,22 @@ let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler, isUserAdmin, curren
                         if (isUserAdmin && task['applicant'] === currentUserName) {
                             actionsHTML = (
                                 <Td key={cellIndex}>
-                                    <ApproveButton onClick={() => {onStatusUpdateHandler({...task, status: APPROVED});}} />
-                                    <DenyButton onClick={() => {onStatusUpdateHandler({...task, status: DENIED});}} />
-                                    <RestoreButton onClick={() => {onStatusUpdateHandler({...task, status: CANCEL_REQUEST_PENDING});}} />
+                                    <ApproveButton onClick={() => {onStatusUpdateHandler({...task, status: APPROVED});}} title="Approve"/>
+                                    <DenyButton onClick={() => {onStatusUpdateHandler({...task, status: DENIED});}} title="Deny" />
+                                    <RestoreButton onClick={() => {onStatusUpdateHandler({...task, status: CANCEL_REQUEST_PENDING});}} title="Cancel Request" />
                                 </Td>
                             );
                         } else if (isUserAdmin) {
                             actionsHTML = (
                                 <Td key={cellIndex}>
-                                    <ApproveButton onClick={() => {onStatusUpdateHandler({...task, status: APPROVED});}} />
-                                    <DenyButton onClick={() => {onStatusUpdateHandler({...task, status: DENIED});}} />
+                                    <ApproveButton onClick={() => {onStatusUpdateHandler({...task, status: APPROVED});}} title="Approve" />
+                                    <DenyButton onClick={() => {onStatusUpdateHandler({...task, status: DENIED});}} title="Deny" />
                                 </Td>
                             );
                         } else if (task['applicant'] === currentUserName) {
                             actionsHTML = (
                                 <Td key={cellIndex}>
-                                    <RestoreButton onClick={() => {onStatusUpdateHandler({...task, status: CANCEL_REQUEST_PENDING});}} />
+                                    <RestoreButton onClick={() => {onStatusUpdateHandler({...task, status: CANCEL_REQUEST_PENDING});}} title="Cancel Request" />
                                 </Td>
                             );
                         } else {
@@ -111,13 +111,13 @@ let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler, isUserAdmin, curren
                     } else if (task.status === CANCEL_REQUEST_PENDING && isUserAdmin) {
                         actionsHTML = (
                             <Td key={cellIndex}>
-                                <ApproveButton onClick={() => {onStatusUpdateHandler({...task, status: CANCEL_REQUEST_APPROVED});}} />
+                                <ApproveButton onClick={() => {onStatusUpdateHandler({...task, status: CANCEL_REQUEST_APPROVED});}} title="Approve" />
                             </Td>
                         );
                     } else if (task.status === APPROVED && task['applicant'] === currentUserName) {
                         actionsHTML = (
                             <Td key={cellIndex}>
-                                <RestoreButton onClick={() => {onStatusUpdateHandler({...task, status: CANCEL_REQUEST_PENDING});}} />
+                                <RestoreButton onClick={() => {onStatusUpdateHandler({...task, status: CANCEL_REQUEST_PENDING});}} title="Cancel Request" />
                             </Td>
                         );
                     } else {
