@@ -51,7 +51,7 @@ let WorkLogQuery = {
 				let ptoList = await query.run(connection);
 
 				//get all uncompleted worklog list
-				query = r.db('work_genius').table('worklog').filter({status:0}).orderBy('start_date').coerceTo('array');
+				query = r.db('work_genius').table('worklog').orderBy('start_date').coerceTo('array');
 				let worklogList = await query.run(connection);
 
 				//get all dates and check if the date is weekend or not
@@ -63,10 +63,6 @@ let WorkLogQuery = {
 						day_type: [0,6].includes(moment(tmpDate).day())? 'holiday':'workday'
 					});
 				} 
-
-				console.log('dateList:');
-				console.log(dateList);
-				console.log();
 
 				//get all public holiday
 				let holidayStartDate = startDate;
@@ -222,7 +218,7 @@ let WorkLogQuery = {
 				let ptoList = await query.run(connection);
 
 				//get all uncompleted worklog list
-				query = r.db('work_genius').table('worklog').filter({status:0,employee_id:employeeId})
+				query = r.db('work_genius').table('worklog').filter({employee_id:employeeId})
 					.orderBy('start_date').coerceTo('array');
 				let worklogList = await query.run(connection);
 
