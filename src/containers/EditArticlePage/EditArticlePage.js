@@ -38,7 +38,16 @@ class EditArticlePage extends Component {
     if (this.props.isEditing && !nextProps.isEditing) {
       this.props.history.replace(`/main/knowledge/document/${nextProps.id}`);
     }
-    if (this.props.id === nextProps.id && this.props.files.length !== nextProps.files.lengh) {
+    const thisFiles = this.props.files;
+    const nextFiles = nextProps.files;
+    const getJustUpdatedImageFiles = this.getJustUpdatedImageFiles(thisFiles, nextFiles);
+
+    if (getJustUpdatedImageFiles.length) {
+      this.setState({
+        editingContent: this.state.editingContent + `\n![image](${getJustUpdatedImageFiles[0].url})`
+      });
+    }
+    if (this.props.id === nextProps.id && thisFiles.length !== nextFiles.lengh) {
       // fiile upload change files, but skip to set new state
     } else {
       const newState = this.getEditingStateFromProps(nextProps);
@@ -48,6 +57,17 @@ class EditArticlePage extends Component {
 
   componentWillUnmount() {
     this.props.articleActions.clearArticle();
+  }
+
+  getJustUpdatedImageFiles(thisFiles, nextFiles) {
+    return nextFiles.filter(nextFile => {
+      const thisFile = thisFiles.filter( eachFile => nextFile.tempId === eachFile.tempId )[0];
+      return thisFiles.length
+        && thisFile
+        && thisFile.isUploading
+        && !nextFile.isUploading
+        && thisFile.type.search('image') !== -1;
+    });
   }
 
   isCreate() {
