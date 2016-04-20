@@ -6,6 +6,9 @@ import {
   GraphQLList
 } from 'graphql';
 
+import AuthorInputType from '../User/AuthorInputType';
+import CommentInputType from '../Comment/CommentInputType';
+
 const ArticleInputType = new GraphQLInputObjectType({
   name: 'ArticleInputType',
   descriptyion: 'An documentation article',
@@ -39,28 +42,10 @@ const ArticleInputType = new GraphQLInputObjectType({
       description: 'Article\'s title'
     },
     comments: {
-      type: new GraphQLList(new GraphQLInputObjectType({
-        name: 'CommentInputType',
-        fields: {
-          'id': {
-            type: GraphQLID,
-            description: 'Comment ID'
-          }
-        }
-      })),
+      type: new GraphQLList(CommentInputType),
       description: 'Comment List'
     },
-    author:{
-      type: new GraphQLInputObjectType({
-        name: 'AuthorInputType',
-        fields: {
-          'id': {
-            type: GraphQLString,
-            description: 'Author ID'
-          },
-        }
-      })
-    },
+    author:{ type: AuthorInputType },
     files:{
       type: new GraphQLList(new GraphQLInputObjectType({
         name: 'FileInputType',

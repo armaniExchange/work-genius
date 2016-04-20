@@ -41,8 +41,11 @@ function _fetchArticle(id) {
         },
         comments {
           id,
-          title,
-          content
+          content,
+          author {
+            id,
+            name
+          }
         },
         files {
           id,
@@ -214,6 +217,13 @@ export function deleteArticleSuccess(id) {
   return {
     type: actionTypes.DELETE_ARTICLE_SUCCESS,
     id
+  };
+}
+
+export function deleteArticleFail(error) {
+  return {
+    type: actionTypes.DELETE_ARTICLE_FAIL,
+    error
   };
 }
 
@@ -433,5 +443,119 @@ export function removeArticleFile({articleId, file, files}) {
 export function clearArticle() {
   return {
     type: actionTypes.CLEAR_ARTICLE
+  };
+}
+
+export function createCommentSuccess(comment) {
+  return {
+    type: actionTypes.CREATE_COMMENT_SUCCESS,
+    comment
+  };
+}
+
+export function createCommentFail(error) {
+  return {
+    type: actionTypes.CREATE_COMMENT_FAIL,
+    error
+  };
+}
+
+export function createComment({articleId, comment}) {
+  return dispatch => {
+    dispatch({
+      type: actionTypes.CREATE_COMMENT,
+      comment
+    });
+    dispatch(setLoadingState(true));
+
+    const config = {
+      method: 'POST',
+      body: `
+        mutation RootMutationType {
+          createComment( comment: ${stringifyObject(comment)} articleId: "${articleId}") {
+            id,
+            content,
+            updatedAt,
+            author {
+              id,
+              name
+            }
+          }
+        }
+      `,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((body) => {
+        dispatch(createCommentSuccess(body.data.createComment));
+        dispatch(setLoadingState(false));
+      })
+      .catch((error) => {
+        dispatch(createCommentFail(error));
+        dispatch(apiFailure(error));
+      });
+  };
+}
+
+export function deleteCommentSuccess(id) {
+  return {
+    type: actionTypes.DELETE_COMMENT_SUCCESS,
+    id
+  };
+}
+
+export function deleteCommentFail(error) {
+  return {
+    type: actionTypes.DELETE_COMMENT_FAIL,
+    error
+  };
+}
+
+export function deleteComment({articleId, id}) {
+  return dispatch => {
+    dispatch({
+      type: actionTypes.DELETE_COMMENT,
+      id
+    });
+    dispatch(setLoadingState(true));
+
+    const config = {
+      method: 'POST',
+      body: `
+        mutation RootMutationType {
+          deleteComment( id: "${id}" articleId: "${articleId}")
+        }
+      `,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then(() => {
+        dispatch(deleteCommentSuccess(id));
+        dispatch(setLoadingState(false));
+      })
+      .catch((error) => {
+        dispatch(deleteCommentFail(error));
+        dispatch(apiFailure(error));
+      });
   };
 }

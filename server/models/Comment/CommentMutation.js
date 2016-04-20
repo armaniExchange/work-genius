@@ -8,55 +8,108 @@ import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 
-let CategoryMutation = {
-	'deleteCommentById': {
-		type: GraphQLString,
-		description: 'Delete a comment by it\'s ID',
-        args: {
-			commentId: {
-				type: GraphQLID,
-				description: 'The comment id'
-			}
-		},
-		resolve: async (root, { commentId }) => {
-			let connection = null,
-				query = null;
+import CommentType from './CommentType.js';
+import CommentInputType from './CommentInputType.js';
 
-			try {
-				query = r.db('work_genius').table('comments').get(commentId).delete();
-				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				await query.run(connection);
-				await connection.close();
-			} catch (err) {
-				return err;
-			}
-			return 'Deleted successfully!';
-		}
-	},
-    'createComment': {
-		type: GraphQLString,
-		description: 'Create a comment by it\'s ID',
-        args: {
-			data: {
-				type: GraphQLString,
-				description: 'new comment data'
-			}
-		},
-		resolve: async (root, { data }) => {
-			let connection = null,
-				query = null;
+const CommentMutation = {
+  deleteComment: {
+    type: GraphQLString,
+    description: 'Delete a comment by it\'s ID',
+    args: {
+      id: {
+        type: GraphQLID,
+        description: 'The comment ID'
+      },
+      articleId: {
+        type: GraphQLID,
+        description: 'The article ID'
+      }
+    },
+    resolve: async (root, { id, articleId }) => {
+      let connection = null, query = null;
 
-			try {
-				query = r.db('work_genius').table('comments').insert(JSON.parse(data));
-				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				await query.run(connection);
-				await connection.close();
-			} catch (err) {
-				return err;
-			}
-			return 'Created successfully!';
-		}
-	},
+      try {
+        connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+
+        if (articleId) {
+          await r.db('work_genius')
+            .table('articles')
+            .get(articleId)
+            .update({
+              comments: r.row('comments').filter(comment => comment.id !== id )
+            });
+        }
+        query = r.db('work_genius').table('comments').get(id).delete();
+        await query.run(connection);
+        await connection.close();
+      } catch (err) {
+        return err;
+      }
+      return 'Deleted successfully!';
+    }
+  },
+
+  createComment: {
+    type: CommentType,
+    description: 'Create a new comment',
+    args: {
+      comment: { type: CommentInputType },
+      articleId: {
+        type: GraphQLID,
+        description: 'The article ID'
+      }
+    },
+    resolve: async (root, { comment, articleId }) => {
+      try {
+        const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+        let result = null;
+        const user = root.req.decoded;
+        const now = new Date().getTime();
+
+        result = await r.db('work_genius')
+          .table('comments')
+          .insert({
+            authorId: user.id,
+            content: comment.content,
+            createdAt: now,
+            updatedAt: now
+          })
+          .run(connection);
+
+        if (result && result.generated_keys && result.generated_keys.length > 0) {
+          const id = result.generated_keys[0];
+
+          if (articleId) {
+            await r.db('work_genius')
+              .table('articles')
+              .get(articleId)
+              .update({
+                commentsId: r.row('commentsId').default([]).append(id)
+              })
+              .run(connection);
+          }
+
+          result = await r.db('work_genius')
+            .table('comments')
+            .get(id)
+            .merge(commentItem => {
+              return {
+                author: r.db('work_genius').table('users').get(commentItem('authorId')).default(null),
+              };
+            })
+            .run(connection);
+          await connection.close();
+
+          return result;
+        } else {
+          await connection.close();
+          throw 'No generated_keys found';
+        }
+      } catch (err) {
+        return err;
+      }
+    }
+  },
 };
 
-export default CategoryMutation;
+export default CommentMutation;

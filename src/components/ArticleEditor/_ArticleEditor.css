@@ -7,10 +7,4 @@
     margin-left: -25px;
     width: 100%;
   }
-  .codemirror-wrapper {
-    border-radius: 5;
-    border: 1px solid lightgray;
-    background: none;
-    overflow: hidden;
-  }
 }

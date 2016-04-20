@@ -29,6 +29,8 @@ const initialState = OrderedMap({
 
 export default function articleReducer(state = initialState, action) {
   let files = state.get('files');
+  let comments = state.get('comments');
+
   switch (action.type) {
     case actionTypes.CREATE_ARTICLE_SUCCESS:
     case actionTypes.UPDATE_ARTICLE_SUCCESS:
@@ -60,7 +62,7 @@ export default function articleReducer(state = initialState, action) {
       return state.set('isDeleting', false);
     case actionTypes.UPLOAD_ARTICLE_FILE:
       const uploading_file = Object.assign({}, action.file, {isUploading: true});
-      return state.set('files', state.get('files').push(fromJS(uploading_file)));
+      return state.set('files', files.push(fromJS(uploading_file)));
     case actionTypes.UPLOAD_ARTICLE_FILE_PROGRESS:
       return state.set('files', files.update(files.findIndex((item) => {
           return item.get('tempId') === action.tempId;
@@ -87,6 +89,12 @@ export default function articleReducer(state = initialState, action) {
     case actionTypes.REMOVE_ARTICLE_FILE_SUCCESS:
       return state.set('files', files.filter(removedFile => {
         return removedFile.get('id') !== action.id;
+      }));
+    case actionTypes.CREATE_COMMENT_SUCCESS:
+      return state.set('comments', comments.push(fromJS(action.comment)));
+    case actionTypes.DELETE_COMMENT_SUCCESS:
+      return state.set('comments', comments.filter(removedComment => {
+        return removedComment.get('id') !== action.id;
       }));
     case actionTypes.CLEAR_ARTICLE:
       return initialState;

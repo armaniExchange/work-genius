@@ -1,7 +1,7 @@
 // GraphQL
 import {
-	GraphQLObjectType,
-	GraphQLSchema
+  GraphQLObjectType,
+  GraphQLSchema
 } from 'graphql';
 
 // Query & Mutations
@@ -28,83 +28,83 @@ import WorkLogQuery from '../models/WorkLog/WorkLogQuery.js';
 import MailMutation from '../models/EMail/EMailMutation.js';
 
 const schema = new GraphQLSchema({
-	query: new GraphQLObjectType({
-		name: 'RootQueryType',
-		fields: {
-			// PTO Page
-			allUserWithPto         : UserQuery.allUserWithPto,
-			allUserWithOvertime    : UserQuery.allUserWithOvertime,
-			ptoApplications        : PTOQuery.ptoApplications,
-			overtimeApplications   : PTOQuery.overtimeApplications,
-			// Task Page
-			allUserWithTasks       : UserQuery.allUserWithTasks,
-			tasks                  : TaskQuery.tasks,
-			// User page
-			allUserWithPrivilege   : UserQuery.allUserWithPrivilege,
-			currentUser            : UserQuery.currentUser,
-			allUsers 			   : UserQuery.allUsers,
-			// Document page
-			allCategories          : CategoryQuery.getAllCategories,
-			categoryTree           : CategoryQuery.getCategoryTree,
-			commentById            : CommentQuery.getCommentById,
-			tags          		   : CategoryQuery.getAllTags,
-			getArticle 			   : ArticleQuery.getArticle,
-			getAllArticles 		   : ArticleQuery.getAllArticles,
-			getAllBugs			   : BugQuery.getAllBugs,
-			getAllBugTags	  	   : BugTagQuery.getAllBugTags,
-			getAllRelease		   : BugTagQuery.getAllRelease,
-			// Feature Analysis
-			assignmentCategoryTree : AssignmentCategoryQuery.getAssignmentCategoryTree,
-			allAssignmentCategories: AssignmentCategoryQuery.getAllAssignmentCategories,
-			tags          		   : AssignmentCategoryQuery.getAllTags,
-			allDifficulties        : AssignmentCategoryQuery.getAllDifficulties,
-			getRootCauseSummary	   : BugStats.getRootCauseSummary,
-			getOwnerSummary		   : BugStats.getOwnerSummary,
-			getTagSummary		   : BugStats.getBugSummary,
-			getOwnerRootCauseSummary	   : BugStats.getOwnerRootCauseSummary,
-			//worklog
-			getWorkLogList		   : WorkLogQuery.getWorkLogList,
-			getWorkLogByEmployeeId : WorkLogQuery.getWorkLogByEmployeeId
-		}
-	}),
-	mutation: new GraphQLObjectType({
-		name: 'RootMutationType',
-		fields: {
-			// Mail APIs
-			sendMail                  : MailMutation.sendMail,
-			sendMailIncludingManagers : MailMutation.sendMailIncludingManagers,
-			// Task Page
-			initiateCrawler           : TaskMutation.initiateCrawler,
-			editTaskEta               : TaskMutation.editTaskEta,
-			deleteInternalFeatures    : TaskMutation.deleteInternalFeatures,
-			createInternalFeatures    : TaskMutation.createInternalFeatures,
-			updateInternalFeatures    : TaskMutation.updateInternalFeatures,
-			// PTO Page
-			createPTOApplication      : PTOMutation.createPTOApplication,
-			deletePTOApplication      : PTOMutation.deletePTOApplication,
-			updatePTOApplicationStatus: PTOMutation.updatePTOApplicationStatus,
-			createOvertimeApplication : PTOMutation.createOvertimeApplication,
-			updateOvertimeApplicationStatus: PTOMutation.updateOvertimeApplicationStatus,
-			// User page
-			updateUserPrivilege       : UserMutation.updateUserPrivilege,
-			// Document page
-			createComment             : CommentMutation.createComment,
-			deleteComment             : CommentMutation.deleteCommentById,
-			createArticle			  : ArticleMutation.createArticle,
-			updateArticle			  : ArticleMutation.updateArticle,
-			deleteArticle			  : ArticleMutation.deleteArticle,
-      updateAssignmentCategory: AssignmentCategoryMutation.updateAssignmentCategory,
-			//Bug page
-			updateBug				  : BugMutation.updateBug,
-			createBugTag			  : BugTagMutation.createBugTag,
-			createRelease			  : BugTagMutation.createRelease,
-			//work log page
-			createWorkLog			  : WorkLogMutation.createWorkLog,
-			updateWorkLog			  : WorkLogMutation.updateWorkLog,
-			deleteWorkLog			  : WorkLogMutation.deleteWorkLog,
-			createWorkLogBatch		  : WorkLogMutation.createWorkLogBatch
-		}
-	})
+  query: new GraphQLObjectType({
+    name: 'RootQueryType',
+    fields: {
+      // PTO Page
+      allUserWithPto           : UserQuery.allUserWithPto,
+      allUserWithOvertime      : UserQuery.allUserWithOvertime,
+      ptoApplications          : PTOQuery.ptoApplications,
+      overtimeApplications     : PTOQuery.overtimeApplications,
+      // Task Page
+      allUserWithTasks         : UserQuery.allUserWithTasks,
+      tasks                    : TaskQuery.tasks,
+      // User page
+      allUserWithPrivilege     : UserQuery.allUserWithPrivilege,
+      currentUser              : UserQuery.currentUser,
+      allUsers                 : UserQuery.allUsers,
+      // Document page
+      allCategories            : CategoryQuery.getAllCategories,
+      categoryTree             : CategoryQuery.getCategoryTree,
+      commentById              : CommentQuery.getCommentById,
+      tags                     : CategoryQuery.getAllTags,
+      getArticle               : ArticleQuery.getArticle,
+      getAllArticles           : ArticleQuery.getAllArticles,
+      getAllBugs               : BugQuery.getAllBugs,
+      getAllBugTags            : BugTagQuery.getAllBugTags,
+      getAllRelease            : BugTagQuery.getAllRelease,
+      // Feature Analysis
+      assignmentCategoryTree   : AssignmentCategoryQuery.getAssignmentCategoryTree,
+      allAssignmentCategories  : AssignmentCategoryQuery.getAllAssignmentCategories,
+      tags                     : AssignmentCategoryQuery.getAllTags,
+      allDifficulties          : AssignmentCategoryQuery.getAllDifficulties,
+      getRootCauseSummary      : BugStats.getRootCauseSummary,
+      getOwnerSummary          : BugStats.getOwnerSummary,
+      getTagSummary            : BugStats.getBugSummary,
+      getOwnerRootCauseSummary : BugStats.getOwnerRootCauseSummary,
+      //worklog
+      getWorkLogList           : WorkLogQuery.getWorkLogList,
+      getWorkLogByEmployeeId   : WorkLogQuery.getWorkLogByEmployeeId
+    }
+  }),
+  mutation: new GraphQLObjectType({
+    name: 'RootMutationType',
+    fields: {
+      // Mail APIs
+      sendMail                        : MailMutation.sendMail,
+      sendMailIncludingManagers       : MailMutation.sendMailIncludingManagers,
+      // Task Page
+      initiateCrawler                 : TaskMutation.initiateCrawler,
+      editTaskEta                     : TaskMutation.editTaskEta,
+      deleteInternalFeatures          : TaskMutation.deleteInternalFeatures,
+      createInternalFeatures          : TaskMutation.createInternalFeatures,
+      updateInternalFeatures          : TaskMutation.updateInternalFeatures,
+      // PTO Page
+      createPTOApplication            : PTOMutation.createPTOApplication,
+      deletePTOApplication            : PTOMutation.deletePTOApplication,
+      updatePTOApplicationStatus      : PTOMutation.updatePTOApplicationStatus,
+      createOvertimeApplication       : PTOMutation.createOvertimeApplication,
+      updateOvertimeApplicationStatus : PTOMutation.updateOvertimeApplicationStatus,
+      // User page
+      updateUserPrivilege             : UserMutation.updateUserPrivilege,
+      // Document page
+      createComment                   : CommentMutation.createComment,
+      deleteComment                   : CommentMutation.deleteComment,
+      createArticle                   : ArticleMutation.createArticle,
+      updateArticle                   : ArticleMutation.updateArticle,
+      deleteArticle                   : ArticleMutation.deleteArticle,
+      updateAssignmentCategory        : AssignmentCategoryMutation.updateAssignmentCategory,
+      //Bug page
+      updateBug                       : BugMutation.updateBug,
+      createBugTag                    : BugTagMutation.createBugTag,
+      createRelease                   : BugTagMutation.createRelease,
+      //work log page
+      createWorkLog                   : WorkLogMutation.createWorkLog,
+      updateWorkLog                   : WorkLogMutation.updateWorkLog,
+      deleteWorkLog                   : WorkLogMutation.deleteWorkLog,
+      createWorkLogBatch              : WorkLogMutation.createWorkLogBatch
+    }
+  })
 });
 
 export default schema;
