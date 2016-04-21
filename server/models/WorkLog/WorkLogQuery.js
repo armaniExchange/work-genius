@@ -117,10 +117,11 @@ let WorkLogQuery = {
 					//assign the worklog to the proper date
 					if(myWorkLogList && myWorkLogList.length > 0){
 						myWorkLogList.forEach(log => {
+							let tmpStartDate = startDate > log.start_date ? startDate: log.start_date;
 							let tmpEndDate = endDate > log.end_date ? log.end_date : endDate;
-							for(let date = startDate ; date <= tmpEndDate; date += 1000 * 60 * 60 * 24){
+							for(let date = tmpStartDate ; date <= tmpEndDate; date += 1000 * 60 * 60 * 24){
 								let dateItem = userItem.worklogs.find(dateItem => {
-									return dateItem.date == date;
+									return moment(dateItem.date).isSame(date,'day');
 								})
 								if(dateItem && dateItem.day_type == 'workday'){
 									dateItem.worklog_items = dateItem.worklog_items || [];
@@ -244,10 +245,11 @@ let WorkLogQuery = {
 				//assign the worklog to the proper date
 				if(myWorkLogList && myWorkLogList.length > 0){
 					myWorkLogList.forEach(log => {
+						let tmpStartDate = startDate > log.start_date ? startDate: log.start_date;
 						let tmpEndDate = endDate > log.end_date ? log.end_date : endDate;
-						for(let date = startDate ; date <= tmpEndDate; date += 1000 * 60 * 60 * 24){
+						for(let date = tmpStartDate ; date <= tmpEndDate; date += 1000 * 60 * 60 * 24){
 							let dateItem = userItem.worklogs.find(dateItem => {
-								return dateItem.date == date;
+								return moment(dateItem.date).isSame(date,'day');
 							})
 							if(dateItem && dateItem.day_type == 'workday'){
 								dateItem.worklog_items = dateItem.worklog_items || [];

@@ -166,7 +166,9 @@ var taskStateActions = {
             let worklogDate = worklog.date instanceof moment ? worklog.date.format('X') * 1000 : worklog.date;
             // self.isSelectDate(worklogDate, millisecondStartDate, startDate, item.duration);
             if (worklog.day_type !== 'workday') {
-                duration += 8;
+                if (self.isSelectDate(worklogDate, millisecondStartDate, duration)) {
+                    duration += 8;
+                }
             } else {
                 var worklogItems = worklog.worklog_items;
                 if (self.isSelectDate(worklogDate, millisecondStartDate, duration)) {
