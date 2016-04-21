@@ -207,7 +207,7 @@ var taskStateActions = {
             return false;
         }
 
-        let index = (duration % 8) === 0 ? (duration / 8) : (duration / 8) + 1;
+        let index = ( duration > 8 && (duration % 8) === 0) ? (duration / 8) : (duration / 8) + 1;
         let millisecondOneDay = 24 * 60 * 60 * 1000;
         for (let i = 0; i < index; i ++) {
             if (selectDate === startDate + i * millisecondOneDay) {

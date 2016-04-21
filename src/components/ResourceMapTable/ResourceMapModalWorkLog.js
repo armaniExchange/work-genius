@@ -236,9 +236,9 @@ class ResourceMapModalWorkLog extends Component {
 		defaultModalInfos.progress = defaultModalInfos.progress ? defaultModalInfos.progress : 0;
 		let showDoneClassName = 'material-icons icon-layout';
 		let hideDoneClassName = 'material-icons icon-layout icon-layou-display';
-		let nowDate = defaultModalInfos.start_date;
+		let nowDate = defaultModalInfos.date;
 		if (nowDate) {
-			nowDate = moment(nowDate).format('YYYY-MM-DD hh:mm a');
+			nowDate = moment(nowDate).format('YYYY-MM-DD');
 		}
 
 		let releaseOptions = ['4.1.0', '4.1.1', '3.2.1'];
