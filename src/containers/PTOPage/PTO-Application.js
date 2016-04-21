@@ -66,6 +66,7 @@ class PTOApplication extends Component {
                         hours={finalData.hours}
                         link={PTO_URL} />
                 ).replace(/"/g, '\\"'),
+                cc: PTOConstants.HR_MANAGERS_EMAIL,
                 includeManagers: true
             };
         let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
@@ -114,6 +115,7 @@ class PTOApplication extends Component {
                     hours={hours}
                     link={PTO_URL} />
             ).replace(/"/g, '\\"'),
+            cc: PTOConstants.HR_MANAGERS_EMAIL,
             includeManagers: true
         };
         let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
