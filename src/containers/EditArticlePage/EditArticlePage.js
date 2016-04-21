@@ -128,7 +128,7 @@ class EditArticlePage extends Component {
       value: item.path
     }));
   }
-  
+
   _transformFromTree(categories) {
     if (!categories || typeof categories !== 'object' || Array.isArray(categories)) {
       return [];
@@ -136,10 +136,7 @@ class EditArticlePage extends Component {
     if (!categories.children || categories.children.length === 0) {
       return [categories];
     }
-    let rest = categories.children.reduce((result, next) => {
-      return result.concat(this._transformFromTree(next));
-    }, []);
-    return [{path: categories.path}, ...rest];
+    return categories.children.reduce((result, next) => result.concat(this._transformFromTree(next)), []);
   }
 
   onSubmit() {
