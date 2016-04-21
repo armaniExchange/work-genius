@@ -86,8 +86,17 @@ class DocumentPage extends Component {
   _onNodeClick(item) {
     this.props.documentActions.setSelectedCategory({...item, isLeaf: false});
   }
-  _onLeafClick(item) {
-    this.props.documentActions.setSelectedCategory({...item, isLeaf: true});
+
+  _setAndFetchCategory(item) {
+    const { documentActions } = this.props;
+    documentActions.setSelectedCategory({...item, isLeaf: true});
+    documentActions.fetchArticles({
+      categoryId: item.path || ''
+    });
+  }
+
+  _clearCategory() {
+    this._setAndFetchCategory({});
   }
 
   render() {
@@ -127,11 +136,15 @@ class DocumentPage extends Component {
             onClick={::this.queryWithTag} />
           <div>
             <h5>Tree</h5>
+            <RaisedButton
+              label="Show All Articles"
+              secondary={true}
+              onClick={::this._clearCategory} />
             <CategoryTree
                 data={allCategories}
                 selectedPath={currentSelectedCategory.path}
                 onNodeClick={::this._onNodeClick}
-                onLeafClick={::this._onLeafClick} />
+                onLeafClick={::this._setAndFetchCategory} />
           </div>
         </div>
         <div style={rightPanelStyle}>

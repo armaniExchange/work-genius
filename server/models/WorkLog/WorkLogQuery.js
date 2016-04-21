@@ -91,7 +91,9 @@ let WorkLogQuery = {
 									&& moment(dateItem.date).isSame(moment(pto.start_date));
 							}else{
 								return pto.applicant_id == user.id
-									&& moment(dateItem.date).isBetween(pto.start_date,pto.end_date);
+									&& (moment(dateItem.date).isBetween(pto.start_date,pto.end_date)
+										|| moment(dateItem.date).isSame(pto.start_date,'day')
+										|| moment(dateItem.date).isSame(pto.end_date,'day'));
 							}
 						});
 						if(!!findPTO){
@@ -216,7 +218,9 @@ let WorkLogQuery = {
 								&& moment(dateItem.date).isSame(moment(pto.start_date));
 						}else{
 							return pto.applicant_id == user.id
-								&& moment(dateItem.date).isBetween(pto.start_date,pto.end_date);
+								&& (moment(dateItem.date).isBetween(pto.start_date,pto.end_date)
+									|| moment(dateItem.date).isSame(pto.start_date,'day')
+									|| moment(dateItem.date).isSame(pto.end_date,'day'));
 						}
 					});
 					if(!!findPTO){
