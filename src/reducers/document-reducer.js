@@ -31,9 +31,9 @@ function getChildren(root, path, titleCountMap) {
             name: key,
             isCollapsed: true,
             path: newPath,
-            children: getChildren(root[key], newPath),
+            children: getChildren(root[key], newPath, titleCountMap),
             childrenCount: Object.keys(titleCountMap).reduce((acc, title) => {
-                return title.indexOf(newPath) >= 0 ? acc + titleCountMap[title] : 0;
+                return title.indexOf(newPath) >= 0 ? acc + titleCountMap[title] : acc;
             }, 0)
         };
     });

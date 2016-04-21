@@ -25,11 +25,17 @@
         }
         @extend selected
     }
-    .category-tree-node__count {
-        @extend treeCount
-    }
+
+}
+
+.category-tree-node__count {
+    @extend treeCount
 }
 
 .tree-view_item {
+    position: relative;
+}
+
+.tree-view_children {
     position: relative;
 }
