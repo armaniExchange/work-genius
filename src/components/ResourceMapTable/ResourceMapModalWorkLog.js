@@ -313,7 +313,6 @@ class ResourceMapModalWorkLog extends Component {
 					</div>
 					<div className="col-xs-6 layout-design-over">
 					<TimePicker
-						defaultTime={new Date(nowDate)}
 						onChange={this._changeStartTime}
 					/>
 					</div>
