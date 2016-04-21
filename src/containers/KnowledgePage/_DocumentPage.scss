@@ -1,16 +1,11 @@
 .document-page-content {
+  padding-left: 300px;
   .left-navigation {
     width: 300px;
-    min-width: 300px;
     position: absolute;
-    z-index: 1;
+    left: 40px;
+    top: 60px;
   }
   .main-content {
-    display: inline-block;
-    position: absolute;
-    padding-left: 300px;
-    padding-right: 80px;
-    top: 0;
-    width: 100%;
   }
 }

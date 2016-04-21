@@ -1,8 +1,9 @@
 .document-filter-select-group {
   display: flex;
   margin-bottom: 1em;
+  margin-top: -2em;
   > div {
-    flex: 1;
+    flex: 2;
     margin-right: 15px;
     &:last-child {
       margin-right: 0;
