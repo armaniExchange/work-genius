@@ -1,8 +1,8 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import TextField from 'material-ui/lib/text-field';
-import SelectField from 'material-ui/lib/SelectField';
-import MenuItem from 'material-ui/lib/menus/menu-item';
+// import SelectField from 'material-ui/lib/SelectField';
+// import MenuItem from 'material-ui/lib/menus/menu-item';
 import Select from 'react-select';
 import Dropzone from 'react-dropzone';
 
@@ -55,7 +55,6 @@ class ArticleEditor extends Component {
   }
 
   render() {
-    const allCategoriesMaxHeight = 300;
     const dropzoneStyle = {
       width: '100%',
       border: '2px dashed gray',
@@ -68,7 +67,7 @@ class ArticleEditor extends Component {
       tags,
       category,
       files,
-      allCategories,
+      allCategoriesOptions,
       tagSuggestions,
       onContentChange,
       onTitleChange,
@@ -80,22 +79,6 @@ class ArticleEditor extends Component {
       editingFile
     } = this.state;
 
-    const allCategoryItems = allCategories
-      .filter(item => {
-        return item.name !== 'root';
-      })
-      .map((item, index) => {
-        const path = item.path.replace('/root/', '').replace(/\//g, ' > ');
-        return (
-          <MenuItem
-            key={index}
-            value={item.id}
-            primaryText={path}
-          />
-        );
-      });
-    const categoryErrorText = !category.id ? 'Category is required' : null;
-
     return (
       <div className="article-editor"
         {...this.props} >
@@ -105,7 +88,13 @@ class ArticleEditor extends Component {
           value={title}
           onChange={onTitleChange} />
         <br />
-        <SelectField
+        <br />
+        <label>Category</label>
+        <Select
+          value={category.id}
+          options={allCategoriesOptions}
+          onChange={onCategoryChange}/>
+        {/*<SelectField
           errorText={categoryErrorText}
           style={{width: '100%'}}
           autoWidth={false}
@@ -113,8 +102,7 @@ class ArticleEditor extends Component {
           value={category.id}
           onChange={onCategoryChange} >
           {allCategoryItems}
-        </SelectField>
-        <br />
+        </SelectField>*/}
         <br />
         <label>Content</label>
         <Editor
@@ -159,7 +147,7 @@ ArticleEditor.propTypes = {
   tags                : PropTypes.arrayOf(PropTypes.string),
   category            : PropTypes.object,
   files               : PropTypes.array,
-  allCategories       : PropTypes.array,
+  allCategoriesOptions: PropTypes.array,
   style               : PropTypes.object,
   tagSuggestions      : PropTypes.arrayOf(PropTypes.string),
   onContentChange     : PropTypes.func.isRequired,
@@ -176,7 +164,7 @@ ArticleEditor.defaultProps = {
   category            : {},
   tags                : [],
   files               : [],
-  allCategories        : [],
+  allCategoriesOptions: [],
   tagSuggestions      : [],
 };
 
