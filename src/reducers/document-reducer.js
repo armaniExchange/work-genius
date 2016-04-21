@@ -75,7 +75,7 @@ function updateCollpaseStatus(root, path) {
 const initialState = Map({
   articleList: List.of(),
   articleTotalCount: 0,
-  allCategories: Map({}),
+  allCategories: Map(enhanceMenu(MENU, {})),
   currentSelectedCategory: Map({}),
   allTags: List.of(),
   allUsers: List.of(),
