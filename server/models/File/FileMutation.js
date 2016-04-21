@@ -67,12 +67,14 @@ export const deleteFile = async (fileId) => {
       .table('files')
       .get(fileId);
     result = await query.run(connection);
-    fs.unlinkSync(result.path);
-    query = r.db('work_genius')
-      .table('files')
-      .get(fileId)
-      .delete();
-    await query.run(connection);
+    if (result) {
+      fs.unlinkSync(result.path);
+      query = r.db('work_genius')
+        .table('files')
+        .get(fileId)
+        .delete();
+      await query.run(connection);
+    }
     await connection.close();
   } catch (err) {
     await connection.close();
