@@ -194,7 +194,7 @@ class DocumentPage extends Component {
             <h5>Hot tags</h5>
             <ArticleTagList
               tags={allTags}
-              value={tag}
+              value={tag} />
             <h5>Tree</h5>
             <RaisedButton
               label="Show All Articles"
@@ -205,7 +205,6 @@ class DocumentPage extends Component {
                 selectedPath={currentSelectedCategory.path}
                 onNodeClick={::this._onNodeClick}
                 onLeafClick={::this._setAndFetchCategory} />
-            </div>
           </div>
           <div className="main-content">
             <DocumentFilterSelectGroup
