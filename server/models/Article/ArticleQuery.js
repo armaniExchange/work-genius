@@ -52,7 +52,7 @@ let ArticleQuery = {
         }
       })
     }),
-    description: 'Get all articles under the selected category',
+    description: 'Get all articles with query',
     args: {
       categoryId: {
         type: GraphQLString,
@@ -61,6 +61,18 @@ let ArticleQuery = {
       authorId: {
         type: GraphQLString,
         description: 'The author of the article'
+      },
+      documentType: {
+        type: GraphQLString,
+        description: 'The document type of the article'
+      },
+      priority: {
+        type: GraphQLString,
+        description: 'The priority of the article'
+      },
+      milestone: {
+        type: GraphQLString,
+        description: 'The milestone of the article'
       },
       tag: {
         type: GraphQLString,
@@ -75,24 +87,34 @@ let ArticleQuery = {
         description: 'argument specifies the number of pages you’d like to get.'
       }
     },
-    resolve: async (root, { categoryId, authorId, tag, page, pageLimit}) => {
+    resolve: async (root, {
+      categoryId,
+      authorId,
+      documentType,
+      priority,
+      milestone,
+      tag,
+      page,
+      pageLimit
+    }) => {
       let result,
         connection = null,
         count = 0,
         allChildrenCategory = null,
         filterFunc = article => {
-          let predicate = true;
-          predicate = predicate && (!authorId || article('authorId').eq(authorId));
-          predicate = predicate && (!tag || article('tags').contains(tag));
+          let predicate = r.expr(true);
           if (categoryId) {
-            predicate = predicate && r.expr([categoryId, ...allChildrenCategory]).contains(article('categoryId'));
+            predicate = predicate.and(r.expr([categoryId, ...allChildrenCategory]).contains(article('categoryId')));
+          }
+          if (tag) {
+            predicate = predicate.and(article('tags').contains(tag));
           }
           return predicate;
         };
 
       try {
+        let query = null;
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-        const query = r.db('work_genius').table('articles');
 
         page = page || 1;
         pageLimit = pageLimit || 5;
@@ -106,10 +128,25 @@ let ArticleQuery = {
             .map(category => category.id);
         }
 
-        result = await query.filter(filterFunc)
-          .orderBy('updatedAt')
+        let filterObj = {
+          authorId,
+          documentType,
+          priority,
+          milestone
+        };
+        Object.keys(filterObj)
+          .forEach(key => {
+            if (!filterObj[key]) { delete filterObj[key]; };
+          });
+
+        query = r.db('work_genius')
+          .table('articles')
+          .filter(filterObj)
+          .filter(filterFunc);
+
+        result = await query.merge(getArticleDetail)
+          .orderBy(r.desc('createdAt'))
           .slice((page - 1) * pageLimit, page * pageLimit)
-          .merge(getArticleDetail)
           .run(connection);
 
         if (!result ){

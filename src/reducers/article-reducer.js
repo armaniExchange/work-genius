@@ -5,11 +5,16 @@
 import { List , OrderedMap, fromJS} from 'immutable';
 // Constants
 import actionTypes from '../constants/action-types';
+import { SERVER_FILES_URL } from '../constants/config';
 
 const initialState = OrderedMap({
   // data of article
   id: '',
   title: '',
+  documentType: '',
+  priority: '',
+  milestone: '',
+  content: '',
   author: OrderedMap({
     id: '',
     name: ''
@@ -20,48 +25,54 @@ const initialState = OrderedMap({
   tags: List(),
   files: List(),
   comments: List(),
-  content: '',
+  reportTo: List(),
   createdAt: 0,
   updatedAt: 0,
   isEditing: true,
   isDeleting: false,
 });
 
+const getFileUrl = (id) => {
+  return `${SERVER_FILES_URL}/${id}`;
+};
+
+const articleToState = (state, action) => {
+  const withUrlFiles = action.files ? action.files.map(file => {
+    return Object.assign({}, file, {url: getFileUrl(file.id)});
+  }) : [];
+  return state.set('id', action.id)
+    .set('title', action.title)
+    .set('documentType', action.documentType)
+    .set('priority', action.priority)
+    .set('milestone', action.milestone)
+    .set('author', OrderedMap(action.author))
+    .set('category', OrderedMap(action.category))
+    .set('tags', List(action.tags || []))
+    .set('files', fromJS(withUrlFiles || []))
+    .set('comments', fromJS(action.comments || []))
+    .set('reportTo', List(action.reportTo || []))
+    .set('content', action.content)
+    .set('createdAt', action.createdAt)
+    .set('updatedAt', action.updatedAt);
+};
+
 export default function articleReducer(state = initialState, action) {
-  let files = state.get('files');
+  const files = state.get('files');
+
   let comments = state.get('comments');
 
   switch (action.type) {
     case actionTypes.CREATE_ARTICLE_SUCCESS:
     case actionTypes.UPDATE_ARTICLE_SUCCESS:
-      return state.set('id', action.id)
-        .set('title', action.title)
-        .set('author', OrderedMap(action.author))
-        .set('category', OrderedMap(action.category))
-        .set('tags', List(action.tags || []))
-        .set('files', fromJS(action.files || []))
-        .set('comments', fromJS(action.comments || []))
-        .set('content', action.content)
-        .set('createdAt', action.createdAt)
-        .set('updatedAt', action.updatedAt)
-        .set('isEditing', false);
+      return articleToState(state, action).set('isEditing', false);
     case actionTypes.FETCH_ARTICLE_SUCCESS:
-      return state.set('id', action.id)
-        .set('title', action.title)
-        .set('author', OrderedMap(action.author))
-        .set('category', OrderedMap(action.category))
-        .set('tags', fromJS(action.tags || []))
-        .set('files', fromJS(action.files || []))
-        .set('comments', fromJS(action.comments || []))
-        .set('content', action.content)
-        .set('createdAt', action.createdAt)
-        .set('updatedAt', action.updatedAt);
+      return articleToState(state, action);
     case actionTypes.DELETE_ARTICLE:
       return state.set('isDeleting', true);
     case actionTypes.DELETE_ARTICLE_SUCCESS:
       return state.set('isDeleting', false);
     case actionTypes.UPLOAD_ARTICLE_FILE:
-      const uploading_file = Object.assign({}, action.file, {isUploading: true});
+      const uploading_file = Object.assign({}, action.file, { isUploading: true });
       return state.set('files', files.push(fromJS(uploading_file)));
     case actionTypes.UPLOAD_ARTICLE_FILE_PROGRESS:
       return state.set('files', files.update(files.findIndex((item) => {
@@ -80,10 +91,9 @@ export default function articleReducer(state = initialState, action) {
           return item.get('tempId') === action.tempId;
         }), (item) => {
           return item.delete('loaded')
-            .delete('tempId')
             .delete('total')
             .delete('isUploading')
-            .set('url', action.file.url)
+            .set('url', getFileUrl(action.file.id))
             .set('id', action.file.id);
       }));
     case actionTypes.REMOVE_ARTICLE_FILE_SUCCESS:

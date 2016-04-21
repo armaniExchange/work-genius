@@ -58,7 +58,7 @@ const ArticleMutation = {
       let connection = null;
       try {
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-        let deletingFiles = await r.db('work_genius')
+        const deletingFiles = await r.db('work_genius')
           .table('articles')
           .get(id)
           .getField('filesId')
@@ -69,11 +69,25 @@ const ArticleMutation = {
           await deleteFile(deletingFiles[i]);
         }
 
+        const deletingComments = await r.db('work_genius')
+          .table('articles')
+          .get(id)
+          .getField('commentsId')
+          .default(['prevent-empty-error'])
+          .run(connection);
+
+        await r.db('work_genius')
+          .table('comments')
+          .getAll(r.args(deletingComments))
+          .delete()
+          .run(connection);
+
         await r.db('work_genius')
           .table('articles')
           .get(id)
           .delete()
           .run(connection);
+
         await connection.close();
       } catch (err) {
         await connection.close();

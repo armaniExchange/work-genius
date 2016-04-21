@@ -3,8 +3,27 @@
   border-radius: 5px;
   border: 1px solid lightgray;
   padding: 15px;
-  .drop-down-menu {
-    margin-left: -25px;
+  .select-field-group {
+    display: flex;
+    > div {
+      flex: 1;
+      margin-right: 15px;
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+  .dropzone {
     width: 100%;
+    border: 2px dashed gray;
+    padding: 2em 1em;
+    box-sizing: border-box;
+  }
+
+  .Select-control {
+    border-color: transparent;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0;
+    box-shadow: none !important;
   }
 }

@@ -4,7 +4,6 @@ import multer from 'multer';
 import moment from 'moment';
 
 import { UPLOAD_FILE_LOCATION } from '../../constants/configurations.js';
-import { SERVER_FILES_URL } from '../../../src/constants/config';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 
@@ -41,7 +40,6 @@ export const fileUploadHandler = async (req, res) => {
         id: filename,
         type: mimetype,
         name: originalname,
-        url: `${SERVER_FILES_URL}/${filename}`,
         path: `${targetDir}/${filename}`,
         createdAt
       };
@@ -69,12 +67,14 @@ export const deleteFile = async (fileId) => {
       .table('files')
       .get(fileId);
     result = await query.run(connection);
-    fs.unlinkSync(result.path);
-    query = r.db('work_genius')
-      .table('files')
-      .get(fileId)
-      .delete();
-    await query.run(connection);
+    if (result) {
+      fs.unlinkSync(result.path);
+      query = r.db('work_genius')
+        .table('files')
+        .get(fileId)
+        .delete();
+      await query.run(connection);
+    }
     await connection.close();
   } catch (err) {
     await connection.close();

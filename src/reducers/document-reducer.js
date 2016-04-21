@@ -2,7 +2,7 @@
  * @author Steven Fong
  */
 // Libraries
-import { Map, List } from 'immutable';
+import { Map, List, fromJS } from 'immutable';
 // Constants
 import actionTypes from '../constants/action-types';
 import { MENU } from '../constants/menu';
@@ -68,7 +68,9 @@ const initialState = Map({
   articleTotalCount: 0,
   allCategories: enhanceMenu(MENU),
   currentSelectedCategory: Map({}),
-  allTags: List.of()
+  allTags: List.of(),
+  allUsers: List.of(),
+  allMilestones: List.of(),
 });
 
 export default function documentReducer(state = initialState, action) {
@@ -90,6 +92,10 @@ export default function documentReducer(state = initialState, action) {
       return state.set('articleList', state.get('articleList').filter(article => {
         return article.id !== action.id;
       }));
+    case actionTypes.FETCH_ALL_USERS_SUCCESS:
+      return state.set('allUsers', fromJS(action.allUsers));
+    case actionTypes.FETCH_ALL_MILESTONES_SUCCESS:
+      return state.set('allMilestones', action.allMilestones);
     default:
         return state;
   }
