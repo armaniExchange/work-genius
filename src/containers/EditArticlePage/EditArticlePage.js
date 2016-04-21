@@ -1,4 +1,4 @@
-// Style
+ // Style
 import './_EditArticlePage.scss';
 // React & Redux
 import React, { Component, PropTypes } from 'react';
@@ -37,20 +37,19 @@ class EditArticlePage extends Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.isEditing && !nextProps.isEditing) {
       this.props.history.replace(`/main/knowledge/document/${nextProps.id}`);
+      return;
     }
+
     const thisFiles = this.props.files;
     const nextFiles = nextProps.files;
-    const getJustUpdatedImageFiles = this.getJustUpdatedImageFiles(thisFiles, nextFiles);
-
-    if (getJustUpdatedImageFiles.length) {
-      const {
-        name,
-        url
-      } = getJustUpdatedImageFiles[0];
+    const justUpdateFile = this.getJustUpdatedFile(thisFiles, nextFiles);
+    if ( justUpdateFile ) {
+      const { name, url } = justUpdateFile;
       this.setState({
-        editingContent: this.state.editingContent.replace(this.getTempImageFileMarkdown(name), `![${name}](${url})`)
+        editingContent: this.state.editingContent.replace(this.getUploadingFileMarkdown(justUpdateFile), `[${name}](${url})`)
       });
     }
+
     if (this.props.id === nextProps.id && thisFiles.length !== nextFiles.lengh) {
       // fiile upload change files, but skip to set new state
     } else {
@@ -145,11 +144,9 @@ class EditArticlePage extends Component {
 
   onFileUpload(file) {
     const { id, files } = this.props;
-    if (file.type.includes('image')) {
-      this.setState({
-        editingContent: this.state.editingContent + '\n' + this.getTempImageFileMarkdown(file.name)
-      });
-    }
+    this.setState({
+      editingContent: this.state.editingContent + '\n' + this.getUploadingFileMarkdown(file)
+    });
     this.props.articleActions.uploadArticleFile({
       articleId: id,
       file,
@@ -170,19 +167,19 @@ class EditArticlePage extends Component {
     this.props.history.go(-1);
   }
 
-  getJustUpdatedImageFiles(thisFiles, nextFiles) {
+  getJustUpdatedFile(thisFiles, nextFiles) {
     return nextFiles.filter(nextFile => {
       const thisFile = thisFiles.filter( eachFile => nextFile.tempId === eachFile.tempId )[0];
       return thisFiles.length
         && thisFile
         && thisFile.isUploading
-        && !nextFile.isUploading
-        && thisFile.type.includes('image');
-    });
+        && !nextFile.isUploading;
+    })[0];
   }
 
-  getTempImageFileMarkdown(fileName) {
-    return `![Uploading ${fileName} ...]()`;
+  getUploadingFileMarkdown(file) {
+    const mdImageSymbol = file.type.includes('image') ? '!' : '';
+    return `${mdImageSymbol}[Uploading ${file.name} ...]()`;
   }
   _transformToOptions(categories) {
     return this._transformFromTree(categories).filter((item) => {
@@ -308,6 +305,7 @@ class EditArticlePage extends Component {
         <RaisedButton
           label="Submit"
           primary={true}
+          disabled={!editingTitle || !editingCategory}
           onClick={::this.onSubmit}
           style={{margin: 10}} />
         <RaisedButton

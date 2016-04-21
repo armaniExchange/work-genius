@@ -113,8 +113,8 @@ let ArticleQuery = {
         };
 
       try {
+        let query = null;
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-        const query = r.db('work_genius').table('articles');
 
         page = page || 1;
         pageLimit = pageLimit || 5;
@@ -138,11 +138,15 @@ let ArticleQuery = {
           .forEach(key => {
             if (!filterObj[key]) { delete filterObj[key]; };
           });
-        result = await query.filter(filterObj)
-          .filter(filterFunc)
-          .orderBy('updatedAt')
+
+        query = r.db('work_genius')
+          .table('articles')
+          .filter(filterObj)
+          .filter(filterFunc);
+
+        result = await query.merge(getArticleDetail)
+          .orderBy(r.desc('createdAt'))
           .slice((page - 1) * pageLimit, page * pageLimit)
-          .merge(getArticleDetail)
           .run(connection);
 
         if (!result ){

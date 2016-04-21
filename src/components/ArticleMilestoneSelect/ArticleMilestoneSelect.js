@@ -29,8 +29,8 @@ class ArticleMilestoneSelect extends Component {
         </label>
         <Select
           {...this.props}
-          className={{/*remove class name*/}}
-          style={{/*remove style name*/}}
+          className="" //remove className set by this.props
+          style={{/* remove style name set by this.props */}}
           allowCreate={true}
           placeholder=" "
         />

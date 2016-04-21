@@ -48,13 +48,11 @@ class DocumentPage extends Component {
     } = this.props.documentActions;
 
     // Todo: find a better way to handle jumpling this page from other page
-    if (this.props.articleList.length === 0) {
       fetchAllCategories();
       fetchAllTags();
       fetchArticles();
       fetchAllUsers();
       fetchAllMilestones();
-    }
   }
 
   // fetch articles with query

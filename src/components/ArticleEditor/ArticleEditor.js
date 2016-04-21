@@ -95,6 +95,7 @@ class ArticleEditor extends Component {
         <TextField
           style={{width: '100%'}}
           hintText="Title"
+          errorText={!title && 'This field is required'}
           value={title}
           onChange={onTitleChange} />
         <br />
