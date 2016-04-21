@@ -87,7 +87,11 @@ class DocumentPage extends Component {
     this.props.documentActions.setSelectedCategory({...item, isLeaf: false});
   }
   _onLeafClick(item) {
-    this.props.documentActions.setSelectedCategory({...item, isLeaf: true});
+    const { documentActions } = this.props;
+    documentActions.setSelectedCategory({...item, isLeaf: true});
+    documentActions.fetchArticles({
+      categoryId: item.path
+    });
   }
 
   render() {
