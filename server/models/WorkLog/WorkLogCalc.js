@@ -44,7 +44,9 @@ export async function getWorklogEndDate(worklog){
 					if(moment(pto.start_date).isSame(moment(pto.end_date))){
 						return moment(tmpDate).isSame(pto.start_date,'day');
 					}else{
-						return moment(tmpDate).isBetween(pto.start_date,pto.end_date);
+						return moment(tmpDate).isBetween(pto.start_date,pto.end_date)
+							|| moment(tmpDate).isSame(pto.start_date,'day')
+							|| moment(tmpDate).isSame(pto.end_date,'day');
 					}
 				});
 				// check if public holiday
@@ -69,8 +71,9 @@ export async function getWorklogEndDate(worklog){
 export async function recalcWorklogEndDate(ptoStartDate,employeeId){
 	try{
 		let startDate = moment(ptoStartDate + ' 00:00:00').format('X') * 1000,
-				query = null,
-				connection = null;
+			query = null,
+			connection = null;
+		connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 	}
 	catch(err){
 		console.log(err);
