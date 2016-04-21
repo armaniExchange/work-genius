@@ -10,5 +10,5 @@ export const PRIVILEGE = {
   OTHERS: 1
 };
 
-export const PTO_URL = 'http://'+SERVERR_HOST+'/main/pto';
-export const OVERTIME_URL = 'http://'+SERVERR_HOST+'/main/pto/overtime';
+export const PTO_URL = `http://${SERVER_HOST}/main/pto`;
+export const OVERTIME_URL = `http://${SERVER_HOST}/main/pto/overtime`;
