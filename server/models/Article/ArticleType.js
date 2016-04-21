@@ -9,7 +9,6 @@ import {
 import UserType from '../User/UserType';
 import CommentType from '../Comment/CommentType';
 import FileType from '../File/FileType';
-import CategoryType from '../Category/CategoryType';
 
 const ArticleType = new GraphQLObjectType({
   name: 'Article',
@@ -35,9 +34,9 @@ const ArticleType = new GraphQLObjectType({
       type: new GraphQLList(GraphQLString),
       description: 'Article\'s tags'
     },
-    category: {
-      type: CategoryType,
-      description: 'Article\'s categories'
+    categoryId: {
+      type: GraphQLString,
+      description: 'Article\'s category'
     },
     content: {
       type: GraphQLString,

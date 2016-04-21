@@ -7,17 +7,21 @@ import { Map, List, fromJS } from 'immutable';
 import actionTypes from '../constants/action-types';
 import { MENU } from '../constants/menu';
 
-function getChildrenCount(root) {
-    if (!root || typeof root !== 'object' || Object.keys(root).length <= 0) {
-        return 0;
-    }
-    return Object.keys(root).reduce((result, next) => {
-        let childs = getChildrenCount(root[next]);
-        return result + (childs === 0 ? 1 : childs);
-    }, 0);
+function generateTitleCountMap(articles) {
+    let result = {};
+
+    articles.forEach((article) => {
+        if (!result[article.categoryId]) {
+            result[article.categoryId] = 1;
+        } else {
+            result[article.categoryId] += 1;
+        }
+    });
+
+    return result;
 }
 
-function getChildren(root, path) {
+function getChildren(root, path, titleCountMap) {
     if (!root || typeof root !== 'object' || Object.keys(root).length <= 0) {
         return [];
     }
@@ -27,20 +31,25 @@ function getChildren(root, path) {
             name: key,
             isCollapsed: true,
             path: newPath,
-            children: getChildren(root[key], newPath),
-            childrenCount: getChildrenCount(root[key])
+            children: getChildren(root[key], newPath, titleCountMap),
+            childrenCount: Object.keys(titleCountMap).reduce((acc, title) => {
+                return title.indexOf(newPath) >= 0 ? acc + titleCountMap[title] : acc;
+            }, 0)
         };
     });
 }
 
-function enhanceMenu(data) {
-    let path = 'root';
+function enhanceMenu(data, titleCountMap) {
+    let path = 'root',
+        articlesCount = Object.keys(titleCountMap).reduce((acc, title) => {
+            return title.indexOf(path) >= 0 ? acc + titleCountMap[title] : 0;
+        }, 0);
     let result = {
         name: 'root',
         isCollapsed: false,
         path,
-        children: getChildren(data.root, path),
-        childrenCount: getChildrenCount(data.root)
+        children: getChildren(data.root, path, titleCountMap),
+        childrenCount: articlesCount
     };
     return result;
 }
@@ -66,18 +75,28 @@ function updateCollpaseStatus(root, path) {
 const initialState = Map({
   articleList: List.of(),
   articleTotalCount: 0,
-  allCategories: enhanceMenu(MENU),
+  allCategories: Map(enhanceMenu(MENU, {})),
   currentSelectedCategory: Map({}),
   allTags: List.of(),
   allUsers: List.of(),
   allMilestones: List.of(),
 });
 
+let isFirstTimeFetch = true;
+
 export default function documentReducer(state = initialState, action) {
   switch (action.type) {
     case actionTypes.FETCH_ARTICLES_SUCCESS:
-      return state.set('articleList', action.articleList)
-        .set('articleTotalCount', action.count);
+      if (isFirstTimeFetch) {
+        let newTitleCountMap = generateTitleCountMap(action.articleList);
+        isFirstTimeFetch = false;
+        return state.set('articleList', action.articleList)
+          .set('articleTotalCount', action.count)
+          .set('allCategories', enhanceMenu(MENU, newTitleCountMap));
+      } else {
+        return state.set('articleList', action.articleList)
+          .set('articleTotalCount', action.count);
+      }
     case actionTypes.FETCH_ALL_TAGS_SUCCESS:
       return state.set('allTags', action.allTags);
     case actionTypes.SET_SELECTED_CATEGORY:

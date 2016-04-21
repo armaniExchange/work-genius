@@ -48,6 +48,7 @@ export function fetchArticles(query = {}) {
             title,
             content,
             tags,
+            categoryId,
             author {
               id,
               name
@@ -284,4 +285,3 @@ export function fetchAllMilestones() {
       });
   };
 }
-
