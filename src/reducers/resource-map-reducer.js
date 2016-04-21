@@ -26,6 +26,11 @@ const initialState = Map({
 	// ),
 	data: List.of(),
     allUsers: List.of(),
+    tags: List.of(
+        Map({'label': 'Fixed Bug1', 'value': 'Fixed Bug1' }),
+        Map({'label': 'Fixed Bug2', 'value': 'Fixed Bug2' }),
+        Map({'label': 'Fixed Bug3', 'value': 'Fixed Bug3' })
+    ),
     currentUserId: '',
 	show: false,
     defaultModalInfos: Map({})

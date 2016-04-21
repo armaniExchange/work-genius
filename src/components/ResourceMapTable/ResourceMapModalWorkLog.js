@@ -13,6 +13,8 @@ import TimePicker from 'material-ui/lib/time-picker/time-picker';
 import SelectField from 'material-ui/lib/select-field';
 import MenuItem from 'material-ui/lib/menus/menu-item';
 
+import Select from 'react-select';
+
 let ModalHeader = ({isEdit}) => {
 	return (
 		<Modal.Header closeButton>
@@ -45,6 +47,8 @@ class ResourceMapModalWorkLog extends Component {
 		this._onSubmitMultiItems = ::this._onSubmitMultiItems;
 		// Select Release Change.
 		this._handleSelectReleaseChange = ::this._handleSelectReleaseChange;
+		// Select Tag
+		this._onSelectTag = ::this._onSelectTag;
 		// Change start date
 		this._changeStartDate = ::this._changeStartDate;
 		// Change start time
@@ -56,7 +60,8 @@ class ResourceMapModalWorkLog extends Component {
 			color: '',
 			selectDate: '',
 			selectTime: '',
-			release: ''
+			release: '',
+			tags: ''
 		};
 	}
 
@@ -65,7 +70,8 @@ class ResourceMapModalWorkLog extends Component {
 		this.setState({
 			release: defaultModalInfos.release,
 			progress: defaultModalInfos.progress,
-			color: defaultModalInfos.color
+			color: defaultModalInfos.color,
+			tags: defaultModalInfos.tags
 		});
 	}
 
@@ -101,6 +107,9 @@ class ResourceMapModalWorkLog extends Component {
 			} else {
 				times = moment(startDate).format('X') * 1000;;
 			}
+			let status = defaultModalInfos.status ? defaultModalInfos.status : 0;
+			// If progress is 100%, the status is 1;
+			status = parseInt(progressValue) >= 100 ? 1 : 0;
 			let data = {
 				'employee_id': defaultModalInfos.userId,
 				'id': defaultModalInfos.id,
@@ -111,7 +120,8 @@ class ResourceMapModalWorkLog extends Component {
 				'start_date': parseInt(times),
 				'duration': parseInt(durationField.getValue()),
 				'release': this.state.release,
-				'status': defaultModalInfos.status ? defaultModalInfos.status : 0
+				'status': status,
+				'tags': this.state.tags
 			};
 			let item = {
 				id: defaultModalInfos.id,
@@ -147,6 +157,7 @@ class ResourceMapModalWorkLog extends Component {
 		console.log('Start Time: ' + self.state.selectTime);
 		console.log('Duration Value: ' + durationField.getValue());
 		console.log('Release: ' + self.state.release);
+		console.log('Tags: ' + self.state.tags);
 	}
 
 	_onSubmitSingleItem() {
@@ -221,6 +232,10 @@ class ResourceMapModalWorkLog extends Component {
 		this.setState({color: color});
 	}
 
+	_onSelectTag(type) {
+		this.setState({tags: type});
+	}
+
 	_changeStartDate(date) {
 		// const { startDate } = this.refs;
 		// startDate.value = date;
@@ -241,10 +256,10 @@ class ResourceMapModalWorkLog extends Component {
 		endDate.value = date;
 	}
 
-
 	render() {
 		const {
 			show,
+			tags,
 			defaultModalInfos
 		} = this.props;
 
@@ -378,6 +393,18 @@ class ResourceMapModalWorkLog extends Component {
 					</div>
 				</div>
 				<div className="form-group">
+					<label className="col-xs-3 control-label">Tag</label>
+					<div className="col-xs-9">
+						<Select
+							allowCreate={true}
+                            name="menu_tag"
+                            value={this.state.tags}
+                            options={tags}
+                            onChange={this._onSelectTag}
+                        />
+                    </div>
+                </div>
+				<div className="form-group">
 					<label className="col-xs-3 control-label">Progress</label>
 					<div className="col-xs-9">
 						<TextField
@@ -424,6 +451,7 @@ class ResourceMapModalWorkLog extends Component {
 
 ResourceMapModalWorkLog.propTypes = {
 	show               : PropTypes.bool.isRequired,
+	tags               : PropTypes.array.isRequired,
 	defaultModalInfos  : PropTypes.object.isRequired,
 	onModalSubmit      : PropTypes.func.isRequired,
 	onModalHander      : PropTypes.func.isRequired,

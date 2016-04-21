@@ -13,6 +13,33 @@ import Checkbox from 'rc-checkbox';
 
 const TAG = 'bgm-teal';
 
+var TooltipContent = ({item}) => {
+	return (
+		<div className="mdl-grid" style={{ width: '300px'}}>
+			<div className="mdl-cell mdl-cell--4-col"><label>Progress</label></div>
+			<div className="mdl-cell mdl-cell--8-col"><em>{item.progress}%</em></div>
+
+			<div className="mdl-cell mdl-cell--4-col"><label>Task</label></div>
+			<div className="mdl-cell mdl-cell--8-col"><span>{item.task}</span></div>
+
+			<div className="mdl-cell mdl-cell--4-col"><label>Start Date</label></div>
+			<div className="mdl-cell mdl-cell--8-col">
+				<span><em>{moment(item.start_date).format('YYYY-MM-DD')}</em></span>
+			</div>
+
+			<div className="mdl-cell mdl-cell--4-col"><label>Duration</label></div>
+			<div className="mdl-cell mdl-cell--8-col">
+				<span><em>{item.duration ? item.duration : 0}</em> Hours</span>
+			</div>
+
+			<div className="mdl-cell mdl-cell--4-col"><label>Work Log</label></div>
+			<div className="mdl-cell mdl-cell--8-col">
+				<span>{item.content}</span>
+			</div>
+		</div>
+	);
+};
+
 class ResourceMapCellWorkLog extends Component {
 
 	constructor() {
@@ -111,7 +138,6 @@ class ResourceMapCellWorkLog extends Component {
 				classNameProgress += defaultColor + '-light';
 				item.progress = item.progress ? item.progress : 0;
 
-				let itemDate = item.start_date;
 				return (
 					<div className="cell-top-item-inner-text" key={index}>
 						<div className="worklog-layout--checkbox">
@@ -127,24 +153,7 @@ class ResourceMapCellWorkLog extends Component {
 								  	<Tooltip
 										placement="top"
 										overlay={
-											(
-												<div>
-													<label>Progress: </label>
-													<span><em>{item.progress}%</em></span>
-													<br />
-													<label>Task: </label>
-													<span><em>{item.task}</em></span>
-													<br />
-													<label>Start Date: </label>
-													<span><em>{moment(itemDate).format('YYYY-MM-DD')}</em></span>
-													<br />
-													<label>Duration: </label>
-													<span><em>{item.duration ? item.duration : 0}</em> Hours</span>
-													<br />
-													<label>Work Log: </label>
-													<span>{item.content}</span>
-												</div>
-											)
+											(<TooltipContent item={item} />)
 										}
 										arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
 									>

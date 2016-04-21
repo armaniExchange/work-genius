@@ -17,6 +17,7 @@ class ResourceMapTable extends Component {
 			totalDays,
 			data,
 			show,
+            tags,
 			onModalHander,
             onSubmitStatus,
             onSubmitMulti,
@@ -41,6 +42,7 @@ class ResourceMapTable extends Component {
                 </Table>
                 <ResourceMapModalWorkLog
                 	show={show}
+                    tags={tags}
                 	onModalHander={onModalHander}
                     onModalSubmit={upsertWorklogItem}
                     onModalSubmitMulti={onSubmitMulti}
@@ -56,6 +58,7 @@ ResourceMapTable.propTypes = {
     totalDays          : PropTypes.number.isRequired,
     show               : PropTypes.bool.isRequired,
     data               : PropTypes.array.isRequired,
+    tags               : PropTypes.array.isRequired,
     defaultModalInfos  : PropTypes.object.isRequired,
     upsertWorklogItem  : PropTypes.func.isRequired,
     onModalHander      : PropTypes.func.isRequired,

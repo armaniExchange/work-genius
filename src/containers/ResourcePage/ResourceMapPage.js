@@ -133,6 +133,7 @@ ResourceMapPage.propTypes = {
     data                           : PropTypes.array.isRequired,
     allUsers                       : PropTypes.array.isRequired,
     currentUserId                  : PropTypes.string.isRequired,
+    tags                           : PropTypes.array.isRequired,
     queryResourceMapData           : PropTypes.func.isRequired,
     fetchAllUsersRequest           : PropTypes.func.isRequired,
 
@@ -152,6 +153,7 @@ ResourceMapPage.defaultProps = {
     totalDays     : 7,
     show          : false,
     data          : [],
+    tags          : [],
     currentUserId : ''
 };
 
