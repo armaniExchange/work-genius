@@ -101,8 +101,7 @@ const schema = new GraphQLSchema({
       //work log page
       createWorkLog                   : WorkLogMutation.createWorkLog,
       updateWorkLog                   : WorkLogMutation.updateWorkLog,
-      deleteWorkLog                   : WorkLogMutation.deleteWorkLog,
-      createWorkLogBatch              : WorkLogMutation.createWorkLogBatch
+      deleteWorkLog                   : WorkLogMutation.deleteWorkLog
     }
   })
 });

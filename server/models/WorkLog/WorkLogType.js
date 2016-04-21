@@ -63,6 +63,10 @@ const WorkLog_TYPE = new GraphQLObjectType({
         'tags': {
             type: new GraphQLList(GraphQLString),
             description: 'tag list'
+        },
+        'end_date': {
+            type: GraphQLFloat,
+            description: 'end date'
         }
     })
 });
