@@ -70,9 +70,13 @@ class ArticleEditor extends Component {
       tags,
       category,
       files,
+      reportTo,
       allCategoriesOptions,
       tagSuggestions,
       onTitleChange,
+      documentType,
+      priority,
+      milestone,
       onDocumentTypeChange,
       onPriorityChange,
       onMilestoneChange,
@@ -99,7 +103,6 @@ class ArticleEditor extends Component {
           value={title}
           onChange={onTitleChange} />
         <br />
-        {this.renderCategorySelectField()}
         <div className="select-field-group">
           <ArticleDocumentTypeSelect
             value={documentType}
@@ -131,6 +134,13 @@ class ArticleEditor extends Component {
           onChange={onCategoryChange} >
           {allCategoryItems}
         </SelectField>*/}
+        <label>Report To</label>
+        <Select
+          multi={true}
+          allowCreate={true}
+          value={reportTo.map( item => {return {value: item, label: item};})}
+          onChange={onReportToChange}
+        />
         <br />
         <label>Content</label>
         <Editor
@@ -177,13 +187,21 @@ ArticleEditor.propTypes = {
   files               : PropTypes.array,
   allCategoriesOptions: PropTypes.array,
   style               : PropTypes.object,
+  documentType        : PropTypes.string,
+  priority            : PropTypes.string,
+  milestone           : PropTypes.string,
+  reportTo            : PropTypes.arrayOf(PropTypes.string),
   tagSuggestions      : PropTypes.arrayOf(PropTypes.string),
   onContentChange     : PropTypes.func.isRequired,
   onTitleChange       : PropTypes.func.isRequired,
   onTagsChange        : PropTypes.func.isRequired,
   onCategoryChange    : PropTypes.func.isRequired,
   onFileUpload        : PropTypes.func.isRequired,
-  onFileRemove        : PropTypes.func.isRequired
+  onFileRemove        : PropTypes.func.isRequired,
+  onDocumentTypeChange: PropTypes.func.isRequired,
+  onPriorityChange    : PropTypes.func.isRequired,
+  onMilestoneChange   : PropTypes.func.isRequired,
+  onReportToChange    : PropTypes.func.isRequired
 };
 
 ArticleEditor.defaultProps = {
@@ -193,7 +211,7 @@ ArticleEditor.defaultProps = {
   tags                : [],
   files               : [],
   allCategoriesOptions: [],
-  tagSuggestions      : [],
+  reportTo            : []
 };
 
 export default ArticleEditor;
