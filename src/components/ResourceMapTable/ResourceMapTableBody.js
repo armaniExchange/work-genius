@@ -1,5 +1,5 @@
 import './ResourceMapTable.css';
-
+import './_color.css';
 import React, { Component, PropTypes } from 'react';
 import moment from 'moment';
 
@@ -71,25 +71,29 @@ class ResourceMapTableBody extends Component {
             </tr>
         );
         if (data.length > 0) {
+            // var moreItems = {};
         	bodyHtml = data.map((resource, bodyIndex) => {
                 let worklogs = resource.worklogs;
                 var user = resource.name;
                 var userId = resource.id;
                 let userHtml = (<Td key={0} colSpan={1} className={'cell-layout-style'}>{user}</Td>);
                 let itemsHtml = worklogs.map((itemValue, itemIndex) => {
+                    // If the day is weekday, will be show weekday style.
                     let currentDay = moment(startDate).add(itemIndex, 'days');
                     let day = currentDay.isoWeekday();
                     let className = 'cell-layout-style ';
                     if (day === 6 || day === 7) {
                         className += 'weekend-style';
                     }
+
+                    // Got work log items, and show item cells.
                     let item = itemValue.worklog_items;
-                    let cellFunc = undefined;
-                    let config = {};
-                    var cellHtml = '';
+                    let cellFunc = undefined; // Different cell function, show different style.
+                    let config = {};    // The cell need config.
+                    var cellHtml = '';  // The style of final.
                     if (item != null) {
-                        let type = itemValue.type;
-                        config = itemValue ;
+                        let type = itemValue.day_type;
+                        config = itemValue;
                         cellFunc = RESOURCE_MAP_CELLS[type];
                     }
                     config.user = user;

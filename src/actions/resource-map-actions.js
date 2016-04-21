@@ -45,6 +45,95 @@ export function fetchResourceMapModalHandler(show, info){
 	};
 }
 
+var taskWorkItemActions = {
+    create: (item) => {
+        return (dispatch) => {
+            var data = item.data;
+            data.employee_id = item.employee_id;
+            let config = {
+                method: 'POST',
+                body: `mutation RootMutationType {
+                    createWorkLog(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+                }`,
+                headers: {
+                    'Content-Type': 'application/graphql',
+                    'x-access-token': localStorage.token
+                }
+            };
+
+            return fetch(SERVER_API_URL, config)
+                .then((res) => res.json())
+                .then((body) => {
+                    let id = body.data.createWorkLog;
+                    if (id !== undefined && id !== '' && id !== 0) {
+                        item.data.id = id;
+                        dispatch(fetchWorklogItem(item));
+                    }
+                })
+                .catch((err) => {
+                    throw new Error(err);
+                });
+        };
+    },
+    update: (item) => {
+        let data = item.data;
+        if (item.isStatus) {
+            data = {status: data.status};
+        }
+        return (dispatch) => {
+            // let date = parseInt(moment(item.date).format('X')) * 1000;
+            // var updateData = {
+            //     employee_id: item.employee_id,
+            //     content: item.content,
+            //     progress: parseInt(item.progress),
+            //     date: date,
+            //     tag: item.tag,
+            //     status: item.status ? item.status : 0
+            // };
+            let config = {
+                method: 'POST',
+                body: `mutation RootMutationType {
+                    updateWorkLog(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}",id:"` + item.id + `")
+                }`,
+                headers: {
+                    'Content-Type': 'application/graphql',
+                    'x-access-token': localStorage.token
+                }
+            };
+
+            return fetch(SERVER_API_URL, config)
+                .then((res) => res.json())
+                .then(() => {
+                    dispatch(fetchWorklogItem(item));
+                })
+                .catch((err) => {
+                    throw new Error(err);
+                });
+        };
+    },
+    delete: (item) => {
+        return (dispatch) => {
+            let config = {
+                method: 'POST',
+                body: `mutation RootMutationType {deleteWorkLog(id:\"` + item.id + `\")}`,
+                headers: {
+                    'Content-Type': 'application/graphql',
+                    'x-access-token': localStorage.token
+                }
+            };
+
+            return fetch(SERVER_API_URL, config)
+                .then((res) => res.json())
+                .then(() => {
+                    dispatch(fetchWorklogItem(item));
+                })
+                .catch((err) => {
+                    throw new Error(err);
+                });
+        };
+    }
+};
+
 export function fetchAllUsersRequest(){
   return (dispatch) => {
         let config = {
@@ -86,13 +175,19 @@ function queryResourceMapDataFromServer(startDate, days) {
 			        name,
 			        worklogs{
 			            date,
-			            type,
+			            day_type,
 			            worklog_items{
 			                id,
+                            start_date,
                             content,
                             progress,
-                            tag,
-                            status
+                            color,
+                            status,
+                            task,
+                            duration,
+                            release,
+                            creator,
+                            tags
 			            }
 			        }
 			    }
@@ -128,13 +223,19 @@ function queryResourceMapDataFromServerByUser(startDate, days, userId) {
                     name,
                     worklogs{
                         date,
-                        type,
+                        day_type,
                         worklog_items{
                             id,
+                            start_date,
                             content,
                             progress,
-                            tag,
-                            status
+                            color,
+                            status,
+                            task,
+                            duration,
+                            release,
+                            creator,
+                            tags
                         }
                     }
                 }
@@ -150,7 +251,6 @@ function queryResourceMapDataFromServerByUser(startDate, days, userId) {
                 dispatch(setLoadingState(false));
                 let data = body.data.getWorkLogByEmployeeId;
                 data = data === undefined ? [] : data;
-                console.log(JSON.stringify(data, 4));
                 dispatch(fetchResourceMapData(data, startDate, userId));
             })
             .catch((err) => {
@@ -161,42 +261,42 @@ function queryResourceMapDataFromServerByUser(startDate, days, userId) {
 }
 
 
-function workLogItemCreate(item) {
-    return (dispatch) => {
-        let date = parseInt(moment(item.date).format('X')) * 1000;
-        var createData = {
-            employee_id: item.employee_id,
-            content: item.content,
-            progress: parseInt(item.progress),
-            date: date,
-            tag: item.tag,
-            status: item.status ? item.status : 0
-        };
-        let config = {
-            method: 'POST',
-            body: `mutation RootMutationType {
-                createWorkLog(data:"${JSON.stringify(createData).replace(/\"/gi, '\\"')}")
-            }`,
-            headers: {
-                'Content-Type': 'application/graphql',
-                'x-access-token': localStorage.token
-            }
-        };
+// function workLogItemCreate(item) {
+//     return (dispatch) => {
+//         let date = parseInt(moment(item.date).format('X')) * 1000;
+//         var createData = {
+//             employee_id: item.employee_id,
+//             content: item.content,
+//             progress: parseInt(item.progress),
+//             date: date,
+//             tag: item.tag,
+//             status: item.status ? item.status : 0
+//         };
+//         let config = {
+//             method: 'POST',
+//             body: `mutation RootMutationType {
+//                 createWorkLog(data:"${JSON.stringify(createData).replace(/\"/gi, '\\"')}")
+//             }`,
+//             headers: {
+//                 'Content-Type': 'application/graphql',
+//                 'x-access-token': localStorage.token
+//             }
+//         };
 
-        return fetch(SERVER_API_URL, config)
-            .then((res) => res.json())
-            .then((body) => {
-                let id = body.data.createWorkLog;
-                if (id !== undefined && id !== '' && id !== 0) {
-                    item.id = id;
-                    dispatch(fetchWorklogItem(item));
-                }
-            })
-            .catch((err) => {
-                throw new Error(err);
-            });
-    };
-}
+//         return fetch(SERVER_API_URL, config)
+//             .then((res) => res.json())
+//             .then((body) => {
+//                 let id = body.data.createWorkLog;
+//                 if (id !== undefined && id !== '' && id !== 0) {
+//                     item.id = id;
+//                     dispatch(fetchWorklogItem(item));
+//                 }
+//             })
+//             .catch((err) => {
+//                 throw new Error(err);
+//             });
+//     };
+// }
 
 function workLogItemCreateMulti(items) {
     return (dispatch) => {
@@ -243,41 +343,41 @@ function workLogItemCreateMulti(items) {
     };
 }
 
-function workLogItemUpdate(item, fetchState) {
+// function workLogItemUpdate(item, fetchState) {
 
-    return (dispatch) => {
-        let date = parseInt(moment(item.date).format('X')) * 1000;
-        var updateData = {
-            employee_id: item.employee_id,
-            content: item.content,
-            progress: parseInt(item.progress),
-            date: date,
-            tag: item.tag,
-            status: item.status ? item.status : 0
-        };
-        let config = {
-            method: 'POST',
-            body: `mutation RootMutationType {
-                updateWorkLog(data:"${JSON.stringify(updateData).replace(/\"/gi, '\\"')}",id:"` + item.id + `")
-            }`,
-            headers: {
-                'Content-Type': 'application/graphql',
-                'x-access-token': localStorage.token
-            }
-        };
+//     return (dispatch) => {
+//         let date = parseInt(moment(item.date).format('X')) * 1000;
+//         var updateData = {
+//             employee_id: item.employee_id,
+//             content: item.content,
+//             progress: parseInt(item.progress),
+//             date: date,
+//             tag: item.tag,
+//             status: item.status ? item.status : 0
+//         };
+//         let config = {
+//             method: 'POST',
+//             body: `mutation RootMutationType {
+//                 updateWorkLog(data:"${JSON.stringify(updateData).replace(/\"/gi, '\\"')}",id:"` + item.id + `")
+//             }`,
+//             headers: {
+//                 'Content-Type': 'application/graphql',
+//                 'x-access-token': localStorage.token
+//             }
+//         };
 
-        return fetch(SERVER_API_URL, config)
-            .then((res) => res.json())
-            .then(() => {
-                if (fetchState) {
-                    dispatch(fetchWorklogItem(item));
-                }
-            })
-            .catch((err) => {
-                throw new Error(err);
-            });
-    };
-}
+//         return fetch(SERVER_API_URL, config)
+//             .then((res) => res.json())
+//             .then(() => {
+//                 if (fetchState) {
+//                     dispatch(fetchWorklogItem(item));
+//                 }
+//             })
+//             .catch((err) => {
+//                 throw new Error(err);
+//             });
+//     };
+// }
 
 function workLogItemDelete(item) {
     return (dispatch) => {
@@ -304,11 +404,11 @@ function workLogItemDelete(item) {
 function workLogItemUpsert(item) {
     if (item.id === undefined || item.id === null) {
         return (dispatch) => {
-            dispatch(workLogItemCreate(item));
+            dispatch(taskWorkItemActions.create(item));
         };
     } else {
         return (dispatch) => {
-            dispatch(workLogItemUpdate(item, true));
+            dispatch(taskWorkItemActions.update(item));
         };
     }
 }
@@ -363,7 +463,7 @@ export function fetchResourceMapDeleteItem(item) {
 export function fetchResourceMapStatus(item) {
     return (dispatch) => {
         Promise.all([
-            dispatch(workLogItemUpdate(item, false))
+            dispatch(taskWorkItemActions.update(item))
         ]).then(
             () => {
             },
