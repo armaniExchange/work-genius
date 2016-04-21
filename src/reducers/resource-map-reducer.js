@@ -160,30 +160,36 @@ var taskStateActions = {
         // let millisecondEndDate = startDate + item.duration * 60 * 60 * 1000;
 
         var newWorklog = [];
-
+        let duration = item.duration ? item.duration : 0;
         dayWorkLog.map((worklog) => {
             // let currentMilliseconds = millisecondStartDate + index * millisecondOneDay;
             let worklogDate = worklog.date instanceof moment ? worklog.date.format('X') * 1000 : worklog.date;
             // self.isSelectDate(worklogDate, millisecondStartDate, startDate, item.duration);
-            if (self.isSelectDate(worklogDate, millisecondStartDate, item.duration)) {
-                let worklogItems = worklog.worklog_items;
-                // Delete items by id
-                if (item.isDelete) {
-                    worklogItems = self.deleteWorkItem(worklogItems, item);
-                } else if (worklogItems === undefined || worklogItems === null) {
-                    worklogItems = [];
-                    worklogItems.push(item);
-                } else {
-                    let logItem = worklogItems.find((log) => {
-                        return log.id === item.id;
-                    });
-                    if (logItem === undefined) {
+            if (worklog.day_type !== 'workday') {
+                duration += 8;
+            } else {
+                var worklogItems = worklog.worklog_items;
+                if (self.isSelectDate(worklogDate, millisecondStartDate, duration)) {
+                    // Delete items by id
+                    if (item.isDelete) {
+                        worklogItems = self.deleteWorkItem(worklogItems, item);
+                    } else if (worklogItems === undefined || worklogItems === null) {
+                        worklogItems = [];
                         worklogItems.push(item);
                     } else {
-                        logItem.content = item.content;
-                        logItem.progress = item.progress;
-                        self.copyValue(logItem, item);
+                        let logItem = worklogItems.find((log) => {
+                            return log.id === item.id;
+                        });
+                        if (logItem === undefined) {
+                            worklogItems.push(item);
+                        } else {
+                            logItem.content = item.content;
+                            logItem.progress = item.progress;
+                            self.copyValue(logItem, item);
+                        }
                     }
+                } else {
+                    worklogItems = self.deleteWorkItem(worklogItems, item);
                 }
                 worklog.worklog_items = worklogItems;
             }
@@ -198,16 +204,17 @@ var taskStateActions = {
      * duration      Duration day
      */
     isSelectDate: function(selectDate, startDate, duration) {
-        if (duration === 0) {
+        // If duration is less than 8, will be compare the start date.
+        if (duration === undefined || duration < 8) {
             return (selectDate === startDate);
         }
 
+        // If the select date is weekday, will return false.
         let day = moment(selectDate).isoWeekday();
         if (day === 6 || day === 7) {
             return false;
         }
-
-        let index = ( duration > 8 && (duration % 8) === 0) ? (duration / 8) : (duration / 8) + 1;
+        let index = duration / 8;
         let millisecondOneDay = 24 * 60 * 60 * 1000;
         for (let i = 0; i < index; i ++) {
             if (selectDate === startDate + i * millisecondOneDay) {

@@ -89,9 +89,20 @@ class ResourceMapModalWorkLog extends Component {
 			progressValue = progressField.getValue();
 		}
 		if (taskValue !== undefined && taskValue !== '') {
-			let startDate = this.state.startDate ? this.state.selectDate : defaultModalInfos.date;
-			let times = moment(startDate).format('X') * 1000 + this.state.selectTime;
+			let startDate;
+			if (defaultModalInfos.id !== undefined) {
+				startDate = this.state.selectDate ? this.state.selectDate : defaultModalInfos.start_date;
+			} else {
+				startDate = this.state.selectDate ? this.state.selectDate : defaultModalInfos.date;
+			}
+			let times;
+			if (this.state.selectTime) {
+				times = moment(moment(startDate).format('YYYY-MM-DD')).format('X') * 1000 + this.state.selectTime;
+			} else {
+				times = moment(startDate).format('X') * 1000;;
+			}
 			let data = {
+				'employee_id': defaultModalInfos.userId,
 				'id': defaultModalInfos.id,
 				'task': taskValue,
 				'content': workValue,
@@ -126,7 +137,11 @@ class ResourceMapModalWorkLog extends Component {
 			console.log('Progress Value: ' + progressField.getValue());
 		}
 
-		let startDate = self.state.startDate ? self.state.selectDate : defaultModalInfos.date;
+		let startDate = self.state.selectDate ? self.state.selectDate : defaultModalInfos.date;
+		console.log(self.state.startDate);
+		console.log(self.state.selectDate);
+		console.log(self.state.selectTime);
+		startDate instanceof moment ? console.log(startDate.format('YYYY-MM-DD')) : console.log(startDate);
 		console.log('Tag Color Value: ' + self.state.color);
 		console.log('Start Date: ' + startDate);
 		console.log('Start Time: ' + self.state.selectTime);
@@ -236,9 +251,11 @@ class ResourceMapModalWorkLog extends Component {
 		defaultModalInfos.progress = defaultModalInfos.progress ? defaultModalInfos.progress : 0;
 		let showDoneClassName = 'material-icons icon-layout';
 		let hideDoneClassName = 'material-icons icon-layout icon-layou-display';
-		let nowDate = defaultModalInfos.date;
-		if (nowDate) {
-			nowDate = moment(nowDate).format('YYYY-MM-DD');
+		let nowDate;
+		if (defaultModalInfos.id) {
+			nowDate = moment(defaultModalInfos.start_date).format('YYYY-MM-DD hh:mm a');
+		} else {
+			nowDate = moment(defaultModalInfos.date).format('YYYY-MM-DD hh:mm a');
 		}
 
 		let releaseOptions = ['4.1.0', '4.1.1', '3.2.1'];
@@ -313,6 +330,7 @@ class ResourceMapModalWorkLog extends Component {
 					</div>
 					<div className="col-xs-6 layout-design-over">
 					<TimePicker
+						defaultTime={new Date(nowDate)}
 						onChange={this._changeStartTime}
 					/>
 					</div>

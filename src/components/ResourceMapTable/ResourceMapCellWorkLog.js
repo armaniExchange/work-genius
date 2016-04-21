@@ -72,93 +72,94 @@ class ResourceMapCellWorkLog extends Component {
 		var items = config.worklog_items;
 		var timer = undefined;
 		var doubleEvent = false;
-		// console.log(items);
-		var worklogHtml = items.map((item, index) => {
-			// console.log(item);
+		var worklogHtml = (<div/>);
+		if (items instanceof Array) {
+			worklogHtml = items.map((item, index) => {
 
-			let __onClickWorkLogItem = (e) => {
-				e.stopPropagation();
-				doubleEvent = false;
-				clearTimeout(timer);
-	            timer = setTimeout(() => {
-	            	if (!doubleEvent) {
-	            		this._onClickWorkLogItem(item);
-	            	}
-	            }, 300);
-				// this._onClickWorkLogItem(item);
-			};
+				let __onClickWorkLogItem = (e) => {
+					e.stopPropagation();
+					doubleEvent = false;
+					clearTimeout(timer);
+		            timer = setTimeout(() => {
+		            	if (!doubleEvent) {
+		            		this._onClickWorkLogItem(item);
+		            	}
+		            }, 300);
+					// this._onClickWorkLogItem(item);
+				};
 
-			let __onClickCheckBox = (e) => {
-				e.stopPropagation();
-			};
+				let __onClickCheckBox = (e) => {
+					e.stopPropagation();
+				};
 
-			let __onChangeCheckBox = (e) => {
-				e.stopPropagation();
+				let __onChangeCheckBox = (e) => {
+					e.stopPropagation();
 
-				item.status = e.target.checked ? 1 : 0;
-				this._onSubmitCheckBoxItem(item);
-			};
+					item.status = e.target.checked ? 1 : 0;
+					this._onSubmitCheckBoxItem(item);
+				};
 
-			let __onDblclickWorkLogItem = (e) => {
-				e.stopPropagation();
-				doubleEvent = true;
-				this.setState({open: true, selectedItem: item});
-			};
-			let className = 'progress__bar ';
-			let classNameProgress = 'progress progress--active ';
-			var defaultColor = (item.color && item.color !== '') ? item.color : TAG;
-			className += defaultColor;
-			classNameProgress += defaultColor + '-light';
-			item.progress = item.progress ? item.progress : 0;
+				let __onDblclickWorkLogItem = (e) => {
+					e.stopPropagation();
+					doubleEvent = true;
+					this.setState({open: true, selectedItem: item});
+				};
+				let className = 'progress__bar ';
+				let classNameProgress = 'progress progress--active ';
+				var defaultColor = (item.color && item.color !== '') ? item.color : TAG;
+				className += defaultColor;
+				classNameProgress += defaultColor + '-light';
+				item.progress = item.progress ? item.progress : 0;
 
-			let itemDate = item.start_date;
-			console.log(item.status);
-			return (
-				<div className="cell-top-item-inner-text" key={index}>
-					<div className="worklog-layout--checkbox">
-						<Checkbox
-							onClick={__onClickCheckBox}
-							checked = {item.status}
-							onChange={__onChangeCheckBox}
-						/>
+				let itemDate = item.start_date;
+				return (
+					<div className="cell-top-item-inner-text" key={index}>
+						<div className="worklog-layout--checkbox">
+							<Checkbox
+								onClick={__onClickCheckBox}
+								checked = {item.status}
+								onChange={__onChangeCheckBox}
+							/>
+						</div>
+						<div className={'worklog-layout--text'} onClick={__onClickWorkLogItem} onDoubleClick={__onDblclickWorkLogItem}>
+						    <div className={classNameProgress}>
+								  <b className={className} style={{ width: item.progress + '%' }}>
+								  	<Tooltip
+										placement="top"
+										overlay={
+											(
+												<div>
+													<label>Progress: </label>
+													<span><em>{item.progress}%</em></span>
+													<br />
+													<label>Task: </label>
+													<span><em>{item.task}</em></span>
+													<br />
+													<label>Start Date: </label>
+													<span><em>{moment(itemDate).format('YYYY-MM-DD')}</em></span>
+													<br />
+													<label>Duration: </label>
+													<span><em>{item.duration ? item.duration : 0}</em> Hours</span>
+													<br />
+													<label>Work Log: </label>
+													<span>{item.content}</span>
+												</div>
+											)
+										}
+										arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+									>
+									    <span className="label-default-style c-white">
+									      <strong>{item.progress}%</strong> {item.task}
+									    </span>
+								    </Tooltip>
+								  </b>
+								</div>
+						</div>
 					</div>
-					<div className={'worklog-layout--text'} onClick={__onClickWorkLogItem} onDoubleClick={__onDblclickWorkLogItem}>
-					    <div className={classNameProgress}>
-							  <b className={className} style={{ width: item.progress + '%' }}>
-							  	<Tooltip
-									placement="top"
-									overlay={
-										(
-											<div>
-												<label>Progress: </label>
-												<span><em>{item.progress}%</em></span>
-												<br />
-												<label>Task: </label>
-												<span><em>{item.task}</em></span>
-												<br />
-												<label>Start Date: </label>
-												<span><em>{moment(itemDate).format('YYYY-MM-DD')}</em></span>
-												<br />
-												<label>Duration: </label>
-												<span><em>{item.duration ? item.duration : 0}</em> Hours</span>
-												<br />
-												<label>Work Log: </label>
-												<span>{item.content}</span>
-											</div>
-										)
-									}
-									arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
-								>
-								    <span className="label-default-style c-white">
-								      <strong>{item.progress}%</strong> {item.task}
-								    </span>
-							    </Tooltip>
-							  </b>
-							</div>
-					</div>
-				</div>
-			);
-		});
+				);
+			});
+		}
+
 		const actions = [
 		      <FlatButton
 		        label="Cancel"
