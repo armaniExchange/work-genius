@@ -5,6 +5,10 @@
 	text-align: center !important;
 }
 
+td {
+  border-right: solid 1px #fff;
+}
+
 .table-tr {
 	height: 100px !important;
 }
