@@ -127,7 +127,7 @@ class ViewArticlePage extends Component {
     };
 
     return (
-      <section>
+      <section className="view-article-page">
         <Paper style={paperStyle} zDepth={1}>
           <h3>{title}</h3>
           <div style={{
@@ -168,7 +168,7 @@ class ViewArticlePage extends Component {
           <br />
           <ArticleTagList tags={tags} />
         </Paper>
-        <Paper style={paperStyle} zDepth={1}>
+        <Paper className="article-viewer" style={paperStyle} zDepth={1}>
           <HighlightMarkdown source={content} />
         </Paper>
         <h5>Comments</h5>

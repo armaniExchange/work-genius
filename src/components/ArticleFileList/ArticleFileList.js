@@ -55,7 +55,7 @@ class ArticleFileList extends Component {
     let icon = 'fa-file-code-o';
 
     MimeTypeMap.forEach( item => {
-      if (mimeType.search(item.type) !== -1) {
+      if (mimeType.includes(item.type)) {
         icon = item.icon;
       }
     });

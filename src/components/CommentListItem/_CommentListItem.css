@@ -39,6 +39,7 @@
     .content {
       flex: 1;
       position: relative;
+
       .toolbar {
         position: absolute;
         top: 5px;
@@ -46,6 +47,7 @@
       }
       .message {
         padding: 15px;
+        min-height: 4em;
       }
       .time {
         text-align: right;

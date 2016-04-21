@@ -1,4 +1,4 @@
-// Style
+ // Style
 import './_EditArticlePage.scss';
 // React & Redux
 import React, { Component, PropTypes } from 'react';
@@ -37,8 +37,20 @@ class EditArticlePage extends Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.isEditing && !nextProps.isEditing) {
       this.props.history.replace(`/main/knowledge/document/${nextProps.id}`);
+      return;
     }
-    if (this.props.id === nextProps.id && this.props.files.length !== nextProps.files.lengh) {
+
+    const thisFiles = this.props.files;
+    const nextFiles = nextProps.files;
+    const justUpdateFile = this.getJustUpdatedFile(thisFiles, nextFiles);
+    if ( justUpdateFile ) {
+      const { name, url } = justUpdateFile;
+      this.setState({
+        editingContent: this.state.editingContent.replace(this.getUploadingFileMarkdown(justUpdateFile), `[${name}](${url})`)
+      });
+    }
+
+    if (this.props.id === nextProps.id && thisFiles.length !== nextFiles.lengh) {
       // fiile upload change files, but skip to set new state
     } else {
       const newState = this.getEditingStateFromProps(nextProps);
@@ -59,14 +71,22 @@ class EditArticlePage extends Component {
       title,
       content,
       tags,
-      category
+      category,
+      documentType,
+      priority,
+      milestone,
+      reportTo
     } = props;
 
     return {
       editingTitle: title,
       editingContent: content,
       editingTags: tags,
-      editingCategory: category
+      editingCategory: category,
+      editingDocumentType: documentType,
+      editingPriority: priority,
+      editingMilestone: milestone,
+      editingReportTo: reportTo
     };
   }
 
@@ -98,8 +118,35 @@ class EditArticlePage extends Component {
     });
   }
 
+  onDocumentTypeChange(event, index, value) {
+    this.setState({
+      editingDocumentType:value
+    });
+  }
+
+  onPriorityChange(event, index, value) {
+    this.setState({
+      editingPriority: value
+    });
+  }
+
+  onMilestoneChange(value) {
+    this.setState({
+      editingMilestone: value
+    });
+  }
+
+  onReportToChange(val, items) {
+    this.setState({
+      editingReportTo: items.map(item => item.value)
+    });
+  }
+
   onFileUpload(file) {
     const { id, files } = this.props;
+    this.setState({
+      editingContent: this.state.editingContent + '\n' + this.getUploadingFileMarkdown(file)
+    });
     this.props.articleActions.uploadArticleFile({
       articleId: id,
       file,
@@ -120,6 +167,20 @@ class EditArticlePage extends Component {
     this.props.history.go(-1);
   }
 
+  getJustUpdatedFile(thisFiles, nextFiles) {
+    return nextFiles.filter(nextFile => {
+      const thisFile = thisFiles.filter( eachFile => nextFile.tempId === eachFile.tempId )[0];
+      return thisFiles.length
+        && thisFile
+        && thisFile.isUploading
+        && !nextFile.isUploading;
+    })[0];
+  }
+
+  getUploadingFileMarkdown(file) {
+    const mdImageSymbol = file.type.includes('image') ? '!' : '';
+    return `${mdImageSymbol}[Uploading ${file.name} ...]()`;
+  }
   _transformToOptions(categories) {
     return this._transformFromTree(categories).filter((item) => {
       return item.path !== 'root';
@@ -152,7 +213,11 @@ class EditArticlePage extends Component {
       editingTitle,
       editingTags,
       editingCategory,
-      editingContent
+      editingContent,
+      editingDocumentType,
+      editingPriority,
+      editingMilestone,
+      editingReportTo,
     } = this.state;
     const {
       createArticle,
@@ -165,6 +230,10 @@ class EditArticlePage extends Component {
       tags: editingTags,
       category: editingCategory,
       content: editingContent,
+      documentType: editingDocumentType,
+      priority: editingPriority,
+      milestone: editingMilestone,
+      reportTo: editingReportTo,
       files: files.map(file => {return {id: file.id};})
     }, idField));
   }
@@ -175,6 +244,10 @@ class EditArticlePage extends Component {
       editingTitle,
       editingTags,
       editingCategory,
+      editingDocumentType,
+      editingPriority,
+      editingMilestone,
+      editingReportTo,
       isPreviewVisible
     } = this.state;
 
@@ -187,27 +260,15 @@ class EditArticlePage extends Component {
 
     const editorStyle = {
       width: isPreviewVisible ? '50%' : '100%',
-      float: 'left',
-      paddingRight: 10
-    };
-
-    const previewStyle = {
-      width: '50%',
-      float: 'left',
-      borderRadius: 5,
-      border: '1px solid lightgray',
-      background: 'white',
-      padding: 15,
-      overflowX: 'scroll'
     };
 
     const pageTitle = params.articleId === 'new' ?
       'Create Document' : 'Update Document';
 
     return (
-      <section>
+      <section className="edit-article-page">
         <h3>{pageTitle}</h3>
-        <div style={editorStyle}>
+        <div className="article-editor-wrapper" style={editorStyle}>
           <ArticleEditor
             title={editingTitle}
             tags={editingTags}
@@ -216,16 +277,25 @@ class EditArticlePage extends Component {
             files={files}
             tagSuggestions={allTags}
             allCategoriesOptions={::this._transformToOptions(allCategories)}
+            documentType={editingDocumentType}
+            priority={editingPriority}
+            milestone={editingMilestone}
+            reportTo={editingReportTo}
             onTagsChange={::this.onTagsChange}
             onTitleChange={::this.onTitleChange}
             onCategoryChange={::this.onCategoryChange}
             onContentChange={::this.onContentChange}
             onFileUpload={::this.onFileUpload}
-            onFileRemove={::this.onFileRemove}/>
+            onFileRemove={::this.onFileRemove}
+            onDocumentTypeChange={::this.onDocumentTypeChange}
+            onPriorityChange={::this.onPriorityChange}
+            onMilestoneChange={::this.onMilestoneChange}
+            onReportToChange={::this.onReportToChange}
+          />
         </div>
         {
           isPreviewVisible ? (
-            <div style={previewStyle}>
+            <div className="article-editor-preview">
               <HighlightMarkdown source={editingContent} />
             </div>
           ) : null
@@ -235,6 +305,7 @@ class EditArticlePage extends Component {
         <RaisedButton
           label="Submit"
           primary={true}
+          disabled={!editingTitle || !editingCategory}
           onClick={::this.onSubmit}
           style={{margin: 10}} />
         <RaisedButton
@@ -260,6 +331,10 @@ EditArticlePage.propTypes = {
   category            : PropTypes.object,
   comments            : PropTypes.array,
   content             : PropTypes.string,
+  documentType        : PropTypes.string,
+  priority            : PropTypes.string,
+  milestone           : PropTypes.string,
+  reportTo            : PropTypes.arrayOf(PropTypes.string),
   createdAt           : PropTypes.number,
   updatedAt           : PropTypes.number,
   params              : PropTypes.object,

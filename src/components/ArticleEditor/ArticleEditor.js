@@ -9,6 +9,9 @@ import Dropzone from 'react-dropzone';
 import ArticleFileList from '../../components/ArticleFileList/ArticleFileList';
 import Editor from '../../components/Editor/Editor';
 import ConfirmDeleteDialog from '../../components/ConfirmDeleteDialog/ConfirmDeleteDialog';
+import ArticleDocumentTypeSelect from '../../components/ArticleDocumentTypeSelect/ArticleDocumentTypeSelect';
+import ArticlePrioritySelect from '../../components/ArticlePrioritySelect/ArticlePrioritySelect';
+import ArticleMilestoneSelect from '../../components/ArticleMilestoneSelect/ArticleMilestoneSelect';
 
 // Styles
 import './_ArticleEditor.css';
@@ -67,10 +70,18 @@ class ArticleEditor extends Component {
       tags,
       category,
       files,
+      reportTo,
       allCategoriesOptions,
       tagSuggestions,
-      onContentChange,
       onTitleChange,
+      documentType,
+      priority,
+      milestone,
+      onDocumentTypeChange,
+      onPriorityChange,
+      onMilestoneChange,
+      onReportToChange,
+      onContentChange,
       onTagsChange,
       onCategoryChange
     } = this.props;
@@ -79,15 +90,35 @@ class ArticleEditor extends Component {
       editingFile
     } = this.state;
 
+    const hidePriorityAndMilestoneSelectStyle = !documentType || documentType === 'knowledges' ?
+      {visibility: 'hidden'} : null;
+
     return (
       <div className="article-editor"
         {...this.props} >
         <TextField
           style={{width: '100%'}}
           hintText="Title"
+          errorText={!title && 'This field is required'}
           value={title}
           onChange={onTitleChange} />
         <br />
+        <div className="select-field-group">
+          <ArticleDocumentTypeSelect
+            value={documentType}
+            onChange={onDocumentTypeChange}
+          />
+          <ArticlePrioritySelect
+            style={hidePriorityAndMilestoneSelectStyle}
+            value={priority}
+            onChange={onPriorityChange}
+          />
+          <ArticleMilestoneSelect
+            style={hidePriorityAndMilestoneSelectStyle}
+            value={milestone}
+            onChange={onMilestoneChange}
+          />
+        </div>
         <br />
         <label>Category</label>
         <Select
@@ -103,6 +134,13 @@ class ArticleEditor extends Component {
           onChange={onCategoryChange} >
           {allCategoryItems}
         </SelectField>*/}
+        <label>Report To</label>
+        <Select
+          multi={true}
+          allowCreate={true}
+          value={reportTo.map( item => {return {value: item, label: item};})}
+          onChange={onReportToChange}
+        />
         <br />
         <label>Content</label>
         <Editor
@@ -149,13 +187,21 @@ ArticleEditor.propTypes = {
   files               : PropTypes.array,
   allCategoriesOptions: PropTypes.array,
   style               : PropTypes.object,
+  documentType        : PropTypes.string,
+  priority            : PropTypes.string,
+  milestone           : PropTypes.string,
+  reportTo            : PropTypes.arrayOf(PropTypes.string),
   tagSuggestions      : PropTypes.arrayOf(PropTypes.string),
   onContentChange     : PropTypes.func.isRequired,
   onTitleChange       : PropTypes.func.isRequired,
   onTagsChange        : PropTypes.func.isRequired,
   onCategoryChange    : PropTypes.func.isRequired,
   onFileUpload        : PropTypes.func.isRequired,
-  onFileRemove        : PropTypes.func.isRequired
+  onFileRemove        : PropTypes.func.isRequired,
+  onDocumentTypeChange: PropTypes.func.isRequired,
+  onPriorityChange    : PropTypes.func.isRequired,
+  onMilestoneChange   : PropTypes.func.isRequired,
+  onReportToChange    : PropTypes.func.isRequired
 };
 
 ArticleEditor.defaultProps = {
@@ -165,7 +211,7 @@ ArticleEditor.defaultProps = {
   tags                : [],
   files               : [],
   allCategoriesOptions: [],
-  tagSuggestions      : [],
+  reportTo            : []
 };
 
 export default ArticleEditor;

@@ -58,6 +58,7 @@ class CommentEditor extends Component {
                 onChange={::this.onContentChange} />
             </Paper>
             <RaisedButton
+              disabled={!editingContent}
               style={commentButtonStyle}
               label="Comment"
               primary={true}
