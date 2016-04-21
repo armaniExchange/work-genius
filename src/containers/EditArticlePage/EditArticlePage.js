@@ -227,9 +227,9 @@ class EditArticlePage extends Component {
       tags: editingTags,
       category: editingCategory,
       content: editingContent,
-      documentType: editingDocumentType,
-      priority: editingPriority,
-      milestone: editingMilestone,
+      documentType: editingDocumentType || '',
+      priority: editingPriority || '',
+      milestone: editingMilestone || '',
       reportTo: editingReportTo,
       files: files.map(file => {return {id: file.id};})
     }, idField));

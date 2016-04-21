@@ -34,7 +34,7 @@ function _fetchArticle(id) {
         title,
         content,
         tags,
-        category {id},
+        categoryId,
         author {
           id,
           name
