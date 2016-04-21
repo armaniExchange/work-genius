@@ -19,9 +19,7 @@ const initialState = OrderedMap({
     id: '',
     name: ''
   }),
-  category: OrderedMap({
-    id: ''
-  }),
+  categoryId: '',
   tags: List(),
   files: List(),
   comments: List(),
@@ -46,7 +44,7 @@ const articleToState = (state, action) => {
     .set('priority', action.priority)
     .set('milestone', action.milestone)
     .set('author', OrderedMap(action.author))
-    .set('category', OrderedMap(action.category))
+    .set('categoryId', action.categoryId)
     .set('tags', List(action.tags || []))
     .set('files', fromJS(withUrlFiles || []))
     .set('comments', fromJS(action.comments || []))

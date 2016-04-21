@@ -71,7 +71,7 @@ class EditArticlePage extends Component {
       title,
       content,
       tags,
-      category,
+      categoryId,
       documentType,
       priority,
       milestone,
@@ -82,7 +82,7 @@ class EditArticlePage extends Component {
       editingTitle: title,
       editingContent: content,
       editingTags: tags,
-      editingCategory: category,
+      editingCategoryId: categoryId,
       editingDocumentType: documentType,
       editingPriority: priority,
       editingMilestone: milestone,
@@ -112,9 +112,9 @@ class EditArticlePage extends Component {
     });
   }
 
-  onCategoryChange(path) {
+  onCategoryIdChange(path) {
     this.setState({
-      editingCategory: {id: path}
+      editingCategoryId: path
     });
   }
 
@@ -209,7 +209,7 @@ class EditArticlePage extends Component {
     const {
       editingTitle,
       editingTags,
-      editingCategory,
+      editingCategoryId,
       editingContent,
       editingDocumentType,
       editingPriority,
@@ -225,7 +225,7 @@ class EditArticlePage extends Component {
     postArticle(Object.assign({
       title: editingTitle,
       tags: editingTags,
-      category: editingCategory,
+      categoryId: editingCategoryId,
       content: editingContent,
       documentType: editingDocumentType || '',
       priority: editingPriority || '',
@@ -240,7 +240,7 @@ class EditArticlePage extends Component {
       editingContent,
       editingTitle,
       editingTags,
-      editingCategory,
+      editingCategoryId,
       editingDocumentType,
       editingPriority,
       editingMilestone,
@@ -270,7 +270,7 @@ class EditArticlePage extends Component {
             title={editingTitle}
             tags={editingTags}
             content={editingContent}
-            category={editingCategory}
+            categoryId={editingCategoryId}
             files={files}
             tagSuggestions={allTags}
             allCategoriesOptions={::this._transformToOptions(allCategories)}
@@ -280,7 +280,7 @@ class EditArticlePage extends Component {
             reportTo={editingReportTo}
             onTagsChange={::this.onTagsChange}
             onTitleChange={::this.onTitleChange}
-            onCategoryChange={::this.onCategoryChange}
+            onCategoryIdChange={::this.onCategoryIdChange}
             onContentChange={::this.onContentChange}
             onFileUpload={::this.onFileUpload}
             onFileRemove={::this.onFileRemove}
@@ -302,7 +302,7 @@ class EditArticlePage extends Component {
         <RaisedButton
           label="Submit"
           primary={true}
-          disabled={!editingTitle || !editingCategory}
+          disabled={!editingTitle || !editingCategoryId}
           onClick={::this.onSubmit}
           style={{margin: 10}} />
         <RaisedButton
@@ -325,7 +325,7 @@ EditArticlePage.propTypes = {
   author              : PropTypes.shape({id: PropTypes.string, name: PropTypes.string}),
   tags                : PropTypes.arrayOf(PropTypes.string),
   files               : PropTypes.array,
-  category            : PropTypes.object,
+  categoryId          : PropTypes.string,
   comments            : PropTypes.array,
   content             : PropTypes.string,
   documentType        : PropTypes.string,

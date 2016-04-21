@@ -155,9 +155,9 @@ class DocumentPage extends Component {
   _setAndFetchCategory(item) {
     const { documentActions } = this.props;
     documentActions.setSelectedCategory({...item, isLeaf: true});
-    documentActions.fetchArticles({
+    this.setState({
       categoryId: item.path || ''
-    });
+    }, this.queryArticles);
   }
 
   _clearCategory() {

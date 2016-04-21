@@ -68,7 +68,7 @@ class ArticleEditor extends Component {
       title,
       content,
       tags,
-      category,
+      categoryId,
       files,
       reportTo,
       allCategoriesOptions,
@@ -83,7 +83,7 @@ class ArticleEditor extends Component {
       onReportToChange,
       onContentChange,
       onTagsChange,
-      onCategoryChange
+      onCategoryIdChange
     } = this.props;
     const {
       isConfirmDeleteFileDialogVisible,
@@ -122,18 +122,9 @@ class ArticleEditor extends Component {
         <br />
         <label>Category</label>
         <Select
-          value={category.id}
+          value={categoryId}
           options={allCategoriesOptions}
-          onChange={onCategoryChange}/>
-        {/*<SelectField
-          errorText={categoryErrorText}
-          style={{width: '100%'}}
-          autoWidth={false}
-          maxHeight={allCategoriesMaxHeight}
-          value={category.id}
-          onChange={onCategoryChange} >
-          {allCategoryItems}
-        </SelectField>*/}
+          onChange={onCategoryIdChange}/>
         <label>Report To</label>
         <Select
           multi={true}
@@ -183,7 +174,7 @@ ArticleEditor.propTypes = {
   title               : PropTypes.string,
   content             : PropTypes.string,
   tags                : PropTypes.arrayOf(PropTypes.string),
-  category            : PropTypes.object,
+  categoryId          : PropTypes.string,
   files               : PropTypes.array,
   allCategoriesOptions: PropTypes.array,
   style               : PropTypes.object,
@@ -195,7 +186,7 @@ ArticleEditor.propTypes = {
   onContentChange     : PropTypes.func.isRequired,
   onTitleChange       : PropTypes.func.isRequired,
   onTagsChange        : PropTypes.func.isRequired,
-  onCategoryChange    : PropTypes.func.isRequired,
+  onCategoryIdChange  : PropTypes.func.isRequired,
   onFileUpload        : PropTypes.func.isRequired,
   onFileRemove        : PropTypes.func.isRequired,
   onDocumentTypeChange: PropTypes.func.isRequired,
@@ -207,7 +198,7 @@ ArticleEditor.propTypes = {
 ArticleEditor.defaultProps = {
   title               : '',
   content             : '',
-  category            : {},
+  categoryId          : '',
   tags                : [],
   files               : [],
   allCategoriesOptions: [],
