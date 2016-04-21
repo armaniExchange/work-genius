@@ -22,11 +22,11 @@ class EditArticlePage extends Component {
 
   componentWillMount() {
     const {
-      params,
       articleActions,
+      params,
       documentActions
     } = this.props;
-    articleActions.clearArticle();
+
     if (!this.isCreate()) {
       articleActions.fetchArticle(params.articleId);
     }
@@ -35,12 +35,19 @@ class EditArticlePage extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-
     if (this.props.isEditing && !nextProps.isEditing) {
-      this.props.history.replace(`/main/articles/${nextProps.id}`);
+      this.props.history.replace(`/main/knowledge/document/${nextProps.id}`);
     }
-    const newState = this.getEditingStateFromProps(nextProps);
-    this.setState(newState);
+    if (this.props.id === nextProps.id && this.props.files.length !== nextProps.files.lengh) {
+      // fiile upload change files, but skip to set new state
+    } else {
+      const newState = this.getEditingStateFromProps(nextProps);
+      this.setState(newState);
+    }
+  }
+
+  componentWillUnmount() {
+    this.props.articleActions.clearArticle();
   }
 
   isCreate() {
@@ -79,26 +86,60 @@ class EditArticlePage extends Component {
     });
   }
 
-  onTagsChange(tags) {
+  onTagsChange(val, tags) {
     this.setState({
-      editingTags: tags
+      editingTags: tags.map(tag => tag.value)
     });
   }
 
-  onCategoryChange(event, index, value) {
+  onCategoryChange(path) {
     this.setState({
-      editingCategory: {id: value}
+      editingCategory: {id: path}
     });
   }
 
-  onFileUpload(dataUri) {
-    this.props.articleActions.uploadArticleFile(dataUri);
+  onFileUpload(file) {
+    const { id, files } = this.props;
+    this.props.articleActions.uploadArticleFile({
+      articleId: id,
+      file,
+      files
+    });
   }
 
-  onFileRemove(file, index) {
-    console.log(`file id ${file.id}, index: ${index}`);
-    // const answer = confirm('Are you sure you want to remove the file?');
-    this.props.articleActions.removeArticleFile(file.id);
+  onFileRemove(file) {
+    const { id, files } = this.props;
+    this.props.articleActions.removeArticleFile({
+      articleId: id,
+      file,
+      files
+    });
+  }
+
+  onCancel() {
+    this.props.history.go(-1);
+  }
+
+  _transformToOptions(categories) {
+    return this._transformFromTree(categories).filter((item) => {
+      return item.path !== 'root';
+    }).map((item) => ({
+      label: item.path.replace('root/', '').replace(/\//gi, ' > '),
+      value: item.path
+    }));
+  }
+  
+  _transformFromTree(categories) {
+    if (!categories || typeof categories !== 'object' || Array.isArray(categories)) {
+      return [];
+    }
+    if (!categories.children || categories.children.length === 0) {
+      return [categories];
+    }
+    let rest = categories.children.reduce((result, next) => {
+      return result.concat(this._transformFromTree(next));
+    }, []);
+    return [{path: categories.path}, ...rest];
   }
 
   onSubmit() {
@@ -124,7 +165,7 @@ class EditArticlePage extends Component {
       tags: editingTags,
       category: editingCategory,
       content: editingContent,
-      files
+      files: files.map(file => {return {id: file.id};})
     }, idField));
   }
 
@@ -174,7 +215,7 @@ class EditArticlePage extends Component {
             category={editingCategory}
             files={files}
             tagSuggestions={allTags}
-            allCategories={allCategories}
+            allCategoriesOptions={::this._transformToOptions(allCategories)}
             onTagsChange={::this.onTagsChange}
             onTitleChange={::this.onTitleChange}
             onCategoryChange={::this.onCategoryChange}
@@ -197,9 +238,14 @@ class EditArticlePage extends Component {
           onClick={::this.onSubmit}
           style={{margin: 10}} />
         <RaisedButton
-          label="Preview"
-          onClick={::this.togglePreviewVisible}
+          label="Cancel"
+          onClick={::this.onCancel}
           style={{margin: 10}} />
+        <RaisedButton
+          label="Preview"
+          secondary={true}
+          onClick={::this.togglePreviewVisible}
+          style={{margin: 10, float: 'right'}} />
       </section>
     );
   }
@@ -217,7 +263,7 @@ EditArticlePage.propTypes = {
   createdAt           : PropTypes.number,
   updatedAt           : PropTypes.number,
   params              : PropTypes.object,
-  allCategories       : PropTypes.array,
+  allCategories       : PropTypes.object,
   allTags             : PropTypes.arrayOf(PropTypes.string),
   isEditing           : PropTypes.bool,
   articleActions      : PropTypes.object.isRequired,
@@ -235,7 +281,7 @@ EditArticlePage.defaultProps = {
   content             : '',
   createdAt           : 0,
   updatedAt           : 0,
-  allCategories       : []
+  allCategories       : {}
 };
 
 function mapStateToProps(state) {

@@ -1,0 +1,16 @@
+.idea {
+	float:left;
+	width:50%;
+}
+
+.team {
+	float:left;
+	width:50%;
+	padding-left:40px;
+
+	
+	
+	img {
+		width:100%;
+	}
+}

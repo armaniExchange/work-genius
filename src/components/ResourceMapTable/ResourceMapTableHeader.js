@@ -88,7 +88,7 @@ ResourceMapTableHeader.propTypes = {
 
 ResourceMapTableHeader.defaultProps = {
 	startDate: new Date(),
-	totalDays: 10
+	totalDays: 7
 };
 
 export default ResourceMapTableHeader;

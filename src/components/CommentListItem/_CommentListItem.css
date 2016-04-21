@@ -1,0 +1,56 @@
+.component-comment-list-item {
+  position: relative;
+  margin-bottom: 20px;
+
+  .component-comment-list-item-wrapper {
+    display: flex;
+
+    .author {
+      position: relative;
+      z-index: 1;
+      box-sizing: content-box;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      .avatar-triangle {
+        width: 0;
+        height: 0;
+        top: 20px;
+        position: absolute;
+        border-style: solid;
+      }
+
+      &.left {
+        padding-right: 20px;
+        .avatar-triangle {
+          right: 0;
+          border-width: 10px 15px 10px 0;
+          border-color: transparent white transparent transparent;
+        }
+      }
+      &.right {
+        padding-left: 20px;
+        .avatar-triangle {
+          left: 0;
+          border-width: 10px 0 10px 15px;
+          border-color: transparent transparent transparent white;
+        }
+      }
+    }
+    .content {
+      flex: 1;
+      position: relative;
+      .toolbar {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+      }
+      .message {
+        padding: 15px;
+      }
+      .time {
+        text-align: right;
+        color: gray;
+      }
+    }
+  }
+}

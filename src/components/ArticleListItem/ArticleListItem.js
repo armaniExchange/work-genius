@@ -21,7 +21,6 @@ class ArticleListItem extends Component {
       tags,
       files,
       comments,
-      // createdAt,
       updatedAt,
       onDelete,
       index
@@ -35,7 +34,7 @@ class ArticleListItem extends Component {
 
     return (
       <Paper style={paperStyle}>
-        <Link to={`/main/articles/${id}`}>
+        <Link to={`/main/knowledge/document/${id}`}>
           <h3 style={{margin: 0}}>{title}</h3>
         </Link>
         <div style={{
@@ -43,7 +42,7 @@ class ArticleListItem extends Component {
           top: 5,
           right: 5
         }}>
-          <Link to={`/main/articles/edit/${id}`}>
+          <Link to={`/main/knowledge/document/edit/${id}`}>
             <RaisedButton
               style={{margin: 10}}
               label="Edit"

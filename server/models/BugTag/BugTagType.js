@@ -21,6 +21,10 @@ const BUG_TAG_TYPE = new GraphQLObjectType({
         'bug_count': {
             type: GraphQLInt,
             description: 'Bug tag count'
+        },
+        'type': {
+            type: GraphQLString,
+            description: 'tag type'
         }
 
     })

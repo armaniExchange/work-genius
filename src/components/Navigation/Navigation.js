@@ -5,11 +5,12 @@ import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 // Components
 import LogoutButton from '../Logout-Button/Logout-Button';
+import { MAIN_URL } from '../../constants/app';
 
 // Stateless functional components
 let HeaderLogo = () => {
 	return (
-		<span className="navigation__header-logo"></span>
+		<Link to={MAIN_URL}><span className="navigation__header-logo" title="More Detailed, More Beautiful"></span></Link>
 	);
 };
 
@@ -35,7 +36,7 @@ class Navigation extends Component {
 	}
 
 	render() {
-		const { headerTitle, currentUser, navItems, hasLogo } = this.props;
+		const { currentUser, navItems, hasLogo } = this.props;
 		let headerLogoHtml = hasLogo ? <HeaderLogo /> : null,
 		    navItemsHtml = navItems.map((item, index) => {
 				return (
@@ -57,7 +58,6 @@ class Navigation extends Component {
 			<div className="mdl-layout__header-row">
 			    <span className="mdl-layout-title">
 				    { headerLogoHtml }
-				    <span className="navigation__header-title">{ headerTitle }</span>
 				</span>
 				<nav className="mdl-navigation">
 					{ navItemsHtml }

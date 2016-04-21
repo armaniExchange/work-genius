@@ -1,0 +1,35 @@
+@define-extend selected {
+    font-weight: bold;
+    font-size: 1.05em;
+}
+
+@define-extend treeCount {
+    position: absolute;
+    display: inline-block;
+    right: 0px;
+}
+
+.category-tree-node {
+    cursor: pointer;
+    &__leaf {
+        cursor: pointer;
+        display: block;
+        &--selected {
+            @extend selected
+        }
+    }
+    &--selected {
+        cursor: pointer;
+        .category-tree-node__count {
+            @extend treeCount
+        }
+        @extend selected
+    }
+    .category-tree-node__count {
+        @extend treeCount
+    }
+}
+
+.tree-view_item {
+    position: relative;
+}

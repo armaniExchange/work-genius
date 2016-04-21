@@ -55,6 +55,7 @@ export default keyMirror({
 
     // PTO page actions
     SET_PTO_APPLY_MODAL_STATE: null,
+    SET_OVERTIME_APPLY_MODAL_STATE: null,
     FILTER_PTO_TABLE: null,
     SORT_PTO_TABLE_BY_CATEGORY: null,
     FETCH_PTO_APPLICATION_SUCCESS: null,
@@ -62,6 +63,10 @@ export default keyMirror({
     RESET_PTO_TABLE: null,
     DECREASE_YEAR: null,
     INCREASE_YEAR: null,
+    SORT_OVERTIME_TABLE_BY_CATEGORY: null,
+    FETCH_OVERTIME_APPLICATION_SUCCESS: null,
+    FILTER_OVERTIME_TABLE: null,
+    FETCH_USERS_WITH_OVERTIME_SUCCESS: null,
 
     // Admin page actions
     FETCH_USERS_WITH_PRIVILEGE_SUCCESS: null,
@@ -70,6 +75,7 @@ export default keyMirror({
     // Article actions
     FETCH_ARTICLE: null,
     FETCH_ARTICLE_SUCCESS: null,
+    FETCH_ARTICLE_FAIL: null,
     CREATE_ARTICLE: null,
     CREATE_ARTICLE_SUCCESS: null,
     CREATE_ARTICLE_FAIL: null,
@@ -82,10 +88,17 @@ export default keyMirror({
     UPLOAD_ARTICLE_FILE: null,
     UPLOAD_ARTICLE_FILE_SUCCESS: null,
     UPLOAD_ARTICLE_FILE_FAIL: null,
+    UPLOAD_ARTICLE_FILE_PROGRESS: null,
     REMOVE_ARTICLE_FILE: null,
     REMOVE_ARTICLE_FILE_SUCCESS: null,
     REMOVE_ARTICLE_FILE_FAIL: null,
     CLEAR_ARTICLE: null,
+    CREATE_COMMENT: null,
+    CREATE_COMMENT_SUCCESS: null,
+    CREATE_COMMENT_FAIL: null,
+    DELETE_COMMENT: null,
+    DELETE_COMMENT_SUCCESS: null,
+    DELETE_COMMENT_FAIL: null,
 
     // Document page actions
     FETCH_ARTICLES: null,
@@ -97,6 +110,7 @@ export default keyMirror({
     FETCH_ALL_TAGS: null,
     FETCH_ALL_TAGS_SUCCESS: null,
     FETCH_ALL_TAGS_FAIL: null,
+    SET_SELECTED_CATEGORY: null,
 
     // Feature analysis page actions
     CHANGE_ASSIGNMENT_CATEGORY_UPDATE_MSG_OPACITY: null,
@@ -128,5 +142,9 @@ export default keyMirror({
     SET_BUG_REPORT_PROJECT_VERSION: null,
 
     // Resource Map page actions
-    FETCH_RESOURCE_MAP_DATA: null
+    FETCH_RESOURCE_MAP_DATA: null,
+    FETCH_RESOURCE_MAP_MODAL: null,
+    FETCH_RESOURCE_MAP_WORKLOG_UPSERT: null,
+    FETCH_RESOURCE_MAP_ALL_USERS: null,
+    FETCH_RESOURCE_MAP_WORKLOG_ADD_MULTI: null
 });

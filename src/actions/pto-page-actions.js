@@ -20,9 +20,23 @@ export function setPTOApplyModalState(state) {
     };
 };
 
+export function setOvertimeApplyModalState(state) {
+    return {
+        type: actionTypes.SET_OVERTIME_APPLY_MODAL_STATE,
+        state
+    };
+};
+
 export function filterPTOTable(filterConditions) {
     return {
         type: actionTypes.FILTER_PTO_TABLE,
+        filterConditions
+    };
+};
+
+export function filterOvertimeTable(filterConditions) {
+    return {
+        type: actionTypes.FILTER_OVERTIME_TABLE,
         filterConditions
     };
 };
@@ -34,6 +48,13 @@ export function sortPTOTableByCategory(category) {
     };
 };
 
+export function sortOvertimeTableByCategory(category) {
+    return {
+        type: actionTypes.SORT_OVERTIME_TABLE_BY_CATEGORY,
+        category
+    };
+};
+
 export function fetchPTOApplicationsSuccess(data) {
     return {
         type: actionTypes.FETCH_PTO_APPLICATION_SUCCESS,
@@ -41,9 +62,23 @@ export function fetchPTOApplicationsSuccess(data) {
     };
 };
 
+export function fetchOvertimeApplicationsSuccess(data) {
+    return {
+        type: actionTypes.FETCH_OVERTIME_APPLICATION_SUCCESS,
+        data
+    };
+};
+
 export function fetchUsersWithPTOSuccess(data) {
     return {
         type: actionTypes.FETCH_USERS_WITH_PTO_SUCCESS,
+        data
+    };
+};
+
+export function fetchUsersWithOvertimeSuccess(data) {
+    return {
+        type: actionTypes.FETCH_USERS_WITH_OVERTIME_SUCCESS,
         data
     };
 };
@@ -86,7 +121,8 @@ export function fetchPTOApplications(userId, timeRange) {
                     applicant,
                     apply_date,
                     status,
-                    memo
+                    memo,
+                    applicant_email
                 }
             }`,
             headers: {
@@ -98,6 +134,38 @@ export function fetchPTOApplications(userId, timeRange) {
             .then((res) => res.json())
             .then((body) => {
                 dispatch(fetchPTOApplicationsSuccess(body.data.ptoApplications));
+            })
+            .catch((err) => {
+                throw new Error(err);
+            });
+    };
+};
+
+export function fetchOvertimeApplications(userId, timeRange) {
+    return (dispatch) => {
+        let config = {
+            method: 'POST',
+            body: `{
+                overtimeApplications(applicantId: "${userId}", timeRange: ${timeRange}) {
+                    id,
+                    start_date,
+                    hours,
+                    applicant,
+                    apply_date,
+                    status,
+                    memo,
+                    applicant_email
+                }
+            }`,
+            headers: {
+                'Content-Type': 'application/graphql',
+                'x-access-token': localStorage.token
+            }
+        };
+        return fetch(SERVER_API_URL, config)
+            .then((res) => res.json())
+            .then((body) => {
+                dispatch(fetchOvertimeApplicationsSuccess(body.data.overtimeApplications));
             })
             .catch((err) => {
                 throw new Error(err);
@@ -134,6 +202,35 @@ export function fetchUsersWithPTO() {
     };
 };
 
+export function fetchUsersWithOvertime() {
+    return (dispatch) => {
+        let config = {
+            method: 'POST',
+            body: `{
+                allUserWithOvertime {
+                    name,
+                    overtime_hours
+                }
+            }`,
+            headers: {
+                'Content-Type': 'application/graphql',
+                'x-access-token': localStorage.token
+            }
+        };
+        dispatch(setLoadingState(true));
+        return fetch(SERVER_API_URL, config)
+            .then((res) => res.json())
+            .then((body) => {
+                dispatch(setLoadingState(false));
+                dispatch(fetchUsersWithOvertimeSuccess(body.data.allUserWithOvertime));
+            })
+            .catch((err) => {
+                dispatch(setLoadingState(false));
+                throw new Error(err);
+            });
+    };
+};
+
 export function fetchPTOPageData(userId) {
     return (dispatch, getState) => {
         let timeRange = getState().pto.toJS().selectedYear;
@@ -154,19 +251,49 @@ export function fetchPTOPageData(userId) {
     };
 };
 
-export function goToPreviousYear() {
+export function fetchOvertimePageData(userId) {
     return (dispatch, getState) => {
-        let currentSelectedUserID = getState().pto.toJS().currentSelectedUserID;
-        dispatch(decreaseYearRange());
-        dispatch(fetchPTOPageData(currentSelectedUserID));
+        let timeRange = getState().pto.toJS().selectedYear;
+        dispatch(setLoadingState(true));
+        Promise.all([
+            dispatch(fetchUsersWithPTO()),
+            dispatch(fetchOvertimeApplications(userId, timeRange))
+        ]).then(
+            () => {
+                dispatch(setCurrentSelectedUserId(userId));
+                dispatch(setLoadingState(false));
+            },
+            (err) => {
+                dispatch(setLoadingState(false));
+                dispatch(apiFailure(err));
+            }
+        );
     };
 };
 
-export function goToNextYear() {
+export function goToPreviousYear(isOvertime) {
     return (dispatch, getState) => {
-        let currentSelectedUserID = getState().pto.toJS().currentSelectedUserID;
+        let currentSelectedUserID = getState().pto.toJS().currentSelectedUserID,
+            currentSelectedYear = getState().pto.toJS().selectedYear;
+        dispatch(decreaseYearRange());
+        if (isOvertime) {
+            dispatch(fetchOvertimePageData(currentSelectedUserID, currentSelectedYear));
+        } else {
+            dispatch(fetchPTOPageData(currentSelectedUserID));
+        }
+    };
+};
+
+export function goToNextYear(isOvertime) {
+    return (dispatch, getState) => {
+        let currentSelectedUserID = getState().pto.toJS().currentSelectedUserID,
+            currentSelectedYear = getState().pto.toJS().selectedYear;
         dispatch(increaseYearRange());
-        dispatch(fetchPTOPageData(currentSelectedUserID));
+        if (isOvertime) {
+            dispatch(fetchOvertimePageData(currentSelectedUserID, currentSelectedYear));
+        } else {
+            dispatch(fetchPTOPageData(currentSelectedUserID));
+        }
     };
 };
 
@@ -191,6 +318,36 @@ export function createPTOApplication(data) {
             .then(() => {
                 dispatch(setLoadingState(false));
                 dispatch(fetchPTOPageData(currentSelectedUserID));
+            })
+            .catch((err) => {
+                dispatch(setLoadingState(false));
+                dispatch(apiFailure(err));
+            });
+    };
+};
+
+export function createOvertimeApplication(data) {
+    return (dispatch, getState) => {
+        let config = {
+                method: 'POST',
+                body: `mutation RootMutationType {
+                    createOvertimeApplication(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+                }`,
+                headers: {
+                    'Content-Type': 'application/graphql',
+                    'x-access-token': localStorage.token
+                }
+            },
+            currentSelectedUserID = getState().pto.toJS().currentSelectedUserID,
+            currentSelectedYear = getState().pto.toJS().selectedYear;
+
+        dispatch(setOvertimeApplyModalState(false));
+        dispatch(setLoadingState(true));
+        return fetch(SERVER_API_URL, config)
+            .then((res) => res.json())
+            .then(() => {
+                dispatch(setLoadingState(false));
+                dispatch(fetchOvertimePageData(currentSelectedUserID, currentSelectedYear));
             })
             .catch((err) => {
                 dispatch(setLoadingState(false));
@@ -227,12 +384,12 @@ export function removePTOApplication(id) {
     };
 };
 
-export function setPTOApplicationStatus(id, status) {
+export function setPTOApplicationStatus(id, status, hours) {
     return (dispatch, getState) => {
         let config = {
                 method: 'POST',
                 body: `mutation RootMutationType {
-                    updatePTOApplicationStatus(id:"${id}", status:"${status}")
+                    updatePTOApplicationStatus(id:"${id}", status:"${status}", hours:${hours})
                 }`,
                 headers: {
                     'Content-Type': 'application/graphql',
@@ -247,6 +404,35 @@ export function setPTOApplicationStatus(id, status) {
             .then(() => {
                 dispatch(setLoadingState(false));
                 dispatch(fetchPTOPageData(currentSelectedUserID));
+            })
+            .catch((err) => {
+                dispatch(setLoadingState(false));
+                dispatch(apiFailure(err));
+            });
+    };
+};
+
+export function setOvertimeApplicationStatus(id, status, hours) {
+    return (dispatch, getState) => {
+        let config = {
+                method: 'POST',
+                body: `mutation RootMutationType {
+                    updateOvertimeApplicationStatus(id:"${id}", status:"${status}", hours:${hours})
+                }`,
+                headers: {
+                    'Content-Type': 'application/graphql',
+                    'x-access-token': localStorage.token
+                }
+            },
+            currentSelectedUserID = getState().pto.toJS().currentSelectedUserID,
+            currentSelectedYear = getState().pto.toJS().selectedYear;
+
+        dispatch(setLoadingState(true));
+        return fetch(SERVER_API_URL, config)
+            .then((res) => res.json())
+            .then(() => {
+                dispatch(setLoadingState(false));
+                dispatch(fetchOvertimePageData(currentSelectedUserID, currentSelectedYear));
             })
             .catch((err) => {
                 dispatch(setLoadingState(false));

@@ -1,5 +1,6 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
+import ReactDOMServer from 'react-dom/server';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -9,43 +10,25 @@ import * as appActions from '../../actions/app-actions';
 import * as mainActions from '../../actions/main-actions';
 // Constants
 import * as PTOConstants from '../../constants/pto-constants';
+import BREADCRUMB from '../../constants/breadcrumb';
+import {  PTO_URL } from '../../constants/config.js';
 // Components
 import PTOApplyModal from '../../components/PTO-Apply-Modal/PTO-Apply-Modal';
-import PTOTable from '../../components/PTO-Table/PTO-Table.js';
-
+import PTOTable from '../../components/PTO-Table/PTO-Table';
+import PTOYearFilter from '../../components/PTO-Year-Filter/PTO-Year-Filter';
 // import NameFilterGroup from '../../components/Name-Filter-Group/Name-Filter-Group.js';
-import RadioGroup from '../../components/A10-UI/Input/Radio-Group.js';
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
-import Space from '../../components/A10-UI/Space.js';
-
 import RaisedButton from 'material-ui/lib/raised-button';
-
 import Breadcrumb from '../../components/A10-UI/Breadcrumb';
-import BREADCRUMB from '../../constants/breadcrumb';
-
-let PTOYearFilter = ({ selectedYear, goToPreviousYear, goToNextYear }) => {
-    let style = {'minWidth':'25px', 'minHeight':'25px', height:'25px', 'lineHeight':1};
-    return (
-        <div className="pto-year-filter">
-            <RaisedButton label="<" style={style} onClick={goToPreviousYear} />
-            <span style={{margin:'0 6px', display:'inline-block'}}>{selectedYear}</span>
-            <RaisedButton label=">" style={style} onClick={goToNextYear} />
-        </div>
-    );
-};
+import PTOMailCard from '../../components/PTO-Mail-Card/PTO-Mail-Card';
 
 class PTOApplication extends Component {
-    constructor(props) {
-        super(props);
-        this._onApplyButtonClicked = ::this._onApplyButtonClicked;
-        this._onPTOApplySubmitClicked = ::this._onPTOApplySubmitClicked;
-        this._closePTOApplyModal = ::this._closePTOApplyModal;
-        this._onPTORemoveClicked = ::this._onPTORemoveClicked;
-        this._onApplicationStatusUpdate = ::this._onApplicationStatusUpdate;
-        this._onUserFilterClickedHandler = ::this._onUserFilterClickedHandler;
-    }
     componentWillMount() {
-        const { fetchPTOPageData, currentUser, selectedYear } = this.props;
+        const {
+            fetchPTOPageData,
+            currentUser,
+            selectedYear
+        } = this.props;
         fetchPTOPageData(currentUser.id, selectedYear);
     }
     componentWillUnmount() {
@@ -61,26 +44,82 @@ class PTOApplication extends Component {
         setPTOApplyModalState(false);
     }
     _onPTOApplySubmitClicked(data) {
-        const { createPTOApplication, currentUser } = this.props;
+        const { createPTOApplication, currentUser, sendMail } = this.props;
         let finalData = {
-            start_date: data.startDate,
-            end_date: data.endDate,
-            memo: data.memo,
-            hours: data.hours,
-            apply_date: moment().format('YYYY-MM-DD'),
-            applicant: currentUser.name,
-            applicant_id: currentUser.id,
-            status: PTOConstants.PENDING
-        };
+                start_date: data.startDate,
+                end_date: data.endDate,
+                memo: data.memo,
+                hours: data.hours,
+                apply_date: moment().format('YYYY-MM-DD'),
+                applicant: currentUser.name,
+                applicant_id: currentUser.id,
+                status: PTOConstants.PENDING
+            },
+            mailingConfig = {
+                subject: `[KB-PTO] ${finalData.applicant} has a New PTO Application`,
+                html: ReactDOMServer.renderToStaticMarkup(
+                    <PTOMailCard
+                        type={'PTO_' + finalData.status}
+                        applicant={finalData.applicant}
+                        startDate={finalData.start_date}
+                        endDate={finalData.end_date}
+                        hours={finalData.hours}
+                        link={PTO_URL} />
+                ).replace(/"/g, '\\"'),
+                includeManagers: true
+            };
+        let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
         createPTOApplication(finalData);
+        sendMail(to, cc, bcc, subject, text, html, includeManagers);
     }
     _onPTORemoveClicked(id) {
         const { removePTOApplication } = this.props;
         removePTOApplication(id);
     }
-    _onApplicationStatusUpdate(id, newState) {
-        const { setPTOApplicationStatus } = this.props;
-        setPTOApplicationStatus(id, newState);
+    _onGoToPreviousYearClicked() {
+        const { goToPreviousYear } = this.props;
+        goToPreviousYear(false);
+    }
+    _onGoToNextYearClicked() {
+        const { goToNextYear } = this.props;
+        goToNextYear(false);
+    }
+    _onApplicationStatusUpdate(updatedPtoApplication) {
+        const {
+            setPTOApplicationStatus,
+            currentUser,
+            sendMail
+        } = this.props;
+        const {
+            id,
+            status,
+            hours,
+            start_date,
+            applicant,
+            end_date,
+            applicant_email
+        } = updatedPtoApplication;
+
+        let mailingConfig = {
+            to: [applicant_email],
+            subject: status === PTOConstants.CANCEL_REQUEST_PENDING ? `[KB-PTO] ${applicant} has canceld a PTO Application` : '[KB-PTO] Your PTO Application has been updated',
+            html: ReactDOMServer.renderToStaticMarkup(
+                <PTOMailCard
+                    type={'PTO_' + status}
+                    applicant={applicant}
+                    startDate={start_date}
+                    endDate={end_date}
+                    status={status}
+                    manager={currentUser.name}
+                    hours={hours}
+                    link={PTO_URL} />
+            ).replace(/"/g, '\\"'),
+            includeManagers: true
+        };
+        let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
+
+        setPTOApplicationStatus(id, status, hours);
+        sendMail(to, cc, bcc, subject, text, html, includeManagers);
     }
     _onUserFilterClickedHandler(id) {
         const {
@@ -89,6 +128,11 @@ class PTOApplication extends Component {
         } = this.props;
         resetPTOTable();
         fetchPTOPageData(id);
+    }
+    _onPTOStatusFilterChange(newStatus) {
+        this.props.filterPTOTable({
+            status: newStatus
+        });
     }
     render() {
         const {
@@ -99,63 +143,60 @@ class PTOApplication extends Component {
             allUsersWithClosestPTO,
             ptoFilterOptions,
             currentSelectedUserID,
-            filterPTOTable,
+            currentUser,
             sortPTOTableByCategory,
-            sortPTOTableBy
+            sortPTOTableBy,
+            selectedYear
         } = this.props;
 
-        const KEY = 'status';
+        let curUser = allUsersWithClosestPTO.find(
+            _user => _user.id === currentSelectedUserID
+        );
 
-        let curUser = allUsersWithClosestPTO.find(_user => {
-            if (_user.id===currentSelectedUserID) {
-                return _user;
-            }
-        });
-        let dropdownTitle = 'All';
-        if (curUser && curUser.name) {
-            dropdownTitle = curUser.name + (curUser.subtitle ? ' - ' + curUser.subtitle : '');
-        }
         return (
-            <section>
+            <section className="pto-application">
                 <Breadcrumb data={BREADCRUMB.ptoapply} />
-                <PTOYearFilter {...this.props} />
-                <Space h="20" />
-                <DropDownList
-                    isNeedAll={true}
-                    onOptionClick={this._onUserFilterClickedHandler}
-                    title={dropdownTitle}
-                    aryOptionConfig={allUsersWithClosestPTO.map((item) => {
-                        return {title: item.name, value: item.id, subtitle: item.subtitle};
-                    })} />
-
-                {/*<NameFilterGroup
-                    users={allUsersWithClosestPTO}
-                    currentSelectedUserID={currentSelectedUserID}
-                    onUserClickedHandler={this._onUserFilterClickedHandler} />*/}
-                <Space h="20" />
-                <RadioGroup
-                    title="Status"
-                    isNeedAll={true}
-                    aryRadioConfig={ptoFilterOptions}
-                    checkRadio={ptoFilterConditions.status}
-                    onRadioChange={(curVal)=>{
-                        filterPTOTable({[KEY]:curVal});
-                    }} />
-                <Space h="20" />
+                <div className="pto-application__filter">
+                    <PTOYearFilter
+                        selectedYear={selectedYear}
+                        goToPreviousYear={::this._onGoToPreviousYearClicked}
+                        goToNextYear={::this._onGoToNextYearClicked} />
+                    <label>Name:&nbsp;</label>
+                    <DropDownList
+                        isNeedAll={true}
+                        onOptionClick={::this._onUserFilterClickedHandler}
+                        title={curUser ? curUser.name : 'All'}
+                        aryOptionConfig={allUsersWithClosestPTO.map((item) => {
+                            return {title: item.name, value: item.id, subtitle: item.subtitle};
+                        })} />
+                    <label>Status:&nbsp;</label>
+                    <DropDownList
+                        isNeedAll={true}
+                        title={ptoFilterConditions.status ? ptoFilterConditions.status : 'All'}
+                        onOptionClick={::this._onPTOStatusFilterChange}
+                        aryOptionConfig={ptoFilterOptions}
+                    />
+                    <RaisedButton
+                        className="pto-application__filter-button"
+                        label="PTO Application"
+                        onClick={::this._onApplyButtonClicked}
+                        labelStyle={{'textTransform':'none'}}
+                        secondary={true} />
+                </div>
                 <PTOTable
                     data={applications}
                     titleKeyMap={ptoTitleKeyMap}
                     enableSort={true}
                     sortBy={sortPTOTableBy}
                     onSortHandler={sortPTOTableByCategory}
-                    onStatusUpdateHandler={this._onApplicationStatusUpdate} />
-                <Space h="20" />
-                <RaisedButton label="PTO Application" onClick={this._onApplyButtonClicked} labelStyle={{'textTransform':'none'}} secondary={true} />
+                    onStatusUpdateHandler={::this._onApplicationStatusUpdate}
+                    isUserAdmin={currentUser.privilege >= 10}
+                    currentUserName={currentUser.name} />
                 <PTOApplyModal
                     show={showPTOApplyModal}
-                    onHideHandler={this._closePTOApplyModal}
-                    onSubmitHandler={this._onPTOApplySubmitClicked}
-                    onCancelHandler={this._closePTOApplyModal} />
+                    onHideHandler={::this._closePTOApplyModal}
+                    onSubmitHandler={::this._onPTOApplySubmitClicked}
+                    onCancelHandler={::this._closePTOApplyModal} />
             </section>
         );
     }
@@ -183,7 +224,8 @@ PTOApplication.propTypes = {
     fetchPTOPageData        : PropTypes.func,
     resetPTOTable           : PropTypes.func,
     goToPreviousYear        : PropTypes.func,
-    goToNextYear            : PropTypes.func
+    goToNextYear            : PropTypes.func,
+    sendMail                : PropTypes.func
 };
 
 function mapStateToProps(state) {

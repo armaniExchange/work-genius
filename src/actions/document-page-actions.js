@@ -1,5 +1,16 @@
 import actionTypes from '../constants/action-types';
 import { SERVER_API_URL } from '../constants/config';
+import {
+    setLoadingState,
+    apiFailure
+} from './app-actions';
+
+export function setSelectedCategory(data) {
+	return {
+		type: actionTypes.SET_SELECTED_CATEGORY,
+		data
+	};
+}
 
 export function fetchArticlesFail(error) {
   return {
@@ -8,39 +19,53 @@ export function fetchArticlesFail(error) {
   };
 }
 
-export function fetchArticlesSuccess(articleList) {
+export function fetchArticlesSuccess(articleList, count) {
   return {
     type: actionTypes.FETCH_ARTICLES_SUCCESS,
-    articleList
+    articleList,
+    count
   };
 }
 
-export function fetchArticles(query) {
+export function fetchArticles(query = {}) {
   return dispatch => {
     dispatch({
       type: actionTypes.FETCH_ARTICLES
     });
+    dispatch(setLoadingState(true));
 
-    console.log(query);
-    let config = {
+    let queryString = Object.keys(query)
+      .reduce((previous, key) => previous + `${key}: ${JSON.stringify(query[key])} `, '');
+    if (queryString !== '') {
+      queryString = `(${queryString})`;
+    }
+    const config = {
       method: 'POST',
       body: `{
-        getAllArticles {
-          id,
-          title,
-          content,
-          tags,
-          author {
-            id,
-            name
-          },
-          comments {
+        getAllArticles ${queryString} {
+          articles {
             id,
             title,
-            content
+            content,
+            tags,
+            author {
+              id,
+              name
+            },
+            comments {
+              id,
+              content
+            },
+            files {
+              id,
+              type,
+              name,
+              url
+            },
+            createdAt,
+            updatedAt
           },
-          created_at,
-          updated_at
+          count
         }
       }`,
       headers: {
@@ -56,34 +81,13 @@ export function fetchArticles(query) {
         return res.json();
       })
       .then((body) => {
-        dispatch(fetchArticlesSuccess(body.data.getAllArticles.map(article => {
-          const {
-            id,
-            title,
-            content,
-            tags,
-            author,
-            comments,
-            created_at,
-            updated_at
-          } = article;
-          return {
-            id,
-            title,
-            content,
-            tags,
-            author,
-            comments,
-            createdAt: parseInt(created_at), // remove this when ready
-            updatedAt: parseInt(updated_at) // remove this when server respond with current
-          };
-        })));
+        dispatch(fetchArticlesSuccess(body.data.getAllArticles.articles, body.data.getAllArticles.count));
+        dispatch(setLoadingState(false));
       })
       .catch((error) => {
         dispatch(fetchArticlesFail(error));
+        dispatch(apiFailure(error));
       });
-
-
 
     // // get data from server
     // if (!query) {
@@ -127,8 +131,7 @@ export function fetchAllCategories() {
     dispatch({
       type: actionTypes.FETCH_ALL_CATEGORIES
     });
-
-    let config = {
+    const config = {
       method: 'POST',
       body: `{
         allCategories {
@@ -156,6 +159,7 @@ export function fetchAllCategories() {
       })
       .catch((error) => {
         dispatch(fetchAllCategoriesFail(error));
+        dispatch(apiFailure(error));
       });
   };
 }
@@ -179,8 +183,8 @@ export function fetchAllTags() {
     dispatch({
       type: actionTypes.FETCH_ALL_TAGS
     });
-    // fetch categoreis from server
-    let config = {
+
+    const config = {
       method: 'POST',
       body: `{
         tags
@@ -202,6 +206,7 @@ export function fetchAllTags() {
       })
       .catch((error) => {
         dispatch(fetchAllTagsFail(error));
+        dispatch(apiFailure(error));
       });
   };
 }

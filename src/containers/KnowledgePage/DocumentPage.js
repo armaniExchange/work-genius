@@ -5,7 +5,6 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { bindActionCreators } from 'redux';
-import TextField from 'material-ui/lib/text-field';
 import RaisedButton from 'material-ui/lib/raised-button';
 import Breadcrumb from '../../components/A10-UI/Breadcrumb';
 import BREADCRUMB from '../../constants/breadcrumb';
@@ -14,6 +13,7 @@ import ArticleListItem from '../../components/ArticleListItem/ArticleListItem';
 import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
 import CategoryTree from '../../components/CategoryTree/CategoryTree';
 import ConfirmDeleteDialog from '../../components/ConfirmDeleteDialog/ConfirmDeleteDialog';
+import Pagination from 'rc-pagination';
 
 import * as DocumentActions from '../../actions/document-page-actions';
 import * as ArticleActions from '../../actions/article-page-actions';
@@ -23,6 +23,7 @@ class DocumentPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      currentPage: 1,
       isConfirmDeleteArticleDialogVisible: false,
       editingArticle: null
     };
@@ -34,11 +35,18 @@ class DocumentPage extends Component {
       fetchAllCategories,
       fetchAllTags
     } = this.props.documentActions;
-    fetchArticles();
+
+    // Todo: find a better way to handle jumpling this page from other page
     fetchAllCategories();
     fetchAllTags();
+    if (this.props.articleList.length === 0) {
+      fetchArticles();
+    }
   }
 
+  queryWithTag(tag) {
+    this.props.documentActions.fetchArticles({tag});
+  }
 
   onConfirmDeleteArticleDialogRequestHide() {
     this.setState({
@@ -47,23 +55,9 @@ class DocumentPage extends Component {
     });
   }
 
-  queryWithTag(tag) {
-    this.props.documentActions.fetchArticles({tag});
-  }
-
-  onSearchChange(event) {
-    this.props.documentActions.fetchArticles({
-      q: event.target.value
-    });
-  }
-
   onConfirmDeleteArticle(deletingArticle) {
     // console.log(`delete article id:${deletingArticle.id} index:${deletingArticle.index}`);
     this.props.articleActions.deleteArticle(deletingArticle.id);
-  }
-
-  onCancelDeleteArticle() {
-
   }
 
   onArticleDelete(id, index) {
@@ -74,6 +68,26 @@ class DocumentPage extends Component {
         index
       }
     });
+  }
+
+  onCancelDeleteArticle() {
+
+  }
+
+  onPaginate(page) {
+    this.setState({
+      currentPage: page
+    });
+    this.props.documentActions.fetchArticles({
+      page
+    });
+  }
+
+  _onNodeClick(item) {
+    this.props.documentActions.setSelectedCategory({...item, isLeaf: false});
+  }
+  _onLeafClick(item) {
+    this.props.documentActions.setSelectedCategory({...item, isLeaf: true});
   }
 
   render() {
@@ -88,33 +102,36 @@ class DocumentPage extends Component {
     const {
       articleList,
       allTags,
-      allCategories
+      allCategories,
+      articleTotalCount,
+      currentSelectedCategory
     } = this.props;
     const {
       isConfirmDeleteArticleDialogVisible,
-      editingArticle
+      editingArticle,
+      currentPage
     } = this.state;
 
     return (
       <section>
         <Breadcrumb data={BREADCRUMB.document} />
         <div style={leftPanelStyle}>
-          <Link to="/main/articles/edit/new">
+          <Link to="/main/knowledge/document/edit/new">
             <RaisedButton
               label="+ Create a Document"
               secondary={true} />
           </Link>
-          <br />
-          <TextField
-            hintText="Search..."
-            onChange={::this.onSearchChange} />
-          <br/>
+          <h5>Hot tags</h5>
           <ArticleTagList
             tags={allTags}
             onClick={::this.queryWithTag} />
           <div>
             <h5>Tree</h5>
-            <CategoryTree categories={allCategories} />
+            <CategoryTree
+                data={allCategories}
+                selectedPath={currentSelectedCategory.path}
+                onNodeClick={::this._onNodeClick}
+                onLeafClick={::this._onLeafClick} />
           </div>
         </div>
         <div style={rightPanelStyle}>
@@ -129,6 +146,11 @@ class DocumentPage extends Component {
               );
             })
           }
+          <Pagination
+            onChange={::this.onPaginate}
+            pageSize={5}
+            current={currentPage}
+            total={articleTotalCount} />
         </div>
         <ConfirmDeleteDialog
           open={isConfirmDeleteArticleDialogVisible}
@@ -144,7 +166,9 @@ class DocumentPage extends Component {
 
 DocumentPage.propTypes = {
   articleList            : PropTypes.array,
-  allCategories          : PropTypes.array,
+  articleTotalCount      : PropTypes.number,
+  allCategories          : PropTypes.object,
+  currentSelectedCategory: PropTypes.object,
   allTags                : PropTypes.array,
   documentActions        : PropTypes.object.isRequired,
   articleActions         : PropTypes.object.isRequired

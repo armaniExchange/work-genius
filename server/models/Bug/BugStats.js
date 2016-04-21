@@ -96,11 +96,17 @@ let BugStats = {
 
 			const rootCauseList = [
 				'GUI Code Issue',
-				'AXAPI',
+				'AXAPI Changed',
 				'Look and Feel',
 				'Requirement Change',
 				'Browser Related',
-				'Others'
+				'Others',
+				'Cannot be Reproduced',
+				'AXAPI Not Supported',
+				'GUI Not Supported',
+				'Duplicate',
+				'NAB/By Design',
+				'Working in current build'
 			];
 
 			try {

@@ -5,21 +5,139 @@
 	text-align: center !important;
 }
 
+.table-tr {
+	height: 100px !important;
+}
+
 .weekend-style{
-	background-color : #eee !important;
+	background-color : #E2E2E2 !important;
 }
 
 .cell-layout-style{
 	border-right: solid 1px #fff;
+	padding: 2px 2px 2px 2px !important;
 	text-align: center !important;
 }
 
 .label-default-style{
 	border: none !important;
+  padding-left: 3px;
+  padding-right: 3px;
 	font-weight: 100;
-	font-size: 8px;
+	font-size: 12px;
+  z-index: -1;
+    white-space: nowrap;
+}
+
+.holiday-style {
+  background-color: #E2E2E2;
 }
 
 .add-button {
 	background-color: #42bd41 !important;
 }
+
+.cell-default-item {
+  top: 1px;
+  z-index: -1;
+  position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+.cell-top-item {
+    z-index: 1;
+	  top: 2px;
+    width: 100%;
+}
+
+.cell-top-item-inner-text {
+	margin-top: 1px;
+	margin-right: 20px !important;
+}
+
+.icon-layout {
+  position: absolute;
+  margin: -10px 0 0 -10px;
+  color: #fff;
+}
+
+.icon-layou-display {
+  display: none;
+}
+
+.worklog-layout--text {
+    width: 100%;
+    z-index: 2 !important;
+    height: 22px;
+    cursor: pointer;
+    text-align: left;
+    padding-left: 3px !important;
+    margin-right: 3px;
+    padding-top: 2px;
+}
+
+.worklog-layout--text span {
+    z-index: 2;
+    cursor: pointer;
+}
+
+.worklog-layout--checkbox {
+    margin-right: -20px;
+    float: right;
+    height: 22px;
+    width: 20px;
+}
+
+/*.worklog-layout--checkbox svg {
+  position: relative !important;
+}*/
+.event-tag {
+    margin-top: 20px;
+}
+
+.event-tag span {
+    padding: 11px 14px 0;
+    margin-right: 5px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.label-field {
+  font-style: 14px !important;
+}
+
+.text-area-style {
+  width: 100% !important;
+}
+
+.text-area-duration-style {
+  width: 100%!important;
+  margin-right: -50px;
+}
+
+.text-area-progress-style {
+  width: 100%!important;
+  margin-right: -30px;
+}
+
+.layout-design-padding-left-0{
+  padding-left: 0px;
+}
+
+.layout-design-over{
+  overflow: hidden;
+}
+
+/* Modify Material checkbox style. */
+.mdl-checkbox__box-outline {
+	border: 2px solid rgb(255, 255, 255) !important;
+}
+.mdl-checkbox.is-checked .mdl-checkbox__box-outline {
+    border: 2px solid rgb(255, 255, 255) !important;
+}
+.mdl-checkbox__label {
+    white-space: nowrap;
+}
+
+

@@ -27,6 +27,6 @@ const isValidDate = (value, formatType='') => {
 };
 
 export default {
-    isValidNumber,
-    isValidDate
+  isValidNumber,
+  isValidDate
 };

@@ -63,7 +63,7 @@ let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort }) => {
     );
 };
 
-let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler }) => {
+let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler, isUserAdmin, currentUserName }) => {
     let bodyHtml = (
         <tr>
             <Td
@@ -80,23 +80,44 @@ let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler }) => {
                 let actionsHTML;
                 if (header['key'] === 'id') {
                     if (task.status === PENDING) {
+                        if (isUserAdmin && task['applicant'] === currentUserName) {
+                            actionsHTML = (
+                                <Td key={cellIndex}>
+                                    <ApproveButton onClick={() => {onStatusUpdateHandler({...task, status: APPROVED});}} title="Approve"/>
+                                    <DenyButton onClick={() => {onStatusUpdateHandler({...task, status: DENIED});}} title="Deny" />
+                                    <RestoreButton onClick={() => {onStatusUpdateHandler({...task, status: CANCEL_REQUEST_PENDING});}} title="Cancel Request" />
+                                </Td>
+                            );
+                        } else if (isUserAdmin) {
+                            actionsHTML = (
+                                <Td key={cellIndex}>
+                                    <ApproveButton onClick={() => {onStatusUpdateHandler({...task, status: APPROVED});}} title="Approve" />
+                                    <DenyButton onClick={() => {onStatusUpdateHandler({...task, status: DENIED});}} title="Deny" />
+                                </Td>
+                            );
+                        } else if (task['applicant'] === currentUserName) {
+                            actionsHTML = (
+                                <Td key={cellIndex}>
+                                    <RestoreButton onClick={() => {onStatusUpdateHandler({...task, status: CANCEL_REQUEST_PENDING});}} title="Cancel Request" />
+                                </Td>
+                            );
+                        } else {
+                            actionsHTML = (
+                                <Td key={cellIndex}>
+                                    No actions!
+                                </Td>
+                            );
+                        }
+                    } else if (task.status === CANCEL_REQUEST_PENDING && isUserAdmin) {
                         actionsHTML = (
                             <Td key={cellIndex}>
-                                <ApproveButton onClick={() => {onStatusUpdateHandler(task['id'], APPROVED);}} />
-                                <DenyButton onClick={() => {onStatusUpdateHandler(task['id'], DENIED);}} />
-                                <RestoreButton onClick={() => {onStatusUpdateHandler(task['id'], CANCEL_REQUEST_PENDING);}} />
+                                <ApproveButton onClick={() => {onStatusUpdateHandler({...task, status: CANCEL_REQUEST_APPROVED});}} title="Approve" />
                             </Td>
                         );
-                    } else if (task.status === CANCEL_REQUEST_PENDING) {
+                    } else if (task.status === APPROVED && task['applicant'] === currentUserName) {
                         actionsHTML = (
                             <Td key={cellIndex}>
-                                <ApproveButton onClick={() => {onStatusUpdateHandler(task['id'], CANCEL_REQUEST_APPROVED);}} />
-                            </Td>
-                        );
-                    } else if (task.status === APPROVED) {
-                        actionsHTML = (
-                            <Td key={cellIndex}>
-                                <RestoreButton onClick={() => {onStatusUpdateHandler(task['id'], CANCEL_REQUEST_PENDING);}} />
+                                <RestoreButton onClick={() => {onStatusUpdateHandler({...task, status: CANCEL_REQUEST_PENDING});}} title="Cancel Request" />
                             </Td>
                         );
                     } else {
@@ -141,7 +162,7 @@ class PTOTable extends Component {
     render() {
         return (
             <div className="pto-table">
-                <Table>
+                <Table className="pto-table__table-content">
                     <TableHeaders
                         {...this.props}
                         onSortHandler={this._onSortHandler} />
@@ -156,6 +177,7 @@ PTOTable.propTypes = {
     data                 : PropTypes.array.isRequired,
     titleKeyMap          : PropTypes.array.isRequired,
     enableSort           : PropTypes.bool,
+    isUserAdmin          : PropTypes.bool,
     sortBy               : PropTypes.object,
     onSortHandler        : PropTypes.func,
     onStatusUpdateHandler: PropTypes.func,

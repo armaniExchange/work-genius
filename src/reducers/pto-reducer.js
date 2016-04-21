@@ -18,10 +18,11 @@ import {
 const initialPTOFilterConditions = Map({
     'status': ''
 });
-
 const initialState = Map({
     applicationsOriginalData: List.of(),
     applications: List.of(),
+    overtimeApplicationsOriginalData: List.of(),
+    overtimeApplications: List.of(),
     ptoTitleKeyMap: List.of(
         Map({ title: 'Start Date', key: 'start_date'}),
         Map({ title: 'End Date', key: 'end_date'}),
@@ -33,45 +34,73 @@ const initialState = Map({
         Map({ title: 'Action', key: 'id'})
     ),
     ptoFilterConditions: initialPTOFilterConditions,
+    overtimeFilterConditions: initialPTOFilterConditions,
     sortPTOTableBy: Map({
         category: '',
         status: 0
     }),
+    sortOvertimeTableBy: Map({
+        category: '',
+        status: 0
+    }),
     allUsersWithClosestPTO: List.of(),
+    allUsersWithOvertime: List.of(),
     showPTOApplyModal: false,
+    showOvertimeApplyModal: false,
     currentSelectedUserID: '',
     selectedYear: moment().get('year'),
     ptoFilterOptions: List(
         [PENDING, APPROVED, DENIED, CANCEL_REQUEST_PENDING, CANCEL_REQUEST_APPROVED].map(status => {
             return Map({
-                name: status,
+                title: status,
                 value: status
             });
         })
+    ),
+    overtimeFilterOptions: List(
+        [PENDING, APPROVED, DENIED].map(status => {
+            return Map({
+                title: status,
+                value: status
+            });
+        })
+    ),
+    overtimeTitleKeyMap: List.of(
+        Map({ title: 'Date', key: 'start_date'}),
+        Map({ title: 'Hours', key: 'hours'}),
+        Map({ title: 'Apply Date', key: 'apply_date'}),
+        Map({ title: 'Status', key: 'status'}),
+        Map({ title: 'Memo', key: 'memo'}),
+        Map({ title: 'Applicant', key: 'applicant'}),
+        Map({ title: 'Action', key: 'id'})
+    ),
+    summaryTitleKeyMap: List.of(
+        Map({ title: 'Name', key: 'name'}),
+        Map({ title: 'Available Overtime Hours', key: 'overtime_hours'})
     )
 });
 
-function filterOriginal(state) {
-    let nextState = state;
-    nextState = nextState.update(`applications`, () => {
-        let keys = nextState.get(`ptoFilterConditions`).keySeq();
-        let isKeyDeprecated = true;
-        let filteredResult = nextState.get(`applicationsOriginalData`).filter((item) => {
+function filterOriginal(state, isOvertime) {
+    let nextState = state,
+        target = isOvertime ? `overtimeApplications` : `applications`,
+        targetOriginalData = isOvertime ? `overtimeApplicationsOriginalData` : `applicationsOriginalData`,
+        targetFilterConditions = isOvertime ? `overtimeFilterConditions` : `ptoFilterConditions`;
+
+    nextState = nextState.update(target, () => {
+        let keys = nextState.get(targetFilterConditions).keySeq();
+        let filteredResult = nextState.get(targetOriginalData).filter((item) => {
             return keys.reduce((acc, key) => {
-                if (nextState.getIn([`ptoFilterConditions`, key]) === item.get(key)) {
-                    isKeyDeprecated = false;
-                }
-                if (item.get(key) !== nextState.getIn([`ptoFilterConditions`, key]) && nextState.getIn([`ptoFilterConditions`, key]) !== '') {
+                if (item.get(key) !== nextState.getIn([targetFilterConditions, key]) && nextState.getIn([targetFilterConditions, key]) !== '') {
                     return acc && false;
                 }
                 return acc && true;
             }, true);
         });
-        if (isKeyDeprecated && filteredResult.isEmpty()) {
-            return nextState.get(`applicationsOriginalData`);
-        }
+
+
         return filteredResult.isEmpty() ? List.of() : filteredResult;
     });
+
     return nextState;
 }
 
@@ -90,18 +119,20 @@ function sortAlphaNum(a,b) {
     return aA > bA ? 1 : -1;
 }
 
-function sortOriginal(state) {
-    let category = state.get(`sortPTOTableBy`).get('category');
-    let sortStatus = state.get(`sortPTOTableBy`).get('status');
+function sortOriginal(state, isOvertime) {
+    let category = isOvertime ? state.get(`sortOvertimeTableBy`).get('category') : state.get(`sortPTOTableBy`).get('category'),
+        sortStatus = isOvertime ? state.get(`sortOvertimeTableBy`).get('status') : state.get(`sortPTOTableBy`).get('status'),
+        targetKeyMap = isOvertime ? `overtimeTitleKeyMap` : `ptoTitleKeyMap`,
+        targetApplications = isOvertime ? `overtimeApplications` : `applications`;
 
     if (!category || sortStatus === 0) {
         return state;
     }
-    state = state.update(`applications`, (data) => {
+    state = state.update(targetApplications, (data) => {
         let sorted = data.sort((curr, next) => {
             let result = 0;
             // Get key corresponded to filter title
-            let key = state.get(`ptoTitleKeyMap`).filter((map) => {
+            let key = state.get(targetKeyMap).filter((map) => {
                 return map.get('title') === category;
             }).first().get('key');
             let tempResult = sortAlphaNum(curr.get(key).toString(10), next.get(key).toString(10));
@@ -121,16 +152,17 @@ function sortOriginal(state) {
     return state;
 }
 
-function filterTable(state, filterConditions) {
-    let nextState = state.set(`ptoFilterConditions`, Map(filterConditions));
-    nextState = filterOriginal(nextState);
-    nextState = sortOriginal(nextState);
+function filterTable(state, filterConditions, isOvertime) {
+    let targetConditions = isOvertime ? `overtimeFilterConditions` : `ptoFilterConditions`,
+        nextState = state.set(targetConditions, Map(filterConditions));
+    nextState = filterOriginal(nextState, isOvertime);
+    nextState = sortOriginal(nextState, isOvertime);
     return nextState;
 }
 
-function sortTable(state, newCategory, type) {
-    let oldCategory = state.get(`sortPTOTableBy`).get('category');
-    let oldStatus = state.get(`sortPTOTableBy`).get('status');
+function sortTable(state, newCategory, isOvertime) {
+    let oldCategory = isOvertime ? state.get(`sortOvertimeTableBy`).get('category') : state.get(`sortPTOTableBy`).get('category');
+    let oldStatus = isOvertime ? state.get(`sortOvertimeTableBy`).get('status') : state.get(`sortPTOTableBy`).get('status');
     let newStatus = 0;
     if (oldCategory === newCategory) {
         newStatus = oldStatus === 1 ? -1 : oldStatus === -1 ? 0 : 1;
@@ -141,9 +173,9 @@ function sortTable(state, newCategory, type) {
         category: newCategory,
         status: newStatus
     });
-    state = state.set(`sortPTOTableBy`, category);
-    state = filterOriginal(state, type);
-    state = sortOriginal(state, type);
+    state = isOvertime ? state.set(`sortOvertimeTableBy`, category) : state.set(`sortPTOTableBy`, category);
+    state = filterOriginal(state, isOvertime);
+    state = sortOriginal(state, isOvertime);
     return state;
 }
 
@@ -171,11 +203,13 @@ function formatResponse(data) {
     return result;
 }
 
-function setTableData(state, data) {
-    let formatedData = formatResponse(data);
+function setTableData(state, data, isOvertime) {
+    let formatedData = formatResponse(data),
+        targetOriginalData = isOvertime ? `overtimeApplicationsOriginalData` : `applicationsOriginalData`,
+        targetApplications = isOvertime ? `overtimeApplications` : `applications`;
     return state
-        .set(`applicationsOriginalData`, formatedData)
-        .set(`applications`, formatedData);
+        .set(targetOriginalData, formatedData)
+        .set(targetApplications, formatedData);
 }
 
 function findClosestDateToToday(dates) {
@@ -211,6 +245,17 @@ function resetTable(state) {
         .set(
             `selectedYear`,
             moment().get('year')
+        )
+        .update(`overtimeApplications`, () => {
+            return state.get(`overtimeApplicationsOriginalData`);
+        })
+        .set(`sortOvertimeTableBy`, Map({
+            category: '',
+            status: 0
+        }))
+        .set(
+            `overtimeFilterConditions`,
+            initialState.get(`ptoFilterConditions`)
         );
 }
 
@@ -219,15 +264,31 @@ export default function ptoReducer(state = initialState, action) {
     switch (action.type) {
         case actionTypes.SET_PTO_APPLY_MODAL_STATE:
             return state.set('showPTOApplyModal', action.state);
+        case actionTypes.SET_OVERTIME_APPLY_MODAL_STATE:
+            return state.set('showOvertimeApplyModal', action.state);
         case actionTypes.SORT_PTO_TABLE_BY_CATEGORY:
             return sortTable(state, action.category);
+        case actionTypes.SORT_OVERTIME_TABLE_BY_CATEGORY:
+            return sortTable(state, action.category, true);
         case actionTypes.FILTER_PTO_TABLE:
             return filterTable(state, action.filterConditions);
+        case actionTypes.FILTER_OVERTIME_TABLE:
+            return filterTable(state, action.filterConditions, true);
         case actionTypes.RESET_PTO_TABLE:
             return resetTable(state);
+        case actionTypes.FETCH_OVERTIME_APPLICATION_SUCCESS:
+            nextState = setTableData(state, action.data, true);
+            if (!is(state.get('overtimeFilterConditions'), initialPTOFilterConditions)) {
+                nextState = filterOriginal(nextState, true);
+            }
+            if (state.get('sortOvertimeTableBy').get('category')) {
+                nextState = sortOriginal(nextState, true);
+            }
+        return nextState;
         case actionTypes.FETCH_PTO_APPLICATION_SUCCESS:
             nextState = setTableData(state, action.data);
             if (!is(state.get('ptoFilterConditions'), initialPTOFilterConditions)) {
+                console.log('I SHOULD FILTER!~');
                 nextState = filterOriginal(nextState);
             }
             if (state.get('sortPTOTableBy').get('category')) {
@@ -243,6 +304,8 @@ export default function ptoReducer(state = initialState, action) {
                 };
             });
             return nextState.set('allUsersWithClosestPTO', newAllUsersWithClosestPTO);
+        case actionTypes.FETCH_USERS_WITH_OVERTIME_SUCCESS:
+            return nextState.set('allUsersWithOvertime', action.data);
         case actionTypes.SET_CURRENT_SELECTED_USER_ID:
             return nextState.set('currentSelectedUserID', action.id === ADMIN_ID ? '' : action.id);
         case actionTypes.DECREASE_YEAR:

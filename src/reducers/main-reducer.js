@@ -2,7 +2,6 @@
 import { Map, List } from 'immutable';
 // Constants
 import actionTypes from '../constants/action-types';
-import { PRIVILEGE } from '../constants/config.js';
 
 const initialState = Map({
 	navHeaderTitle: 'WG',
@@ -13,7 +12,7 @@ const initialState = Map({
     }),
 		Map({
       displayText: 'Resources',
-      link: '/main/resource/resource-map' //new
+      link: '/main/resource/resource-map'
     }),
     Map({
         displayText: 'Bug Analysis',
@@ -36,18 +35,22 @@ const initialState = Map({
       },
       {
         name: 'Bug Tracking',
-        url: '/main/knowledge/bug-tracking' //new
+        url: '/main/knowledge/bug-tracking'
       }
     ),
     'Resources': List.of(
       {
         name: 'Resource Map',
-        url: '/main/resource/resource-map' //new
+        url: '/main/resource/resource-map'
+      },
+      {
+        name: 'Team Members',
+        url: '/main/resource/team'
       }
     ),
     'Bug Analysis': List.of(
       {
-        name: 'Bug Root Causes',
+        name: 'Root Causes',
         url: '/main/bug-analysis/bug-analysis'
       },
       {
@@ -73,6 +76,10 @@ const initialState = Map({
       {
         name: 'Overtime',
         url: '/main/pto/overtime'
+      },
+      {
+        name: 'Summary',
+        url: '/main/pto/summary'
       }
     )
 	}),
@@ -80,7 +87,9 @@ const initialState = Map({
 	hasLogo: true
 });
 
-const updateNavigationItem = (state, action) => {
+const updateNavigationItem = (state) => {
+  return state;
+  /*
 	return action.user.privilege >= PRIVILEGE.ADMIN ?
 		state.update('navItems', (items) => {
 			return items.filter(
@@ -94,7 +103,7 @@ const updateNavigationItem = (state, action) => {
 		}) :
 		state.update('navItems', (items) => items.filter(
 			item => item.get('displayText') !== 'Admin'
-		));
+		));*/
 };
 
 export default function mainReducer(state = initialState, action) {

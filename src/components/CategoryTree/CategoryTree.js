@@ -1,89 +1,80 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
+// Components
+import TreeView from 'react-treeview';
+import NodeLabel from './Node-Label';
+// Styles
+import '../../../node_modules/react-treeview/react-treeview.css';
+import './Category-Tree.css';
 
 class CategoryTree extends Component {
+    _renderTree(data, index) {
+        const { onLeafClick, onNodeClick, selectedPath } = this.props;
+        let label,
+            childTrees,
+            possiblePaths = selectedPath.split('/').map((str, i, a) => {
+                return a.slice(0, i + 1).join('/');
+            });
+        if (!data.children || data.children.length === 0) {
+            return (
+                <NodeLabel
+                    data={data}
+                    key={index}
+                    isLeaf
+                    isSelected={possiblePaths.indexOf(data.path) >= 0}
+                    onClickHandler={() => {
+                        onLeafClick(data);
+                    }} />
+            );
+        } else {
+            childTrees = data.children.map((child, i) => {
+                return this._renderTree(child, data.name + i);
+            });
+            label = (
+                <NodeLabel
+                    data={data}
+                    key={index}
+                    isSelected={possiblePaths.indexOf(data.path) >= 0}
+                    onClickHandler={() => {
+                        onNodeClick(data);
+                    }} />
+            );
 
-  buildCategoryTree(categories, tree) {
-    let root = tree || {
-      'id': 'root',
-      'root': true,
-      'leaves': []
-    };
-
-    let legacyCategories = categories.filter(category => {
-      
-      if (category.hasOwnProperty('parentId') && category['parentId']) {
-        let isFound = this.traversalCategoryTree(root, category);
-        return ! isFound;
-      } else {
-        root['leaves'].push(category);
-        return false;
-      }
-
-    });
-
-    if (legacyCategories && legacyCategories.length) {
-      this.buildCategoryTree(legacyCategories, root);
-    }
-
-    return root;
-
-  }
-
-  traversalCategoryTree(node, category) {
-    let isFound = false;
-
-    if (node && node['leaves']) {
-
-      node['leaves'].some(leaf => {
-        if (leaf['id'] === category['parentId']) {
-          leaf['leaves'] = leaf['leaves'] || [];
-          leaf['leaves'].push(category);
-          isFound = true;
-          return isFound;
-        } else if ( Array.isArray(node['leaves']) && node['leaves'].length ) {
-          isFound = this.traversalCategoryTree(leaf, category);
-          return isFound;
+            return (
+                <TreeView
+                    nodeLabel={label}
+                    collapsed={data.isCollapsed}
+                    onClick={() => {
+                        onNodeClick(data);
+                    }}
+                    key={index}>
+                    {childTrees}
+                </TreeView>
+            );
         }
-      });
     }
-
-    return isFound;
-  }
-
-  renderTree(node, level) {
-    let leaves = node['leaves'] || [];
-    level = level || 1;
-
-    return (
-      <ul key={node['id']}>
-        <li><a href="#">{node['name']}</a></li>
-        {
-          leaves.map(leaf => {
-            return this.renderTree(leaf, (level + 1));
-          })
-        }
-      </ul>
-    );
-  }
-
-  render() {
-
-    const { categories } = this.props;
-    const tree = this.buildCategoryTree(categories);
-
-    return (
-      <div>{this.renderTree(tree)}</div>
-    );
-  }
+    render() {
+        const { data } = this.props;
+        let treeHTML = Object.keys(data).length > 0 ? ::this._renderTree(data, 'root0') : null;
+        return (
+            <div className="category-tree">
+                {treeHTML}
+            </div>
+        );
+    }
 }
 
 CategoryTree.propTypes = {
-  categories: PropTypes.arrayOf(PropTypes.object)
+    data: PropTypes.object.isRequired,
+    selectedPath: PropTypes.string,
+    onNodeClick: PropTypes.func,
+    onLeafClick: PropTypes.func
 };
 
 CategoryTree.defaultProps = {
-  categories: []
+    selectedPath: 'root',
+    onNodeClick: () => {},
+    onLeafClick: () => {}
 };
 
 export default CategoryTree;
