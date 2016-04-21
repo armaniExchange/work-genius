@@ -86,7 +86,8 @@ class ArticleEditor extends Component {
       editingFile
     } = this.state;
 
-    const isPriorityAndMilestoneSelectShow =  documentType && documentType !== 'knowledges';
+    const hidePriorityAndMilestoneSelectStyle = !documentType || documentType === 'knowledges' ?
+      {visibility: 'hidden'} : null;
 
     return (
       <div className="article-editor"
@@ -103,23 +104,16 @@ class ArticleEditor extends Component {
             value={documentType}
             onChange={onDocumentTypeChange}
           />
-          {
-            isPriorityAndMilestoneSelectShow && (
-              <ArticlePrioritySelect
-                value={priority}
-                onChange={onPriorityChange}
-              />
-            )
-          }
-
-          {
-            isPriorityAndMilestoneSelectShow && (
-              <ArticleMilestoneSelect
-                value={milestone}
-                onChange={onMilestoneChange}
-              />
-            )
-          }
+          <ArticlePrioritySelect
+            style={hidePriorityAndMilestoneSelectStyle}
+            value={priority}
+            onChange={onPriorityChange}
+          />
+          <ArticleMilestoneSelect
+            style={hidePriorityAndMilestoneSelectStyle}
+            value={milestone}
+            onChange={onMilestoneChange}
+          />
         </div>
         <br />
         <label>Category</label>
