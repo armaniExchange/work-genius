@@ -55,6 +55,7 @@ class CommentListItem extends Component {
       </div>
     );
 
+    //TODO: add edit
     const renderContent = (
       <div key="renderContent"
         className="content">
@@ -63,10 +64,6 @@ class CommentListItem extends Component {
           {
             this.state.isHovered && (
               <div className="toolbar">
-                <FlatButton
-                  label="Edit"
-                  primary={true}
-                  onClick={::this.onEditClick} />
                 <FlatButton
                   label="Delete"
                   onClick={::this.onDeleteClick} />

@@ -1,0 +1,19 @@
+.document-filter-select-group {
+  display: flex;
+  margin-bottom: 1em;
+  margin-top: -2em;
+  > div {
+    flex: 2;
+    margin-right: 15px;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+  .Select-control {
+    background: transparent;
+    border-color: transparent;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0;
+    box-shadow: none !important;
+  }
+}

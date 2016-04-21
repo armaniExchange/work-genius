@@ -53,6 +53,10 @@ function _fetchArticle(id) {
           name,
           url
         },
+        documentType,
+        priority,
+        milestone,
+        reportTo,
         createdAt,
         updatedAt
       }

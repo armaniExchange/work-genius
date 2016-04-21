@@ -45,6 +45,7 @@ const schema = new GraphQLSchema({
       allUsers                 : UserQuery.allUsers,
       // Document page
       allCategories            : CategoryQuery.getAllCategories,
+      getAllMilestones         : CategoryQuery.getAllMilestones,
       categoryTree             : CategoryQuery.getCategoryTree,
       commentById              : CommentQuery.getCommentById,
       tags                     : CategoryQuery.getAllTags,

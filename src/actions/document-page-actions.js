@@ -88,27 +88,6 @@ export function fetchArticles(query = {}) {
         dispatch(fetchArticlesFail(error));
         dispatch(apiFailure(error));
       });
-
-    // // get data from server
-    // if (!query) {
-    //   dispatch(fetchArticlesSuccess(fakeArticleList));
-    //   return;
-    // }
-    // let result;
-    // if (query.tag) {
-    //   result = fakeArticleList.filter((article) => {
-    //     return article.tags.indexOf(query.tag) !== -1;
-    //   });
-    //   dispatch(fetchArticlesSuccess(result));
-    //   return;
-    // }
-    // if (query.q) {
-    //   result = fakeArticleList.filter((article) => {
-    //     return article.content.indexOf(query.q) !== -1 || article.author.name.indexOf(query.q) !== -1 || article.title.indexOf(query.q) !== -1;
-    //   });
-    //   dispatch(fetchArticlesSuccess(result));
-    //   return;
-    // }
   };
 }
 
@@ -210,3 +189,99 @@ export function fetchAllTags() {
       });
   };
 }
+
+export function fetchAllUsersFail(error) {
+  return {
+    type: actionTypes.FETCH_ALL_USERS_FAIL,
+    error
+  };
+}
+
+export function fetchAllUsersSuccess(allUsers) {
+  return {
+    type: actionTypes.FETCH_ALL_USERS_SUCCESS,
+    allUsers
+  };
+}
+
+export function fetchAllUsers() {
+  return dispatch => {
+    dispatch({
+      type: actionTypes.FETCH_ALL_USERS
+    });
+
+    const config = {
+      method: 'POST',
+      body: `{
+        allUsers {id, name}
+      }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((body) => {
+        dispatch(fetchAllUsersSuccess(body.data.allUsers));
+      })
+      .catch((error) => {
+        dispatch(fetchAllUsersFail(error));
+        dispatch(apiFailure(error));
+      });
+  };
+}
+
+
+export function fetchAllMilestonesFail(error) {
+  return {
+    type: actionTypes.FETCH_ALL_MILESTONES_FAIL,
+    error
+  };
+}
+
+export function fetchAllMilestonesSuccess(allMilestones) {
+  return {
+    type: actionTypes.FETCH_ALL_MILESTONES_SUCCESS,
+    allMilestones
+  };
+}
+
+export function fetchAllMilestones() {
+  return dispatch => {
+    dispatch({
+      type: actionTypes.FETCH_ALL_MILESTONES
+    });
+
+    const config = {
+      method: 'POST',
+      body: `{
+        getAllMilestones
+      }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((body) => {
+        dispatch(fetchAllMilestonesSuccess(body.data.getAllMilestones));
+      })
+      .catch((error) => {
+        dispatch(fetchAllMilestonesFail(error));
+        dispatch(apiFailure(error));
+      });
+  };
+}
+

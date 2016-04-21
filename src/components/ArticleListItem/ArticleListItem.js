@@ -35,7 +35,7 @@ class ArticleListItem extends Component {
     return (
       <Paper style={paperStyle}>
         <Link to={`/main/knowledge/document/${id}`}>
-          <h3 style={{margin: 0}}>{title}</h3>
+          <h3 style={{margin: 0, minHeight: '1em'}}>{title}</h3>
         </Link>
         <div style={{
           position: 'absolute',
