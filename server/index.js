@@ -45,7 +45,7 @@ app.use((req, res, next) => {
 app.post('/login', loginHandler);
 
 app.use((req, res, next) => {
-  if ( req.method === 'GET' && req.url.search('/files/') !== -1 ){
+  if ( req.method === 'GET' && req.url.includes('/files/')){
     // when downloading file skip token checking
     next();
     return;

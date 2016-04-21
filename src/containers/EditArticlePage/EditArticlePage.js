@@ -43,8 +43,12 @@ class EditArticlePage extends Component {
     const getJustUpdatedImageFiles = this.getJustUpdatedImageFiles(thisFiles, nextFiles);
 
     if (getJustUpdatedImageFiles.length) {
+      const {
+        name,
+        url
+      } = getJustUpdatedImageFiles[0];
       this.setState({
-        editingContent: this.state.editingContent + `\n![image](${getJustUpdatedImageFiles[0].url})`
+        editingContent: this.state.editingContent.replace(this.getTempImageFileMarkdown(name), `![${name}](${url})`)
       });
     }
     if (this.props.id === nextProps.id && thisFiles.length !== nextFiles.lengh) {
@@ -57,17 +61,6 @@ class EditArticlePage extends Component {
 
   componentWillUnmount() {
     this.props.articleActions.clearArticle();
-  }
-
-  getJustUpdatedImageFiles(thisFiles, nextFiles) {
-    return nextFiles.filter(nextFile => {
-      const thisFile = thisFiles.filter( eachFile => nextFile.tempId === eachFile.tempId )[0];
-      return thisFiles.length
-        && thisFile
-        && thisFile.isUploading
-        && !nextFile.isUploading
-        && thisFile.type.search('image') !== -1;
-    });
   }
 
   isCreate() {
@@ -152,6 +145,11 @@ class EditArticlePage extends Component {
 
   onFileUpload(file) {
     const { id, files } = this.props;
+    if (file.type.includes('image')) {
+      this.setState({
+        editingContent: this.state.editingContent + '\n' + this.getTempImageFileMarkdown(file.name)
+      });
+    }
     this.props.articleActions.uploadArticleFile({
       articleId: id,
       file,
@@ -172,6 +170,20 @@ class EditArticlePage extends Component {
     this.props.history.go(-1);
   }
 
+  getJustUpdatedImageFiles(thisFiles, nextFiles) {
+    return nextFiles.filter(nextFile => {
+      const thisFile = thisFiles.filter( eachFile => nextFile.tempId === eachFile.tempId )[0];
+      return thisFiles.length
+        && thisFile
+        && thisFile.isUploading
+        && !nextFile.isUploading
+        && thisFile.type.includes('image');
+    });
+  }
+
+  getTempImageFileMarkdown(fileName) {
+    return `![Uploading ${fileName} ...]()`;
+  }
   _transformToOptions(categories) {
     return this._transformFromTree(categories).filter((item) => {
       return item.path !== 'root';
