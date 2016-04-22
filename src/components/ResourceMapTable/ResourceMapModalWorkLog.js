@@ -67,12 +67,9 @@ class ResourceMapModalWorkLog extends Component {
 
 	componentWillReceiveProps (nextProps) {
 		const { show, defaultModalInfos } = nextProps;
-		console.log(defaultModalInfos);
-		console.log(show);
 		defaultModalInfos.tags = defaultModalInfos.tags ? defaultModalInfos.tags : [];
 		if (show) {
 			let tag = this.state.tags !== '' ? this.state.tags : defaultModalInfos.tags.join(',');
-			console.log(tag);
 			this.setState({
 				release: defaultModalInfos.release,
 				progress: defaultModalInfos.progress,
@@ -137,7 +134,6 @@ class ResourceMapModalWorkLog extends Component {
 				'status': status,
 				'tags': this.state.tags.split(',')
 			};
-			console.log(JSON.stringify(data));
 			let item = {
 				id: defaultModalInfos.id,
 				employee_id: defaultModalInfos.userId,

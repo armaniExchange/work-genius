@@ -213,10 +213,10 @@ var taskStateActions = {
         }
 
         // If the select date is weekday, will return false.
-        let day = moment(selectDate).isoWeekday();
-        if (day === 6 || day === 7) {
-            return false;
-        }
+        // let day = moment(selectDate).isoWeekday();
+        // if (day === 6 || day === 7) {
+        //     return false;
+        // }
         let index = duration / 8;
         let millisecondOneDay = 24 * 60 * 60 * 1000;
         for (let i = 0; i < index; i ++) {
