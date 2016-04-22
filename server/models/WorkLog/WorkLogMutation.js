@@ -7,7 +7,7 @@ import {
 import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
-import {getWorklogEndDate} from './WorklogCalc.js';
+import {getWorklogEndDate} from './WorkLogCalc.js';
 
 let WorkLogMutation = {
 	'createWorkLog': {
