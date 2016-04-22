@@ -30,11 +30,13 @@ class ResourceMapPage extends Component{
 		const {
             totalDays,
 			queryResourceMapData,
-            fetchAllUsersRequest
+            fetchAllUsersRequest,
+            queryResourceMapTags
 		} = this.props;
         // User id default is 0, current user.
 		queryResourceMapData(defaultStartDate, totalDays, 0);
         fetchAllUsersRequest();
+        queryResourceMapTags();
 	}
 
 	_changeStartDate(date) {
@@ -64,7 +66,8 @@ class ResourceMapPage extends Component{
 			fetchResourceMapModalHandler,
             fetchResourceMapStatus,
             fetchResourceMapAddMulti,
-            fetchResourceMapDeleteItem
+            fetchResourceMapDeleteItem,
+            addResourceMapTag
 		} = this.props;
         let userObj = allUsers.find((user) => {
             return String(user.id) === String(currentUserId);
@@ -120,6 +123,7 @@ class ResourceMapPage extends Component{
                     onSubmitStatus={fetchResourceMapStatus}
                     onSubmitMulti={fetchResourceMapAddMulti}
                     onDeleteItemHander={fetchResourceMapDeleteItem}
+                    onAddTagHandler={addResourceMapTag}
 					{...this.props}
 				/>
 			</section>
@@ -140,6 +144,8 @@ ResourceMapPage.propTypes = {
     fetchResourceMapDeleteItem     : PropTypes.func.isRequired,
     fetchResourceMapStatus         : PropTypes.func.isRequired,
     fetchResourceMapAddMulti       : PropTypes.func.isRequired,
+    queryResourceMapTags           : PropTypes.func.isRequired,
+    addResourceMapTag              : PropTypes.func.isRequired,
 
     // Modal handle options.
     show                           : PropTypes.bool.isRequired,
