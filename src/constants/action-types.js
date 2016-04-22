@@ -110,13 +110,14 @@ export default keyMirror({
     FETCH_ALL_TAGS: null,
     FETCH_ALL_TAGS_SUCCESS: null,
     FETCH_ALL_TAGS_FAIL: null,
-    SET_SELECTED_CATEGORY: null,
     FETCH_ALL_USERS: null,
     FETCH_ALL_USERS_SUCCESS: null,
     FETCH_ALL_USERS_FAIL: null,
     FETCH_ALL_MILESTONES: null,
     FETCH_ALL_MILESTONES_SUCCESS: null,
     FETCH_ALL_MILESTONES_FAIL: null,
+    SET_SELECTED_CATEGORY: null,
+    UPDATE_ARTICLES_QUERY: null,
 
     // Feature analysis page actions
     CHANGE_ASSIGNMENT_CATEGORY_UPDATE_MSG_OPACITY: null,

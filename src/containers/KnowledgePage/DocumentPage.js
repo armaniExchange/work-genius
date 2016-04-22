@@ -25,13 +25,6 @@ class DocumentPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // the query state
-      currentPage: 1,
-      tag: '',
-      documentType: '',
-      priority: '',
-      milestone: '',
-      authorId: '',
       // the delete state
       isConfirmDeleteArticleDialogVisible: false,
       editingArticle: null
@@ -40,7 +33,6 @@ class DocumentPage extends Component {
 
   componentWillMount() {
     const {
-      fetchArticles,
       fetchAllCategories,
       fetchAllTags,
       fetchAllUsers,
@@ -48,28 +40,28 @@ class DocumentPage extends Component {
     } = this.props.documentActions;
 
     // Todo: find a better way to handle jumpling this page from other page
-      fetchAllCategories();
-      fetchAllTags();
-      fetchArticles();
-      fetchAllUsers();
-      fetchAllMilestones();
+    fetchAllCategories();
+    fetchAllTags();
+    fetchAllUsers();
+    fetchAllMilestones();
+    this.queryArticles();
   }
 
   // fetch articles with query
   //
   onTagChange(tag) {
-    this.setState({tag}, this.queryArticles);
+    this.props.documentActions.updateArticlesQuery({tag});
+    setTimeout(() => this.queryArticles(), 0);
   }
 
   onFilterChange(filter) {
-    this.setState(filter, this.queryArticles);
-
+    this.props.documentActions.updateArticlesQuery(filter);
+    setTimeout(() => this.queryArticles(), 0);
   }
 
   onPaginate(page) {
-    this.setState({
-      currentPage: page
-    }, this.queryArticles);
+    this.props.documentActions.updateArticlesQuery({currentPage: page});
+    setTimeout(() => this.queryArticles(), 0);
   }
 
   queryArticles() {
@@ -80,7 +72,7 @@ class DocumentPage extends Component {
       priority,
       milestone,
       owner,
-    } = this.state;
+    } = this.props;
     let query = {
       page: currentPage,
       tag: tag,
@@ -155,9 +147,8 @@ class DocumentPage extends Component {
   _setAndFetchCategory(item) {
     const { documentActions } = this.props;
     documentActions.setSelectedCategory({...item, isLeaf: true});
-    documentActions.fetchArticles({
-      categoryId: item.path || ''
-    });
+    this.props.documentActions.updateArticlesQuery({categoryId: item.path || ''});
+    setTimeout(() => this.queryArticles(), 0);
   }
 
   _clearCategory() {
@@ -172,7 +163,11 @@ class DocumentPage extends Component {
       allTags,
       allCategories,
       articleTotalCount,
-      currentSelectedCategory
+      currentSelectedCategory,
+      documentType,
+      priority,
+      milestone,
+      owner
     } = this.props;
     const {
       isConfirmDeleteArticleDialogVisible,
@@ -210,6 +205,10 @@ class DocumentPage extends Component {
             <DocumentFilterSelectGroup
               allUsers={allUsers}
               allMilestones={allMilestones}
+              documentType={documentType}
+              priority={priority}
+              milestone={milestone}
+              owner={owner}
               onChange={::this.onFilterChange}
             />
             { this.renderArticleList() }
@@ -237,15 +236,22 @@ class DocumentPage extends Component {
 }
 
 DocumentPage.propTypes = {
-  articleList            : PropTypes.array,
-  articleTotalCount      : PropTypes.number,
-  allCategories          : PropTypes.object,
-  currentSelectedCategory: PropTypes.object,
-  allTags                : PropTypes.array,
-  allUsers               : PropTypes.array,
-  allMilestones          : PropTypes.array,
-  documentActions        : PropTypes.object.isRequired,
-  articleActions         : PropTypes.object.isRequired
+  articleList             : PropTypes.array,
+  articleTotalCount       : PropTypes.number,
+  allCategories           : PropTypes.object,
+  currentSelectedCategory : PropTypes.object,
+  allTags                 : PropTypes.array,
+  allUsers                : PropTypes.array,
+  allMilestones           : PropTypes.array,
+  documentActions         : PropTypes.object.isRequired,
+  articleActions          : PropTypes.object.isRequired,
+  // query object
+  currentPage             : PropTypes.number,
+  tag                     : PropTypes.string,
+  documentType            : PropTypes.string,
+  priority                : PropTypes.string,
+  milestone               : PropTypes.string,
+  owner                   : PropTypes.string,
 };
 
 function mapStateToProps(state) {

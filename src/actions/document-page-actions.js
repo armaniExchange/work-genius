@@ -285,3 +285,12 @@ export function fetchAllMilestones() {
       });
   };
 }
+
+export function updateArticlesQuery(query) {
+  return dispatch => {
+    dispatch ({
+      type: actionTypes.UPDATE_ARTICLES_QUERY,
+      ...query
+    });
+  };
+}

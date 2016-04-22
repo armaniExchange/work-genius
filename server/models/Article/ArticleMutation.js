@@ -18,15 +18,12 @@ import { getArticleDetail } from './ArticleQuery';
 const parseArticle = (article) => {
   // only update give article property, if it didn't pass, keep original property
   // ex: article = {id: '123', files: ['567']}
-  // didn't provided category, then result shouldn't contain category property
+  // didn't provided categoryId, then result shouldn't contain categoryId property
   let result = {};
 
   Object.keys(article)
     .map( key => {
       switch (key) {
-        case 'category':
-          result.categoryId = article.category.id;
-          break;
         case 'comments':
           result.commentsId = article.comments.map(comment => comment.id);
           break;
