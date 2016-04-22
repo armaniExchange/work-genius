@@ -6,7 +6,12 @@ import { Map, List, fromJS } from 'immutable';
 // Constants
 import actionTypes from '../constants/action-types';
 import { MENU } from '../constants/menu';
+import { TECH_MENU } from '../constants/tec-menu';
 import { appendFileUrlToFiles } from '../libraries/fileUrl';
+import _ from 'lodash';
+
+
+_.merge(MENU, TECH_MENU);
 
 function generateTitleCountMap(articles) {
     let result = {};
@@ -46,7 +51,7 @@ function enhanceMenu(data, titleCountMap) {
             return title.indexOf(path) >= 0 ? acc + titleCountMap[title] : 0;
         }, 0);
     let result = {
-        name: 'root',
+        name: 'Root',
         isCollapsed: false,
         path,
         children: getChildren(data.root, path, titleCountMap),

@@ -167,7 +167,9 @@ var taskStateActions = {
             let worklogDate = worklog.date instanceof moment ? worklog.date.format('X') * 1000 : worklog.date;
             // self.isSelectDate(worklogDate, millisecondStartDate, startDate, item.duration);
             if (worklog.day_type !== 'workday') {
+                console.log(worklog.day_type, self.isSelectDate(worklogDate, millisecondStartDate, duration));
                 if (self.isSelectDate(worklogDate, millisecondStartDate, duration)) {
+                    console.log(worklogDate, millisecondStartDate, duration);
                     duration += 8;
                 }
             } else {
@@ -208,6 +210,7 @@ var taskStateActions = {
      */
     isSelectDate: function(selectDate, startDate, duration) {
         // If duration is less than 8, will be compare the start date.
+        console.log(selectDate, startDate, duration);
         if (duration === undefined || duration < 8) {
             return (selectDate === startDate);
         }
