@@ -7,6 +7,7 @@ import {
 import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
+import {createTag} from './BugTagUtility.js';
 
 let BugTagMutation = {
 	'createBugTag': {
@@ -19,28 +20,7 @@ let BugTagMutation = {
 			}
 		},
 		resolve: async (root, { data }) => {
-			let connection = null,
-				query = null,
-				result = null;
-			try {
-				let tag = JSON.parse(data);
-				if(tag.tag_name == ''){
-					return false;
-				}
-				tag.type = 'bug';
-				query = r.db('work_genius').table('bugtags').filter({tag_name:tag.tag_name,type:'bug'}).coerceTo('array');
-				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				result = await query.run(connection);
-				if(result && result.length > 0){
-					return 'Fail to create a bug tag!';
-				}
-				query = r.db('work_genius').table('bugtags').insert(tag);
-				await query.run(connection);
-				await connection.close();
-			} catch (err) {
-				return 'Fail to create a bug tag!';
-			}
-			return 'Create bug tag successfully!';
+			return await createTag(data,'bug');
 		}
 	},
 	'createRelease': {
@@ -53,31 +33,22 @@ let BugTagMutation = {
 			}
 		},
 		resolve: async (root, { data }) => {
-			let connection = null,
-				query = null,
-				result = null;
-			try {
-				let release = JSON.parse(data);
-				if(release.tag_name == ''){
-					return false;
-				}
-				release.type = 'release';
-				query = r.db('work_genius').table('bugtags').filter({tag_name:release.tag_name,type:'release'}).coerceTo('array');
-				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				result = await query.run(connection);
-				if(result && result.length > 0){
-					return 'Fail to create a release!';
-				}
-				query = r.db('work_genius').table('bugtags').insert(release);
-				await query.run(connection);
-				await connection.close();
-			} catch (err) {
-				return 'Fail to create a release!';
+			return await createTag(data,'release');
+		}
+	},
+	'createWorklogTag': {
+		type: GraphQLString,
+		description: 'create a worklog tag',
+        args: {
+			data: {
+				type: GraphQLString,
+				description: 'new worklog tag data'
 			}
-			return 'Create release successfully!';
+		},
+		resolve: async (root, { data }) => {
+			return await createTag(data,'worklog');
 		}
 	}
-
 };
 
 export default BugTagMutation;
