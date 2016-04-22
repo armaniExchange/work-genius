@@ -16,6 +16,7 @@
         display: block;
         &--selected {
             margin-left: 15px;
+            line-height: 32px;
             @extend selected
         }
     }
