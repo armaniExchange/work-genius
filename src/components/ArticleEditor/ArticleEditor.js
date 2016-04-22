@@ -182,6 +182,7 @@ class ArticleEditor extends Component {
                   multi={true}
                   allowCreate={true}
                   value={reportTo.map( item => {return {value: item, label: item};})}
+                  addLabelText={'Add "{label}"@a10networks.com?'}
                   onChange={onReportToChange}
                 />
                 <span className="postfix-email">@a10networks.com</span>
