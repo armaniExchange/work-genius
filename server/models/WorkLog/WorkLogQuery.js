@@ -175,7 +175,6 @@ let WorkLogQuery = {
 				query = r.db('work_genius').table('pto')
 					.filter({'applicant_id':employeeId})
 					.filter(r.row('status').eq('PENDING').or(r.row('status').eq('APPROVED')))
-					.filter(r.row('hours').coerceTo('number').ge(8))
 					.pluck('applicant_id','start_date','end_date','hours').coerceTo('array');
 				let ptoList = await query.run(connection);
 
@@ -225,7 +224,10 @@ let WorkLogQuery = {
 						}
 					});
 					if(!!findPTO){
-						dateItem.day_type = 'pto';
+						dateItem.pto_hours = Number.parseInt(findPTO.hours);
+						if(dateItem.pto_hours >= 8){
+							dateItem.day_type = 'pto';
+						}
 					}
 
 					//set public holiday info
