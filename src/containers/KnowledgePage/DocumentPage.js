@@ -183,18 +183,15 @@ class DocumentPage extends Component {
           <div className="left-navigation">
             <Link to="/main/knowledge/document/edit/new">
               <RaisedButton
-                label="+ Create a Document"
+                label="+ Create Document"
                 secondary={true} />
             </Link>
-            <h5>Hot tags</h5>
+            <h5>HOT TAGS</h5>
             <ArticleTagList
               tags={allTags}
               value={tag} />
-            <h5>Tree</h5>
-            <RaisedButton
-              label="Show All Articles"
-              secondary={true}
-              onClick={::this._clearCategory} />
+            <h5>KNOWLEGE TREE</h5>
+            
             <CategoryTree
                 data={allCategories}
                 selectedPath={currentSelectedCategory.path}

@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import SelectField from 'material-ui/lib/SelectField';
-import RaisedButton from 'material-ui/lib/raised-button';
+import FlatButton from 'material-ui/lib/flat-button';
 import MenuItem from 'material-ui/lib/menus/menu-item';
 
 import ArticleDocumentTypeSelect from '../../components/ArticleDocumentTypeSelect/ArticleDocumentTypeSelect';
@@ -91,9 +91,9 @@ class DocumentFilterSelectGroup extends Component {
           })}
         </SelectField>
         <div style={{flex: 1}} />
-        <RaisedButton
+        <FlatButton
           style={{marginTop: 28}}
-          label="Show All"
+          label="All Articles"
           secondary={true}
           onClick={::this.clearFilter}/>
       </div>
