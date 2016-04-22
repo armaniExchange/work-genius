@@ -5,7 +5,7 @@
 import { List , OrderedMap, fromJS} from 'immutable';
 // Constants
 import actionTypes from '../constants/action-types';
-import { SERVER_FILES_URL } from '../constants/config';
+import { getFileUrl, appendFileUrlToFiles } from '../libraries/fileUrl';
 
 const initialState = OrderedMap({
   // data of article
@@ -30,14 +30,8 @@ const initialState = OrderedMap({
   isDeleting: false,
 });
 
-const getFileUrl = (id) => {
-  return `${SERVER_FILES_URL}/${id}`;
-};
 
 const articleToState = (state, action) => {
-  const withUrlFiles = action.files ? action.files.map(file => {
-    return Object.assign({}, file, {url: getFileUrl(file.id)});
-  }) : [];
   return state.set('id', action.id)
     .set('title', action.title)
     .set('documentType', action.documentType)
@@ -46,7 +40,7 @@ const articleToState = (state, action) => {
     .set('author', OrderedMap(action.author))
     .set('categoryId', action.categoryId)
     .set('tags', List(action.tags || []))
-    .set('files', fromJS(withUrlFiles || []))
+    .set('files', fromJS(appendFileUrlToFiles(action.files || [])))
     .set('comments', fromJS(action.comments || []))
     .set('reportTo', List(action.reportTo || []))
     .set('content', action.content)
@@ -56,7 +50,6 @@ const articleToState = (state, action) => {
 
 export default function articleReducer(state = initialState, action) {
   const files = state.get('files');
-
   let comments = state.get('comments');
 
   switch (action.type) {

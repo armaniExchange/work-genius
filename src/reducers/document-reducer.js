@@ -6,6 +6,7 @@ import { Map, List, fromJS } from 'immutable';
 // Constants
 import actionTypes from '../constants/action-types';
 import { MENU } from '../constants/menu';
+import { appendFileUrlToFiles } from '../libraries/fileUrl';
 
 function generateTitleCountMap(articles) {
     let result = {};
@@ -98,11 +99,15 @@ export default function documentReducer(state = initialState, action) {
       if (isFirstTimeFetch) {
         let newTitleCountMap = generateTitleCountMap(action.articleList);
         isFirstTimeFetch = false;
-        return state.set('articleList', action.articleList)
+        return state.set('articleList', action.articleList.map(article => {
+            return Object.assign({}, article, {files: appendFileUrlToFiles(article.files)});
+          }))
           .set('articleTotalCount', action.count)
           .set('allCategories', enhanceMenu(MENU, newTitleCountMap));
       } else {
-        return state.set('articleList', action.articleList)
+        return state.set('articleList', action.articleList.map(article => {
+            return Object.assign({}, article, {files: appendFileUrlToFiles(article.files)});
+          }))
           .set('articleTotalCount', action.count);
       }
     case actionTypes.FETCH_ALL_TAGS_SUCCESS:
@@ -124,14 +129,12 @@ export default function documentReducer(state = initialState, action) {
     case actionTypes.FETCH_ALL_MILESTONES_SUCCESS:
       return state.set('allMilestones', action.allMilestones);
     case actionTypes.UPDATE_ARTICLES_QUERY:
-      const queryList = ['categoryId', 'currentPage', 'tag', 'documentType', 'priority', 'milestone', 'owner'];
-      queryList.forEach((item) => {
+      const queryParams = ['categoryId', 'currentPage', 'tag', 'documentType', 'priority', 'milestone', 'owner'];
+      queryParams.forEach((item) => {
         state = state.set(item, typeof action[item] === 'undefined' ? state.get(item) : action[item]);
       });
-
       return state;
-
     default:
-        return state;
+      return state;
   }
 };
