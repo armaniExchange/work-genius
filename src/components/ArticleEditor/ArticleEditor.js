@@ -1,8 +1,6 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import TextField from 'material-ui/lib/text-field';
-// import SelectField from 'material-ui/lib/SelectField';
-// import MenuItem from 'material-ui/lib/menus/menu-item';
 import Select from 'react-select';
 import Dropzone from 'react-dropzone';
 
@@ -121,7 +119,9 @@ class ArticleEditor extends Component {
         </div>
         <br />
         <label>Category</label>
+        {!categoryId && <small style={{color: 'red'}}>&nbsp;&nbsp;<span>*</span> This field is required</small>}
         <Select
+          placeholder="Category is required field"
           value={categoryId}
           options={allCategoriesOptions}
           onChange={onCategoryIdChange}/>
