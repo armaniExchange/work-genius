@@ -80,6 +80,14 @@ const initialState = Map({
   allTags: List.of(),
   allUsers: List.of(),
   allMilestones: List.of(),
+  // query object
+  categoryId: '',
+  currentPage: 1,
+  tag: '',
+  documentType: '',
+  priority: '',
+  milestone: '',
+  owner: ''
 });
 
 let isFirstTimeFetch = true;
@@ -115,6 +123,14 @@ export default function documentReducer(state = initialState, action) {
       return state.set('allUsers', fromJS(action.allUsers));
     case actionTypes.FETCH_ALL_MILESTONES_SUCCESS:
       return state.set('allMilestones', action.allMilestones);
+    case actionTypes.UPDATE_ARTICLES_QUERY:
+      const queryList = ['categoryId', 'currentPage', 'tag', 'documentType', 'priority', 'milestone', 'owner'];
+      queryList.forEach((item) => {
+        state = state.set(item, typeof action[item] === 'undefined' ? state.get(item) : action[item]);
+      });
+
+      return state;
+
     default:
         return state;
   }

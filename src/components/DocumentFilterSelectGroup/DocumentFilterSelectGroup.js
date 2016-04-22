@@ -10,38 +10,30 @@ import ArticlePrioritySelect from '../../components/ArticlePrioritySelect/Articl
 import './_DocumentFilterSelectGroup.css';
 
 class DocumentFilterSelectGroup extends Component {
-  constructor(props) {
-    super(props);
-    this.state = this._getInitialState();
+
+  onDocumentTypeChange(event, index, value) {
+    this.props.onChange({documentType: value});
   }
 
-  _getInitialState() {
-    return {
+  onPriorityChange(event, index, value) {
+    this.props.onChange({priority: value});
+  }
+
+  onMilestoneChange(event, index, value) {
+    this.props.onChange({milestone: value});
+  }
+
+  onOwnerChange(event, index, value) {
+    this.props.onChange({owner: value});
+  }
+
+  clearFilter() {
+    this.props.onChange({
       documentType: '',
       priority: '',
       milestone: '',
       owner: ''
-    };
-  }
-
-  onDocumentTypeChange(event, index, value) {
-    this.setState({documentType: value}, this.triggerChange);
-  }
-
-  onPriorityChange(event, index, value) {
-    this.setState({priority: value}, this.triggerChange);
-  }
-
-  onMilestoneChange(event, index, value) {
-    this.setState({milestone: value}, this.triggerChange);
-  }
-
-  onOwnerChange(event, index, value) {
-    this.setState({owner: value}, this.triggerChange);
-  }
-
-  clearFilter() {
-    this.setState(this._getInitialState(), this.triggerChange);
+    });
   }
 
   triggerChange() {
@@ -51,14 +43,12 @@ class DocumentFilterSelectGroup extends Component {
   render() {
     const {
       allUsers,
-      allMilestones
-    } = this.props;
-    const {
+      allMilestones,
       documentType,
       priority,
       milestone,
       owner
-    } = this.state;
+    } = this.props;
 
     return (
       <div className="document-filter-select-group">
@@ -112,14 +102,20 @@ class DocumentFilterSelectGroup extends Component {
 }
 
 DocumentFilterSelectGroup.propTypes = {
-  onChange      : PropTypes.func.isRequired,
-  allUsers      : PropTypes.array,
-  allMilestones : PropTypes.array
+  onChange           : PropTypes.func.isRequired,
+  allUsers           : PropTypes.array,
+  allMilestones      : PropTypes.array,
+  currentPage        : PropTypes.number,
+  tag                : PropTypes.string,
+  documentType       : PropTypes.string,
+  priority           : PropTypes.string,
+  milestone          : PropTypes.string,
+  owner              : PropTypes.string,
 };
 
 DocumentFilterSelectGroup.defaultProps = {
-  allUsers      : [],
-  allMilestones : []
+  allUsers           : [],
+  allMilestones      : []
 };
 
 export default DocumentFilterSelectGroup;
