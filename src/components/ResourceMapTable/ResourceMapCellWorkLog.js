@@ -64,8 +64,9 @@ class ResourceMapCellWorkLog extends Component {
 		let offerItem = {};
 		offerItem.id = item.id;
 		// offerItem.data = {status: item.status};
+		item.progress = 100;
 		offerItem.data = item;
-		offerItem.isStatus = true;
+		// offerItem.isStatus = true;
 		offerItem.employee_id = config.userId;
 		offerItem.date = config.date;
 		onSubmitStatus(offerItem);
@@ -155,6 +156,7 @@ class ResourceMapCellWorkLog extends Component {
 										overlay={
 											(<TooltipContent item={item} />)
 										}
+										mouseEnterDelay="1"
 										arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
 									>
 									    <span className="label-default-style c-white">

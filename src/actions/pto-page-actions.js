@@ -302,7 +302,7 @@ export function createPTOApplication(data) {
         let config = {
                 method: 'POST',
                 body: `mutation RootMutationType {
-                    createPTOApplication(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+                    createPTOAndRefreshWorklog(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
                 }`,
                 headers: {
                     'Content-Type': 'application/graphql',
@@ -389,7 +389,7 @@ export function setPTOApplicationStatus(id, status, hours) {
         let config = {
                 method: 'POST',
                 body: `mutation RootMutationType {
-                    updatePTOApplicationStatus(id:"${id}", status:"${status}", hours:${hours})
+                    updatePTOStatusAndRefreshWorklog(id:"${id}", status:"${status}", hours:${hours})
                 }`,
                 headers: {
                     'Content-Type': 'application/graphql',

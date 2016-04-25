@@ -109,11 +109,12 @@ class ResourceMapTableBody extends Component {
                         this._onShowModalHandler(itemValue);
                     };
 
-                    let day = currentDay.isoWeekday();
+                    // let day = currentDay.isoWeekday();
                     let className = 'cell-layout-style';
-                    if (day === 6 || day === 7) {
-                        className += '__weekday';
-                    } else if (type === 'pto') {
+                    // if (day === 6 || day === 7) {
+                    //     className += '__weekday';
+                    // } else
+                    if (type === 'pto') {
                         className += '__pto';
                     } else if (type === 'holiday') {
                         className += '__holiday';
