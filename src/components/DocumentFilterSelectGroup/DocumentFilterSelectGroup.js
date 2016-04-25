@@ -26,15 +26,6 @@ class DocumentFilterSelectGroup extends Component {
     this.props.onChange({owner: value});
   }
 
-  clearFilter() {
-    this.props.onChange({
-      documentType: '',
-      priority: '',
-      milestone: '',
-      owner: ''
-    });
-  }
-
   triggerChange() {
     this.props.onChange(this.state);
   }
@@ -46,7 +37,8 @@ class DocumentFilterSelectGroup extends Component {
       documentType,
       priority,
       milestone,
-      owner
+      owner,
+      onClearAll
     } = this.props;
 
     return (
@@ -92,7 +84,7 @@ class DocumentFilterSelectGroup extends Component {
           style={{float: 'right'}}
           label="All Articles"
           secondary={true}
-          onClick={::this.clearFilter}/>
+          onClick={onClearAll}/>
       </div>
     );
   }
@@ -100,6 +92,7 @@ class DocumentFilterSelectGroup extends Component {
 
 DocumentFilterSelectGroup.propTypes = {
   onChange           : PropTypes.func.isRequired,
+  onClearAll         : PropTypes.func,
   allUsers           : PropTypes.array,
   allMilestones      : PropTypes.array,
   currentPage        : PropTypes.number,

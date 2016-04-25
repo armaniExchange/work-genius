@@ -49,20 +49,33 @@ class DocumentPage extends Component {
   }
 
   // fetch articles with query
-  //
   onTagChange(tag) {
-    this.props.documentActions.updateArticlesQuery({tag});
+    this.props.documentActions.updateArticlesQuery({tag, currentPage: 1});
     setTimeout(() => this.queryArticles(), 0);
   }
 
   onFilterChange(filter) {
-    this.props.documentActions.updateArticlesQuery(filter);
+    this.props.documentActions.updateArticlesQuery(Object.assign(filter, {currentPage: 1}));
     setTimeout(() => this.queryArticles(), 0);
   }
 
   onPaginate(page) {
     this.props.documentActions.updateArticlesQuery({currentPage: page});
     setTimeout(() => this.queryArticles(), 0);
+  }
+
+  resetQueryAndFetchArticles() {
+    this.props.documentActions.updateArticlesQuery({
+      currentPage: 1,
+      tag: '',
+      documentType: '',
+      priority: '',
+      milestone: '',
+      owner: '',
+      categoryId: ''
+    });
+    setTimeout(() => this.queryArticles(), 0);
+
   }
 
   queryArticles() {
@@ -73,6 +86,7 @@ class DocumentPage extends Component {
       priority,
       milestone,
       owner,
+      categoryId
     } = this.props;
     let query = {
       page: currentPage,
@@ -81,6 +95,7 @@ class DocumentPage extends Component {
       documentType,
       priority,
       milestone,
+      categoryId
     };
     Object.keys(query).forEach((key) => {
       if (!query[key]) { delete query[key]; }
@@ -152,7 +167,10 @@ class DocumentPage extends Component {
   _setAndFetchCategory(item) {
     const { documentActions } = this.props;
     documentActions.setSelectedCategory({...item, isLeaf: true});
-    this.props.documentActions.updateArticlesQuery({categoryId: item.path || ''});
+    this.props.documentActions.updateArticlesQuery({
+      categoryId: item.path || '',
+      currentPage: 1
+    });
     setTimeout(() => this.queryArticles(), 0);
   }
 
@@ -213,6 +231,7 @@ class DocumentPage extends Component {
               milestone={milestone}
               owner={owner}
               onChange={::this.onFilterChange}
+              onClearAll={::this.resetQueryAndFetchArticles}
             />
             { this.renderArticleList() }
             {
@@ -255,6 +274,7 @@ DocumentPage.propTypes = {
   priority                : PropTypes.string,
   milestone               : PropTypes.string,
   owner                   : PropTypes.string,
+  categoryId              : PropTypes.string,
 };
 
 function mapStateToProps(state) {
