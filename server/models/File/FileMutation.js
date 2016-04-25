@@ -3,10 +3,9 @@ import r from 'rethinkdb';
 import multer from 'multer';
 import moment from 'moment';
 
-import { UPLOAD_FILE_LOCATION } from '../../constants/configurations.js';
 // Constants
-import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
-
+import { DB_HOST, DB_PORT, UPLOAD_FILE_LOCATION } from '../../constants/configurations.js';
+import { SERVER_FILES_URL } from '../../../src/constants/config';
 
 // upload file
 //
@@ -41,6 +40,7 @@ export const fileUploadHandler = async (req, res) => {
         type: mimetype,
         name: originalname,
         path: `${targetDir}/${filename}`,
+        url: `${SERVER_FILES_URL}/${filename}`,
         createdAt
       };
       connection = await r.connect({ host: DB_HOST, port: DB_PORT });

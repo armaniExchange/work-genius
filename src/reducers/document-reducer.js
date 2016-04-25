@@ -7,7 +7,6 @@ import { Map, List, fromJS } from 'immutable';
 import actionTypes from '../constants/action-types';
 import { MENU } from '../constants/menu';
 import { TECH_MENU } from '../constants/tec-menu';
-import { appendFileUrlToFiles } from '../libraries/fileUrl';
 import _ from 'lodash';
 
 
@@ -104,15 +103,11 @@ export default function documentReducer(state = initialState, action) {
       if (isFirstTimeFetch) {
         let newTitleCountMap = generateTitleCountMap(action.articleList);
         isFirstTimeFetch = false;
-        return state.set('articleList', action.articleList.map(article => {
-            return Object.assign({}, article, {files: appendFileUrlToFiles(article.files)});
-          }))
+        return state.set('articleList', action.articleList)
           .set('articleTotalCount', action.count)
           .set('allCategories', enhanceMenu(MENU, newTitleCountMap));
       } else {
-        return state.set('articleList', action.articleList.map(article => {
-            return Object.assign({}, article, {files: appendFileUrlToFiles(article.files)});
-          }))
+        return state.set('articleList', action.articleList)
           .set('articleTotalCount', action.count);
       }
     case actionTypes.FETCH_ALL_TAGS_SUCCESS:

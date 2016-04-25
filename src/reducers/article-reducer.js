@@ -5,7 +5,6 @@
 import { List , OrderedMap, fromJS} from 'immutable';
 // Constants
 import actionTypes from '../constants/action-types';
-import { getFileUrl, appendFileUrlToFiles } from '../libraries/fileUrl';
 
 const initialState = OrderedMap({
   // data of article
@@ -40,7 +39,7 @@ const articleToState = (state, action) => {
     .set('author', OrderedMap(action.author))
     .set('categoryId', action.categoryId)
     .set('tags', List(action.tags || []))
-    .set('files', fromJS(appendFileUrlToFiles(action.files || [])))
+    .set('files', fromJS(action.files || []))
     .set('comments', fromJS(action.comments || []))
     .set('reportTo', List(action.reportTo || []))
     .set('content', action.content)
@@ -84,7 +83,7 @@ export default function articleReducer(state = initialState, action) {
           return item.delete('loaded')
             .delete('total')
             .delete('isUploading')
-            .set('url', getFileUrl(action.file.id))
+            .set('url', action.file.url)
             .set('id', action.file.id);
       }));
     case actionTypes.REMOVE_ARTICLE_FILE_SUCCESS:

@@ -17,7 +17,6 @@ import CategoryTree from '../../components/CategoryTree/CategoryTree';
 import ConfirmDeleteDialog from '../../components/ConfirmDeleteDialog/ConfirmDeleteDialog';
 import DocumentFilterSelectGroup from '../../components/DocumentFilterSelectGroup/DocumentFilterSelectGroup';
 
-
 import * as DocumentActions from '../../actions/document-page-actions';
 import * as ArticleActions from '../../actions/article-page-actions';
 

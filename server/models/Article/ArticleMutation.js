@@ -183,7 +183,7 @@ const ArticleMutation = {
 
         await connection.close();
         const articleKeys = Object.keys(article);
-        if (articleKeys === 2 && articleKeys[1] === 'files' || articleKeys[0] === 'files') {
+        if (articleKeys.length === 2 && articleKeys[1] === 'files' || articleKeys[0] === 'files') {
           // skip update files
         } else {
           await transporter.sendMail({
