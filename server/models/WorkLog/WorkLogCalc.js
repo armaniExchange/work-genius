@@ -91,7 +91,6 @@ export async function recalcWorklogEndDate(ptoStartDate,employeeId){
 		//get public holiday list
 		let location = user.location;
 		query = r.db('work_genius').table('holiday').filter({'location':location})
-			.filter(r.row('date').ge(startDate))
 			.pluck('date','type').coerceTo('array');
 		let holidayList = await query.run(connection);
 
@@ -117,7 +116,7 @@ export async function recalcWorklogEndDate(ptoStartDate,employeeId){
 					});
 					// check if public holiday
 					let findHoliday = holidayList.find( holiday => {
-						return holiday.date == tmpDate;
+						return moment(holiday.date).isSame(tmpDate,'day');
 					});
 					if(![0,6].includes(moment(tmpDate).day()) && !findPto && !findHoliday){
 						duration -= 8;
