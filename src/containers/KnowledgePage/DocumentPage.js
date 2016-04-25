@@ -214,12 +214,11 @@ class DocumentPage extends Component {
               tags={allTags}
               value={tag} />
             <h5>KNOWLEDGE TREE</h5>
-
             <CategoryTree
-                data={allCategories}
-                selectedPath={currentSelectedCategory.path}
-                onNodeClick={::this._onNodeClick}
-                onLeafClick={::this._setAndFetchCategory} />
+              data={allCategories}
+              selectedPath={currentSelectedCategory.path}
+              onNodeClick={::this._onNodeClick}
+              onLeafClick={::this._setAndFetchCategory} />
           </div>
           <div className="main-content">
             <DocumentFilterSelectGroup

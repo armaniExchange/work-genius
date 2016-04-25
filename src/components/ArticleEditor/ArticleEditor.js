@@ -199,6 +199,7 @@ class ArticleEditor extends Component {
         </small>
 
         <Editor
+          height={400}
           value={content}
           onChange={::this.onContentChange} />
         <br />
