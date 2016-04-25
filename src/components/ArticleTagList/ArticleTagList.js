@@ -21,7 +21,7 @@ class ArticleTagList extends Component {
     } = this.props;
 
     return (
-      <span className="component-article-tag-list">
+      <span className="article-tag-list">
         {
           (tags || []).map((tag, index) => {
             return (
@@ -49,7 +49,8 @@ ArticleTagList.propTypes = {
 
 ArticleTagList.defaultProps = {
   tags           : [],
-  value          : ''
+  value          : '',
+  onChange       : () => {}
 };
 
 export default ArticleTagList;

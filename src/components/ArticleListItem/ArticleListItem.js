@@ -1,17 +1,25 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
-import moment from 'moment';
+
 import Paper from 'material-ui/lib/paper';
 import RaisedButton from 'material-ui/lib/raised-button';
 
-import ArticleFileList from '../../components/ArticleFileList/ArticleFileList';
+import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
 import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
+import ArticleMetadata from '../../components/ArticleMetadata/ArticleMetadata';
 
 // Styles
 import './_ArticleListItem.css';
 
+const ABSTRACT_LINES = 10;
+
 class ArticleListItem extends Component {
+
+  getContentAbstract() {
+    const{ content } = this.props;
+    return content.split('\n').slice(0, ABSTRACT_LINES).join('\n');
+  }
 
   render() {
     const {
@@ -23,58 +31,39 @@ class ArticleListItem extends Component {
       comments,
       updatedAt,
       onDelete,
-      index
+      index,
+      activeTag,
+      onActiveTagChange
     } = this.props;
-
-    const paperStyle = {
-      position: 'relative',
-      padding: 15,
-      marginBottom: 20,
-    };
-
     return (
-      <Paper style={paperStyle}>
+      <Paper className="article-list-item">
         <Link to={`/main/knowledge/document/${id}`}>
-          <h3 style={{margin: 0, minHeight: '1em'}}>{title}</h3>
+          <h3 className="title">{title}</h3>
         </Link>
-        <div style={{
-          position: 'absolute',
-          top: 5,
-          right: 5
-        }}>
+        <div className="button-group">
           <Link to={`/main/knowledge/document/edit/${id}`}>
             <RaisedButton
-              style={{margin: 10}}
               label="Edit"
               primary={true} />
           </Link>
           <RaisedButton
-            style={{margin: 10}}
             label="Delete"
             onClick={onDelete.bind(this, id, index)} />
         </div>
+        <HighlightMarkdown source={::this.getContentAbstract()}/>
         <hr />
-        <div>
-          <span>Author: {author && author.name}&nbsp;</span>
-          &nbsp;&nbsp;
-          <span style={{color: 'gray'}}>
-            {moment(updatedAt).format('YYYY-MM-DD')}&nbsp;
-          </span>
-          &nbsp;&nbsp;
-          <span>
-            <i className="fa fa-comments"/>&nbsp;
-            Comments: {comments.length}&nbsp;
-          </span>
-          &nbsp;&nbsp;
-          <span>
-            <i className="fa fa-paperclip"/>&nbsp;
-            <span>{`attachments(${files.length}):`}&nbsp;</span>
-            <ArticleFileList files={files} />
-          </span>
-        </div>
+        <ArticleMetadata
+          author={author}
+          updatedAt={updatedAt}
+          comments={comments}
+          files={files}
+        />
         <br />
-        <ArticleTagList tags={tags} />
-        <br/>
+        <ArticleTagList
+          tags={tags}
+          value={activeTag}
+          onChange={onActiveTagChange}
+        />
       </Paper>
     );
   }
@@ -92,7 +81,9 @@ ArticleListItem.propTypes = {
   createdAt       : PropTypes.number,
   updatedAt       : PropTypes.number,
   index           : PropTypes.number,
-  onDelete        : PropTypes.func.isRequired
+  onDelete        : PropTypes.func.isRequired,
+  activeTag       : PropTypes.string,
+  onActiveTagChange     : PropTypes.func
 };
 
 

@@ -1,4 +1,4 @@
-const SERVER_HOST = '192.168.95.29';
+export const SERVER_HOST = '192.168.95.29';
 
 export const SERVER_API_URL = `http://${SERVER_HOST}:3000/graphql`;
 export const SERVER_LOGIN_URL = `http://${SERVER_HOST}:3000/login`;
@@ -12,3 +12,20 @@ export const PRIVILEGE = {
 
 export const PTO_URL = `http://${SERVER_HOST}/main/pto`;
 export const OVERTIME_URL = `http://${SERVER_HOST}/main/pto/overtime`;
+
+// Documentation
+export const DOCUMENT_TYPE_OPTIONS = [
+  'knowledges',
+  'bugs',
+  'task',
+  'requirement',
+  'enhancement'
+];
+
+export const PRIORITY_OPTIONS = [
+  'blocker',
+  'critical',
+  'major',
+  'minor',
+  'trival'
+];

@@ -17,6 +17,7 @@ import CategoryTree from '../../components/CategoryTree/CategoryTree';
 import ConfirmDeleteDialog from '../../components/ConfirmDeleteDialog/ConfirmDeleteDialog';
 import DocumentFilterSelectGroup from '../../components/DocumentFilterSelectGroup/DocumentFilterSelectGroup';
 
+
 import * as DocumentActions from '../../actions/document-page-actions';
 import * as ArticleActions from '../../actions/article-page-actions';
 
@@ -97,7 +98,6 @@ class DocumentPage extends Component {
   }
 
   onConfirmDeleteArticle(deletingArticle) {
-    // console.log(`delete article id:${deletingArticle.id} index:${deletingArticle.index}`);
     this.props.articleActions.deleteArticle(deletingArticle.id);
   }
 
@@ -114,7 +114,10 @@ class DocumentPage extends Component {
   onCancelDeleteArticle() {}
 
   renderArticleList() {
-    const { articleList } = this.props;
+    const {
+      articleList,
+      tag
+    } = this.props;
     if (articleList.length === 0) {
       return (
         <div style={{
@@ -133,7 +136,9 @@ class DocumentPage extends Component {
           <ArticleListItem
             key={index}
             index={index}
+            activeTag={tag}
             onDelete={::this.onArticleDelete}
+            onActiveTagChange={::this.onTagChange}
             {...article}/>
         );
       })
@@ -191,8 +196,8 @@ class DocumentPage extends Component {
               onChange={::this.onTagChange}
               tags={allTags}
               value={tag} />
-            <h5>KNOWLEGE TREE</h5>
-            
+            <h5>KNOWLEDGE TREE</h5>
+
             <CategoryTree
                 data={allCategories}
                 selectedPath={currentSelectedCategory.path}

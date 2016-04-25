@@ -10,17 +10,18 @@ import ArticleType from './ArticleType.js';
 import ArticleInputType from './ArticleInputType.js';
 
 // Constants
-import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
+import { DB_HOST, DB_PORT, MAILER_ADDRESS } from '../../constants/configurations.js';
 
 import { deleteFile } from '../File/FileMutation';
 import { getArticleDetail } from './ArticleQuery';
+import { SERVER_HOST } from '../../../src/constants/config';
+import parseMarkdown from '../../libraries/parseMarkdown';
 
 const parseArticle = (article) => {
   // only update give article property, if it didn't pass, keep original property
   // ex: article = {id: '123', files: ['567']}
   // didn't provided categoryId, then result shouldn't contain categoryId property
   let result = {};
-
   Object.keys(article)
     .map( key => {
       switch (key) {
@@ -33,12 +34,19 @@ const parseArticle = (article) => {
         case 'tags':
           result.tags = article.tags || [];
           break;
+        case 'reportTo':
+          result.reportTo = article.reportTo || [];
+          break;
         default:
           result[key] = article[key];
           break;
       }
     });
   return result;
+};
+
+export const getArticleLinkMarkdown = (articleId) => {
+  return `[View on Knowledge Base](http://${SERVER_HOST}/main/knowledge/document/${articleId})`;
 };
 
 const ArticleMutation = {
@@ -100,11 +108,11 @@ const ArticleMutation = {
     args: {
       article: { type: ArticleInputType }
     },
-    resolve: async (root, { article }) => {
+    resolve: async ({ req, transporter }, { article }) => {
       let connection = null, result = null;
       try {
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-        const user = root.req.decoded;
+        const user = req.decoded;
         const now = new Date().getTime();
         const parsedArticle = Object.assign({}, parseArticle(article), {
           authorId: user.id,
@@ -125,6 +133,15 @@ const ArticleMutation = {
             .merge(getArticleDetail)
             .run(connection);
           await connection.close();
+
+          await transporter.sendMail({
+            from: MAILER_ADDRESS,
+            to: user.email,
+            subject: `[KB]New Article by ${user.name} - ${result.title}`,
+            html: parseMarkdown(`${getArticleLinkMarkdown(id)}<br />${result.content}`),
+            cc: result.reportTo.map((emailName) => `${emailName}@a10networks.com`)
+          });
+
           return result;
         } else {
           throw 'No generated_keys found';
@@ -142,12 +159,12 @@ const ArticleMutation = {
     args: {
       article: { type: ArticleInputType }
     },
-    resolve: async (root, { article }) => {
+    resolve: async ({ req, transporter }, { article }) => {
+      const user = req.decoded;
       let connection = null, result = null;
 
       try {
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-
         const parsedArticle = Object.assign({}, parseArticle(article), {
           updatedAt: new Date().getTime()
         });
@@ -165,6 +182,18 @@ const ArticleMutation = {
           .run(connection);
 
         await connection.close();
+        const articleKeys = Object.keys(article);
+        if (articleKeys === 2 && articleKeys[1] === 'files' || articleKeys[0] === 'files') {
+          // skip update files
+        } else {
+          await transporter.sendMail({
+            from: MAILER_ADDRESS,
+            to: user.email,
+            subject: `[KB]Update Article by ${user.name} - ${result.title}`,
+            html: parseMarkdown(`${getArticleLinkMarkdown(result.id)}<br />${result.content}`),
+            cc: result.reportTo.map((emailName) => `${emailName}@a10networks.com`)
+          });
+        }
         return result;
       } catch (err) {
         await connection.close();
