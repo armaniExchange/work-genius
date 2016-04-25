@@ -54,6 +54,7 @@ const schema = new GraphQLSchema({
       getAllBugs               : BugQuery.getAllBugs,
       getAllBugTags            : BugTagQuery.getAllBugTags,
       getAllRelease            : BugTagQuery.getAllRelease,
+      getAllWorklogTags		   : BugTagQuery.getAllWorklogTags,
       // Feature Analysis
       assignmentCategoryTree   : AssignmentCategoryQuery.getAssignmentCategoryTree,
       allAssignmentCategories  : AssignmentCategoryQuery.getAllAssignmentCategories,
@@ -99,6 +100,7 @@ const schema = new GraphQLSchema({
       updateBug                       : BugMutation.updateBug,
       createBugTag                    : BugTagMutation.createBugTag,
       createRelease                   : BugTagMutation.createRelease,
+      createWorklogTag				  : BugTagMutation.createWorklogTag,
       //work log page
       createWorkLog                   : WorkLogMutation.createWorkLog,
       updateWorkLog                   : WorkLogMutation.updateWorkLog,

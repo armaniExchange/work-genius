@@ -26,11 +26,7 @@ const initialState = Map({
 	// ),
 	data: List.of(),
     allUsers: List.of(),
-    tags: List.of(
-        Map({'label': 'Fixed Bug1', 'value': 'Fixed Bug1' }),
-        Map({'label': 'Fixed Bug2', 'value': 'Fixed Bug2' }),
-        Map({'label': 'Fixed Bug3', 'value': 'Fixed Bug3' })
-    ),
+    tags: List.of(),
     currentUserId: '',
 	show: false,
     defaultModalInfos: Map({})
@@ -217,10 +213,10 @@ var taskStateActions = {
         }
 
         // If the select date is weekday, will return false.
-        let day = moment(selectDate).isoWeekday();
-        if (day === 6 || day === 7) {
-            return false;
-        }
+        // let day = moment(selectDate).isoWeekday();
+        // if (day === 6 || day === 7) {
+        //     return false;
+        // }
         let index = duration / 8;
         let millisecondOneDay = 24 * 60 * 60 * 1000;
         for (let i = 0; i < index; i ++) {
@@ -270,6 +266,20 @@ function upsertUserItemData(state, item) {
     return state.set('data', newData);
 }
 
+function setAllTags(state, tags) {
+    let formatedData = formatResponse(tags);
+    return state
+        .set(`tags`, formatedData);
+}
+
+function setTag(state, tag) {
+    let tags = state.get(`tags`).toJS();
+    tags.push(tag);
+    let formatedData = formatResponse(tags);
+    return state
+        .set(`tags`, formatedData);
+}
+
 export default function resourceMapReducer(state = initialState, action) {
 	var nextState = state;
 	switch (action.type){
@@ -291,6 +301,12 @@ export default function resourceMapReducer(state = initialState, action) {
         return nextState;
     case actionTypes.FETCH_RESOURCE_MAP_ALL_USERS:
         nextState = setAllUsers(nextState, action.data);
+        return nextState;
+    case actionTypes.FETCH_RESOURCE_MAP_All_TAG:
+        nextState = setAllTags(nextState, action.tags);
+        return nextState;
+    case actionTypes.FETCH_RESOURCE_MAP_NEW_TAG:
+        nextState = setTag(nextState, action.tag);
         return nextState;
 	default:
 		return nextState;

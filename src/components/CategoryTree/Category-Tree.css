@@ -5,7 +5,7 @@
 
 @define-extend treeCount {
     position: absolute;
-    display: inline-block;
+    // display: inline-block;
     right: 0px;
 }
 
@@ -15,6 +15,8 @@
         cursor: pointer;
         display: block;
         &--selected {
+            margin-left: 15px;
+            line-height: 32px;
             @extend selected
         }
     }
@@ -32,10 +34,31 @@
     @extend treeCount
 }
 
+.category-tree-node__leaf {
+    margin-left:15px;
+    line-height: 32px;
+    position: relative;
+}
+
+.category-tree {
+    margin-top:20px;
+}
+
+.tree-view {
+    font-size: 16px;
+}
+
 .tree-view_item {
     position: relative;
+    line-height: 32px;
 }
 
 .tree-view_children {
     position: relative;
+}
+
+.tree-view_arrow {
+    &:after {
+        font-size: 24px;
+    }
 }

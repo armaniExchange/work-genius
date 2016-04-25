@@ -66,13 +66,24 @@ class ResourceMapModalWorkLog extends Component {
 	}
 
 	componentWillReceiveProps (nextProps) {
-		const { defaultModalInfos } = nextProps;
-		this.setState({
-			release: defaultModalInfos.release,
-			progress: defaultModalInfos.progress,
-			color: defaultModalInfos.color,
-			tags: defaultModalInfos.tags
-		});
+		const { show, defaultModalInfos } = nextProps;
+		defaultModalInfos.tags = defaultModalInfos.tags ? defaultModalInfos.tags : [];
+		if (show) {
+			let tag = this.state.tags !== '' ? this.state.tags : defaultModalInfos.tags.join(',');
+			this.setState({
+				release: defaultModalInfos.release,
+				progress: defaultModalInfos.progress,
+				color: defaultModalInfos.color,
+				tags: tag
+			});
+		} else {
+			this.setState({
+				release: '',
+				progress: 0,
+				color: '',
+				tags: ''
+			});
+		}
 	}
 
 
@@ -121,7 +132,7 @@ class ResourceMapModalWorkLog extends Component {
 				'duration': parseInt(durationField.getValue()),
 				'release': this.state.release,
 				'status': status,
-				'tags': this.state.tags
+				'tags': this.state.tags.split(',')
 			};
 			let item = {
 				id: defaultModalInfos.id,
@@ -234,7 +245,17 @@ class ResourceMapModalWorkLog extends Component {
 
 	_onSelectTag(type) {
 		this.setState({tags: type});
-	}
+		let types = type.split(',');
+		const { tags, onAddTagHandler } = this.props;
+		for (let newType of types) {
+			let tag = tags.find((inTag) => {
+				return inTag.tag_name === newType;
+			});
+			if (newType !== undefined && tag === undefined) {
+				onAddTagHandler(newType);
+			}
+		}
+ 	}
 
 	_changeStartDate(date) {
 		// const { startDate } = this.refs;
@@ -387,7 +408,7 @@ class ResourceMapModalWorkLog extends Component {
 							multiLine={true}
 							rowsMax={15}
 							defaultValue={defaultModalInfos.content}
-							rows={8}
+							rows={7}
 							ref="workLogField"
 						/>
 					</div>
@@ -396,14 +417,17 @@ class ResourceMapModalWorkLog extends Component {
 					<label className="col-xs-3 control-label">Tag</label>
 					<div className="col-xs-9">
 						<Select
+							multi={true}
 							allowCreate={true}
-                            name="menu_tag"
-                            value={this.state.tags}
-                            options={tags}
-                            onChange={this._onSelectTag}
-                        />
-                    </div>
-                </div>
+              name="menu_tag"
+              value={this.state.tags}
+              options={tags.map((tag) => {
+              	return {label: tag.tag_name, value: tag.tag_name};
+              })}
+              onChange={this._onSelectTag}
+            />
+		      </div>
+		    </div>
 				<div className="form-group">
 					<label className="col-xs-3 control-label">Progress</label>
 					<div className="col-xs-9">
@@ -455,7 +479,8 @@ ResourceMapModalWorkLog.propTypes = {
 	defaultModalInfos  : PropTypes.object.isRequired,
 	onModalSubmit      : PropTypes.func.isRequired,
 	onModalHander      : PropTypes.func.isRequired,
-	onModalSubmitMulti : PropTypes.func.isRequired
+	onModalSubmitMulti : PropTypes.func.isRequired,
+	onAddTagHandler    : PropTypes.func.isRequired
 };
 
 ResourceMapModalWorkLog.defaultProps = {

@@ -45,6 +45,20 @@ export function fetchResourceMapModalHandler(show, info){
 	};
 }
 
+export function fetchResourecMapAllTag(tags){
+    return {
+        type: actionTypes.FETCH_RESOURCE_MAP_All_TAG,
+        tags
+    };
+}
+
+export function fetchResourecMapNewTag(tag){
+    return {
+        type: actionTypes.FETCH_RESOURCE_MAP_NEW_TAG,
+        tag
+    };
+}
+
 var taskWorkItemActions = {
     create: (item) => {
         return (dispatch, getState) => {
@@ -128,6 +142,61 @@ var taskWorkItemActions = {
                 .then((res) => res.json())
                 .then(() => {
                     dispatch(fetchWorklogItem(item));
+                })
+                .catch((err) => {
+                    throw new Error(err);
+                });
+        };
+    }
+};
+
+
+var tagActions = {
+    get: function () {
+        return (dispatch) => {
+            let config = {
+                method: 'POST',
+                body: `{
+                        getAllWorklogTags(name:""){
+                            id,
+                            tag_name,
+                            type
+                        }
+                }`,
+                headers: {
+                    'Content-Type': 'application/graphql',
+                    'x-access-token': localStorage.token
+                }
+            };
+            return fetch(SERVER_API_URL, config)
+                .then((res) => res.json())
+                .then((body) => {
+                    let tags = body.data.getAllWorklogTags;
+                    dispatch(fetchResourecMapAllTag(tags));
+                })
+                .catch((err) => {
+                    throw new Error(err);
+                });
+        };
+    },
+    add: function (tag) {
+        return (dispatch) => {
+            var data = {tag_name: tag};
+            let config = {
+                method: 'POST',
+                body: `mutation RootMutationType {
+                    createWorklogTag(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+                }`,
+                headers: {
+                    'Content-Type': 'application/graphql',
+                    'x-access-token': localStorage.token
+                }
+            };
+
+            return fetch(SERVER_API_URL, config)
+                .then((res) => res.json())
+                .then(() => {
+                    dispatch(fetchResourecMapNewTag(data));
                 })
                 .catch((err) => {
                     throw new Error(err);
@@ -424,6 +493,22 @@ export function upsertWorklogItem(item) {
     return (dispatch) => {
         Promise.all([
             dispatch(workLogItemUpsert(item))
+        ]);
+    };
+}
+
+export function queryResourceMapTags() {
+    return (dispatch) => {
+        Promise.all([
+            dispatch(tagActions.get())
+        ]);
+    };
+}
+
+export function addResourceMapTag(tag) {
+    return (dispatch) => {
+        Promise.all([
+            dispatch(tagActions.add(tag))
         ]);
     };
 }

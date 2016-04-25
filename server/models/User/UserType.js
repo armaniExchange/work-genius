@@ -106,6 +106,10 @@ let UserType = new GraphQLObjectType({
 			            type: GraphQLString,
 			            description: 'workday/pto/holiday'
 			        },
+			        'pto_hours': {
+			            type: GraphQLInt,
+			            description: 'pto hours'
+			        },
 			        worklog_items: {
 			            type: new GraphQLList(WorkLog_Type),
 			            description: 'workday/pto/holiday'

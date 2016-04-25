@@ -67,6 +67,10 @@ const WorkLog_TYPE = new GraphQLObjectType({
         'end_date': {
             type: GraphQLFloat,
             description: 'end date'
+        },
+        'pto_hours': {
+            type: GraphQLInt,
+            description: 'pto hours'
         }
     })
 });
