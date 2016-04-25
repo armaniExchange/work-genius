@@ -1,29 +1,28 @@
 import React, { Component, PropTypes } from 'react';
-import SelectField from 'material-ui/lib/SelectField';
 import FlatButton from 'material-ui/lib/flat-button';
-import MenuItem from 'material-ui/lib/menus/menu-item';
 
-import ArticleDocumentTypeSelect from '../../components/ArticleDocumentTypeSelect/ArticleDocumentTypeSelect';
-import ArticlePrioritySelect from '../../components/ArticlePrioritySelect/ArticlePrioritySelect';
+import { DOCUMENT_TYPE_OPTIONS, PRIORITY_OPTIONS } from '../../constants/config';
+import capitalizeFirstLetter from '../../libraries/capitalizeFirstLetter';
+import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 
 // Styles
 import './_DocumentFilterSelectGroup.css';
 
 class DocumentFilterSelectGroup extends Component {
 
-  onDocumentTypeChange(event, index, value) {
+  onDocumentTypeChange(value) {
     this.props.onChange({documentType: value});
   }
 
-  onPriorityChange(event, index, value) {
+  onPriorityChange(value) {
     this.props.onChange({priority: value});
   }
 
-  onMilestoneChange(event, index, value) {
+  onMilestoneChange(value) {
     this.props.onChange({milestone: value});
   }
 
-  onOwnerChange(event, index, value) {
+  onOwnerChange(value) {
     this.props.onChange({owner: value});
   }
 
@@ -52,47 +51,45 @@ class DocumentFilterSelectGroup extends Component {
 
     return (
       <div className="document-filter-select-group">
-        <ArticleDocumentTypeSelect
-          value={documentType}
-          onChange={::this.onDocumentTypeChange}
-        />
-        <ArticlePrioritySelect
-          value={priority}
-          onChange={::this.onPriorityChange}
-        />
-        <SelectField
-          value={milestone}
-          onChange={::this.onMilestoneChange}
-          floatingLabelText="Milestone"
-          autoWidth={false} >
-          <MenuItem value="" primaryText="&nbsp;" />
-          {allMilestones.map((item, index) => {
-            return(
-              <MenuItem
-               key={index}
-               value={item}
-               primaryText={item} />
-            );
+        <label>Document Type:&nbsp;</label>
+        <DropDownList
+          isNeedAll={true}
+          title={documentType ? capitalizeFirstLetter(documentType) : 'All'}
+          onOptionClick={::this.onDocumentTypeChange}
+          aryOptionConfig={DOCUMENT_TYPE_OPTIONS.map(item => {
+            return { title: capitalizeFirstLetter(item), value: item};
           })}
-        </SelectField>
-        <SelectField
-          floatingLabelText="Owner"
-          value={owner}
-          onChange={::this.onOwnerChange}
-        >
-          <MenuItem value="" primaryText="&nbsp;" />
-          {allUsers.map((user, index) => {
-            return(
-              <MenuItem
-               key={index}
-               value={user.id}
-               primaryText={user.name} />
-            );
+        />
+        <label>Priority:&nbsp;</label>
+        <DropDownList
+          isNeedAll={true}
+          title={priority ? capitalizeFirstLetter(priority) : 'All'}
+          onOptionClick={::this.onPriorityChange}
+          aryOptionConfig={PRIORITY_OPTIONS.map(item => {
+            return { title: capitalizeFirstLetter(item), value: item};
           })}
-        </SelectField>
-        <div style={{flex: 1}} />
+        />
+        <label>Milestone:&nbsp;</label>
+        <DropDownList
+          isNeedAll={true}
+          title={milestone ? milestone : 'All'}
+          onOptionClick={::this.onMilestoneChange}
+          aryOptionConfig={allMilestones.map(item => {
+            return { title: item, value: item};
+          })}
+        />
+        <label>Owner:&nbsp;</label>
+        <DropDownList
+          isNeedAll={true}
+          title={owner ? allUsers.filter(user=> user.id === owner)[0].name : 'All'}
+          onOptionClick={::this.onOwnerChange}
+          aryOptionConfig={allUsers.map(item => {
+            return { title: item.name, value: item.id};
+          })}
+        />
+
         <FlatButton
-          style={{marginTop: 28}}
+          style={{float: 'right'}}
           label="All Articles"
           secondary={true}
           onClick={::this.clearFilter}/>

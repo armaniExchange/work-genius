@@ -2,19 +2,16 @@
 import React, { Component } from 'react';
 import SelectField from 'material-ui/lib/SelectField';
 import MenuItem from 'material-ui/lib/menus/menu-item';
+
+import { DOCUMENT_TYPE_OPTIONS } from '../../constants/config';
+import capitalizeFirstLetter from '../../libraries/capitalizeFirstLetter';
+
 // Styles
 import './_ArticleDocumentTypeSelect.css';
 
 class ArticleDocumentTypeSelect extends Component {
 
   render() {
-    const documentTypeOptions = [
-      'Knowledges',
-      'Bugs',
-      'Task',
-      'Requirement',
-      'Enhancement'
-    ];
 
     return (
       <SelectField
@@ -22,12 +19,12 @@ class ArticleDocumentTypeSelect extends Component {
         floatingLabelText="Document Type"
         autoWidth={false} >
         <MenuItem value="" primaryText="&nbsp;" />
-        {documentTypeOptions.map((item, index) => {
+        {DOCUMENT_TYPE_OPTIONS.map((item, index) => {
           return(
             <MenuItem
              key={index}
-             value={item.toLowerCase()}
-             primaryText={item} />
+             value={item}
+             primaryText={capitalizeFirstLetter(item)} />
           );
         })}
       </SelectField>

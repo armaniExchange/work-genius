@@ -174,15 +174,18 @@ class ArticleEditor extends Component {
 
         {
           isDocumentTypeKnowlegesOrNull ? null : (
-            <div>
+            <div className="report-to" style={{position: 'relative'}}>
               <br />
               <label>Report To</label>
-              <Select
-                multi={true}
-                allowCreate={true}
-                value={reportTo.map( item => {return {value: item, label: item};})}
-                onChange={onReportToChange}
-              />
+              <div className="wrapper">
+                <Select
+                  multi={true}
+                  allowCreate={true}
+                  value={reportTo.map( item => {return {value: item, label: item};})}
+                  onChange={onReportToChange}
+                />
+                <span className="postfix-email">@a10networks.com</span>
+              </div>
             </div>
           )
         }

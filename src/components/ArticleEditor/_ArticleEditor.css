@@ -26,4 +26,23 @@
     border-radius: 0;
     box-shadow: none !important;
   }
+
+  .report-to {
+    position: relative;
+
+    .wrapper {
+      display: flex;
+      .Select {
+        flex: 1;
+        vertical-align: bottom;
+      }
+      .postfix-email {
+        vertical-align: bottom;
+        padding-left: 10px;
+        padding-top: 10px;
+        padding-right: 10px;
+        color: #999;
+      }
+    }
+  }
 }
