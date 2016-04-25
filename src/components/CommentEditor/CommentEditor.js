@@ -6,7 +6,6 @@ import RaisedButton from 'material-ui/lib/raised-button';
 import Editor from '../../components/Editor/Editor';
 import Avatar from '../../components/Avatar/Avatar';
 
-
 // Styles
 import './_CommentEditor.css';
 import '../CommentListItem/_CommentListItem.css';
@@ -64,7 +63,6 @@ class CommentEditor extends Component {
               primary={true}
               onClick={::this.onSubmit} />
           </div>
-
           <div className="author right">
             <Avatar user={currentUser} />
             <div className="avatar-triangle" />

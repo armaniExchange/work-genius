@@ -167,13 +167,13 @@ class DocumentPage extends Component {
       documentType,
       priority,
       milestone,
-      owner
+      owner,
+      tag,
+      currentPage
     } = this.props;
     const {
       isConfirmDeleteArticleDialogVisible,
-      editingArticle,
-      currentPage,
-      tag
+      editingArticle
     } = this.state;
 
     return (
@@ -188,6 +188,7 @@ class DocumentPage extends Component {
             </Link>
             <h5>Hot tags</h5>
             <ArticleTagList
+              onChange={::this.onTagChange}
               tags={allTags}
               value={tag} />
             <h5>Tree</h5>

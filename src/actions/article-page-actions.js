@@ -42,10 +42,11 @@ function _fetchArticle(id) {
         comments {
           id,
           content,
+          createdAt,
           author {
             id,
             name
-          }
+          },
         },
         files {
           id,
