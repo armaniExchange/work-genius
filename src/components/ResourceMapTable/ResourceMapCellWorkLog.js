@@ -132,6 +132,7 @@ class ResourceMapCellWorkLog extends Component {
 					doubleEvent = true;
 					this.setState({open: true, selectedItem: item});
 				};
+
 				let className = 'progress__bar ';
 				let classNameProgress = 'progress progress--active ';
 				var defaultColor = (item.color && item.color !== '') ? item.color : TAG;
@@ -140,7 +141,10 @@ class ResourceMapCellWorkLog extends Component {
 				item.progress = item.progress ? item.progress : 0;
 
 				return (
-					<div className="cell-top-item-inner-text" key={index}>
+					<div
+						className="cell-top-item-inner-text"
+						key={index}
+					>
 						<div className="worklog-layout--checkbox">
 							<Checkbox
 								onClick={__onClickCheckBox}
@@ -156,7 +160,7 @@ class ResourceMapCellWorkLog extends Component {
 										overlay={
 											(<TooltipContent item={item} />)
 										}
-										mouseEnterDelay="1"
+										mouseEnterDelay={1}
 										arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
 									>
 									    <span className="label-default-style c-white">

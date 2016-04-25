@@ -415,12 +415,16 @@ function queryResourceMapDataByUser(startDate, days, userId) {
     return (dispatch, getState) => {
         if (userId === 0) {
             let user = getState().app.toJS().currentUser;
-            if (user.name === 'Craig Huang' || user.name ==='Zuoping Li') {
+            let privilege = user.privilege;
+            privilege = privilege ? privilege : 10;
+            // if (user.name === 'Craig Huang' || user.name ==='Zuoping Li') {
+            if (privilege > 5) {
                 userId = '';
             } else {
                 userId = user.id;
             }
         }
+
         if (userId === '') {
             dispatch(queryResourceMapDataFromServer(startDate, days));
         } else {
