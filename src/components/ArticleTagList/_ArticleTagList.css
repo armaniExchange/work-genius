@@ -1,4 +1,4 @@
-.component-article-tag-list {
+.article-tag-list {
   .tag {
     color: #39739d;
     white-space: nowrap;
@@ -9,6 +9,10 @@
     border-radius: 0;
     padding:.2em .5em;
     cursor: pointer;
+
+    &:hover {
+        opacity: .8;
+    }
 
     &.active {
         background: #283593;

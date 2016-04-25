@@ -31,7 +31,9 @@ class ArticleListItem extends Component {
       comments,
       updatedAt,
       onDelete,
-      index
+      index,
+      activeTag,
+      onActiveTagChange
     } = this.props;
     return (
       <Paper className="article-list-item">
@@ -57,7 +59,11 @@ class ArticleListItem extends Component {
           files={files}
         />
         <br />
-        <ArticleTagList tags={tags} />
+        <ArticleTagList
+          tags={tags}
+          value={activeTag}
+          onChange={onActiveTagChange}
+        />
       </Paper>
     );
   }
@@ -75,7 +81,9 @@ ArticleListItem.propTypes = {
   createdAt       : PropTypes.number,
   updatedAt       : PropTypes.number,
   index           : PropTypes.number,
-  onDelete        : PropTypes.func.isRequired
+  onDelete        : PropTypes.func.isRequired,
+  activeTag       : PropTypes.string,
+  onActiveTagChange     : PropTypes.func
 };
 
 
