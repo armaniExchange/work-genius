@@ -121,13 +121,15 @@ class ResourceMapModalWorkLog extends Component {
 			let status = defaultModalInfos.status ? defaultModalInfos.status : 0;
 			// If progress is 100%, the status is 1;
 			status = parseInt(progressValue) >= 100 ? 1 : 0;
+			let color = (this.state.color === undefined || this.state.color === '')
+				? this._$defaultColor() : this.state.color;
 			let data = {
 				'employee_id': defaultModalInfos.userId,
 				'id': defaultModalInfos.id,
 				'task': taskValue,
 				'content': workValue,
 				'progress': parseInt(progressValue),
-				'color': this.state.color,
+				'color': color,
 				'start_date': parseInt(times),
 				'duration': parseInt(durationField.getValue()),
 				'release': this.state.release,
@@ -143,6 +145,15 @@ class ResourceMapModalWorkLog extends Component {
 			this._onCloseModelHandler();
 		}
 		// this._$PrintFormData(this);
+	}
+
+	_$defaultColor() {
+		let list = [ 'bgm-teal', 'bgm-red', 'bgm-pink', 'bgm-blue', 'bgm-lime',
+					 'bgm-green', 'bgm-cyan', 'bgm-orange', 'bgm-purple'];
+
+		var Rand = Math.random();
+		let num = Math.round(Rand * 9);
+		return list[num];
 	}
 
 	/**
