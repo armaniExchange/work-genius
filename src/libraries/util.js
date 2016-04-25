@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 const isValidNumber = (value, conf) => {
   const min = conf.min || undefined;
   const max = conf.max || undefined;
@@ -24,6 +26,15 @@ const isValidDate = (value, formatType='') => {
   };
   const REG = MAPPING_REGEXP[formatType] || /^(\d{4}-\d{2}-\d{2})$/gi;
   return REG.test(value);
+};
+
+export const convertToUtcTimeStamp = (date, time) => {
+	// 2016-04-05T16:00:00+00:00
+	let utcDate = moment(date).format().split('T')[0],
+	    utcTime = moment(time).format().split('T')[1],
+		utcDateTime = utcDate + 'T' + utcTime;
+
+    return moment(utcDateTime).format('x');
 };
 
 export default {

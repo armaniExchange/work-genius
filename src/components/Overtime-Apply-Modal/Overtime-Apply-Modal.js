@@ -76,7 +76,7 @@ class PTOApplyModal extends Component {
 		let startDateClassName = classnames({
 				'form-group': true
 			}),
-			today = moment().format('YYYY-MM-DD');
+			today = moment().format('YYYY-MM-DD HH:mm');
 		return (
 			<Modal ref="modal" show={show} onHide={onHideHandler}>
 				<ModalHeader {...this.props} />
@@ -90,9 +90,10 @@ class PTOApplyModal extends Component {
 					    <div className={startDateClassName}>
 						    <label className="col-xs-3 control-label">Start Date</label>
 						    <div className="col-xs-9">
-						    	<DatePicker defaultDate={today} placeholder="Start Date" onChange={(val)=>{
-						    		this._onStartDateChange(val);
-						    	}} />
+						    	<DatePicker
+								    defaultDate={today}
+									placeholder="Start Date"
+									onChange={this._onStartDateChange} />
 						    </div>
 						</div>
 						<div>
