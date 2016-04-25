@@ -156,6 +156,7 @@ class ResourceMapCellWorkLog extends Component {
 										overlay={
 											(<TooltipContent item={item} />)
 										}
+										mouseEnterDelay="1"
 										arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
 									>
 									    <span className="label-default-style c-white">
