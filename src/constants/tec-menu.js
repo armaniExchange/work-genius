@@ -18,8 +18,11 @@ export const TECH_MENU = {
             'Help Function': {}
          }
          
+      },
+
+      'Daily Working' : {
+
       }
-         
    }
 };
 

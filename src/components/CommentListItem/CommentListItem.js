@@ -7,7 +7,6 @@ import moment from 'moment';
 import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
 import Avatar from '../../components/Avatar/Avatar';
 
-
 // Styles
 import './_CommentListItem.css';
 
@@ -38,12 +37,12 @@ class CommentListItem extends Component {
     onDeleteClick(id);
   }
 
-
   render() {
     const {
       author,
       content,
-      currentUserId
+      currentUserId,
+      createdAt
     } = this.props;
     const isAuthorCurrentUser = author && (author.id === currentUserId);
     const renderAuthor = (
@@ -72,7 +71,7 @@ class CommentListItem extends Component {
           }
         </Paper>
         <div className="time">
-          {moment().format('YYYY-MM-DD hh:mm a')}
+          {moment(createdAt).format('YYYY-MM-DD hh:mm a')}
         </div>
       </div>
     );
@@ -84,7 +83,6 @@ class CommentListItem extends Component {
         <div className="component-comment-list-item-wrapper">
           { isAuthorCurrentUser ? [renderContent, renderAuthor] : [renderAuthor, renderContent]}
         </div>
-
       </div>
     );
   }
@@ -94,6 +92,7 @@ CommentListItem.propTypes = {
   id            : PropTypes.string,
   content       : PropTypes.string,
   author        : PropTypes.object,
+  createdAt     : PropTypes.number,
   currentUserId : PropTypes.string,
   onEditClick   : PropTypes.func,
   onDeleteClick : PropTypes.func,

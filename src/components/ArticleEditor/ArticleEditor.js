@@ -20,7 +20,12 @@ class ArticleEditor extends Component {
     super(props);
     this.state = {
       isConfirmDeleteFileDialogVisible: false,
-      editingFile: null
+      isArticleFormValid: false,
+      editingFile: null,
+      enableTitleError: false,
+      enableDocumentTypeError: false,
+      enableCategoryError: false,
+      enableContentError: false
     };
   }
 
@@ -55,6 +60,42 @@ class ArticleEditor extends Component {
     });
   }
 
+  onTitleChange() {
+    this.props.onTitleChange.apply(this, arguments);
+    this.setState({enableTitleError: true});
+    this.triggerValidFormChange();
+  }
+
+  onCategoryIdChange() {
+    this.props.onCategoryIdChange.apply(this, arguments);
+    this.setState({enableCategoryError: true});
+    this.triggerValidFormChange();
+  }
+
+  onContentChange() {
+    this.props.onContentChange.apply(this, arguments);
+    this.setState({enableContentError: true});
+    this.triggerValidFormChange();
+  }
+
+  onDocumentTypeChange() {
+    this.props.onDocumentTypeChange.apply(this, arguments);
+    this.setState({enableDocumentTypeError: true});
+    this.triggerValidFormChange();
+  }
+
+  triggerValidFormChange(){
+    const {
+      title,
+      categoryId,
+      content,
+      documentType,
+      onValidFormChange
+    } = this.props;
+    const isValid = title.trim() && categoryId && content.trim() && documentType;
+    onValidFormChange(isValid);
+  }
+
   render() {
     const dropzoneStyle = {
       width: '100%',
@@ -71,24 +112,24 @@ class ArticleEditor extends Component {
       reportTo,
       allCategoriesOptions,
       tagSuggestions,
-      onTitleChange,
       documentType,
       priority,
       milestone,
-      onDocumentTypeChange,
       onPriorityChange,
       onMilestoneChange,
       onReportToChange,
-      onContentChange,
-      onTagsChange,
-      onCategoryIdChange
+      onTagsChange
     } = this.props;
     const {
       isConfirmDeleteFileDialogVisible,
+      enableTitleError,
+      enableDocumentTypeError,
+      enableCategoryError,
+      enableContentError,
       editingFile
     } = this.state;
-
-    const hidePriorityAndMilestoneSelectStyle = !documentType || documentType === 'knowledges' ?
+    const isDocumentTypeKnowlegesOrNull = !documentType || documentType === 'knowledges';
+    const hidePriorityAndMilestoneSelectStyle =  isDocumentTypeKnowlegesOrNull ?
       {visibility: 'hidden'} : null;
 
     return (
@@ -97,14 +138,15 @@ class ArticleEditor extends Component {
         <TextField
           style={{width: '100%'}}
           hintText="Title"
-          errorText={!title && 'This field is required'}
+          errorText={enableTitleError && !title && 'This field is required'}
           value={title}
-          onChange={onTitleChange} />
+          onChange={::this.onTitleChange} />
         <br />
         <div className="select-field-group">
           <ArticleDocumentTypeSelect
             value={documentType}
-            onChange={onDocumentTypeChange}
+            errorText={enableDocumentTypeError && !documentType && 'This field is required'}
+            onChange={::this.onDocumentTypeChange}
           />
           <ArticlePrioritySelect
             style={hidePriorityAndMilestoneSelectStyle}
@@ -119,24 +161,42 @@ class ArticleEditor extends Component {
         </div>
         <br />
         <label>Category</label>
-        {!categoryId && <small style={{color: 'red'}}>&nbsp;&nbsp;<span>*</span> This field is required</small>}
+        <small style={{color: 'red'}}>
+          <span>&nbsp;&nbsp;*</span>
+          {enableCategoryError && !categoryId && <span> This field is required</span>}
+        </small>
+
         <Select
           placeholder="Category is required field"
           value={categoryId}
           options={allCategoriesOptions}
-          onChange={onCategoryIdChange}/>
-        <label>Report To</label>
-        <Select
-          multi={true}
-          allowCreate={true}
-          value={reportTo.map( item => {return {value: item, label: item};})}
-          onChange={onReportToChange}
-        />
+          onChange={::this.onCategoryIdChange}/>
+
+        {
+          isDocumentTypeKnowlegesOrNull ? null : (
+            <div>
+              <br />
+              <label>Report To</label>
+              <Select
+                multi={true}
+                allowCreate={true}
+                value={reportTo.map( item => {return {value: item, label: item};})}
+                onChange={onReportToChange}
+              />
+            </div>
+          )
+        }
+
         <br />
         <label>Content</label>
+        <small style={{color: 'red'}}>
+          <span>&nbsp;&nbsp;*</span>
+          {enableContentError && !content.trim() && <span> This field is required</span>}
+        </small>
+
         <Editor
           value={content}
-          onChange={onContentChange} />
+          onChange={::this.onContentChange} />
         <br />
         <label>Tags</label>
         <Select
@@ -192,7 +252,8 @@ ArticleEditor.propTypes = {
   onDocumentTypeChange: PropTypes.func.isRequired,
   onPriorityChange    : PropTypes.func.isRequired,
   onMilestoneChange   : PropTypes.func.isRequired,
-  onReportToChange    : PropTypes.func.isRequired
+  onReportToChange    : PropTypes.func.isRequired,
+  onValidFormChange   : PropTypes.func
 };
 
 ArticleEditor.defaultProps = {

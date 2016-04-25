@@ -16,8 +16,11 @@ class EditArticlePage extends Component {
 
   constructor(props) {
     super(props);
-    this.state = this.getEditingStateFromProps(props);
-    this.state.isPreviewVisible = false;
+    this.state = Object.assign(this.getEditingStateFromProps(props), {
+      isPreviewVisible: false,
+      isArticleFormValid: false,
+      enableErrorMessage: false
+    });
   }
 
   componentWillMount() {
@@ -144,8 +147,10 @@ class EditArticlePage extends Component {
 
   onFileUpload(file) {
     const { id, files } = this.props;
+    const { editingContent } = this.state;
+    const mdImageSymbol = file.type.includes('image') ? '!' : '';
     this.setState({
-      editingContent: this.state.editingContent + '\n' + this.getUploadingFileMarkdown(file)
+      editingContent: `${editingContent}\n${mdImageSymbol}${this.getUploadingFileMarkdown(file)}`
     });
     this.props.articleActions.uploadArticleFile({
       articleId: id,
@@ -178,8 +183,7 @@ class EditArticlePage extends Component {
   }
 
   getUploadingFileMarkdown(file) {
-    const mdImageSymbol = file.type.includes('image') ? '!' : '';
-    return `${mdImageSymbol}[Uploading ${file.name} ...]()`;
+    return `[Uploading ${file.name} ...]()`;
   }
   _transformToOptions(categories) {
     return this._transformFromTree(categories).filter((item) => {
@@ -198,6 +202,10 @@ class EditArticlePage extends Component {
       return [categories];
     }
     return categories.children.reduce((result, next) => result.concat(this._transformFromTree(next)), []);
+  }
+
+  onValidFormChange (isArticleFormValid) {
+    this.setState({isArticleFormValid});
   }
 
   onSubmit() {
@@ -220,6 +228,7 @@ class EditArticlePage extends Component {
       createArticle,
       updateArticle
     } = articleActions;
+
     const postArticle = this.isCreate() ? createArticle : updateArticle;
     const idField = this.isCreate() ? null : {id: params.articleId};
     postArticle(Object.assign({
@@ -288,6 +297,7 @@ class EditArticlePage extends Component {
             onPriorityChange={::this.onPriorityChange}
             onMilestoneChange={::this.onMilestoneChange}
             onReportToChange={::this.onReportToChange}
+            onValidFormChange ={::this.onValidFormChange }
           />
         </div>
         {
