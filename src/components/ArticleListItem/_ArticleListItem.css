@@ -1,0 +1,22 @@
+.article-list-item {
+  position: relative;
+  padding: 15px;
+  margin-bottom: 20px;
+  h3 {
+    margin: 0;
+    margin-bottom: 10px;
+    min-height: 1em;
+  }
+  img {
+    width: 100%;
+  }
+  .button-group {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    > a > div {
+      margin-right: 10px;
+    }
+  }
+}
+
