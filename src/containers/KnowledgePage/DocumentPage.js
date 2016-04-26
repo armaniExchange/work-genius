@@ -134,11 +134,7 @@ class DocumentPage extends Component {
     } = this.props;
     if (articleList.length === 0) {
       return (
-        <div style={{
-          textAlign: 'center',
-          padding: 30,
-          color: 'gray'
-        }}>
+        <div className="blank-article">
           <i className="fa fa-file-text-o fa-5x"/>
           <h3>No matching items found.</h3>
         </div>
