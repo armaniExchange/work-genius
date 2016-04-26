@@ -46,12 +46,11 @@ class PTOApplication extends Component {
     _onPTOApplySubmitClicked(data) {
         const { createPTOApplication, currentUser, sendMail } = this.props;
         let finalData = {
-                start_date: data.startDate,
-                end_date: data.endDate,
+                start_time: data.startTimeStamp,
+                end_time: data.endTimeStamp,
                 memo: data.memo,
                 hours: data.hours,
-                apply_date: moment().format('YYYY-MM-DD'),
-                applicant: currentUser.name,
+                apply_time: moment().format('x'),
                 applicant_id: currentUser.id,
                 status: PTOConstants.PENDING
             },
@@ -61,8 +60,8 @@ class PTOApplication extends Component {
                     <PTOMailCard
                         type={'PTO_' + finalData.status}
                         applicant={finalData.applicant}
-                        startDate={finalData.start_date}
-                        endDate={finalData.end_date}
+                        startDate={moment(finalData.start_time).format('YYYY-MM-DD HH:mm')}
+                        endDate={moment(finalData.end_time).format('YYYY-MM-DD HH:mm')}
                         hours={finalData.hours}
                         link={PTO_URL} />
                 ).replace(/"/g, '\\"'),
@@ -70,6 +69,7 @@ class PTOApplication extends Component {
                 includeManagers: true
             };
         let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
+        
         createPTOApplication(finalData);
         sendMail(to, cc, bcc, subject, text, html, includeManagers);
     }
