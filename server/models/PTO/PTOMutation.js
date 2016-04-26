@@ -173,7 +173,7 @@ let TaskMutation = {
 					console.log(err);
 				}
 			}
-			return re;
+			return result;
 		}
 	},
 	'updatePTOStatusAndRefreshWorklog': {
