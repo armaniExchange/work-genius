@@ -46,6 +46,10 @@ class CommentListItem extends Component {
     });
   }
 
+  onCancel() {
+    this.setState({isEditing: false});
+  }
+
   render() {
     const {
       author,
@@ -95,6 +99,7 @@ class CommentListItem extends Component {
         currentUser={currentUser}
         content={content}
         onSubmit={::this.onSubmit}
+        onCancel={::this.onCancel}
       />
     ): (
       <div className="component-comment-list-item"

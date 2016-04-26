@@ -28,7 +28,10 @@ class Editor extends Component {
 
   componentDidMount() {
     const { editorId } = this.state;
-    document.getElementsByClassName(`${editorId}-edit-edit-button`)[0].click();
+    // document.getElementsByClassName(`${editorId}-edit-edit-button`)[0].click();
+    /*eslint-disable */
+    new window.MaterialTabs(document.getElementById(`editor-${editorId}`));
+    /*eslint-enable  */
   }
 
   render() {
@@ -41,7 +44,7 @@ class Editor extends Component {
     } = this.props;
     const { editorId } = this.state;
     return (
-      <div className="mdl-tabs mdl-js-tabs mdl-js-ripple-effect component-editor">
+      <div id={`editor-${editorId}`} className="mdl-tabs mdl-js-tabs mdl-js-ripple-effect component-editor">
         <div className="mdl-tabs__tab-bar">
           <a href={`#-${editorId}-edit-panel`}
             className={`mdl-tabs__tab is-active ${editorId}-edit-edit-button`}>

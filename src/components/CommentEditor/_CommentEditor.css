@@ -1,0 +1,9 @@
+.component-comment-list-item.editor {
+  .component-comment-list-item-wrapper {
+    .content {
+      .message {
+        padding: 20px;
+      }
+    }
+  }
+}
