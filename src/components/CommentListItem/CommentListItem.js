@@ -5,6 +5,7 @@ import FlatButton from 'material-ui/lib/flat-button';
 import moment from 'moment';
 
 import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
+import CommentEditor from '../../components/CommentEditor/CommentEditor';
 import Avatar from '../../components/Avatar/Avatar';
 
 // Styles
@@ -15,6 +16,7 @@ class CommentListItem extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isEditing: false,
       isHovered: false
     };
   }
@@ -28,8 +30,7 @@ class CommentListItem extends Component {
   }
 
   onEditClick() {
-    const { id, onEditClick } = this.props;
-    onEditClick(id);
+    this.setState({isEditing: true});
   }
 
   onDeleteClick() {
@@ -37,14 +38,23 @@ class CommentListItem extends Component {
     onDeleteClick(id);
   }
 
+  onSubmit(editingContent) {
+    this.setState({isEditing: false});
+    this.props.onSubmit({
+      id: this.props.id,
+      content: editingContent
+    });
+  }
+
   render() {
     const {
       author,
       content,
-      currentUserId,
+      currentUser,
       createdAt
     } = this.props;
-    const isAuthorCurrentUser = author && (author.id === currentUserId);
+    const { isEditing, isHovered } = this.state;
+    const isAuthorCurrentUser = author && (author.id === currentUser.id);
     const renderAuthor = (
       <div
         key="renderAuthor"
@@ -61,8 +71,12 @@ class CommentListItem extends Component {
         <Paper className="message">
           <HighlightMarkdown source={content} />
           {
-            this.state.isHovered && (
+            isAuthorCurrentUser && isHovered && (
               <div className="toolbar">
+                <FlatButton
+                  label="Edit"
+                  secondary={true}
+                  onClick={::this.onEditClick} />
                 <FlatButton
                   label="Delete"
                   onClick={::this.onDeleteClick} />
@@ -76,7 +90,13 @@ class CommentListItem extends Component {
       </div>
     );
 
-    return (
+    return isAuthorCurrentUser && isEditing ? (
+      <CommentEditor
+        currentUser={currentUser}
+        content={content}
+        onSubmit={::this.onSubmit}
+      />
+    ): (
       <div className="component-comment-list-item"
         onMouseEnter={::this.onMouseEnter}
         onMouseLeave={::this.onMouseLeave}>
@@ -93,15 +113,15 @@ CommentListItem.propTypes = {
   content       : PropTypes.string,
   author        : PropTypes.object,
   createdAt     : PropTypes.number,
-  currentUserId : PropTypes.string,
-  onEditClick   : PropTypes.func,
+  currentUser   : PropTypes.object,
   onDeleteClick : PropTypes.func,
+  onSubmit      : PropTypes.func
 };
 
 
 CommentListItem.defaultProps = {
   content         : '',
-  currentUserId   : ''
+  currentUser     : {id: ''}
 };
 
 export default CommentListItem;

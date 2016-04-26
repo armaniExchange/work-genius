@@ -27,6 +27,11 @@ class Editor extends Component {
     };
   }
 
+  componentDidMount() {
+    const { editorId } = this.state;
+    document.getElementsByClassName(`${editorId}-edit-edit-button`)[0].click();
+  }
+
   render() {
     const {
       value,
@@ -39,17 +44,20 @@ class Editor extends Component {
     return (
       <div className="mdl-tabs mdl-js-tabs mdl-js-ripple-effect component-editor">
         <div className="mdl-tabs__tab-bar">
-            <a href={`#-${editorId}-edit-panel`} className="mdl-tabs__tab is-active">Edit</a>
-            <a href={`#${editorId}-preview-panel`} className="mdl-tabs__tab">Preview</a>
-            <a className="help"
-              target="_blank"
-              href="https://guides.github.com/features/mastering-markdown/" >
-              Help
-            </a>
+          <a href={`#-${editorId}-edit-panel`}
+            className={`mdl-tabs__tab is-active ${editorId}-edit-edit-button`}>
+            Edit
+          </a>
+          <a href={`#${editorId}-preview-panel`} className="mdl-tabs__tab">Preview</a>
+          <a className="help"
+            target="_blank"
+            href="https://guides.github.com/features/mastering-markdown/" >
+            Help
+          </a>
         </div>
         <div id={`-${editorId}-edit-panel`}
           style={{height}}
-          className="mdl-tabs__panel is-active component-edit-panel">
+          className="mdl-tabs__panel is-active component-edit-panel is-active">
             <Codemirror
               options={options}
               value={value}
@@ -64,7 +72,6 @@ class Editor extends Component {
         <div id={`${editorId}-preview-panel`} className="mdl-tabs__panel component-preview-panel" >
           <HighlightMarkdown source={value} />
         </div>
-
       </div>
     );
   }

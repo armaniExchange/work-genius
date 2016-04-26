@@ -76,6 +76,12 @@ class ViewArticlePage extends Component {
     });
   }
 
+  onCommentUpdate(updatedComment) {
+    this.props.articleActions.updateComment({
+      articleId: this.props.id,
+      comment: updatedComment
+    });
+  }
 
   onConfirmDeleteCommentDialogRequestHide() {
     this.setState({
@@ -165,8 +171,9 @@ class ViewArticlePage extends Component {
               <CommentListItem
                 {...comment}
                 key={comment.id}
-                currentUserId={currentUser.id}
-                onDeleteClick={::this.onCommentDelete} />
+                currentUser={currentUser}
+                onDeleteClick={::this.onCommentDelete}
+                onSubmit={::this.onCommentUpdate}/>
             );
           })
         }

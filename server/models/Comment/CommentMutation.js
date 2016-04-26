@@ -93,6 +93,7 @@ const CommentMutation = {
               .get(articleId)
               .merge(article => {return {author: r.db('work_genius').table('users').get(article('authorId')).default(null)};})
               .run(connection);
+
             await transporter.sendMail({
               from: MAILER_ADDRESS,
               to: user.email,
@@ -118,6 +119,67 @@ const CommentMutation = {
           await connection.close();
           throw 'No generated_keys found';
         }
+      } catch (err) {
+        return err;
+      }
+    }
+  },
+
+  updateComment: {
+    type: CommentType,
+    description: 'Update a comment',
+    args: {
+      comment: { type: CommentInputType },
+      articleId: {
+        type: GraphQLID,
+        description: 'The article ID'
+      }
+    },
+    resolve: async ({ req, transporter }, { comment, articleId }) => {
+      try {
+        const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+        let result = null;
+        const user = req.decoded;
+        const now = new Date().getTime();
+
+        result = await r.db('work_genius')
+          .table('comments')
+          .get(comment.id)
+          .update({
+            content: comment.content,
+            updatedAt: now
+          })
+          .run(connection);
+
+        if (articleId) {
+          const commentedArticle = await r.db('work_genius')
+            .table('articles')
+            .get(articleId)
+            .merge(article => {return {author: r.db('work_genius').table('users').get(article('authorId')).default(null)};})
+            .run(connection);
+
+          await transporter.sendMail({
+            from: MAILER_ADDRESS,
+            to: user.email,
+            subject: `[KB]Updated Comment by ${user.name} - ${commentedArticle.title} `,
+            html: parseMarkdown(`${getArticleLinkMarkdown(articleId)}<br />${comment.content}`),
+            cc: [commentedArticle.author.email, ...(commentedArticle.reportTo.map((emailName) => `${emailName}@a10networks.com`))]
+          });
+        }
+
+        result = await r.db('work_genius')
+          .table('comments')
+          .get(comment.id)
+          .merge(commentItem => {
+            return {
+              author: r.db('work_genius').table('users').get(commentItem('authorId')).default(null),
+            };
+          })
+          .run(connection);
+        await connection.close();
+
+        return result;
+
       } catch (err) {
         return err;
       }

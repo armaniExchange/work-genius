@@ -49,7 +49,7 @@ const articleToState = (state, action) => {
 
 export default function articleReducer(state = initialState, action) {
   const files = state.get('files');
-  let comments = state.get('comments');
+  const comments = state.get('comments');
 
   switch (action.type) {
     case actionTypes.CREATE_ARTICLE_SUCCESS:
@@ -92,6 +92,13 @@ export default function articleReducer(state = initialState, action) {
       }));
     case actionTypes.CREATE_COMMENT_SUCCESS:
       return state.set('comments', comments.push(fromJS(action.comment)));
+    case actionTypes.UPDATE_COMMENT_SUCCESS:
+      return state.set('comments', comments.update(comments.findIndex((item) => {
+        return item.get('id') === action.comment.id;
+      }), (item) => {
+        return item.set('content', action.comment.content)
+          .set('updatedAt', action.comment.updatedAt);
+      }));
     case actionTypes.DELETE_COMMENT_SUCCESS:
       return state.set('comments', comments.filter(removedComment => {
         return removedComment.get('id') !== action.id;
