@@ -2,6 +2,13 @@
   position: relative;
   padding: 15px;
   margin-bottom: 20px;
+
+  a:focus,
+  a:hover {
+    font-size: 30px;
+    text-decoration: none;
+  }
+
   h3 {
     margin: 0;
     margin-bottom: 10px;
@@ -16,4 +23,6 @@
     }
   }
 }
+
+
 

@@ -3,7 +3,6 @@ import React, { Component, PropTypes } from 'react';
 import Codemirror from 'react-codemirror';
 import _ from 'lodash';
 
-
 import HighlightMarkdown from '../HighlightMarkdown/HighlightMarkdown';
 
 // Styles
@@ -51,7 +50,7 @@ class Editor extends Component {
           <a href={`#${editorId}-preview-panel`} className="mdl-tabs__tab">Preview</a>
           <a className="help"
             target="_blank"
-            href="https://guides.github.com/features/mastering-markdown/" >
+            href="/main/knowledge/document/markdown-cheatsheet" >
             Help
           </a>
         </div>

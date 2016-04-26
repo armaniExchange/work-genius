@@ -32,6 +32,7 @@ import ViewArticlePage from '../containers/ViewArticlePage/ViewArticlePage';
 import FeatureAnalysisPage from '../containers/FeatureAnalysisPage/FeatureAnalysisPage';
 import FeatureAnalysisTreePage from '../containers/FeatureAnalysisPage/FeatureAnalysisTree';
 import FeatureAnalysisTablePage from '../containers/FeatureAnalysisPage/FeatureAnalysisTable';
+import MarkdownCheatSheet from '../containers/MarkdownCheatSheet/MarkdownCheatSheet';
 
 // Utilities
 import requireAuth from '../containers/Require-Auth/Require-Auth';
@@ -70,6 +71,7 @@ const appRoutes = () => (
         {/* Knowlege base*/}
         <Route path="knowledge" component={requireAuth(KnowledgePage)}>
           <Route path="document/edit/:articleId" component={requireAuth(EditArticlePage)} />
+          <Route path="document/markdown-cheatsheet" component={requireAuth(MarkdownCheatSheet)} />
           <Route path="document/:articleId" component={requireAuth(ViewArticlePage)} />
           <Route path="document" component={requireAuth(DocumentPage)} />
           <Route path="bug-tracking" component={requireAuth(BugTrackingPage)} />

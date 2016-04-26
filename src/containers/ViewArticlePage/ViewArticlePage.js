@@ -133,7 +133,7 @@ class ViewArticlePage extends Component {
 
     return (
       <section className="view-article-page">
-        <Paper style={paperStyle} zDepth={1}>
+        <Paper className="header" zDepth={1}>
           <h3>{title}</h3>
           <div style={{
             position: 'absolute',

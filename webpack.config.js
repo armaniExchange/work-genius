@@ -58,6 +58,10 @@ var config = {
             {
                 test : /\.(woff|woff2|ttf|eot)(\?v=\d\.\d\.\d)?$/,
                 loader: 'url'
+            },
+            {
+                test : /\.md?$/,
+                loader: 'raw'
             }
         ]
     },

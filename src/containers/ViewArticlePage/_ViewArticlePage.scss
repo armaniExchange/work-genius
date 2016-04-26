@@ -1,4 +1,9 @@
 .view-article-page {
   max-width: 1200px;
   margin: 0 auto;
+  .header {
+    position: relative;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
 }
