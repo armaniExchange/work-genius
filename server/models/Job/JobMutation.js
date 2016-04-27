@@ -28,17 +28,24 @@ let JobMutation = {
 
 			try {
 				
-				let job = JSON.parse(data);
+				let obj = JSON.parse(data);
+				let job = { ...obj};
+				if('content' in job){
+					delete job.content;
+				}
+				if('tags' in job){
+					delete job.tags;
+				}
 				let id = await createJob(job);
 		        if (id && !id.includes('Fail')){
 		          //create related worklog
-		          if(!!job.content || !!job.tags){
+		          if(obj.content || obj.tags){
 		          	let worklog = {
-		          		content : job.content || '',
-		          		author_id : job.employee_id,
+		          		content : obj.content || '',
+		          		author_id : obj.employee_id,
 		          		create_date : moment().utc().format('X') * 1000,
 		          		job_id : id,
-		          		tags : job.tags || []
+		          		tags : obj.tags || []
 		          	}
 		          	await createWorkLog(worklog);
 		          }
@@ -69,31 +76,38 @@ let JobMutation = {
 
 			try {
 				
-				let job = JSON.parse(data);
+				let obj = JSON.parse(data);
+				let job = {...obj};
+				if('content' in job){
+					delete job.content;
+				}
+				if('tags' in job){
+					delete job.tags;
+				}
 				await updateJob(id, job); 
 				
 				//update related worklog
-				if(job.content || job.tags){
+				if(obj.content || obj.tags){
 					connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 					query = r.db('work_genius').table('worklog').filter({job_id:id}).coerceTo('array');
 					// the related worklog exists, we need to update it
 					let worklogList = await query.run(connection);
 					if(worklogList && worklogList.length > 0){
 						let worklog = {
-			          		content : job.content || worklogList[0].content,
+			          		content : obj.content || worklogList[0].content,
 			          		author_id : worklogList[0].author_id,
 			          		update_date : moment().utc().format('X') * 1000,
-			          		tags : job.tags || worklogList[0].tags
+			          		tags : obj.tags || worklogList[0].tags
 			          	}
 			          	await updateWorkLog(worklogList[0].id,worklog);
 					}else{
 						// the related worklog doesn't exist, we need to create it
 						let worklog = {
-			          		content : job.content || '',
-			          		author_id : job.employee_id,
+			          		content : obj.content || '',
+			          		author_id : obj.employee_id,
 			          		create_date : moment().utc().format('X') * 1000,
 			          		job_id : id,
-			          		tags : job.tags || []
+			          		tags : obj.tags || []
 			          	}
 			          	await createWorkLog(worklog);
 					}

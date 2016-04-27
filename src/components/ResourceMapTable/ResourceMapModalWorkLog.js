@@ -355,7 +355,7 @@ class ResourceMapModalWorkLog extends Component {
 					<TextField
 						type="text"
 						className="text-area-style"
-						defaultValue={defaultModalInfos.task}
+						defaultValue={defaultModalInfos.title}
 						ref="taskField"
 					/>
 				</div>

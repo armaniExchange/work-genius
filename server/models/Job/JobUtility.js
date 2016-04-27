@@ -41,11 +41,12 @@ export async function updateJob(id,job){
 
 	try {
 		if(job.id){
-			delete worklog.id;
+			delete job.id;
 		}
 		if(job.duration){
 			job.end_date = await getJobEndDate(job);
 		}
+
 		query = r.db('work_genius').table('jobs').get(id).update(job);
 		connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 		await query.run(connection);

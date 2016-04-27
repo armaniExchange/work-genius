@@ -195,6 +195,9 @@ let JobQuery = {
 					.coerceTo('array');
 				let jobList = await query.run(connection);
 
+				console.log('joblist:');
+				console.log(jobList);
+
 				//get all dates and check if the date is weekend or not
 				let dateList = [];
 				for(let i=0; i < dateRange; i++){
