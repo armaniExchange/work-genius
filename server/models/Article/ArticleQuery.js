@@ -114,7 +114,7 @@ let ArticleQuery = {
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 
         page = page || 1;
-        pageLimit = pageLimit || 5;
+        pageLimit = pageLimit || 20;
 
         let filterObj = {
           authorId,
