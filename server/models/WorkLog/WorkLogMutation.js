@@ -7,7 +7,7 @@ import {
 import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
-import {getWorklogEndDate} from './WorkLogCalc.js';
+import { createWorkLog , updateWorkLog} from './WorkLogUtility.js';
 
 let WorkLogMutation = {
 	'createWorkLog': {
@@ -20,27 +20,14 @@ let WorkLogMutation = {
 			}
 		},
 		resolve: async (root, { data }) => {
-			let connection = null,
-				query = null;
-
-			try {
-				
+			try{
 				let worklog = JSON.parse(data);
-
-				worklog.end_date = await getWorklogEndDate(worklog);
-
-				query = r.db('work_genius').table('worklog').insert(worklog);
-				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				let result = await query.run(connection);
-				await connection.close();
-				let id = '';
-		        if (result && result.generated_keys && result.generated_keys.length > 0){
-		          id = result.generated_keys[0];
-		        }
-		        return id;
-			} catch (err) {
+				return await createWorkLog(data);
+			}catch(err){
+				console.log(err);
 				return 'Fail to create a worklog!';
 			}
+			
 		}
 	},
 	'updateWorkLog': {
@@ -57,26 +44,14 @@ let WorkLogMutation = {
 			}
 		},
 		resolve: async (root, { id,data }) => {
-			let connection = null,
-				query = null;
-
-			try {
-				
+			try{
 				let worklog = JSON.parse(data);
-				if(worklog.id){
-					delete worklog.id;
-				}
-				if(worklog.duration){
-					worklog.end_date = await getWorklogEndDate(worklog);
-				}
-				query = r.db('work_genius').table('worklog').get(id).update(worklog);
-				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				await query.run(connection);
-				await connection.close();
-			} catch (err) {
+				return await updateWorkLog(id,data);
+			}catch(err){
+				console.log(err);
 				return 'Fail to update a worklog!';
 			}
-			return 'Update worklog successfully!';
+		
 		}
 	},
 	'deleteWorkLog': {

@@ -26,6 +26,8 @@ import BugStats from '../models/Bug/BugStats.js';
 import WorkLogMutation from '../models/WorkLog/WorkLogMutation.js';
 import WorkLogQuery from '../models/WorkLog/WorkLogQuery.js';
 import MailMutation from '../models/EMail/EMailMutation.js';
+import JobMutation from '../models/Job/JobMutation.js';
+import JobQuery from '../models/Job/JobQuery.js';
 
 const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -65,8 +67,10 @@ const schema = new GraphQLSchema({
       getTagSummary            : BugStats.getBugSummary,
       getOwnerRootCauseSummary : BugStats.getOwnerRootCauseSummary,
       //worklog
-      getWorkLogList           : WorkLogQuery.getWorkLogList,
-      getWorkLogByEmployeeId   : WorkLogQuery.getWorkLogByEmployeeId
+      getWorkLogByEmployeeId   : WorkLogQuery.getWorkLogByEmployeeId,
+      //job
+      getJobList               : JobQuery.getJobList,
+      getJobByEmployeeId       : JobQuery.getJobByEmployeeId
     }
   }),
   mutation: new GraphQLObjectType({
@@ -106,7 +110,12 @@ const schema = new GraphQLSchema({
       //work log page
       createWorkLog                   : WorkLogMutation.createWorkLog,
       updateWorkLog                   : WorkLogMutation.updateWorkLog,
-      deleteWorkLog                   : WorkLogMutation.deleteWorkLog
+      deleteWorkLog                   : WorkLogMutation.deleteWorkLog,
+      //job page
+      createJobAndWorkLog             : JobMutation.createJobAndWorkLog,
+      updateJobAndWorkLog             : JobMutation.updateJobAndWorkLog,
+      deleteJob                       : JobMutation.deleteJob
+
     }
   })
 });

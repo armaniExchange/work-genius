@@ -8,7 +8,7 @@ import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 import { APPROVED, CANCEL_REQUEST_APPROVED, CANCEL_REQUEST_PENDING } from '../../../src/constants/pto-constants';
-import {recalcWorklogEndDate} from '../WorkLog/WorkLogCalc.js';
+import {recalcJobEndDate} from '../Job/JobCalc.js';
 import {createPTO,updatePTOStatus} from './PTOUtility.js';
 
 let TaskMutation = {
@@ -154,7 +154,7 @@ let TaskMutation = {
 	},
 	'createPTOAndRefreshWorklog': {
 		type: GraphQLString,
-		description: 'Create a new pto application and recalc the end date of applicant worklog',
+		description: 'Create a new pto application and recalc the end date of applicant jobs',
 		args: {
 			data: {
 				type: GraphQLString,
@@ -167,7 +167,7 @@ let TaskMutation = {
 				//recalc the worklog end date of this user.
 				try{
 					let finalData = JSON.parse(data);
-					await recalcWorklogEndDate(finalData.start_date,finalData.applicant_id);
+					await recalcJobEndDate(finalData.start_date,finalData.applicant_id);
 				}
 				catch(err){
 					console.log(err);
@@ -204,8 +204,8 @@ let TaskMutation = {
 					.pluck('start_date','applicant_id');
 				let {start_date,applicant_id} = await mutationQuery.run(connection);
 				result = await updatePTOStatus(id,status,hours); 
-				//recalc the worklog end date of this user.
-				await recalcWorklogEndDate(start_date,applicant_id); 
+				//recalc the job end date of this user.
+				await recalcJobEndDate(start_date,applicant_id); 
 				await connection.close();
 			}
 			catch(err){
