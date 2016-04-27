@@ -61,11 +61,11 @@ class ArticleListItem extends Component {
         <HighlightMarkdown source={abstractContent}/>
         {
           readmore ? (
-            <div>
-              <Link style={{float: 'right', fontSize: '1.2em'}} to={`/main/knowledge/document/${id}`}>
+            <div className="readmore">
+              <Link to={`/main/knowledge/document/${id}`}>
                 Read more >>
               </Link>
-              <div style={{clear: 'both'}}/>
+              <div />
             </div>
           ) : null
         }

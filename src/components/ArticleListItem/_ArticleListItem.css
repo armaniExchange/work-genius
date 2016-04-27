@@ -18,6 +18,16 @@
       margin-right: 10px;
     }
   }
+  .readmore {
+    margin-top: 3em;
+    a {
+      float: right;
+      font-size: 1.2em;
+    }
+    > div {
+      clear: both;
+    }
+  }
 }
 
 
