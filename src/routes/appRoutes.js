@@ -33,6 +33,7 @@ import FeatureAnalysisPage from '../containers/FeatureAnalysisPage/FeatureAnalys
 import FeatureAnalysisTreePage from '../containers/FeatureAnalysisPage/FeatureAnalysisTree';
 import FeatureAnalysisTablePage from '../containers/FeatureAnalysisPage/FeatureAnalysisTable';
 import MarkdownCheatSheet from '../containers/MarkdownCheatSheet/MarkdownCheatSheet';
+import EditDocumentCategoryPage from '../containers/EditDocumentCategoryPage/EditDocumentCategoryPage';
 
 // Utilities
 import requireAuth from '../containers/Require-Auth/Require-Auth';
@@ -72,6 +73,7 @@ const appRoutes = () => (
         <Route path="knowledge" component={requireAuth(KnowledgePage)}>
           <Route path="document/edit/:articleId" component={requireAuth(EditArticlePage)} />
           <Route path="document/markdown-cheatsheet" component={requireAuth(MarkdownCheatSheet)} />
+          <Route path="document/category/edit" component={requireAuth(EditDocumentCategoryPage)} />
           <Route path="document/:articleId" component={requireAuth(ViewArticlePage)} />
           <Route path="document" component={requireAuth(DocumentPage)} />
           <Route path="bug-tracking" component={requireAuth(BugTrackingPage)} />
