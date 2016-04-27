@@ -27,6 +27,13 @@ export function fetchArticlesSuccess(articleList, count) {
   };
 }
 
+export function fetchDocumentCategoriesSuccess(data) {
+  return {
+    type: actionTypes.FETCH_DOCUMENT_CATEGORIES_SUCCESS,
+    data
+  };
+}
+
 export function fetchArticles(query = {}) {
   return dispatch => {
     dispatch({
@@ -292,5 +299,43 @@ export function updateArticlesQuery(query) {
       type: actionTypes.UPDATE_ARTICLES_QUERY,
       ...query
     });
+  };
+}
+
+export function fetchDocumentCategories() {
+  return dispatch => {
+    dispatch(setLoadingState(true));
+    dispatch({
+      type: actionTypes.FETCH_DOCUMENT_CATEGORIES
+    });
+    const config = {
+      method: 'POST',
+      body: `{
+        getAllDocumentCategories {
+          id,
+          parentId,
+          name
+        }
+      }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((body) => {
+        dispatch(setLoadingState(false));
+        dispatch(fetchDocumentCategoriesSuccess(body.data.getAllDocumentCategories));
+      })
+      .catch((error) => {
+        dispatch(setLoadingState(false));
+        dispatch(apiFailure(error));
+      });
   };
 }

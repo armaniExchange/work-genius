@@ -12,6 +12,36 @@ import _ from 'lodash';
 
 _.merge(MENU, TECH_MENU);
 
+function generateTree(dataArr, root) {
+    let subTree, directChildren, subDataArr;
+    if (!root || Object.keys(root).length === 0) {
+        return {};
+    }
+    if (dataArr.length === 0) {
+        return {
+            id: root.id,
+            name: root.name,
+            subCategories: []
+        };
+    }
+    directChildren = dataArr.filter((node) => { return node.parentId === root.id; });
+    subDataArr = dataArr.filter((node) => { return node.parentId !== root.id; });
+    subTree = directChildren.map((node) => {
+        return generateTree(subDataArr, node);
+    });
+    return {
+        id: root.id,
+        name: root.name,
+        subCategories: subTree
+    };
+};
+
+export function transformToTree(dataArr) {
+    let root = dataArr.filter((node) => { return !node.parentId; })[0],
+        rest = dataArr.filter((node) => { return node.parentId; });
+    return generateTree(rest, root);
+}
+
 function generateTitleCountMap(articles) {
     let result = {};
 
@@ -81,6 +111,7 @@ const initialState = Map({
   articleList: List.of(),
   articleTotalCount: 0,
   allCategories: Map(enhanceMenu(MENU, {})),
+  documentCategories: Map({}),
   currentSelectedCategory: Map({}),
   allTags: List.of(),
   allUsers: List.of(),
@@ -126,6 +157,8 @@ export default function documentReducer(state = initialState, action) {
       }));
     case actionTypes.FETCH_ALL_USERS_SUCCESS:
       return state.set('allUsers', fromJS(action.allUsers));
+    case actionTypes.FETCH_DOCUMENT_CATEGORIES_SUCCESS:
+      return state.set('documentCategories', fromJS(transformToTree(action.data)));
     case actionTypes.FETCH_ALL_MILESTONES_SUCCESS:
       return state.set('allMilestones', action.allMilestones);
     case actionTypes.UPDATE_ARTICLES_QUERY:
