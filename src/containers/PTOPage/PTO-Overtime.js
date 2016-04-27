@@ -50,10 +50,10 @@ class PTOOvertime extends Component {
         } = this.props;
 
         let finalData = {
-                start_date: data.startDate,
+                start_time: data.startTimeStamp,
                 memo: data.memo,
                 hours: data.hours,
-                apply_date: moment().format('YYYY-MM-DD'),
+                apply_time: moment().format('x'),
                 applicant: currentUser.name,
                 applicant_id: currentUser.id,
                 status: PTOConstants.PENDING
@@ -64,7 +64,7 @@ class PTOOvertime extends Component {
                     <PTOMailCard
                         type={'OVERTIME_' + finalData.status}
                         applicant={finalData.applicant}
-                        startDate={finalData.apply_date}
+                        startDate={finalData.start_time}
                         hours={finalData.hours}
                         link={OVERTIME_URL} />
                 ).replace(/"/g, '\\"'),
@@ -89,14 +89,14 @@ class PTOOvertime extends Component {
             currentUser,
             sendMail
         } = this.props;
-        const { id, status, hours, start_date, applicant_email, applicant } = updatedOvertime;
+        const { id, status, hours, start_time, applicant_email, applicant } = updatedOvertime;
         let mailingConfig = {
             to: [applicant_email],
             subject: '[KB-PTO] Your Overtime Application has been updated',
             html: ReactDOMServer.renderToStaticMarkup(
                 <PTOMailCard
                     type={'OVERTIME_' + status}
-                    startDate={start_date}
+                    startDate={start_time}
                     manager={currentUser.name}
                     status={status}
                     hours={hours}

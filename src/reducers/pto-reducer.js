@@ -24,10 +24,10 @@ const initialState = Map({
     overtimeApplicationsOriginalData: List.of(),
     overtimeApplications: List.of(),
     ptoTitleKeyMap: List.of(
-        Map({ title: 'Start Date', key: 'start_date'}),
-        Map({ title: 'End Date', key: 'end_date'}),
+        Map({ title: 'Start Time', key: 'start_time'}),
+        Map({ title: 'End Time', key: 'end_time'}),
         Map({ title: 'Total Hours', key: 'hours'}),
-        Map({ title: 'Apply Date', key: 'apply_date'}),
+        Map({ title: 'Apply Time', key: 'apply_time'}),
         Map({ title: 'Status', key: 'status'}),
         Map({ title: 'Memo', key: 'memo'}),
         Map({ title: 'Applicant', key: 'applicant'}),
@@ -66,9 +66,9 @@ const initialState = Map({
         })
     ),
     overtimeTitleKeyMap: List.of(
-        Map({ title: 'Date', key: 'start_date'}),
+        Map({ title: 'Time', key: 'start_time'}),
         Map({ title: 'Hours', key: 'hours'}),
-        Map({ title: 'Apply Date', key: 'apply_date'}),
+        Map({ title: 'Apply Time', key: 'apply_time'}),
         Map({ title: 'Status', key: 'status'}),
         Map({ title: 'Memo', key: 'memo'}),
         Map({ title: 'Applicant', key: 'applicant'}),
@@ -214,12 +214,12 @@ function setTableData(state, data, isOvertime) {
 
 function findClosestDateToToday(dates) {
     let result = undefined,
-        today = moment().format('YYYY-MM-DD');;
+        today = moment();
 
     if (dates.length !== 0) {
         result = dates.reduce((acc, x) => {
-            let accMoment = moment(acc),
-                xMoment = moment(x),
+            let accMoment = moment(+acc),
+                xMoment = moment(+x),
                 accDiff = Math.abs(parseInt(accMoment.diff(today, 'days'), 10)),
                 xDiff = Math.abs(parseInt(xMoment.diff(today, 'days'), 10));
             return (accDiff <= xDiff) ? acc : x;
@@ -288,7 +288,6 @@ export default function ptoReducer(state = initialState, action) {
         case actionTypes.FETCH_PTO_APPLICATION_SUCCESS:
             nextState = setTableData(state, action.data);
             if (!is(state.get('ptoFilterConditions'), initialPTOFilterConditions)) {
-                console.log('I SHOULD FILTER!~');
                 nextState = filterOriginal(nextState);
             }
             if (state.get('sortPTOTableBy').get('category')) {
@@ -297,10 +296,11 @@ export default function ptoReducer(state = initialState, action) {
             return nextState;
         case actionTypes.FETCH_USERS_WITH_PTO_SUCCESS:
             let newAllUsersWithClosestPTO = action.data.map((user) => {
+                let closestPTO = findClosestDateToToday(user.pto.map((application) => +application.end_time));
                 return {
                     id: user.id,
                     name: user.name,
-                    subtitle: findClosestDateToToday(user.pto.map((application) => application.end_date))
+                    subtitle: closestPTO ? moment(+closestPTO).format('YYYY-MM-DD') : ''
                 };
             });
             return nextState.set('allUsersWithClosestPTO', newAllUsersWithClosestPTO);
