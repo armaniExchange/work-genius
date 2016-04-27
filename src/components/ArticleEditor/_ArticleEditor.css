@@ -2,7 +2,7 @@
   background: white;
   border-radius: 5px;
   border: 1px solid lightgray;
-  padding: 15px;
+  padding: 20px 40px;
   .select-field-group {
     display: flex;
     > div {

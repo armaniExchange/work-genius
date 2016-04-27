@@ -1,7 +1,32 @@
 .highlight-markdown {
+  font-size: 18px;
+
+  h1 {
+    font-size: 2.25em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+    font-weight: bold;
+  }
+  h2 {
+    font-size: 1.75em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+    font-weight: bold;
+  }
+  h3 {
+    font-size: 1.5em;
+  }
+  h4 {
+    font-size: 1.25em;
+  }
+
+  h5 {
+    font-size: 1em;
+  }
+
   ul, ol, p {
-    font-size: 18px;
-    line-height: 28px;
+    font-size: 1em;
+    line-height: 1.4;
   }
   pre {
     font-size: 16px;

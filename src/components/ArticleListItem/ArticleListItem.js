@@ -17,8 +17,12 @@ const ABSTRACT_LINES = 10;
 class ArticleListItem extends Component {
 
   getContentAbstract() {
-    const{ content } = this.props;
-    return content.split('\n').slice(0, ABSTRACT_LINES).join('\n');
+    const { content } = this.props;
+    const splittedContent = content.split('\n') || [];
+    return {
+      abstractContent: splittedContent.slice(0, ABSTRACT_LINES).join('\n'),
+      readmore: splittedContent.length > ABSTRACT_LINES
+    };
   }
 
   render() {
@@ -35,6 +39,10 @@ class ArticleListItem extends Component {
       activeTag,
       onActiveTagChange
     } = this.props;
+    const {
+      abstractContent,
+      readmore
+    } = this.getContentAbstract();
     return (
       <Paper className="article-list-item">
         <Link to={`/main/knowledge/document/${id}`}>
@@ -50,7 +58,17 @@ class ArticleListItem extends Component {
             label="Delete"
             onClick={onDelete.bind(this, id, index)} />
         </div>
-        <HighlightMarkdown source={::this.getContentAbstract()}/>
+        <HighlightMarkdown source={abstractContent}/>
+        {
+          readmore ? (
+            <div>
+              <Link style={{float: 'right', fontSize: '1.2em'}} to={`/main/knowledge/document/${id}`}>
+                Read more >>
+              </Link>
+              <div style={{clear: 'both'}}/>
+            </div>
+          ) : null
+        }
         <hr />
         <ArticleMetadata
           author={author}
