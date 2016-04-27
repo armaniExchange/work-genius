@@ -13,11 +13,10 @@ export const TECH_MENU = {
          'Backend': {},
          'Technology': {
             'Design Pattern': {},
-            'Best Coding': {},
-            'Practice': {},
-            'Help Function': {}
+            'Best Coding Practice': {},
+            'Helper Function': {}
          }
-         
+
       },
 
       'Daily Working' : {
@@ -25,4 +24,3 @@ export const TECH_MENU = {
       }
    }
 };
-
