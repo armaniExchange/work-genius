@@ -7,13 +7,10 @@ import { APPROVED, CANCEL_REQUEST_APPROVED, CANCEL_REQUEST_PENDING } from '../..
 export async function createPTO(data){
 	let connection = null,
 		mutationQuery = null,
-		finalData = JSON.parse(data),
-		applicant_email;
+		finalData = JSON.parse(data);
 	try {
 		connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-		mutationQuery = r.db('work_genius').table('users').filter(r.row('name').eq(finalData.applicant)).getField('email').coerceTo('array');
-		applicant_email = await mutationQuery.run(connection);
-		mutationQuery = r.db('work_genius').table('pto').insert({...finalData, applicant_email: applicant_email[0]});
+		mutationQuery = r.db('work_genius').table('pto').insert({...finalData});
 		await mutationQuery.run(connection);
 		await connection.close();
 	} catch (err) {

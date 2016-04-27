@@ -19,11 +19,11 @@ class DatePicker extends Component {
     render() {
         let { format, defaultDate, placeholder, disabled, onChange } = this.props;
         defaultDate = defaultDate && typeof(defaultDate) === 'string' ? new Date(defaultDate) : defaultDate;
-        return (<DatePickerBase 
+        return (<DatePickerBase
                   hintText={placeholder}
                   defaultDate={defaultDate}
-                  disabled={disabled} 
-                  formatDate={(obj) => formatDate(obj, format)} 
+                  disabled={disabled}
+                  formatDate={(obj) => formatDate(obj, format)}
                   onChange={(e, objDate)=>{ // e is `null` by material-ui document of <DatePicker />.
                     onChange(formatDate(objDate));
                   }} />);

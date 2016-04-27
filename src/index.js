@@ -11,13 +11,15 @@ import './components/A10-UI/a10-mdl.css'; //override getmdl.com css for our purp
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-
+import injectTapEventPlugin from 'react-tap-event-plugin';
 // Store
 import configureStore from './store/configureStore';
 // Routes
 import appRoutes from './routes/appRoutes';
 
 const store = configureStore();
+
+injectTapEventPlugin();
 
 ReactDOM.render(
 	<Provider store={store}>

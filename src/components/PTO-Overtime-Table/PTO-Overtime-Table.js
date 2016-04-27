@@ -3,6 +3,7 @@ import './PTO-Overtime-Table.css';
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
+import moment from 'moment';
 // Constants
 import {
     PENDING,
@@ -90,6 +91,13 @@ let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler, isUserAdmin }) => {
                             </Td>
                         );
                     }
+                    return actionsHTML;
+                } else if (header['key'] === 'start_time' || header['key'] === 'end_time' || header['key'] === 'apply_time') {
+                    actionsHTML = (
+                        <Td key={cellIndex}>
+                            {moment(+task[header['key']]).format('YYYY-MM-DD HH:mm')}
+                        </Td>
+                    );
                     return actionsHTML;
                 }
 

@@ -115,11 +115,11 @@ export function fetchPTOApplications(userId, timeRange) {
             body: `{
                 ptoApplications(applicantId: "${userId}", timeRange: ${timeRange}) {
                     id,
-                    start_date,
-                    end_date,
+                    start_time,
+                    end_time,
                     hours,
                     applicant,
-                    apply_date,
+                    apply_time,
                     status,
                     memo,
                     applicant_email
@@ -148,10 +148,10 @@ export function fetchOvertimeApplications(userId, timeRange) {
             body: `{
                 overtimeApplications(applicantId: "${userId}", timeRange: ${timeRange}) {
                     id,
-                    start_date,
+                    start_time,
                     hours,
                     applicant,
-                    apply_date,
+                    apply_time,
                     status,
                     memo,
                     applicant_email
@@ -182,7 +182,7 @@ export function fetchUsersWithPTO() {
                     id,
                     name,
                     pto {
-                        end_date
+                        end_time
                     }
                 }
             }`,
