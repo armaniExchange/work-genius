@@ -3,9 +3,8 @@
   padding: 15px 40px;
   margin-bottom: 20px;
 
-  a:focus,
-  a:hover {
-    font-size: 30px;
+  > a:focus,
+  > a:hover {
     text-decoration: none;
   }
 
