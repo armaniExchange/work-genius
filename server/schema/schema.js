@@ -94,8 +94,8 @@ const schema = new GraphQLSchema({
       updatePTOApplicationStatus      : PTOMutation.updatePTOApplicationStatus,
       createOvertimeApplication       : PTOMutation.createOvertimeApplication,
       updateOvertimeApplicationStatus : PTOMutation.updateOvertimeApplicationStatus,
-      createPTOAndRefreshWorklog      : PTOMutation.createPTOAndRefreshWorklog,
-      updatePTOStatusAndRefreshWorklog: PTOMutation.updatePTOStatusAndRefreshWorklog,
+      createPTOAndRefreshJob          : PTOMutation.createPTOAndRefreshJob,
+      updatePTOStatusAndRefreshJob    : PTOMutation.updatePTOStatusAndRefreshJob,
       // User page
       updateUserPrivilege             : UserMutation.updateUserPrivilege,
       // Document page

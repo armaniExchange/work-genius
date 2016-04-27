@@ -152,7 +152,7 @@ let TaskMutation = {
 			return 'Update successfully!';
 		}
 	},
-	'createPTOAndRefreshWorklog': {
+	'createPTOAndRefreshJob': {
 		type: GraphQLString,
 		description: 'Create a new pto application and recalc the end date of applicant jobs',
 		args: {
@@ -167,7 +167,7 @@ let TaskMutation = {
 				//recalc the worklog end date of this user.
 				try{
 					let finalData = JSON.parse(data);
-					await recalcWorklogEndDate(finalData.start_time,finalData.applicant_id);
+					await recalcJobEndDate(finalData.start_time,finalData.applicant_id);
 				}
 				catch(err){
 					console.log(err);
@@ -176,9 +176,9 @@ let TaskMutation = {
 			return result;
 		}
 	},
-	'updatePTOStatusAndRefreshWorklog': {
+	'updatePTOStatusAndRefreshJob': {
 		type: GraphQLString,
-		description: 'Update a pto application',
+		description: 'Update a pto application and recalc the end date of applicant jobs',
 		args: {
 			id: {
 				type: GraphQLString,
@@ -205,7 +205,7 @@ let TaskMutation = {
 				let {start_time,applicant_id} = await mutationQuery.run(connection);
 				result = await updatePTOStatus(id,status,hours);
 				//recalc the worklog end date of this user.
-				await recalcWorklogEndDate(start_time,applicant_id);
+				await recalcJobEndDate(start_time,applicant_id);
 				await connection.close();
 			}
 			catch(err){

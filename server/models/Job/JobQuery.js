@@ -48,8 +48,9 @@ let JobQuery = {
 				//get all PTO data
 				query = r.db('work_genius').table('pto')
 					.filter(r.row('status').eq('PENDING').or(r.row('status').eq('APPROVED')))
-					.pluck('applicant_id','start_date','end_date','hours').coerceTo('array');
+					.pluck('applicant_id','start_time','end_time','hours').coerceTo('array');
 				let ptoList = await query.run(connection);
+
 
 				//get all uncompleted job list
 				query = r.db('work_genius').table('worklog').eqJoin('job_id',r.db('work_genius').table('jobs'))
@@ -86,14 +87,16 @@ let JobQuery = {
 					userItem.jobs.forEach(dateItem => {
 						//set pto info
 						let findPTO = ptoList.find( pto => {
-							if(moment(pto.start_date).isSame(moment(pto.end_date))){
+							let startTime = Number.parseFloat(pto.start_time);
+							let endtTime = Number.parseFloat(pto.end_time);
+							if(moment(startTime).isSame(endtTime,'day')){
 								return pto.applicant_id == user.id
-									&& moment(dateItem.date).isSame(moment(pto.start_date));
+									&& moment(dateItem.date).isSame(startTime,'day');
 							}else{
 								return pto.applicant_id == user.id
-									&& (moment(dateItem.date).isBetween(pto.start_date,pto.end_date)
-										|| moment(dateItem.date).isSame(pto.start_date,'day')
-										|| moment(dateItem.date).isSame(pto.end_date,'day'));
+									&& (moment(dateItem.date).isBetween(startTime,endtTime)
+										|| moment(dateItem.date).isSame(startTime)
+										|| moment(dateItem.date).isSame(endtTime));
 							}
 						});
 						if(!!findPTO){
@@ -181,7 +184,7 @@ let JobQuery = {
 				query = r.db('work_genius').table('pto')
 					.filter({applicant_id : employeeId})
 					.filter(r.row('status').eq('PENDING').or(r.row('status').eq('APPROVED')))
-					.pluck('applicant_id','start_date','end_date','hours').coerceTo('array');
+					.pluck('applicant_id','start_time','end_time','hours').coerceTo('array');
 				let ptoList = await query.run(connection);
 
 				//get all uncompleted job list
@@ -194,9 +197,6 @@ let JobQuery = {
 						})'))
 					.coerceTo('array');
 				let jobList = await query.run(connection);
-
-				console.log('joblist:');
-				console.log(jobList);
 
 				//get all dates and check if the date is weekend or not
 				let dateList = [];
@@ -222,14 +222,16 @@ let JobQuery = {
 				userItem.jobs.forEach(dateItem => {
 					//set pto info
 					let findPTO = ptoList.find( pto => {
-						if(moment(pto.start_date).isSame(moment(pto.end_date))){
+						let startTime = Number.parseFloat(pto.start_time);
+						let endtTime = Number.parseFloat(pto.end_time);
+						if(moment(startTime).isSame(endtTime,'day')){
 							return pto.applicant_id == user.id
-								&& moment(dateItem.date).isSame(moment(pto.start_date));
+								&& moment(dateItem.date).isSame(startTime,'day');
 						}else{
 							return pto.applicant_id == user.id
-								&& (moment(dateItem.date).isBetween(pto.start_date,pto.end_date)
-									|| moment(dateItem.date).isSame(pto.start_date,'day')
-									|| moment(dateItem.date).isSame(pto.end_date,'day'));
+								&& (moment(dateItem.date).isBetween(startTime,endtTime)
+									|| moment(dateItem.date).isSame(startTime)
+									|| moment(dateItem.date).isSame(endtTime));
 						}
 					});
 					if(!!findPTO){
