@@ -76,6 +76,12 @@ class ViewArticlePage extends Component {
     });
   }
 
+  onCommentUpdate(updatedComment) {
+    this.props.articleActions.updateComment({
+      articleId: this.props.id,
+      comment: updatedComment
+    });
+  }
 
   onConfirmDeleteCommentDialogRequestHide() {
     this.setState({
@@ -118,22 +124,11 @@ class ViewArticlePage extends Component {
       isConfirmDeleteArticleDialogVisible,
       isConfirmDeleteCommentDialogVisible
     } = this.state;
-
-    const paperStyle = {
-      position: 'relative',
-      padding: 15,
-      marginBottom: 20,
-    };
-
     return (
       <section className="view-article-page">
-        <Paper style={paperStyle} zDepth={1}>
+        <Paper className="header" zDepth={1}>
           <h3>{title}</h3>
-          <div style={{
-            position: 'absolute',
-            top: 5,
-            right: 5
-          }}>
+          <div className="toolbar">
             <Link to={`/main/knowledge/document/edit/${id}`}>
               <RaisedButton
                 style={{margin: 10}}
@@ -155,7 +150,7 @@ class ViewArticlePage extends Component {
           <br />
           <ArticleTagList tags={tags} />
         </Paper>
-        <Paper className="article-viewer" style={paperStyle} zDepth={1}>
+        <Paper className="body" zDepth={1}>
           <HighlightMarkdown source={content} />
         </Paper>
         <h5>Comments</h5>
@@ -165,8 +160,9 @@ class ViewArticlePage extends Component {
               <CommentListItem
                 {...comment}
                 key={comment.id}
-                currentUserId={currentUser.id}
-                onDeleteClick={::this.onCommentDelete} />
+                currentUser={currentUser}
+                onDeleteClick={::this.onCommentDelete}
+                onSubmit={::this.onCommentUpdate}/>
             );
           })
         }

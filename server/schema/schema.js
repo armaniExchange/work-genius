@@ -94,6 +94,7 @@ const schema = new GraphQLSchema({
       // Document page
       createComment                   : CommentMutation.createComment,
       deleteComment                   : CommentMutation.deleteComment,
+      updateComment                   : CommentMutation.updateComment,
       createArticle                   : ArticleMutation.createArticle,
       updateArticle                   : ArticleMutation.updateArticle,
       deleteArticle                   : ArticleMutation.deleteArticle,

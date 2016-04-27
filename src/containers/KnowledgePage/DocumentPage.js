@@ -134,11 +134,7 @@ class DocumentPage extends Component {
     } = this.props;
     if (articleList.length === 0) {
       return (
-        <div style={{
-          textAlign: 'center',
-          padding: 30,
-          color: 'gray'
-        }}>
+        <div className="blank-article">
           <i className="fa fa-file-text-o fa-5x"/>
           <h3>No matching items found.</h3>
         </div>
@@ -178,7 +174,7 @@ class DocumentPage extends Component {
   }
 
   render() {
-    const PAGE_SIZE = 5;
+    const PAGE_SIZE = 20;
     const {
       allUsers,
       allMilestones,
@@ -214,12 +210,11 @@ class DocumentPage extends Component {
               tags={allTags}
               value={tag} />
             <h5>KNOWLEDGE TREE</h5>
-
             <CategoryTree
-                data={allCategories}
-                selectedPath={currentSelectedCategory.path}
-                onNodeClick={::this._onNodeClick}
-                onLeafClick={::this._setAndFetchCategory} />
+              data={allCategories}
+              selectedPath={currentSelectedCategory.path}
+              onNodeClick={::this._onNodeClick}
+              onLeafClick={::this._setAndFetchCategory} />
           </div>
           <div className="main-content">
             <DocumentFilterSelectGroup

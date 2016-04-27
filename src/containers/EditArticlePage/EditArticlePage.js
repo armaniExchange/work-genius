@@ -254,7 +254,8 @@ class EditArticlePage extends Component {
       editingPriority,
       editingMilestone,
       editingReportTo,
-      isPreviewVisible
+      isPreviewVisible,
+      isArticleFormValid
     } = this.state;
 
     const {
@@ -312,7 +313,7 @@ class EditArticlePage extends Component {
         <RaisedButton
           label="Submit"
           primary={true}
-          disabled={!editingTitle || !editingCategoryId}
+          disabled={!isArticleFormValid}
           onClick={::this.onSubmit}
           style={{margin: 10}} />
         <RaisedButton

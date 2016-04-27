@@ -7,6 +7,13 @@
     top: 60px;
   }
   .main-content {
+    margin:0 auto;
+    max-width: 1200px;
     min-width: 650px;
+  }
+  .blank-article {
+    text-align: center;
+    padding: 30px;
+    color: gray;
   }
 }

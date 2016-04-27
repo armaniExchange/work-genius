@@ -512,6 +512,67 @@ export function createComment({articleId, comment}) {
   };
 }
 
+export function updateCommentSuccess(comment) {
+  return {
+    type: actionTypes.UPDATE_COMMENT_SUCCESS,
+    comment
+  };
+}
+
+export function updateCommentFail(error) {
+  return {
+    type: actionTypes.UPDATE_COMMENT_FAIL,
+    error
+  };
+}
+
+export function updateComment({articleId, comment}) {
+  return dispatch => {
+    dispatch({
+      type: actionTypes.UPDATE_COMMENT,
+      comment
+    });
+    dispatch(setLoadingState(true));
+
+    const config = {
+      method: 'POST',
+      body: `
+        mutation RootMutationType {
+          updateComment( comment: ${stringifyObject(comment)} articleId: "${articleId}") {
+            id,
+            content,
+            updatedAt,
+            author {
+              id,
+              name
+            }
+          }
+        }
+      `,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((body) => {
+        dispatch(updateCommentSuccess(body.data.updateComment));
+        dispatch(setLoadingState(false));
+      })
+      .catch((error) => {
+        dispatch(updateCommentFail(error));
+        dispatch(apiFailure(error));
+      });
+  };
+}
+
 export function deleteCommentSuccess(id) {
   return {
     type: actionTypes.DELETE_COMMENT_SUCCESS,
