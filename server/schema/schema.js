@@ -26,6 +26,8 @@ import BugStats from '../models/Bug/BugStats.js';
 import WorkLogMutation from '../models/WorkLog/WorkLogMutation.js';
 import WorkLogQuery from '../models/WorkLog/WorkLogQuery.js';
 import MailMutation from '../models/EMail/EMailMutation.js';
+import DocumentCategoryQuery from '../models/DocumentCategory/DocumentCategoryQuery.js';
+import DocumentCategoryMutation from '../models/DocumentCategory/DocumentCategoryMutation.js';
 
 const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -55,6 +57,7 @@ const schema = new GraphQLSchema({
       getAllBugTags            : BugTagQuery.getAllBugTags,
       getAllRelease            : BugTagQuery.getAllRelease,
       getAllWorklogTags		   : BugTagQuery.getAllWorklogTags,
+      getAllDocumentCategories : DocumentCategoryQuery.getAllDocumentCategories,
       // Feature Analysis
       assignmentCategoryTree   : AssignmentCategoryQuery.getAssignmentCategoryTree,
       allAssignmentCategories  : AssignmentCategoryQuery.getAllAssignmentCategories,
@@ -99,6 +102,8 @@ const schema = new GraphQLSchema({
       updateArticle                   : ArticleMutation.updateArticle,
       deleteArticle                   : ArticleMutation.deleteArticle,
       updateAssignmentCategory        : AssignmentCategoryMutation.updateAssignmentCategory,
+      createDocumentCategory          : DocumentCategoryMutation.createDocumentCategory,
+      deleteDocumentCategory          : DocumentCategoryMutation.deleteDocumentCategory,
       //Bug page
       updateBug                       : BugMutation.updateBug,
       createBugTag                    : BugTagMutation.createBugTag,

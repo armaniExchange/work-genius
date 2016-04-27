@@ -540,27 +540,39 @@ export const MENU = {
             }
          },
          'Framework': {}
-      }
-   }
+     },
+     'Layer': {
+         'GUI': {},
+         'GUI Framework': {
+             'Unit Test': {},
+             'Django': {},
+             'AngularJS': {},
+             'React JS': {},
+             'GUI Server': {}
+         },
+         'AXAPI': {},
+         'Backend': {},
+         'Technology': {
+             'Design Pattern': {},
+             'Best Coding Practice': {},
+             'Helper Function': {}
+         }
+     },
+     'Daily Working' : {}
+ }
 };
 
 // var s='';
-// var record = {};
+// var counter = 0;
 // function f(o, parentKey){
 //   for(var k in o){
 //     if(!o.hasOwnProperty(k)){continue;}
-//     var suffix = record[k] ? (record[k]+'') : '';
-//     var k_and_suffix = k+suffix;
-//      s+="r.db('work_genius').table('assignment_categories').insert({id:'"+k_and_suffix+"',name:'"+k+"',parentId:'"+parentKey+"'});" + "\r\n";
-//     if (record.hasOwnProperty(k)){
-//       record[k]++;
-//     } else {
-//       record[k] = 1;
-//     }
+//     counter += 1
+//      s+="r.db('work_genius').table('document_categories').insert({id:'"+counter+"',name:'"+k+"',parentId:'"+parentKey+"'});" + "\r\n";
 //     if(typeof o[k]==='object'){
-//       f(o[k], k_and_suffix);
+//       f(o[k], counter);
 //     }
 //   }
 // }
-// f(obj, 'root');
+// f(MENU, null);
 // console.log(s);

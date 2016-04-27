@@ -9,7 +9,7 @@ import {
 
 const ASSIGNMENT_CATEGORY_TYPE = new GraphQLObjectType({
     name: 'AssignmentCategory',
-    descriptyion: 'An assignment Category',
+    description: 'An assignment Category',
     fields: () => ({
         'id': {
             type: GraphQLID,

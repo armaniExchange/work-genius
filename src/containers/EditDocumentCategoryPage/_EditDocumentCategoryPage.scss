@@ -1,0 +1,17 @@
+.edit-article-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  .article-editor-wrapper {
+    float: left;
+    padding-right: 10px;
+  }
+  .article-editor-preview {
+    width: 50%;
+    float: left;
+    border-radius: 5px;
+    border: 1px solid lightgray;
+    background: white;
+    overflow-x: scroll;
+    padding: 15px;
+  }
+}
