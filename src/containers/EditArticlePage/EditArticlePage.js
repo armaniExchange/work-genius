@@ -12,6 +12,8 @@ import ArticleEditor from '../../components/ArticleEditor/ArticleEditor';
 import * as ArticleActions from '../../actions/article-page-actions';
 import * as DocumentActions from '../../actions/document-page-actions';
 
+import documentTestCaseMd from '../../assets/template/document-test-case.md';
+
 class EditArticlePage extends Component {
 
   constructor(props) {
@@ -122,9 +124,12 @@ class EditArticlePage extends Component {
   }
 
   onDocumentTypeChange(event, index, value) {
-    this.setState({
-      editingDocumentType:value
-    });
+    const { editingContent } = this.state;
+    let contentTemplate = {};
+    if (value === 'test case' && editingContent.trim() === '') {
+      contentTemplate = { editingContent: documentTestCaseMd };
+    }
+    this.setState(Object.assign({ editingDocumentType: value }, contentTemplate));
   }
 
   onPriorityChange(event, index, value) {

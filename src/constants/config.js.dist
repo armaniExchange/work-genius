@@ -19,7 +19,8 @@ export const DOCUMENT_TYPE_OPTIONS = [
   'bugs',
   'task',
   'requirement',
-  'enhancement'
+  'enhancement',
+  'test case'
 ];
 
 export const PRIORITY_OPTIONS = [

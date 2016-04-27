@@ -16,11 +16,15 @@
     border: 1px solid lightgray;
     background: none;
     overflow: hidden;
-    position: relative;
-    padding: 20px;
+    position: relative; 
     min-height: 200px;
   }
-
+  .component-edit-panel {
+    padding: 10px;
+  }
+  .component-preview-panel {
+    padding: 20px;
+  }
   .placeholder {
     color: gray;
     position: absolute;
