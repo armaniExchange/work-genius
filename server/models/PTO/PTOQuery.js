@@ -6,8 +6,9 @@ import {
 } from 'graphql';
 // Models
 import PTOType from './PTOType.js';
-// RethinkDB
+// Library
 import r from 'rethinkdb';
+import moment from 'moment';
 // Constants
 import { DB_HOST, DB_PORT, ADMIN_ID } from '../../constants/configurations.js';
 
@@ -32,14 +33,17 @@ let TaskQuery = {
 				},
 			    result = null,
 				query = r.db('work_genius').table('pto')
-				    .filter(filterCondition)
+				    .filter(filterCondition).merge((pto) => ({
+						applicant: r.db('work_genius').table('users').get(pto('applicant_id')).getField('name'),
+						applicant_email: r.db('work_genius').table('users').get(pto('applicant_id')).getField('email')
+					}))
 				    .coerceTo('array');
 
 			try {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				result = await query.run(connection);
 				result = result.filter((application) => {
-					return parseInt(application.end_date.slice(0, 4), 10) === timeRange;
+					return +moment(+application.end_time).format('YYYY') === timeRange;
 				});
 				await connection.close();
 			} catch (err) {
@@ -75,7 +79,7 @@ let TaskQuery = {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				result = await query.run(connection);
 				result = result.filter((application) => {
-					return parseInt(application.start_date.slice(0, 4), 10) === timeRange;
+					return +moment(+application.start_time).format('YYYY') === timeRange;
 				});
 				await connection.close();
 			} catch (err) {

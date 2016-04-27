@@ -167,7 +167,7 @@ let TaskMutation = {
 				//recalc the worklog end date of this user.
 				try{
 					let finalData = JSON.parse(data);
-					await recalcWorklogEndDate(finalData.start_date,finalData.applicant_id);
+					await recalcWorklogEndDate(finalData.start_time,finalData.applicant_id);
 				}
 				catch(err){
 					console.log(err);
@@ -201,11 +201,11 @@ let TaskMutation = {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				mutationQuery = r.db('work_genius').table('pto')
 					.get(id)
-					.pluck('start_date','applicant_id');
-				let {start_date,applicant_id} = await mutationQuery.run(connection);
-				result = await updatePTOStatus(id,status,hours); 
+					.pluck('start_time','applicant_id');
+				let {start_time,applicant_id} = await mutationQuery.run(connection);
+				result = await updatePTOStatus(id,status,hours);
 				//recalc the worklog end date of this user.
-				await recalcWorklogEndDate(start_date,applicant_id); 
+				await recalcWorklogEndDate(start_time,applicant_id);
 				await connection.close();
 			}
 			catch(err){

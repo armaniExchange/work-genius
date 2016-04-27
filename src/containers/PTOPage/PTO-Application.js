@@ -69,7 +69,7 @@ class PTOApplication extends Component {
                 includeManagers: true
             };
         let { to, cc, bcc, subject, text, html, includeManagers } = mailingConfig;
-        
+
         createPTOApplication(finalData);
         sendMail(to, cc, bcc, subject, text, html, includeManagers);
     }
@@ -95,9 +95,9 @@ class PTOApplication extends Component {
             id,
             status,
             hours,
-            start_date,
+            start_time,
             applicant,
-            end_date,
+            end_time,
             applicant_email
         } = updatedPtoApplication;
 
@@ -108,8 +108,8 @@ class PTOApplication extends Component {
                 <PTOMailCard
                     type={'PTO_' + status}
                     applicant={applicant}
-                    startDate={start_date}
-                    endDate={end_date}
+                    startDate={start_time}
+                    endDate={end_time}
                     status={status}
                     manager={currentUser.name}
                     hours={hours}

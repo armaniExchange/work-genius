@@ -3,16 +3,17 @@ import './Overtime-Apply-Modal.css';
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
-import moment from 'moment';
+import { convertToUtcTimeStamp } from '../../libraries/util';
 // Components
 import {
 	Modal
 } from 'react-bootstrap';
 
 // Material-UI
-import DatePicker from '../../components/A10-UI/Input/Date-Picker.js';
+import DatePicker from 'material-ui/lib/date-picker/date-picker';
 import RaisedButton from 'material-ui/lib/raised-button';
 import TextField from 'material-ui/lib/text-field';
+import TimePicker from 'material-ui/lib/time-picker/time-picker';
 
 let ModalHeader = () => {
 	return (
@@ -31,89 +32,164 @@ let ModalFooter = ({ onSubmit, onCancelHandler }) => {
 	);
 };
 
+let initialState = {
+	'startDate': '',
+	'startTime': '',
+	'hours': '',
+	'memo': '',
+	'isStartDateEmpty': false,
+	'isHourValid': true
+};
+
 class PTOApplyModal extends Component {
 	constructor(props) {
 		super(props);
-		this._onSubmit = ::this._onSubmit;
-		this._onStartDateChange = ::this._onStartDateChange;
-		this._validateInput = ::this._validateInput;
-		this._validateDateFormat = ::this._validateDateFormat;
+		this.state = initialState;
 	}
 
-	_validateDateFormat(date) {
-		return /^(\d{4}-\d{2}-\d{2})?$/gi.test(date);
+	_validateInput(data) {
+		const {
+			startTimeStamp,
+			hours
+		} = data;
+		let newErrorState = {
+				'isStartDateEmpty': false,
+				'isHourValid': true
+			},
+			isInputValid = true;
+
+		if (hours <= 0) {
+			newErrorState.isHourValid = false;
+			isInputValid = false;
+		}
+		if (!startTimeStamp) {
+			newErrorState.isStartDateEmpty = true;
+			isInputValid = false;
+		}
+		this.setState(newErrorState);
+		return isInputValid;
 	}
 
-	_validateInput() {
-		let startDate = this.refs.startDate.value;
-		return this._validateDateFormat(startDate);
+	_onCancel() {
+		const { onCancelHandler } = this.props;
+		this.setState(initialState, () => {
+			onCancelHandler();
+		});
 	}
 
 	_onSubmit() {
+		const {
+			startDate,
+			startTime,
+			hours,
+			memo
+		} = this.state;
+
 		const { onSubmitHandler } = this.props;
-		let startDate = this.refs.startDate.value,
-		    memo = this.refs.memo.getValue(),
-		    hours = this.refs.hours.getValue(),
-		    data = {
-				startDate,
-				memo,
-				hours
+		let startTimeStamp = (startDate && startTime) ? convertToUtcTimeStamp(startDate, startTime) : undefined,
+			finalData = {
+				startTimeStamp,
+				hours,
+				memo
 			},
-			isInputValid = this._validateInput();
-
-		data['hours'] = hours ? hours : '8';
-
-		if (isInputValid) {
-			onSubmitHandler(data);
+			isInputValidate = this._validateInput(finalData);
+		if (isInputValidate) {
+			this.setState(initialState, () => {
+				onSubmitHandler(finalData);
+			});
 		}
-	}
-	_onStartDateChange(newDate) {
-		this.refs.startDate.value = newDate;
 	}
 
 	render() {
 		const { show, onHideHandler } = this.props;
+		const {
+			startDate,
+			hours,
+			memo,
+			isHourValid,
+			isStartDateEmpty
+		} = this.state;
 		let startDateClassName = classnames({
 				'form-group': true
-			}),
-			today = moment().format('YYYY-MM-DD HH:mm');
+			});
 		return (
 			<Modal ref="modal" show={show} onHide={onHideHandler}>
 				<ModalHeader {...this.props} />
 				<Modal.Body>
 					<form className="form-horizontal">
-					    <input
-					        className="hidden"
-					        defaultValue={today}
-					        onChange={this._validateInput}
-					        ref="startDate" />
 					    <div className={startDateClassName}>
-						    <label className="col-xs-3 control-label">Start Date</label>
+						    <label className="col-xs-3 control-label">
+							    Start Date
+							</label>
 						    <div className="col-xs-9">
-						    	<DatePicker
-								    defaultDate={today}
+								<DatePicker
+									value={startDate}
 									placeholder="Start Date"
-									onChange={this._onStartDateChange} />
+									onChange={(err, newDate) => {
+										this.setState({
+											startDate: newDate
+										});
+									}} />
 						    </div>
 						</div>
-						<div>
-							<label className="col-xs-3 control-label">Total Hours</label>
-					    	<div className="col-xs-9">
-					    		<TextField hintText="hour(s)" ref="hours" type="number" />
-					    	</div>
+						<div className={startDateClassName}>
+						    <label className="col-xs-3 control-label">
+							    Start Time
+							</label>
+						    <div className="col-xs-9">
+						    	<TimePicker
+									placeholder="Start Time"
+									onChange={(err, newTime) => {
+										this.setState({
+											startTime: newTime
+										});
+									}} />
+						    </div>
+						</div>
+						<div className={isStartDateEmpty ? 'col-xs-12 error' : 'col-xs-12 hide'}>
+							Start date and time must not be empty!
 						</div>
 						<div>
-							<label className="col-xs-3 control-label">Memo</label>
+							<label className="col-xs-3 control-label">
+								Total Hours
+							</label>
+							<div className="col-xs-9">
+								<TextField
+									value={hours}
+									hintText="hour(s)"
+									type="number"
+									errorText={isHourValid ? '' : 'Hours must not be empty or less than 1'}
+									onChange={(e) => {
+										this.setState({
+											hours: e.target.value
+										});
+									}} />
+							</div>
+						</div>
+						<div>
+							<label className="col-xs-3 control-label">
+							    Memo
+							</label>
 					    	<div className="col-xs-9">
-					    		<TextField hintText="Memo" ref="memo" multiLine={true} rows={2} rowsMax={4} />
+					    		<TextField
+								    hintText="Memo"
+									value={memo}
+									multiLine={true}
+									rows={2}
+									rowsMax={4}
+									onChange={(e) => {
+										this.setState({
+											memo: e.target.value
+										});
+									}} />
 					    	</div>
 						</div>
 						<div style={{clear:'both'}}></div>
 					</form>
 		        </Modal.Body>
 		        <ModalFooter
-		        	onSubmit={this._onSubmit}
-		            {...this.props} />
+		        	onSubmit={::this._onSubmit}
+		            onCancelHandler={::this._onCancel} />
 			</Modal>
 		);
 	}
