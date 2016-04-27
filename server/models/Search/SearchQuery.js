@@ -45,10 +45,11 @@ let KbElastic = {
   jsonResult: (result) => {
     const hasHit = result.hits && result.hits.hits && result.hits.hits.length;
   
-    return {
+    let ret = {
       total: hasHit ? result.hits.total : 0,
       hits: hasHit ? result.hits.hits : []
     };
+    return ret;
   }
 };
 
@@ -76,7 +77,10 @@ let responseSearch = async (req, res, searchMethod) => {
   if (searchq) {
     searchq = encodeURIComponent(searchq);
     try {
-      res.json({'code':0, 'data': await searchMethod.apply(null, [searchq]) });
+      let data = await searchMethod.apply(null, [searchq]);
+      data.from = start;
+      data.size = count; // http://localhost:3000/search?searchq=knowledges&start=2&count=1
+      res.json({'code':0, 'data': data });
     } catch (err) {
       res.json({'err': err});
     }

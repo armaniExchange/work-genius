@@ -13,6 +13,12 @@ export default keyMirror({
     SET_CURRENT_SELECTED_USER_ID: null,
     SET_CURRENT_SELECTED_PAGE_NAME: null,
 
+    // Search page actions
+    SEARCH_ARTICLE_SUCCESS: null,
+    SEARCH_FILE_SUCCESS: null,
+    SEARCH_WORKLOG_SUCCESS: null,
+    SEARCH_COMMENT_SUCCESS: null,
+
     // Task page actions
     SORT_FEATURE_TABLE_BY_CATEGORY: null,
     FILTER_FEATURE_TABLE: null,
