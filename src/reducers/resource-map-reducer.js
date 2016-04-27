@@ -133,6 +133,9 @@ function checkWorkLogsData(worklogs, item) {
 
 var taskStateActions = {
     handle: function (state, item) {
+        console.log('item:');
+        console.log(item);
+        console.log();
         var employeeId = item.employee_id;
         if (employeeId === undefined || employeeId === -1) {
             return state;
@@ -145,9 +148,9 @@ var taskStateActions = {
             oldData = state.get('data');
         oldData.map((data) => {
             if (data.get('id') === item.employee_id) {
-                let worklogs = data.get('worklogs');
+                let worklogs = data.get('jobs');
                 worklogs = self.byDaysHandle(worklogs, item.data);
-                data = data.set('worklogs', worklogs);
+                data = data.set('jobs', worklogs);
             }
             newData = newData.push(data);
         });
@@ -171,7 +174,7 @@ var taskStateActions = {
                     duration += 8;
                 }
             } else {
-                var worklogItems = worklog.worklog_items;
+                var worklogItems = worklog.job_items;
                 if (self.isSelectDate(worklogDate, millisecondStartDate, duration)) {
                     // Delete items by id
                     if (item.isDelete) {
@@ -194,7 +197,7 @@ var taskStateActions = {
                 } else {
                     worklogItems = self.deleteWorkItem(worklogItems, item);
                 }
-                worklog.worklog_items = worklogItems;
+                worklog.job_items = worklogItems;
             }
             newWorklog.push(worklog);
         });

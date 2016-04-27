@@ -75,7 +75,7 @@ class ResourceMapTableBody extends Component {
         if (data.length > 0) {
             // var moreItems = {};
         	bodyHtml = data.map((resource, bodyIndex) => {
-                let worklogs = resource.worklogs;
+                let worklogs = resource.jobs;
                 var user = resource.name;
                 var userId = resource.id;
                 let userHtml = (<Td key={0} colSpan={1} className={'cell-layout-style'}>{user}</Td>);

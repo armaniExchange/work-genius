@@ -69,7 +69,7 @@ var taskWorkItemActions = {
             let config = {
                 method: 'POST',
                 body: `mutation RootMutationType {
-                    createWorkLog(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+                    createJobAndWorkLog(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
                 }`,
                 headers: {
                     'Content-Type': 'application/graphql',
@@ -80,7 +80,7 @@ var taskWorkItemActions = {
             return fetch(SERVER_API_URL, config)
                 .then((res) => res.json())
                 .then((body) => {
-                    let id = body.data.createWorkLog;
+                    let id = body.data.createJobAndWorkLog;
                     if (id !== undefined && id !== '' && id !== 0) {
                         item.data.id = id;
                         dispatch(fetchWorklogItem(item));
@@ -109,7 +109,7 @@ var taskWorkItemActions = {
             let config = {
                 method: 'POST',
                 body: `mutation RootMutationType {
-                    updateWorkLog(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}",id:"` + item.id + `")
+                    updateJobAndWorkLog(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}",id:"` + item.id + `")
                 }`,
                 headers: {
                     'Content-Type': 'application/graphql',
@@ -131,7 +131,7 @@ var taskWorkItemActions = {
         return (dispatch) => {
             let config = {
                 method: 'POST',
-                body: `mutation RootMutationType {deleteWorkLog(id:\"` + item.id + `\")}`,
+                body: `mutation RootMutationType {deleteJob(id:\"` + item.id + `\")}`,
                 headers: {
                     'Content-Type': 'application/graphql',
                     'x-access-token': localStorage.token
@@ -241,20 +241,20 @@ function queryResourceMapDataFromServer(startDate, days) {
         let config = {
             method: 'POST',
             body: `{
-                getWorkLogList(startDate:` + date + `,dateRange:` + days +`){
+                getJobList(startDate:` + date + `,dateRange:` + days +`){
 			        id,
 			        name,
-			        worklogs{
+			        jobs{
 			            date,
 			            day_type,
-			            worklog_items{
+			            job_items{
 			                id,
                             start_date,
                             content,
                             progress,
                             color,
                             status,
-                            task,
+                            title,
                             duration,
                             release,
                             creator,
@@ -272,7 +272,7 @@ function queryResourceMapDataFromServer(startDate, days) {
             .then((res) => res.json())
             .then((body) => {
                 dispatch(setLoadingState(false));
-            	let data = body.data.getWorkLogList;
+            	let data = body.data.getJobList;
             	data = data === undefined ? [] : data;
             	dispatch(fetchResourceMapData(data, startDate));
             })
@@ -289,20 +289,20 @@ function queryResourceMapDataFromServerByUser(startDate, days, userId) {
         let config = {
             method: 'POST',
             body: `{
-                getWorkLogByEmployeeId(startDate:` + date + `,dateRange:` + days +`,employeeId:\"` + userId + `\"){
+                getJobByEmployeeId(startDate:` + date + `,dateRange:` + days +`,employeeId:\"` + userId + `\"){
                     id,
                     name,
-                    worklogs{
+                    jobs{
                         date,
                         day_type,
-                        worklog_items{
+                        job_items{
                             id,
                             start_date,
                             content,
                             progress,
                             color,
                             status,
-                            task,
+                            title,
                             duration,
                             release,
                             creator,
@@ -320,7 +320,7 @@ function queryResourceMapDataFromServerByUser(startDate, days, userId) {
             .then((res) => res.json())
             .then((body) => {
                 dispatch(setLoadingState(false));
-                let data = body.data.getWorkLogByEmployeeId;
+                let data = body.data.getJobByEmployeeId;
                 data = data === undefined ? [] : data;
                 // console.log(JSON.stringify(data, null, 4));
                 dispatch(fetchResourceMapData(data, startDate, userId));
@@ -381,7 +381,7 @@ function workLogItemDelete(item) {
     return (dispatch) => {
         let config = {
             method: 'POST',
-            body: `mutation RootMutationType {deleteWorkLog(id:\"` + item.id + `\")}`,
+            body: `mutation RootMutationType {deleteJob(id:\"` + item.id + `\")}`,
             headers: {
                 'Content-Type': 'application/graphql',
                 'x-access-token': localStorage.token
