@@ -171,7 +171,7 @@ const CommentMutation = {
             subject: `[KB - Updated Comment] ${commentedArticle.title} `,
             html: parseMarkdown(generateEmailMarkdown({
               to: commentedArticle.author.name,
-              beginning: `${user.name} update a comment on your document on KB.`,
+              beginning: `${user.name} updated a comment on your document on KB.`,
               url: getArticleLink(articleId),
               title: commentedArticle.title,
               content: comment.content

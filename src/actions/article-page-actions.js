@@ -121,6 +121,8 @@ export function createArticle(newArticle) {
     });
     dispatch(setLoadingState(true));
 
+    newArticle.title = newArticle.title.replace(/\\/g, '\\\\');
+    newArticle.content = newArticle.content.replace(/\\/g, '\\\\');
     const config = {
       method: 'POST',
       body: `
@@ -181,6 +183,8 @@ export function updateArticle(newArticle) {
     });
     dispatch(setLoadingState(true));
 
+    newArticle.title = newArticle.title.replace(/\\/g, '\\\\');
+    newArticle.content = newArticle.content.replace(/\\/g, '\\\\');
     const config = {
       method: 'POST',
       body: `
@@ -472,7 +476,7 @@ export function createComment({articleId, comment}) {
       comment
     });
     dispatch(setLoadingState(true));
-
+    comment.content = comment.content.replace(/\\/g, '\\\\');
     const config = {
       method: 'POST',
       body: `
@@ -533,7 +537,7 @@ export function updateComment({articleId, comment}) {
       comment
     });
     dispatch(setLoadingState(true));
-
+    comment.content = comment.content.replace(/\\/g, '\\\\');
     const config = {
       method: 'POST',
       body: `
