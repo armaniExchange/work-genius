@@ -8,7 +8,7 @@ import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 import { APPROVED, CANCEL_REQUEST_APPROVED, CANCEL_REQUEST_PENDING } from '../../../src/constants/pto-constants';
-import {recalcWorklogEndDate} from '../WorkLog/WorkLogCalc.js';
+import {recalcJobEndDate} from '../Job/JobCalc.js';
 import {createPTO,updatePTOStatus} from './PTOUtility.js';
 
 let TaskMutation = {
@@ -154,7 +154,7 @@ let TaskMutation = {
 	},
 	'createPTOAndRefreshWorklog': {
 		type: GraphQLString,
-		description: 'Create a new pto application and recalc the end date of applicant worklog',
+		description: 'Create a new pto application and recalc the end date of applicant jobs',
 		args: {
 			data: {
 				type: GraphQLString,

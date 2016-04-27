@@ -126,7 +126,7 @@ class ResourceMapModalWorkLog extends Component {
 			let data = {
 				'employee_id': defaultModalInfos.userId,
 				'id': defaultModalInfos.id,
-				'task': taskValue,
+				'title': taskValue,
 				'content': workValue,
 				'progress': parseInt(progressValue),
 				'color': color,
@@ -355,7 +355,7 @@ class ResourceMapModalWorkLog extends Component {
 					<TextField
 						type="text"
 						className="text-area-style"
-						defaultValue={defaultModalInfos.task}
+						defaultValue={defaultModalInfos.title}
 						ref="taskField"
 					/>
 				</div>

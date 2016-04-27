@@ -20,7 +20,7 @@ var TooltipContent = ({item}) => {
 			<div className="mdl-cell mdl-cell--8-col"><em>{item.progress}%</em></div>
 
 			<div className="mdl-cell mdl-cell--4-col"><label>Task</label></div>
-			<div className="mdl-cell mdl-cell--8-col"><span>{item.task}</span></div>
+			<div className="mdl-cell mdl-cell--8-col"><span>{item.title}</span></div>
 
 			<div className="mdl-cell mdl-cell--4-col"><label>Start Date</label></div>
 			<div className="mdl-cell mdl-cell--8-col">
@@ -97,7 +97,7 @@ class ResourceMapCellWorkLog extends Component {
 		const {
 			config
 		} = this.props;
-		var items = config.worklog_items;
+		var items = config.job_items;
 		var timer = undefined;
 		var doubleEvent = false;
 		var worklogHtml = (<div/>);
@@ -164,7 +164,7 @@ class ResourceMapCellWorkLog extends Component {
 										arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
 									>
 									    <span className="label-default-style c-white">
-									      <strong>{item.progress}%</strong> {item.task}
+									      <strong>{item.progress}%</strong> {item.title}
 									    </span>
 								    </Tooltip>
 								  </b>
