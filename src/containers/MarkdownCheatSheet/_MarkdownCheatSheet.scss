@@ -2,6 +2,9 @@
   max-width: 1200px;
   min-width: 600px;
   margin: 0 auto;
+  > div {
+    padding: 40px;
+  }
   a {
     color: #4078c0;
   }

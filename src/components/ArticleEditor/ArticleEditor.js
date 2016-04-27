@@ -89,10 +89,9 @@ class ArticleEditor extends Component {
       title,
       categoryId,
       content,
-      documentType,
       onValidFormChange
     } = this.props;
-    const isValid = title.trim() && categoryId && content.trim() && documentType;
+    const isValid = !!title.trim() && !!categoryId && !!content.trim();
     onValidFormChange(isValid);
   }
 
