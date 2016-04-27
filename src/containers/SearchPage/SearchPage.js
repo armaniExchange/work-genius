@@ -75,22 +75,22 @@ class SearchPage extends Component {
           <div className="search-section__body--article" style={articleBodyStyle}>
             {!articleSearchResult || !articleSearchResult.length ? 'No article.' : ''}
             <ul>{articleSearchResult.map((item, idx)=>{
-              let _files = item._source && item._source.files
+              let _files = item._source && item._source.files;
               _files = _files || [];
 
-              return <li key={idx} className="search-section-row search-section-row--article">
+              return (<li key={idx} className="search-section-row search-section-row--article">
                 <h4>{item._source.title}</h4>
                 <div>{item._source.updated_at}{' '}{'['+item._source.document_type+']'}</div>
                 <div>{item._source.content}</div>
                 <div>{item._source.author_name}</div>
                 <ul>
-                  {_files.map((fileItem,idx)=>{
-                    return <li key={idx} title={fileItem.type}>
+                  {_files.map((fileItem,fileIdx)=>{
+                    return (<li key={fileIdx} title={fileItem.type}>
                     <a href={fileItem.url}>{fileItem.name}</a>
-                    </li>;
+                    </li>);
                   })}
                 </ul>
-              </li>;
+              </li>);
             })}</ul>
           </div>
           <div className="search-section__body--file" style={fileBodyStyle}>
