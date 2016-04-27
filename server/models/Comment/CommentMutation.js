@@ -7,7 +7,8 @@ import {
 import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT, MAILER_ADDRESS } from '../../constants/configurations.js';
-import { getArticleLinkMarkdown } from '../Article/ArticleMutation';
+import { getArticleLink } from '../Article/ArticleMutation';
+import generateEmailMarkdown from '../../libraries/generateEmailMarkdown';
 import parseMarkdown from '../../libraries/parseMarkdown';
 import CommentType from './CommentType.js';
 import CommentInputType from './CommentInputType.js';
@@ -97,8 +98,14 @@ const CommentMutation = {
             await transporter.sendMail({
               from: MAILER_ADDRESS,
               to: user.email,
-              subject: `[KB]New Comment by ${user.name} - ${commentedArticle.title} `,
-              html: parseMarkdown(`${getArticleLinkMarkdown(articleId)}<br />${comment.content}`),
+              subject: `[KB New Comment] ${commentedArticle.title} `,
+              html: parseMarkdown(generateEmailMarkdown({
+                to: commentedArticle.author.name,
+                beginning: `${user.name} commented your document on KB.`,
+                url: getArticleLink(articleId),
+                title: commentedArticle.title,
+                content: comment.content
+              })),
               cc: [commentedArticle.author.email, ...(commentedArticle.reportTo.map((emailName) => `${emailName}@a10networks.com`))]
             });
           }
@@ -161,8 +168,14 @@ const CommentMutation = {
           await transporter.sendMail({
             from: MAILER_ADDRESS,
             to: user.email,
-            subject: `[KB]Updated Comment by ${user.name} - ${commentedArticle.title} `,
-            html: parseMarkdown(`${getArticleLinkMarkdown(articleId)}<br />${comment.content}`),
+            subject: `[KB - Updated Comment] ${commentedArticle.title} `,
+            html: parseMarkdown(generateEmailMarkdown({
+              to: commentedArticle.author.name,
+              beginning: `${user.name} update a comment on your document on KB.`,
+              url: getArticleLink(articleId),
+              title: commentedArticle.title,
+              content: comment.content
+            })),
             cc: [commentedArticle.author.email, ...(commentedArticle.reportTo.map((emailName) => `${emailName}@a10networks.com`))]
           });
         }

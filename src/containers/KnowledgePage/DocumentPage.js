@@ -174,7 +174,7 @@ class DocumentPage extends Component {
   }
 
   render() {
-    const PAGE_SIZE = 5;
+    const PAGE_SIZE = 20;
     const {
       allUsers,
       allMilestones,

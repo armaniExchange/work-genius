@@ -15,6 +15,7 @@ import { DB_HOST, DB_PORT, MAILER_ADDRESS } from '../../constants/configurations
 import { deleteFile } from '../File/FileMutation';
 import { getArticleDetail } from './ArticleQuery';
 import { SERVER_HOST } from '../../../src/constants/config';
+import generateEmailMarkdown from '../../libraries/generateEmailMarkdown';
 import parseMarkdown from '../../libraries/parseMarkdown';
 
 const parseArticle = (article) => {
@@ -45,8 +46,8 @@ const parseArticle = (article) => {
   return result;
 };
 
-export const getArticleLinkMarkdown = (articleId) => {
-  return `[View on Knowledge Base](http://${SERVER_HOST}/main/knowledge/document/${articleId})`;
+export const getArticleLink = (articleId) => {
+  return `http://${SERVER_HOST}/main/knowledge/document/${articleId}`;
 };
 
 const ArticleMutation = {
@@ -137,8 +138,14 @@ const ArticleMutation = {
           await transporter.sendMail({
             from: MAILER_ADDRESS,
             to: user.email,
-            subject: `[KB]New Article by ${user.name} - ${result.title}`,
-            html: parseMarkdown(`${getArticleLinkMarkdown(id)}<br />${result.content}`),
+            subject: `[KB - New Document] ${result.title}`,
+            html: parseMarkdown(generateEmailMarkdown({
+              to: 'teams',
+              beginning: `Thanks ${user.name} for sharing the knowledge on KB.`,
+              url: getArticleLink(id),
+              title: result.title,
+              content: result.content
+            })),
             cc: result.reportTo.map((emailName) => `${emailName}@a10networks.com`)
           });
 
@@ -189,8 +196,14 @@ const ArticleMutation = {
           await transporter.sendMail({
             from: MAILER_ADDRESS,
             to: user.email,
-            subject: `[KB]Update Article by ${user.name} - ${result.title}`,
-            html: parseMarkdown(`${getArticleLinkMarkdown(result.id)}<br />${result.content}`),
+            subject: `[KB - Updated Document] ${result.title}`,
+            html: parseMarkdown(generateEmailMarkdown({
+              to: 'teams',
+              beginning: `Thanks ${user.name} for sharing the knowledge on KB.`,
+              title: result.title,
+              url: getArticleLink(result.id),
+              content: result.content
+            })),
             cc: result.reportTo.map((emailName) => `${emailName}@a10networks.com`)
           });
         }
