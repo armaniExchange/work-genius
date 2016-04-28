@@ -159,18 +159,24 @@ export default class SearchSection extends Component {
         </div>
         <div className="search-section__footer">
           <div className="search-section__footer--article" style={articleFootStyle}>
-            <Pagination onChange={(selected, b, c)=>{
+            <Pagination onChange={(selected)=>{
               searchArticle(searchKeyword, pagesize, (selected-1)*pagesize);
             }} pageSize={pagesize} current={articleCurPage} total={articleTotal} />            
           </div>
           <div className="search-section__footer--file" style={fileFootStyle}>
-            <Pagination onChange={this._onClickFilePaginate} pageSize={pagesize} current={fileCurPage} total={fileTotal} />
+            <Pagination onChange={(selected)=>{
+              searchFile(searchKeyword, pagesize, (selected-1)*pagesize);
+            }} pageSize={pagesize} current={fileCurPage} total={fileTotal} />
           </div>
           <div className="search-section__footer--worklog" style={worklogFootStyle}>
-            <Pagination onChange={this._onClickWorklogPaginate} pageSize={pagesize} current={worklogCurPage} total={worklogTotal} />
+            <Pagination onChange={(selected)=>{
+              searchWorklog(searchKeyword, pagesize, (selected-1)*pagesize);
+            }} pageSize={pagesize} current={worklogCurPage} total={worklogTotal} />
           </div>
           <div className="search-section__footer--comment" style={commentFootStyle}>
-            <Pagination onChange={this._onClickCommentPaginate} pageSize={pagesize} current={commentCurPage} total={commentTotal} />
+            <Pagination onChange={(selected)=>{
+              searchComment(searchKeyword, pagesize, (selected-1)*pagesize);
+            }} pageSize={pagesize} current={commentCurPage} total={commentTotal} />
           </div>
         </div>
       </section>

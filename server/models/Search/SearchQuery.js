@@ -5,12 +5,17 @@ const ES_HOST = '192.168.95.138:9200'
 const ES_INDEX = 'kb';
 const ES_TYPE_ARTICLES = 'articles';
 const ES_TYPE_FILES = 'files';
+const ES_TYPE_WORKLOGS = 'worklog';
+const ES_TYPE_COMMENTS = 'comments';
+const ES_TYPE_BUGTRACKINGS = 'bug_tracking';
 
 let elasticsearch = require('elasticsearch');
 let client = new elasticsearch.Client({
   host: ES_HOST
   //, log: 'trace'
 });
+
+const VALID_FROM_SIZE_REGEXP = /^[0-9]+$/;
 
 let KbElastic = {
   // _decorateFromSize: (searchObj, _from, _size) => {
@@ -19,7 +24,7 @@ let KbElastic = {
   //   })
   // },
   isValidFromSize: (val) => {
-    return /^[0-9]+$/.exec(val+'');
+    return VALID_FROM_SIZE_REGEXP.exec(val+'');
   },
   getSearchObj: (opt) => {
     let obj = {
@@ -69,6 +74,30 @@ let FileElastic = {
     return KbElastic.jsonResult(ret);
   }
 };
+let WorklogElastic = {
+  search: async (q, opt={}) => {
+    opt.typeName = ES_TYPE_WORKLOGS;
+    opt.q = q;
+    let ret = await client.search(KbElastic.getSearchObj(opt));
+    return KbElastic.jsonResult(ret);
+  }
+};
+let CommentElastic = {
+  search: async (q, opt={}) => {
+    opt.typeName = ES_TYPE_COMMENTS;
+    opt.q = q;
+    let ret = await client.search(KbElastic.getSearchObj(opt));
+    return KbElastic.jsonResult(ret);
+  }
+};
+let BugtrackingElastic = {
+  search: async (q, opt={}) => {
+    opt.typeName = ES_TYPE_BUGTRACKINGS;
+    opt.q = q;
+    let ret = await client.search(KbElastic.getSearchObj(opt));
+    return KbElastic.jsonResult(ret);
+  }
+};
 
 let responseSearch = async (req, res, searchMethod) => {
   let searchq = req.query && req.query.searchq;
@@ -95,6 +124,15 @@ export const searchArticleHandler = async (req, res) => {
 };
 export const searchFileHandler = async (req, res) => {
   responseSearch(req, res, FileElastic.search);
+};
+export const searchWorklogHandler = async (req, res) => {
+  responseSearch(req, res, WorklogElastic.search);
+};
+export const searchCommentHandler = async (req, res) => {
+  responseSearch(req, res, CommentElastic.search);
+};
+export const searchBugtrackingHandler = async (req, res) => {
+  responseSearch(req, res, BugtrackingElastic.search);
 };
 
 /*

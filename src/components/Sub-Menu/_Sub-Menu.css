@@ -15,6 +15,7 @@
         width: 60vw;
         background: #f5f5f5;
         z-index:99;
+        box-shadow: 0 5px 6px #eee;
         .search-section{
             width: 95%;
             margin:auto;
