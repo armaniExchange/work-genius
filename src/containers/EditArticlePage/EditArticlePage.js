@@ -71,6 +71,18 @@ class EditArticlePage extends Component {
     return this.props.params.articleId === 'new';
   }
 
+  ValidateForm(){
+    const {
+      editingTitle,
+      editingCategoryId,
+      editingContent
+    } = this.state;
+    const isValid = !!editingTitle.trim() && !!editingCategoryId && !!editingContent.trim();
+    this.setState({
+      isArticleFormValid: isValid
+    });
+  }
+
   getEditingStateFromProps(props) {
     const {
       title,
@@ -102,12 +114,19 @@ class EditArticlePage extends Component {
   }
 
   onContentChange(newContent) {
-    this.setState({ editingContent: newContent});
+    this.setState(
+      {
+        editingContent: newContent
+      }, () => {
+        ::this.ValidateForm();
+      });
   }
 
   onTitleChange(event){
     this.setState({
       editingTitle: event.target.value
+    }, () => {
+      ::this.ValidateForm();
     });
   }
 
@@ -120,6 +139,8 @@ class EditArticlePage extends Component {
   onCategoryIdChange(path) {
     this.setState({
       editingCategoryId: path
+    }, () => {
+      ::this.ValidateForm();
     });
   }
 
@@ -207,10 +228,6 @@ class EditArticlePage extends Component {
       return [categories];
     }
     return categories.children.reduce((result, next) => result.concat(this._transformFromTree(next)), []);
-  }
-
-  onValidFormChange (isArticleFormValid) {
-    this.setState({isArticleFormValid});
   }
 
   onSubmit() {
@@ -303,7 +320,6 @@ class EditArticlePage extends Component {
             onPriorityChange={::this.onPriorityChange}
             onMilestoneChange={::this.onMilestoneChange}
             onReportToChange={::this.onReportToChange}
-            onValidFormChange ={::this.onValidFormChange }
           />
         </div>
         {
