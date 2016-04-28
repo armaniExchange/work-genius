@@ -20,6 +20,9 @@ import * as DocumentActions from '../../actions/document-page-actions';
 
 import CategoryRow from '../../components/CategoryRow/CategoryRow';
 
+import Breadcrumb from '../../components/A10-UI/Breadcrumb';
+import BREADCRUMB from '../../constants/breadcrumb';
+
 
 class EditDocumentCategoryPage extends Component {
 
@@ -67,6 +70,7 @@ class EditDocumentCategoryPage extends Component {
     const { documentCategories } = this.props;
     return (
       <div>
+        <Breadcrumb data={BREADCRUMB.editDocumentCategory} />
         <h3>Knowledge Tree</h3>
         {
           displayTree.map(row => {

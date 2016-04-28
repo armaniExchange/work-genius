@@ -7,6 +7,7 @@ let BREADCRUMB = {
   knowledge: [{txt:'Document', url: BASE_URL + '/knowledge/document'}],
   document: [{txt:'Document', url: BASE_URL + '/knowledge/document'}],
   bugtracking: [{txt:'Bug Tracking', url: BASE_URL + '/knowledge/bug-tracking'}],
+  editDocumentCategory: [{txt:'Edit Category', url: BASE_URL + '/knowledge/document/category/edit'}],
 
   resource: [{txt:'Resources', url: BASE_URL + '/resource/resource-map'}],
   resourcemap: [{txt:'Resource Map', url: BASE_URL + '/resource/resource-map'}],
@@ -29,6 +30,7 @@ let BREADCRUMB = {
 // chain
 BREADCRUMB.document = BREADCRUMB.knowledge.concat(BREADCRUMB.document);
 BREADCRUMB.bugtracking = BREADCRUMB.knowledge.concat(BREADCRUMB.bugtracking);
+BREADCRUMB.editDocumentCategory = BREADCRUMB.knowledge.concat(BREADCRUMB.editDocumentCategory);
 
 BREADCRUMB.resourcemap = BREADCRUMB.resource.concat(BREADCRUMB.resourcemap);
 BREADCRUMB.teammember = BREADCRUMB.resource.concat(BREADCRUMB.teammember);

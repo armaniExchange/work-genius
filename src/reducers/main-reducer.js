@@ -36,6 +36,10 @@ const initialState = Map({
       {
         name: 'Bug Tracking',
         url: '/main/knowledge/bug-tracking'
+      },
+      {
+        name: 'Edit Category',
+        url: '/main/knowledge/document/category/edit'
       }
     ),
     'Resources': List.of(
