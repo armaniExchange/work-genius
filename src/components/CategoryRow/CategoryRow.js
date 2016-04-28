@@ -1,6 +1,5 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
-// import TableRow from 'material-ui/lib/table/table-row';
 
 // Styles
 import './_CategoryRow.css';
@@ -17,17 +16,23 @@ class CategoryRow extends Component {
     };
   }
 
-  toggleSubCategories() {
+  toggleSubCategories(forceEnable) {
     const {
       id,
       toggleSubCategories
     } = this.props;
-    toggleSubCategories(id);
+    toggleSubCategories({id, forceEnable});
   }
 
   toggleAddSubcategoreis() {
     const { isCreatingSubCategory } = this.state;
-    this.setState({isCreatingSubCategory: !isCreatingSubCategory});
+    if (!isCreatingSubCategory) {
+      this.toggleSubCategories(true);
+    }
+    this.setState({
+      isCreatingSubCategory: !isCreatingSubCategory,
+      editingSubcategoryName: ''
+    });
   }
 
   onNameChange(event) {
@@ -51,7 +56,8 @@ class CategoryRow extends Component {
   saveSubcategory() {
     const { id, onSave } = this.props;
     const { editingSubcategoryName } = this.state;
-    console.log(`save SubCategories parentId:${id} name:${editingSubcategoryName}`);
+    this.setState({isCreatingSubCategory: false});
+    console.log(`save SubCategories id:${this.getNewId()} parentId:${id} name:${editingSubcategoryName}`);
     onSave({
       id: this.getNewId(),
       parentId: id,
@@ -62,6 +68,7 @@ class CategoryRow extends Component {
   save() {
     const { id, parentId, onSave } = this.props;
     const { editingName } = this.state;
+    this.setState({isEditing: false});
     console.log(`save category id:${id} parentId:${parentId} name:${editingName}`);
     onSave({
       id,
@@ -120,7 +127,9 @@ class CategoryRow extends Component {
         &nbsp;&nbsp;|&nbsp;&nbsp;
         <a href="#" onClick={::this.toggleAddSubcategoreis}>Add SubCategories</a>
         &nbsp;&nbsp;|&nbsp;&nbsp;
-        <a href="#" onClick={::this.onDelete}>Delete</a>
+        {
+          !hasSubCategories ? <a href="#" onClick={::this.onDelete}>Delete</a> : null
+        }
       </div>
     );
     const CreatingSubCategory = (
