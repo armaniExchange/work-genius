@@ -7,38 +7,29 @@ import './_CategoryRow.css';
 
 class CategoryRow extends Component {
 
-  toggleChildren() {
+  toggleSubCategories() {
     const {
       id,
-      children,
-      level,
-      isDisplayChildren,
-      toggleChildren,
+      toggleSubCategories
     } = this.props;
-    const hasChildren = children && children.length > 0;
-    if (!hasChildren) {
-      return;
-    }
-    toggleChildren({
-      id,
-      children,
-      level,
-      isDisplayChildren: !isDisplayChildren
-    });
+    toggleSubCategories({ id });
   }
 
   render() {
     const {
       id,
       name,
-      children,
-      isDisplayChildren
+      level,
+      expand,
+      subCategories
     } = this.props;
-    const hasChildren = children && children.length > 0;
+    const hasSubCategories = subCategories && subCategories.length > 0;
+    const indicator = !hasSubCategories ? ' ' : (
+      expand ? '+' : '-'
+    );
     return (
-      <div onClick={::this.toggleChildren}>
-
-        {`isDisplayChildren: ${JSON.stringify(isDisplayChildren)}, id:${id}, name: ${name}, hasChildren:${JSON.stringify(hasChildren)}`}
+      <div onClick={::this.toggleSubCategories} style={{paddingLeft: level * 10}}>
+        {`${indicator} id:${id}, name: ${name} `}
       </div>
     );
   }
@@ -48,18 +39,15 @@ CategoryRow.propTypes = {
   id: PropTypes.string,
   parentId: PropTypes.string,
   name: PropTypes.string,
-  children: PropTypes.array,
-  isDisplayChildren: PropTypes.bool,
   level: PropTypes.number,
-  toggleChildren: PropTypes.func
-  // user              : PropTypes.object.isRequired
+  expand: PropTypes.bool,
+  toggleSubCategories: PropTypes.func,
+  subCategories: PropTypes.object
 };
 
 CategoryRow.defaultProps = {
-  // id                : '',
-  isDisplayChildren: false,
-  children: [],
-  level: 0
+  level: 0,
+  expand: false,
 };
 
 export default CategoryRow;
