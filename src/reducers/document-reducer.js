@@ -12,6 +12,15 @@ import _ from 'lodash';
 
 _.merge(MENU, TECH_MENU);
 
+function countArticles(node) {
+    if (!node || !node.subCategories) {
+        return node.articlesCount || 0;
+    }
+    return node.subCategories.reduce((acc, nextNode) => {
+        return acc + countArticles(nextNode);
+    }, 0);
+}
+
 function generateTree(dataArr, root) {
     let subTree, directChildren, subDataArr;
     if (!root || Object.keys(root).length === 0) {
@@ -21,7 +30,9 @@ function generateTree(dataArr, root) {
         return {
             id: root.id,
             name: root.name,
-            subCategories: []
+            parentId: root.parentId,
+            subCategories: [],
+            articlesCount: countArticles(subTree)
         };
     }
     directChildren = dataArr.filter((node) => { return node.parentId === root.id; });
@@ -32,7 +43,9 @@ function generateTree(dataArr, root) {
     return {
         id: root.id,
         name: root.name,
-        subCategories: subTree
+        parentId: root.parentId,
+        subCategories: subTree,
+        articlesCount: countArticles(subTree)
     };
 };
 
@@ -112,6 +125,7 @@ const initialState = Map({
   articleTotalCount: 0,
   allCategories: Map(enhanceMenu(MENU, {})),
   documentCategories: Map({}),
+  documentCategoriesLength: 0,
   currentSelectedCategory: Map({}),
   allTags: List.of(),
   allUsers: List.of(),
@@ -158,7 +172,8 @@ export default function documentReducer(state = initialState, action) {
     case actionTypes.FETCH_ALL_USERS_SUCCESS:
       return state.set('allUsers', fromJS(action.allUsers));
     case actionTypes.FETCH_DOCUMENT_CATEGORIES_SUCCESS:
-      return state.set('documentCategories', fromJS(transformToTree(action.data)));
+      console.log(transformToTree(action.data));
+      return state.set('documentCategoriesLength', action.data.length).set('documentCategories', fromJS(transformToTree(action.data)));
     case actionTypes.FETCH_ALL_MILESTONES_SUCCESS:
       return state.set('allMilestones', action.allMilestones);
     case actionTypes.UPDATE_ARTICLES_QUERY:
