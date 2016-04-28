@@ -57,7 +57,6 @@ class CategoryRow extends Component {
     const { id, onSave } = this.props;
     const { editingChildName } = this.state;
     this.setState({isCreatingChild: false});
-    console.log(`save children id:${this.getNewId()} parentId:${id} name:${editingChildName}`);
     onSave({
       id: this.getNewId(),
       parentId: id,
@@ -69,7 +68,6 @@ class CategoryRow extends Component {
     const { id, parentId, onSave } = this.props;
     const { editingName } = this.state;
     this.setState({isEditing: false});
-    console.log(`save category id:${id} parentId:${parentId} name:${editingName}`);
     onSave({
       id,
       parentId,
@@ -79,7 +77,6 @@ class CategoryRow extends Component {
 
   onRemove() {
     const { id, onRemove } = this.props;
-    console.log(`Delete category id:${id}`);
     onRemove(id);
   }
 
