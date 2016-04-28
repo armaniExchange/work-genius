@@ -5,9 +5,13 @@ import actionTypes from '../constants/action-types';
 import { SERVER_SEARCH_API_URL } from '../constants/config';
 import { apiFailure } from './app-actions';
 
-export function searchArticleSuccess(hits, total, size, _from, searchq){
+/**
+* common base code
+*/
+let searchSuccess = (succType,
+  hits, total, size, _from, searchq) => {
   return {
-    type: actionTypes.SEARCH_ARTICLE_SUCCESS,
+    type: succType,
     hits,
     total,
     size: size,
@@ -15,8 +19,33 @@ export function searchArticleSuccess(hits, total, size, _from, searchq){
     searchq
   };
 };
+export function searchArticleSuccess(hits, total, size, _from, searchq){
+  return searchSuccess(actionTypes.SEARCH_ARTICLE_SUCCESS,
+    hits, total, size, _from, searchq);
+};
+export function searchFileSuccess(hits, total, size, _from, searchq){
+  return searchSuccess(actionTypes.SEARCH_FILE_SUCCESS,
+    hits, total, size, _from, searchq);
+};
+export function searchWorklogSuccess(hits, total, size, _from, searchq){
+  return searchSuccess(actionTypes.SEARCH_WORKLOG_SUCCESS,
+    hits, total, size, _from, searchq);
+};
+export function searchCommentSuccess(hits, total, size, _from, searchq){
+  return searchSuccess(actionTypes.SEARCH_COMMENT_SUCCESS,
+    hits, total, size, _from, searchq);
+};
+export function searchBugtrackingSuccess(hits, total, size, _from, searchq){
+  return searchSuccess(actionTypes.SEARCH_BUGTRACKING_SUCCESS,
+    hits, total, size, _from, searchq);
+};
 
-export function searchArticle(searchq, size=undefined, _from=undefined) {
+/**
+* common base func
+*/
+let search = (searchfor, 
+  searchq, size, _from) => {
+  // searchfor: ARTICLE FILE COMMENT WORKLOG BUGTRACKING
   return (dispatch) => {
     let config = {
       method: 'GET',
@@ -26,7 +55,7 @@ export function searchArticle(searchq, size=undefined, _from=undefined) {
       }
     };
     let url = SERVER_SEARCH_API_URL;
-    url += `?searchfor=ARTICLE&searchq=${searchq}`;
+    url += `?searchfor=${searchfor}&searchq=${searchq}`;
 
     if (size!==undefined) {
       url += '&count=' + size;
@@ -34,20 +63,60 @@ export function searchArticle(searchq, size=undefined, _from=undefined) {
     if (_from!==undefined) {
       url += '&start=' + _from;
     }
-
+    console.warn(size, _from, url);
     return fetch(url, config)
       .then((res) => res.json())
       .then((body) => {
         console.warn(body);
         let data = body.data;
-        dispatch(searchArticleSuccess(
+        switch (searchfor) {
+          case 'ARTICLE':
+          dispatch(searchArticleSuccess(
           data.hits, data.total, data.size, data.from, 
           searchq));
+          break;
+          case 'FILE':
+          dispatch(searchFileSuccess(
+          data.hits, data.total, data.size, data.from, 
+          searchq));
+          break;
+          case 'WORKLOG':
+          dispatch(searchWorklogSuccess(
+          data.hits, data.total, data.size, data.from, 
+          searchq));
+          break;
+          case 'COMMENT':
+          dispatch(searchCommentSuccess(
+          data.hits, data.total, data.size, data.from, 
+          searchq));
+          break;
+          case 'BUGTRACKING':
+          dispatch(searchBugtrackingSuccess(
+          data.hits, data.total, data.size, data.from, 
+          searchq));
+          break;
+        }
       })
       .catch((err) => {
         dispatch(apiFailure(err));
       });
   };
+};
+
+export function searchArticle(searchq, size=undefined, _from=undefined) {
+  return search('ARTICLE', searchq, size, _from);
+};
+export function searchFile(searchq, size=undefined, _from=undefined) {
+  return search('FILE', searchq, size, _from);
+};
+export function searchWorklog(searchq, size=undefined, _from=undefined) {
+  return search('WORKLOG', searchq, size, _from);
+};
+export function searchComment(searchq, size=undefined, _from=undefined) {
+  return search('COMMENT', searchq, size, _from);
+};
+export function searchBugtracking(searchq, size=undefined, _from=undefined) {
+  return search('BUGTRACKING', searchq, size, _from);
 };
 
 // Actions

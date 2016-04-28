@@ -18,6 +18,7 @@ export default keyMirror({
     SEARCH_FILE_SUCCESS: null,
     SEARCH_WORKLOG_SUCCESS: null,
     SEARCH_COMMENT_SUCCESS: null,
+    SEARCH_BUGTRACKING_SUCCESS: null,
 
     // Task page actions
     SORT_FEATURE_TABLE_BY_CATEGORY: null,
