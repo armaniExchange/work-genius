@@ -6,7 +6,7 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // Actions
-import * as SearchPageActions from '../../actions/search-page-actions';
+import * as SearchPageActions from '../../actions/search-actions';
 
 import SearchSection from '../../components/SearchSection/SearchSection';
 

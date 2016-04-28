@@ -7,6 +7,8 @@ import TextField from 'material-ui/lib/text-field';
 import { Link } from 'react-router';
 import { ROOT_URL } from '../../constants/app';
 
+import SearchSection from '../SearchSection/SearchSection';
+
 class SubMenu extends Component {
 	render () {
 		const { data, headerTitle } = this.props;
@@ -38,8 +40,10 @@ class SubMenu extends Component {
             <TextField
               hintText="Search..." />
             <i className="material-icons" title="Search">search</i>
+            <div className="search-box__result">
+              <SearchSection {...this.props} />
+            </div>
           </div>
-
 			    </div>
 			</header>
 		);

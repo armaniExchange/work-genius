@@ -7,7 +7,31 @@
         float: right;
         margin: 14px 0 0;
     }
+    &__result{
+        position: absolute;
+        right: 0;
+        display: block; /*change to none before go live*/
+        border: 3px solid #666;
+        width: 60vw;
+        background: #eee;
+        z-index:99;
+    }
+    &:hover {
+        .search-box__result {
+            display: block;
+        }
+    }
 }
+
+.search-section-row{
+    list-style-type: none;
+}
+.search-section-row h4{
+    font-weight: bold;
+    font-size:15px;
+    margin:10px 0 0;
+}
+
 
 .mdl-navigation__link__tag--active{
     font-weight: bold;
