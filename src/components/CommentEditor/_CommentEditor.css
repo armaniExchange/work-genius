@@ -3,6 +3,11 @@
     .content {
       .message {
         padding: 20px;
+        .component-editor {
+          .CodeMirror {
+            height: 100px;
+          }
+        }
       }
     }
   }

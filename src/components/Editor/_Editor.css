@@ -16,11 +16,11 @@
     border: 1px solid lightgray;
     background: none;
     overflow: hidden;
-    position: relative; 
-    min-height: 200px;
+    position: relative;
+    min-height: 100px;
   }
   .component-edit-panel {
-    padding: 10px;
+
   }
   .component-preview-panel {
     padding: 20px;
@@ -36,5 +36,9 @@
     border-bottom: none;
     justify-content: flex-start;
     padding-left: 10px;
+  }
+  .CodeMirror {
+    height: 400px;
+    padding: 10px;
   }
 }

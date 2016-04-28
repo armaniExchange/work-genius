@@ -49,7 +49,6 @@ class Editor extends Component {
       onChange,
       options,
       placeholder,
-      height
     } = this.props;
     const {
       editorId,
@@ -58,7 +57,7 @@ class Editor extends Component {
     return (
       <div id={`editor-${editorId}`} className="mdl-tabs mdl-js-tabs mdl-js-ripple-effect component-editor">
         <div className="mdl-tabs__tab-bar">
-          <a href={`#-${editorId}-edit-panel`}
+          <a href={`#${editorId}-edit-panel`}
             onClick={::this.onEditPanelButtonClick}
             className={`mdl-tabs__tab is-active ${editorId}-edit-edit-button`}>
             Edit
@@ -74,8 +73,7 @@ class Editor extends Component {
             Help
           </a>
         </div>
-        <div id={`-${editorId}-edit-panel`}
-          style={{height}}
+        <div id={`${editorId}-edit-panel`}
           className="mdl-tabs__panel is-active component-edit-panel is-active">
             <Codemirror
               options={options}
@@ -100,14 +98,12 @@ Editor.propTypes = {
   value                : PropTypes.string.isRequired,
   options              : PropTypes.object,
   onChange             : PropTypes.func.isRequired,
-  placeholder          : PropTypes.string,
-  height               : PropTypes.number
+  placeholder          : PropTypes.string
 };
 
 Editor.defaultProps = {
   value                : '',
-  options              : { mode: 'gfm' },
-  height               : 200
+  options              : { mode: 'gfm' }
 };
 
 export default Editor;

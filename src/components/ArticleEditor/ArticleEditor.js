@@ -196,9 +196,7 @@ class ArticleEditor extends Component {
           <span>&nbsp;&nbsp;*</span>
           {enableContentError && !content.trim() && <span> This field is required</span>}
         </small>
-
         <Editor
-          height={400}
           value={content}
           onChange={::this.onContentChange} />
         <br />
