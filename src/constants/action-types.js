@@ -123,6 +123,8 @@ export default keyMirror({
     UPDATE_ARTICLES_QUERY: null,
     FETCH_DOCUMENT_CATEGORIES_SUCCESS: null,
     FETCH_DOCUMENT_CATEGORIES: null,
+    UPSERT_DOCUMENT_CATEGORIES: null,
+    DELETE_DOCUMENT_CATEGORIES: null,
 
     // Feature analysis page actions
     CHANGE_ASSIGNMENT_CATEGORY_UPDATE_MSG_OPACITY: null,

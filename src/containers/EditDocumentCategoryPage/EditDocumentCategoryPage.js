@@ -25,13 +25,21 @@ class EditDocumentCategoryPage extends Component {
 
   constructor(props) {
     super(props);
+    this._counter = 0;
     const initDisplayTree = props.data.children;
     this.state = { displayTree: initDisplayTree };
   }
 
   componentDidMount() {
     this.props.documentActions.fetchDocumentCategories();
+  }
 
+  _onSaveHandler(newData) {
+      this.props.documentActions.upsertDocumentCategory(newData);
+  }
+
+  _onDeleteHandler(id) {
+      this.props.documentActions.deleteDocumentCategory(id);
   }
 
   toggleChildren({id, level, isDisplayChildren, children}) {
@@ -57,7 +65,6 @@ class EditDocumentCategoryPage extends Component {
       displayTree
     } = this.state;
     const { documentCategories } = this.props;
-    console.log(documentCategories);
     return (
       <div>
         <h3>Knowledge Tree</h3>
@@ -95,7 +102,24 @@ class EditDocumentCategoryPage extends Component {
           </Table>
            */
         }
-
+        <div>{JSON.stringify(documentCategories, undefined, 4)}</div>
+        <button
+          onClick={() => {
+            this._counter += 1;
+            ::this._onSaveHandler({
+              id: '998', // THIS HAS TO BE STRING
+              parentId: '2', // THIS HAS TO BE STRING
+              name: `Test ${this._counter}`
+            });
+          }}>
+          Save
+        </button>
+        <button
+          onClick={() => {
+            ::this._onDeleteHandler(998); // THIS CAN BE NUMBER OR STRING
+          }}>
+          Delete
+        </button>
       </div>
     );
   }

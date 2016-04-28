@@ -339,3 +339,70 @@ export function fetchDocumentCategories() {
       });
   };
 }
+
+
+export function upsertDocumentCategory(data) {
+  return dispatch => {
+    dispatch(setLoadingState(true));
+    dispatch({
+      type: actionTypes.UPSERT_DOCUMENT_CATEGORIES
+    });
+    const config = {
+      method: 'POST',
+      body: `mutation RootMutationType {
+        upsertDocumentCategory(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+      }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then(() => {
+        dispatch(fetchDocumentCategories());
+      })
+      .catch((error) => {
+        dispatch(setLoadingState(false));
+        dispatch(apiFailure(error));
+      });
+  };
+}
+
+export function deleteDocumentCategory(id) {
+  return dispatch => {
+    dispatch(setLoadingState(true));
+    dispatch({
+      type: actionTypes.DELETE_DOCUMENT_CATEGORIES
+    });
+    const config = {
+      method: 'POST',
+      body: `mutation RootMutationType {
+        deleteDocumentCategory(id:"${id}")
+      }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then(() => {
+        dispatch(fetchDocumentCategories());
+      })
+      .catch((error) => {
+        dispatch(setLoadingState(false));
+        dispatch(apiFailure(error));
+      });
+  };
+}
