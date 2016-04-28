@@ -115,9 +115,15 @@ class CategoryRow extends Component {
         </span>
         <span className="article-number">{articlesCount}</span>
         <span className="action">
-          <a href="#" onClick={::this.toggleEdit}>Cancel</a>
+          <a href="#" onClick={::this.save}>
+            <i className="fa fa-check" ariaHidden="true" />
+            &nbsp;Save
+          </a>
           &nbsp;&nbsp;|&nbsp;&nbsp;
-          <a href="#" onClick={::this.save}>Save</a>
+          <a href="#" onClick={::this.toggleEdit}>
+            <i className="fa fa-times" ariaHidden="true" />
+            &nbsp;Cancel
+          </a>
         </span>
       </div>
     );
@@ -128,17 +134,27 @@ class CategoryRow extends Component {
         </span>
         <span className="article-number">{articlesCount}</span>
         <span className="action">
-          <a href="#" onClick={::this.toggleAddSubcategoreis}>+ Add Child</a>{
+          <a href="#" onClick={::this.toggleAddSubcategoreis}>
+            <i className="fa fa-plus" ariaHidden="true" />
+            &nbsp;Add Child
+          </a>
+          {
             !isRoot ? [
               <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>,,
-              <a href="#" onClick={::this.toggleEdit}>Edit</a>
+              <a href="#" onClick={::this.toggleEdit}>
+                <i className="fa fa-pencil" ariaHidden="true" />
+                &nbsp;Edit
+              </a>
             ]: null
           }
 
           {
             !isRoot && !hasChildren ? [
               <span> &nbsp;&nbsp;|&nbsp;&nbsp;</span>,
-              <a href="#" onClick={::this.onRemove}>Remove</a>
+              <a href="#" onClick={::this.onRemove}>
+                <i className="fa fa-trash-o" ariaHidden="true" />
+                &nbsp;Remove
+              </a>
             ] : null
           }
         </span>
@@ -158,9 +174,15 @@ class CategoryRow extends Component {
           </span>
           <span className="article-number">{articlesCount}</span>
           <span className="action">
-            <a href="#" onClick={::this.toggleAddSubcategoreis}>Cancel</a>
+            <a href="#" onClick={::this.saveSubcategory}>
+              <i className="fa fa-check" ariaHidden="true" />
+              &nbsp;Add
+            </a>
             &nbsp;&nbsp;|&nbsp;&nbsp;
-            <a href="#" onClick={::this.saveSubcategory}>Add</a>
+            <a href="#" onClick={::this.toggleAddSubcategoreis}>
+              <i className="fa fa-times" ariaHidden="true" />
+              &nbsp;Cancel
+            </a>
           </span>
         </div>
       </div>

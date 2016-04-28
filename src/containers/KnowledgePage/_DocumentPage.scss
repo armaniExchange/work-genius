@@ -1,11 +1,15 @@
 .document-page-content {
   padding-left: 340px;
   .knowledge-tree-label {
-    h5, a {
-      display: inline-block;
-    }
+    position: relative;
     a {
-      margin-left: 10px;
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      color: #00bcd4;
+      &:hover,&:focus {
+        color: #23527c
+      }
     }
   }
   .left-navigation {

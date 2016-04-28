@@ -60,5 +60,10 @@
     }
 
   }
-
+  a {
+    color: #00bcd4;
+    &:hover,&:focus {
+      color: #23527c
+    }
+  }
 }

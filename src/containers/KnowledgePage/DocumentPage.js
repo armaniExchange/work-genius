@@ -212,7 +212,7 @@ class DocumentPage extends Component {
             <div className="knowledge-tree-label">
               <h5>KNOWLEDGE TREE</h5>
               <Link to="/main/knowledge/document/category/edit">
-                Edit
+                <i className="fa fa-pencil" ariaHidden="true" />
               </Link>
             </div>
             <CategoryTree
