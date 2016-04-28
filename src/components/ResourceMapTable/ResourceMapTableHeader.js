@@ -5,38 +5,16 @@ import React, { Component, PropTypes } from 'react';
 import Th from '../A10-UI/Table/Th';
 import moment from 'moment';
 
-const dateFormate = function(date, fmt)
-  { //author: meizz
-    var o = {
-      'M+' : date.getMonth()+1,                 //月份
-      'd+' : date.getDate(),                    //日
-      'h+' : date.getHours(),                   //小时
-      'm+' : date.getMinutes(),                 //分
-      's+' : date.getSeconds(),                 //秒
-      'q+' : Math.floor((date.getMonth()+3)/3), //季度
-      'S'  : date.getMilliseconds()             //毫秒
-    };
-    if (/(y+)/.test(fmt)) {
-      fmt=fmt.replace(RegExp.$1, (date.getFullYear()+'').substr(4 - RegExp.$1.length));
-    }
-    for (var k in o) {
-      if (new RegExp('('+ k +')').test(fmt)) {
-	    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length===1) ? (o[k]) : (('00'+ o[k]).substr(('' + o[k]).length)));
-	  }
-	}
-    return fmt;
-  };
-
-const getDateList = function (startDate, totalDays, format){
-  var start = new Date(startDate);
+const getDateList = function (startDate, totalDays) {
+  var start = moment(startDate);
   var results = [];
-  start.setDate(start.getDate() - 1);
   for (var i = 0; i < totalDays; i ++) {
     let pre = {};
-    start.setDate(start.getDate() + 1);
-    pre.date = dateFormate(start, format);
-    pre.day = start.getDay();
+    pre.date = start.format('YYYY-MM-DD');
+    pre.format = start.format('M/D');
+    pre.day = start.isoWeekday();
     results.push(pre);
+    start.add(1, 'days');
   }
   return results;
 };
@@ -50,13 +28,10 @@ class ResourceMapTableHeader extends Component {
 			totalDays
 		} = this.props;
 
-		var dateList = getDateList(startDate, totalDays, 'yyyy-MM-dd');
-
+    var dateList = getDateList(startDate, totalDays);
 		var headerHtml = dateList.map((headerObj, index) => {
       let className = 'table_header_style ';
-      //let date = headerObj.date;
-      let mo = moment(headerObj.date);
-      let day = mo.isoWeekday();
+      let day = headerObj.day;
       if (day === 6 || day === 7) {
         className += 'weekend-style';
       }
@@ -66,7 +41,7 @@ class ResourceMapTableHeader extends Component {
 					key={index}
 					colSpan={1}
 				>
-					{mo.format('M/D')}
+					{headerObj.format}
 				</Th>
 			);
 		});

@@ -27,6 +27,7 @@ class ResourceMapPage extends Component{
 
 	componentWillMount() {
 		let defaultStartDate = moment().isoWeekday(1).format('YYYY-MM-DD');
+        console.log(defaultStartDate);
 		const {
             totalDays,
 			queryResourceMapData,
@@ -81,7 +82,7 @@ class ResourceMapPage extends Component{
                         <label>Date:&nbsp;</label>
                     </div>
                     <div className = "pull-left">
-                        <DatePicker className="option-layout" defaultDate={String(startDate)} placeholder="Start Date" onChange={this._changeStartDate} />
+                        <DatePicker className="option-layout" defaultDate={startDate} placeholder="Start Date" onChange={this._changeStartDate} />
                     </div>
                     <div className = "top-selector pull-left">
                         &nbsp;&nbsp;&nbsp;
