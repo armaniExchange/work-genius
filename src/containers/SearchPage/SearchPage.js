@@ -2,6 +2,7 @@
 import './_SearchPage.css';
 // React & Redux
 import React, { Component, PropTypes } from 'react';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // Actions
@@ -16,6 +17,7 @@ const tabMapping = {
   WORKLOG: {title: 'Worklog'},
   COMMENT: {title: 'Comment'}
 };
+const DOCUMENT_URL_PREFIX = '/main/knowledge/document/';
 
 class SearchPage extends Component {
   render() {
@@ -66,9 +68,11 @@ class SearchPage extends Component {
       <section className="search-section">
         <div className="search-section__header">
           Toggle: <button type="button" onClick={()=>{
-            searchArticle('knowledges');
+            searchArticle('knowledges', pagesize, 0);
           }}>Knowledge</button>
-          <button type="button">Files</button>
+          <button type="button" onClick={()=>{
+
+          }}>Files</button>
         </div>
         <div className="search-section__body">
           {searchResultTitle} Result for "{searchKeyword}":
@@ -79,10 +83,10 @@ class SearchPage extends Component {
               _files = _files || [];
 
               return (<li key={idx} className="search-section-row search-section-row--article">
-                <h4>{item._source.title}</h4>
-                <div>{item._source.updated_at}{' '}{'['+item._source.document_type+']'}</div>
-                <div>{item._source.content}</div>
-                <div>{item._source.author_name}</div>
+                <h4><a href={DOCUMENT_URL_PREFIX + item._source.id}>{item._source.title}</a></h4>
+                <div>{moment(item._source.updated_at).format('YYYY-MM-DD')}{' '}{'['+item._source.document_type+']'}</div>
+                <div style={{background:'#dfdfdf',padding:'9px'}}>{(item._source.content||'').substr(0,300) + '...'}</div>
+                <div>Author: {item._source.author_name}</div>
                 <ul>
                   {_files.map((fileItem,fileIdx)=>{
                     return (<li key={fileIdx} title={fileItem.type}>
@@ -116,7 +120,9 @@ class SearchPage extends Component {
         </div>
         <div className="search-section__footer">
           <div className="search-section__footer--article" style={articleFootStyle}>
-            <Pagination onChange={this._onClickArticlePaginate} pageSize={pagesize} current={articleCurPage} total={articleTotal} />            
+            <Pagination onChange={(selected, b, c)=>{
+              searchArticle(searchKeyword, pagesize, (selected-1)*pagesize);
+            }} pageSize={pagesize} current={articleCurPage} total={articleTotal} />            
           </div>
           <div className="search-section__footer--file" style={fileFootStyle}>
             <Pagination onChange={this._onClickFilePaginate} pageSize={pagesize} current={fileCurPage} total={fileTotal} />
