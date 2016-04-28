@@ -173,10 +173,9 @@ class EditArticlePage extends Component {
 
   onFileUpload(file) {
     const { id, files } = this.props;
-    const { editingContent } = this.state;
     const mdImageSymbol = file.type.includes('image') ? '!' : '';
     this.setState({
-      editingContent: `${editingContent}\n${mdImageSymbol}${this.getUploadingFileMarkdown(file)}`
+      editingContent: this.refs.articleEditor.getValueOfInsertedStringAtCursor(`\n${mdImageSymbol}${this.getUploadingFileMarkdown(file)}`)
     });
     this.props.articleActions.uploadArticleFile({
       articleId: id,
@@ -299,6 +298,7 @@ class EditArticlePage extends Component {
         <h3>{pageTitle}</h3>
         <div className="article-editor-wrapper" style={editorStyle}>
           <ArticleEditor
+            ref="articleEditor"
             title={editingTitle}
             tags={editingTags}
             content={editingContent}

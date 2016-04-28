@@ -29,6 +29,10 @@ class ArticleEditor extends Component {
     };
   }
 
+  getValueOfInsertedStringAtCursor(str) {
+    return this.refs.editor.getValueOfInsertedStringAtCursor(str);
+  }
+
   onFileChange(files) {
     const file = files[0];
     const reader = new FileReader();
@@ -182,6 +186,7 @@ class ArticleEditor extends Component {
           {enableContentError && !content.trim() && <span> This field is required</span>}
         </small>
         <Editor
+          ref="editor"
           value={content}
           onChange={::this.onContentChange} />
         <br />
