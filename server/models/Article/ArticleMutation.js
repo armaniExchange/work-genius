@@ -189,24 +189,6 @@ const ArticleMutation = {
           .run(connection);
 
         await connection.close();
-        const articleKeys = Object.keys(article);
-        if (articleKeys.length === 2 && articleKeys[1] === 'files' || articleKeys[0] === 'files') {
-          // skip update files
-        } else {
-          await transporter.sendMail({
-            from: MAILER_ADDRESS,
-            to: user.email,
-            subject: `[KB - Updated Document] ${result.title}`,
-            html: parseMarkdown(generateEmailMarkdown({
-              to: 'teams',
-              beginning: `Thanks ${user.name} for sharing the knowledge on KB.`,
-              title: result.title,
-              url: getArticleLink(result.id),
-              content: result.content
-            })),
-            cc: result.reportTo.map((emailName) => `${emailName}@a10networks.com`)
-          });
-        }
         return result;
       } catch (err) {
         await connection.close();

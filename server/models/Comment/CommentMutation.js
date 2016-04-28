@@ -158,28 +158,6 @@ const CommentMutation = {
           })
           .run(connection);
 
-        if (articleId) {
-          const commentedArticle = await r.db('work_genius')
-            .table('articles')
-            .get(articleId)
-            .merge(article => {return {author: r.db('work_genius').table('users').get(article('authorId')).default(null)};})
-            .run(connection);
-
-          await transporter.sendMail({
-            from: MAILER_ADDRESS,
-            to: user.email,
-            subject: `[KB - Updated Comment] ${commentedArticle.title} `,
-            html: parseMarkdown(generateEmailMarkdown({
-              to: commentedArticle.author.name,
-              beginning: `${user.name} updated a comment on your document on KB.`,
-              url: getArticleLink(articleId),
-              title: commentedArticle.title,
-              content: comment.content
-            })),
-            cc: [commentedArticle.author.email, ...(commentedArticle.reportTo.map((emailName) => `${emailName}@a10networks.com`))]
-          });
-        }
-
         result = await r.db('work_genius')
           .table('comments')
           .get(comment.id)
