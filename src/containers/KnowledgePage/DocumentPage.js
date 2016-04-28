@@ -33,14 +33,14 @@ class DocumentPage extends Component {
 
   componentWillMount() {
     const {
-      fetchAllCategories,
+      fetchDocumentCategories,
       fetchAllTags,
       fetchAllUsers,
       fetchAllMilestones
     } = this.props.documentActions;
 
     // Todo: find a better way to handle jumpling this page from other page
-    fetchAllCategories();
+    fetchDocumentCategories();
     fetchAllTags();
     fetchAllUsers();
     fetchAllMilestones();
@@ -163,7 +163,7 @@ class DocumentPage extends Component {
     const { documentActions } = this.props;
     documentActions.setSelectedCategory({...item, isLeaf: true});
     this.props.documentActions.updateArticlesQuery({
-      categoryId: item.path || '',
+      categoryId: item.id || '',
       currentPage: 1
     });
     setTimeout(() => this.queryArticles(), 0);
@@ -179,7 +179,7 @@ class DocumentPage extends Component {
       allUsers,
       allMilestones,
       allTags,
-      allCategories,
+      documentCategories,
       articleTotalCount,
       currentSelectedCategory,
       documentType,
@@ -211,7 +211,7 @@ class DocumentPage extends Component {
               value={tag} />
             <h5>KNOWLEDGE TREE</h5>
             <CategoryTree
-              data={allCategories}
+              data={documentCategories}
               selectedPath={currentSelectedCategory.path}
               onNodeClick={::this._onNodeClick}
               onLeafClick={::this._setAndFetchCategory} />
@@ -254,7 +254,7 @@ class DocumentPage extends Component {
 DocumentPage.propTypes = {
   articleList             : PropTypes.array,
   articleTotalCount       : PropTypes.number,
-  allCategories           : PropTypes.object,
+  documentCategories      : PropTypes.object,
   currentSelectedCategory : PropTypes.object,
   allTags                 : PropTypes.array,
   allUsers                : PropTypes.array,
