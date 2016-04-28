@@ -22,7 +22,8 @@ class Editor extends Component {
   constructor(props){
     super(props);
     this.state = {
-      editorId: _.uniqueId('editor-')
+      editorId: _.uniqueId('editor-'),
+      enablePreview: false
     };
   }
 
@@ -34,6 +35,14 @@ class Editor extends Component {
     /*eslint-enable  */
   }
 
+  onEditPanelButtonClick() {
+    this.setState({ enablePreview: false });
+  }
+
+  onPreviewPanelButtonClick() {
+    this.setState({ enablePreview: true });
+  }
+
   render() {
     const {
       value,
@@ -42,15 +51,23 @@ class Editor extends Component {
       placeholder,
       height
     } = this.props;
-    const { editorId } = this.state;
+    const {
+      editorId,
+      enablePreview
+    } = this.state;
     return (
       <div id={`editor-${editorId}`} className="mdl-tabs mdl-js-tabs mdl-js-ripple-effect component-editor">
         <div className="mdl-tabs__tab-bar">
           <a href={`#-${editorId}-edit-panel`}
+            onClick={::this.onEditPanelButtonClick}
             className={`mdl-tabs__tab is-active ${editorId}-edit-edit-button`}>
             Edit
           </a>
-          <a href={`#${editorId}-preview-panel`} className="mdl-tabs__tab">Preview</a>
+          <a href={`#${editorId}-preview-panel`}
+            onClick={::this.onPreviewPanelButtonClick}
+            className="mdl-tabs__tab">
+            Preview
+          </a>
           <a className="help"
             target="_blank"
             href="/main/knowledge/document/markdown-cheatsheet" >
@@ -72,7 +89,7 @@ class Editor extends Component {
             }
         </div>
         <div id={`${editorId}-preview-panel`} className="mdl-tabs__panel component-preview-panel" >
-          <HighlightMarkdown source={value} />
+          {enablePreview ? <HighlightMarkdown source={value} /> : null}
         </div>
       </div>
     );
