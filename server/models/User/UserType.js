@@ -121,6 +121,10 @@ let UserType = new GraphQLObjectType({
 		location: {
 			type: GraphQLString,
 			description: 'location'
+		},
+		timezone: {
+			type: GraphQLInt,
+			description: 'timezone'
 		}
 	})
 });
