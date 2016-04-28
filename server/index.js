@@ -81,9 +81,16 @@ app.use('/graphql', graphqlHTTP(request => ({
 })));
 
 app.route('/search')
-  .get(searchArticleHandler);
-app.route('/search_file')
-  .get(searchFileHandler);
+  .get((req, res)=>{
+    var searchfor = req.query && req.query.searchfor;
+    switch (searchfor) {
+      case 'FILE':
+        return searchFileHandler(req, res);
+      case 'ARTICLE':
+      default:
+        return searchArticleHandler(req, res);
+    }
+  });
 
 app.route('/files')
   .post(fileUploadHandler);

@@ -18,28 +18,28 @@ let KbElastic = {
 
   //   })
   // },
-  REGEXP_NUMBER: /^[0-9]+$/,
   isValidFromSize: (val) => {
-    return typeof val==='number' && REGEXP_NUMBER.exec(val+'');
+    return /^[0-9]+$/.exec(val+'');
   },
-  getSearchObj: (setting) => {
+  getSearchObj: (opt) => {
     let obj = {
         index: ES_INDEX,
-        type: setting.typeName //ES_TYPE_ARTICLES,
+        type: opt.typeName //ES_TYPE_ARTICLES,
       };
 
-    if (setting.q) {
-      obj.q = setting.q;
+    if (opt.q) {
+      obj.q = opt.q;
     }
 
-    obj.body = setting.body || {};
-    if (KbElastic.isValidFromSize(setting.from)) {
-      obj.from = setting.from;
+    obj.body = opt.body || {};
+    // console.log('getSearchObj opt', opt);
+    if (KbElastic.isValidFromSize(opt.from)) {
+      obj.from = opt.from;
     }
-    if (KbElastic.isValidFromSize(setting.size)) {
-      obj.size = setting.size;
+    if (KbElastic.isValidFromSize(opt.size)) {
+      obj.size = opt.size;
     }
-
+    // console.log('getSearchObj', obj);
     return obj;
   },
   jsonResult: (result) => {
@@ -77,7 +77,7 @@ let responseSearch = async (req, res, searchMethod) => {
   if (searchq) {
     searchq = encodeURIComponent(searchq);
     try {
-      let data = await searchMethod.apply(null, [searchq]);
+      let data = await searchMethod.apply(null, [searchq, {from:start, size:count}]);
       data.from = start;
       data.size = count; // http://localhost:3000/search?searchq=knowledges&start=2&count=1
       res.json({'code':0, 'data': data });
