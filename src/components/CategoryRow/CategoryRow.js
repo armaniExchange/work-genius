@@ -9,29 +9,29 @@ class CategoryRow extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isCreatingSubCategory: false,
+      isCreatingChild: false,
       isEditing: false,
       editingName: props.name,
-      editingSubcategoryName: ''
+      editingChildName: ''
     };
   }
 
-  toggleSubCategories(forceEnable) {
+  toggleChildren(forceEnable) {
     const {
       id,
-      toggleSubCategories
+      toggleChildren
     } = this.props;
-    toggleSubCategories({id, forceEnable});
+    toggleChildren({id, forceEnable});
   }
 
   toggleAddSubcategoreis() {
-    const { isCreatingSubCategory } = this.state;
-    if (!isCreatingSubCategory) {
-      this.toggleSubCategories(true);
+    const { isCreatingChild } = this.state;
+    if (!isCreatingChild) {
+      this.toggleChildren(true);
     }
     this.setState({
-      isCreatingSubCategory: !isCreatingSubCategory,
-      editingSubcategoryName: ''
+      isCreatingChild: !isCreatingChild,
+      editingChildName: ''
     });
   }
 
@@ -39,8 +39,8 @@ class CategoryRow extends Component {
     this.setState({editingName: event.currentTarget.value});
   }
 
-  onSubcategoryNameChange(event) {
-    this.setState({editingSubcategoryName: event.currentTarget.value});
+  onChildNameChange(event) {
+    this.setState({editingChildName: event.currentTarget.value});
   }
 
   toggleEdit() {
@@ -55,13 +55,13 @@ class CategoryRow extends Component {
 
   saveSubcategory() {
     const { id, onSave } = this.props;
-    const { editingSubcategoryName } = this.state;
-    this.setState({isCreatingSubCategory: false});
-    console.log(`save SubCategories id:${this.getNewId()} parentId:${id} name:${editingSubcategoryName}`);
+    const { editingChildName } = this.state;
+    this.setState({isCreatingChild: false});
+    console.log(`save children id:${this.getNewId()} parentId:${id} name:${editingChildName}`);
     onSave({
       id: this.getNewId(),
       parentId: id,
-      name: editingSubcategoryName
+      name: editingChildName
     });
   }
 
@@ -77,10 +77,10 @@ class CategoryRow extends Component {
     });
   }
 
-  onDelete() {
-    const { id, onDelete } = this.props;
+  onRemove() {
+    const { id, onRemove } = this.props;
     console.log(`Delete category id:${id}`);
-    onDelete(id);
+    onRemove(id);
   }
 
   getPaddingLeft(level) {
@@ -91,29 +91,32 @@ class CategoryRow extends Component {
     const {
       name,
       level,
-      expand,
-      subCategories
+      collapsed,
+      articlesCount,
+      children
     } = this.props;
     const {
       editingName,
-      editingSubcategoryName,
+      editingChildName,
       isEditing,
-      isCreatingSubCategory
+      isCreatingChild
     } = this.state;
-    const hasSubCategories = subCategories && subCategories.length > 0;
-    const Indicator = !hasSubCategories ? <span>&nbsp;</span> : (
-      <span>{expand ? '+' : '-' }</span>
+    const hasChildren = children && children.length > 0;
+    const isRoot = name === 'root';
+    const Indicator = !hasChildren ? <span style={{width: 20, display: 'inline-block'}}/> : (
+      <span className={`tree-view_arrow${collapsed ? ' tree-view_arrow-collapsed': ''}`} />
     );
-
     const EditRow = (
       <div className="category-tree-edit-table-row">
         <span className="category-name" style={this.getPaddingLeft(level)}>
           {Indicator}
           <input type="text"
             value={editingName}
-            onChange={::this.onNameChange} />
+            onChange={::this.onNameChange}
+            autoFocus={true}
+          />
         </span>
-        <span className="article-number" />
+        <span className="article-number">{articlesCount}</span>
         <span className="action">
           <a href="#" onClick={::this.toggleEdit}>Cancel</a>
           &nbsp;&nbsp;|&nbsp;&nbsp;
@@ -123,18 +126,22 @@ class CategoryRow extends Component {
     );
     const ViewRow = (
       <div className="category-tree-edit-table-row">
-        <span className="category-name" onClick={::this.toggleSubCategories} style={this.getPaddingLeft(level)}>
+        <span className="category-name" onClick={::this.toggleChildren} style={this.getPaddingLeft(level)}>
           {Indicator} {name}
         </span>
-        <span className="article-number" />
+        <span className="article-number">{articlesCount}</span>
         <span className="action">
-          <a href="#" onClick={::this.toggleAddSubcategoreis}>+ Add Child</a>
-          &nbsp;&nbsp;|&nbsp;&nbsp;
-          <a href="#" onClick={::this.toggleEdit}>Edit</a>
+          <a href="#" onClick={::this.toggleAddSubcategoreis}>+ Add Child</a>{
+            !isRoot ? [
+              <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>,,
+              <a href="#" onClick={::this.toggleEdit}>Edit</a>
+            ]: null
+          }
+
           {
-            !hasSubCategories ? [
+            !isRoot && !hasChildren ? [
               <span> &nbsp;&nbsp;|&nbsp;&nbsp;</span>,
-              <a href="#" onClick={::this.onDelete}>Delete</a>
+              <a href="#" onClick={::this.onRemove}>Remove</a>
             ] : null
           }
         </span>
@@ -144,24 +151,25 @@ class CategoryRow extends Component {
       <div>
         { ViewRow }
         <div className="category-tree-edit-table-row">
-          <span style={this.getPaddingLeft(level + 1)} className="category-name">
+          <span style={this.getPaddingLeft(level + 2)} className="category-name">
             <input
               type="text"
-              value={editingSubcategoryName}
-              onChange={::this.onSubcategoryNameChange}
+              value={editingChildName}
+              onChange={::this.onChildNameChange}
+              autoFocus={true}
             />
           </span>
-          <span className="article-number" />
+          <span className="article-number">{articlesCount}</span>
           <span className="action">
-            <a href="#" onClick={::this.saveSubcategory}>Save</a>
-            &nbsp;&nbsp;|&nbsp;&nbsp;
             <a href="#" onClick={::this.toggleAddSubcategoreis}>Cancel</a>
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="#" onClick={::this.saveSubcategory}>Add</a>
           </span>
         </div>
       </div>
     );
 
-    return isCreatingSubCategory ? CreatingSubCategory :
+    return isCreatingChild ? CreatingSubCategory :
       isEditing ? EditRow : ViewRow;
   }
 }
@@ -172,16 +180,17 @@ CategoryRow.propTypes = {
   lastId              : PropTypes.string,
   name                : PropTypes.string,
   level               : PropTypes.number,
-  expand              : PropTypes.bool,
-  subCategories       : PropTypes.array,
-  toggleSubCategories : PropTypes.func,
+  collapsed              : PropTypes.bool,
+  children            : PropTypes.array,
+  toggleChildren      : PropTypes.func,
   onSave              : PropTypes.func,
-  onDelete            : PropTypes.func
+  onRemove            : PropTypes.func,
+  articlesCount        : PropTypes.number
 };
 
 CategoryRow.defaultProps = {
   level               : 0,
-  expand              : false
+  collapsed              : false
 };
 
 export default CategoryRow;

@@ -1,5 +1,13 @@
 .document-page-content {
   padding-left: 340px;
+  .knowledge-tree-label {
+    h5, a {
+      display: inline-block;
+    }
+    a {
+      margin-left: 10px;
+    }
+  }
   .left-navigation {
     width: 300px;
     position: absolute;

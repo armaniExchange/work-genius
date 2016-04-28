@@ -209,7 +209,12 @@ class DocumentPage extends Component {
               onChange={::this.onTagChange}
               tags={allTags}
               value={tag} />
-            <h5>KNOWLEDGE TREE</h5>
+            <div className="knowledge-tree-label">
+              <h5>KNOWLEDGE TREE</h5>
+              <Link to="/main/knowledge/document/category/edit">
+                Edit
+              </Link>
+            </div>
             <CategoryTree
               data={documentCategories}
               selectedPath={currentSelectedCategory.path}

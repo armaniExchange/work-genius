@@ -30,16 +30,16 @@ class EditDocumentCategoryPage extends Component {
     this.props.documentActions.upsertDocumentCategory(newData);
   }
 
-  onCategoryDelete(id) {
+  onCategoryRemove(id) {
     this.props.documentActions.deleteDocumentCategory(id);
   }
 
-  toggleSubCategories({id, forceEnable}) {
+  toggleChildren({id, forceEnable}) {
     const { displayCategoriesId } = this.state;
     let result = displayCategoriesId;
     if (displayCategoriesId.includes(id)) {
       if (forceEnable === true) {
-        // skip remove
+        // skip remove, keep it in displayCategoriesId
       } else {
         result = displayCategoriesId.filter(eachId => eachId !== id);
       }
@@ -52,17 +52,16 @@ class EditDocumentCategoryPage extends Component {
   depthFirstFlat(node) {
     const { displayCategoriesId } = this.state;
     node.level = node.level || 0;
-    // console.log(`name: ${node.name}, level: ${node.level}`);
-    if (node.subCategories && node.subCategories.length > 0 && (node.name === 'root' || displayCategoriesId.includes(node.id))) {
-      node.expand = false;
-      const modifiedSubCategories = node.subCategories.map(child => {
+    if (node.children && node.children.length > 0 && (node.name === 'root' || displayCategoriesId.includes(node.id))) {
+      node.collapsed = false;
+      const modifiedChildren = node.children.map(child => {
           return Object.assign({}, child, {level: node.level + 1});
         })
         .map(this.depthFirstFlat.bind(this))
         .reduce((prev, item) => [...prev, ...item], []);
-      return [node, ...modifiedSubCategories];
+      return [node, ...modifiedChildren];
     } else {
-      node.expand = true;
+      node.collapsed = true;
       return [node];
     }
   }
@@ -93,9 +92,9 @@ class EditDocumentCategoryPage extends Component {
                     <CategoryRow
                       lastId={documentCategoriesLength + ''}
                       key={row.id}
-                      toggleSubCategories={::this.toggleSubCategories}
+                      toggleChildren={::this.toggleChildren}
                       onSave={::this.onCategorySave}
-                      onDelete={::this.onCategoryDelete}
+                      onRemove={::this.onCategoryRemove}
                       {...row} />
                   );
                 })
