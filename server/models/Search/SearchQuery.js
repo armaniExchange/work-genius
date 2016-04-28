@@ -134,22 +134,3 @@ export const searchCommentHandler = async (req, res) => {
 export const searchBugtrackingHandler = async (req, res) => {
   responseSearch(req, res, BugtrackingElastic.search);
 };
-
-/*
-export const searchFileHandler = async (req, res) => {
-  let searchq = req.query && req.query.searchq;
-  let start = req.query && req.query.start; // from
-  let count = req.query && req.query.count; // size
-  if (searchq) {
-    searchq = encodeURIComponent(searchq);
-    try {
-      res.json({'code':0, 'data': await ArticleElastic.search(searchq)});
-    } catch (err) {
-      res.json({'err': err});
-    }
-
-  } else {
-    res.json({'code':0, 'data':[]});
-  }
-};
-*/
