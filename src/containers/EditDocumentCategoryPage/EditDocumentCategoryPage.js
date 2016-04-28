@@ -24,25 +24,22 @@ class EditDocumentCategoryPage extends Component {
     this.props.documentActions.fetchDocumentCategories();
   }
 
-  _onSaveHandler(newData) {
-      this.props.documentActions.upsertDocumentCategory(newData);
+  onCategorySave(/*newData*/) {
+    // this.props.documentActions.upsertDocumentCategory(newData);
   }
 
-  _onDeleteHandler(id) {
-      this.props.documentActions.deleteDocumentCategory(id);
+  onCategoryDelete(/*id*/) {
+    // this.props.documentActions.deleteDocumentCategory(id);
   }
 
-  toggleSubCategories({id}) {
-    const {
-      displayCategoriesId
-    } = this.state;
+  toggleSubCategories(id) {
+    const { displayCategoriesId } = this.state;
     let result;
     if (displayCategoriesId.includes(id)) {
       result = displayCategoriesId.filter(eachId => eachId !== id);
     } else {
       result = [...displayCategoriesId, id];
     }
-    console.log(`id: ${id}, result ${result}`);
     this.setState({displayCategoriesId: result});
   }
 
@@ -65,7 +62,8 @@ class EditDocumentCategoryPage extends Component {
   }
 
   render() {
-    const displayTree = this.depthFirstFlat(this.props.documentCategories);
+    const { documentCategories } = this.props;
+    const displayTree = this.depthFirstFlat(documentCategories);
     return (
       <div>
         <Breadcrumb data={BREADCRUMB.editDocumentCategory} />
@@ -76,71 +74,24 @@ class EditDocumentCategoryPage extends Component {
               <CategoryRow
                 key={row.id}
                 toggleSubCategories={::this.toggleSubCategories}
+                onSave={::this.onCategorySave}
+                onDelete={::this.onCategoryDelete}
                 {...row} />
             );
           })
         }
-
-        <div>{/*JSON.stringify(documentCategories, undefined, 4)*/}</div>
-        <button
-          onClick={() => {
-            this._counter += 1;
-            ::this._onSaveHandler({
-              id: '998', // THIS HAS TO BE STRING
-              parentId: '2', // THIS HAS TO BE STRING
-              name: `Test ${this._counter}`
-            });
-          }}>
-          Save
-        </button>
-        <button
-          onClick={() => {
-            ::this._onDeleteHandler(998); // THIS CAN BE NUMBER OR STRING
-          }}>
-          Delete
-        </button>
       </div>
     );
   }
 }
 
 EditDocumentCategoryPage.propTypes = {
-  data                   : PropTypes.object,
   documentCategories     : PropTypes.object,
   documentActions        : PropTypes.object.isRequired,
 };
-const fakeData = {
-  id: '1',
-  name: 'root',
-  children: [
-    {
-      id: '2',
-      name: 'treeA'
-    },
-    {
-      id: '3',
-      name: 'treeB',
-      children: [
-        {
-          id: '4',
-          name: 'treeC'
-        }
-      ]
-    },
-  ]
-};
+
 EditDocumentCategoryPage.defaultProps = {
-  data                   : fakeData
-  // id                  : '',
-  // content             : '',
-  // author              : { id: '', name: ''},
-  // tags                : [],
-  // files               : [],
-  // comments            : [],
-  // content             : '',
-  // createdAt           : 0,
-  // updatedAt           : 0,
-  // allCategories       : {}
+  documentCategories     : PropTypes.object
 };
 
 function mapStateToProps(state) {
