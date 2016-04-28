@@ -63,36 +63,21 @@ class ArticleEditor extends Component {
   onTitleChange() {
     this.props.onTitleChange.apply(this, arguments);
     this.setState({enableTitleError: true});
-    this.triggerValidFormChange();
   }
 
   onCategoryIdChange() {
     this.props.onCategoryIdChange.apply(this, arguments);
     this.setState({enableCategoryError: true});
-    this.triggerValidFormChange();
   }
 
   onContentChange() {
     this.props.onContentChange.apply(this, arguments);
     this.setState({enableContentError: true});
-    this.triggerValidFormChange();
   }
 
   onDocumentTypeChange() {
     this.props.onDocumentTypeChange.apply(this, arguments);
     this.setState({enableDocumentTypeError: true});
-    this.triggerValidFormChange();
-  }
-
-  triggerValidFormChange(){
-    const {
-      title,
-      categoryId,
-      content,
-      onValidFormChange
-    } = this.props;
-    const isValid = !!title.trim() && !!categoryId && !!content.trim();
-    onValidFormChange(isValid);
   }
 
   render() {
@@ -254,8 +239,7 @@ ArticleEditor.propTypes = {
   onDocumentTypeChange: PropTypes.func.isRequired,
   onPriorityChange    : PropTypes.func.isRequired,
   onMilestoneChange   : PropTypes.func.isRequired,
-  onReportToChange    : PropTypes.func.isRequired,
-  onValidFormChange   : PropTypes.func
+  onReportToChange    : PropTypes.func.isRequired
 };
 
 ArticleEditor.defaultProps = {
