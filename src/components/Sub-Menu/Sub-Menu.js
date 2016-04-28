@@ -35,6 +35,11 @@ class SubMenu extends Component {
 			);
 		});
 
+    const searchBoxResultStyle = {};
+    if (!searchKeyword) {
+      searchBoxResultStyle.opacity = 0;
+    }
+    
 		return (
 			<header className="mdl-layout__header mdl-layout__header--level2">
 			    <div className="mdl-layout__header-row">
@@ -48,13 +53,13 @@ class SubMenu extends Component {
             <TextField
               onBlur={(evt)=>{
                 let val = evt.target.value;
-                changeSearchKeyword(val);
+                val!=='' && changeSearchKeyword(val);
               }}
               hintText="Search..." />
             <i className="material-icons" title="Search" onClick={()=>{
               searchArticle(searchKeyword, pagesize, 0);
             }}>search</i>
-            <div className="search-box__result">
+            <div className="search-box__result" style={searchBoxResultStyle}>
               <SearchSection {...this.props} />
             </div>
           </div>

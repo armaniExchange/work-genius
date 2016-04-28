@@ -13,8 +13,9 @@ const DOCUMENT_URL_PREFIX = '/main/knowledge/document/';
 
 let highlightKeyword = (content, keyword) => {
   let s = content.substr(0,300);
+  let suffix = s===content ? '' : '...';
   s = s.replace(new RegExp(keyword, 'ig'), '<b style="color:red;background:yellow">$&</b>');
-  return s + '...';
+  return s + suffix;
 };
 
 export default class SearchSection extends Component {
@@ -110,7 +111,7 @@ export default class SearchSection extends Component {
             label="Comment" />
         </div>
         <div className="search-section__body">
-          <h3 className="search-section__body-title" style={{display:searchResultTitle!=='' ? '' : 'none'}}><span style={{color:'#aaa'}}>{searchResultTitle}</span> result for "<em>{searchKeyword}</em>":</h3>
+          <div className="search-section__body-title" style={{display:searchResultTitle!=='' ? '' : 'none'}}><span style={{color:'#aaa'}}>{searchResultTitle}</span> result for "<em>{searchKeyword}</em>":</div>
           <div className="search-section__body--article" style={articleBodyStyle}>
             {!articleSearchResult || !articleSearchResult.length ? 'No article.' : ''}
             <ul className="search-section__body-list">{articleSearchResult.map((item, idx)=>{

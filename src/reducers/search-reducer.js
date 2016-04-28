@@ -1,7 +1,7 @@
 import actionTypes from '../constants/action-types';
-import { Map, List } from 'immutable';
+import { Map } from 'immutable';
 
-export const PAGESIZE = 3;
+export const PAGESIZE = 5;
 
 const initialState = Map({
   searchKeyword: '',
