@@ -82,10 +82,13 @@ class CategoryRow extends Component {
     console.log(`Delete category id:${id}`);
     onDelete(id);
   }
+
+  getPaddingLeft(level) {
+    return {paddingLeft: level * 20 + 10};
+  }
+
   render() {
     const {
-      id,
-      parentId,
       name,
       level,
       expand,
@@ -98,54 +101,62 @@ class CategoryRow extends Component {
       isCreatingSubCategory
     } = this.state;
     const hasSubCategories = subCategories && subCategories.length > 0;
-    const paddingLeftStyle = {paddingLeft: level * 10};
     const Indicator = !hasSubCategories ? <span>&nbsp;</span> : (
-      <span onClick={::this.toggleSubCategories}>{expand ? '+' : '-' }</span>
+      <span>{expand ? '+' : '-' }</span>
     );
 
     const EditRow = (
-      <div
-        key="edit"
-        style={paddingLeftStyle}>
-        {Indicator}
-        <input type="text"
-          value={editingName}
-          onChange={::this.onNameChange}
-        />
-        <a href="#" onClick={::this.toggleEdit}>Cacnel</a>
-        &nbsp;&nbsp;|&nbsp;&nbsp;
-        <a href="#" onClick={::this.save}>Save</a>
+      <div className="category-tree-edit-table-row">
+        <span className="category-name" style={this.getPaddingLeft(level)}>
+          {Indicator}
+          <input type="text"
+            value={editingName}
+            onChange={::this.onNameChange} />
+        </span>
+        <span className="article-number" />
+        <span className="action">
+          <a href="#" onClick={::this.toggleEdit}>Cancel</a>
+          &nbsp;&nbsp;|&nbsp;&nbsp;
+          <a href="#" onClick={::this.save}>Save</a>
+        </span>
       </div>
     );
     const ViewRow = (
-      <div
-        key="view"
-        style={paddingLeftStyle}>
-        {Indicator}
-        {`id:${id}, parentId:${parentId} name: ${name} `}
-        <a href="#" onClick={::this.toggleEdit}>Edit</a>
-        &nbsp;&nbsp;|&nbsp;&nbsp;
-        <a href="#" onClick={::this.toggleAddSubcategoreis}>Add SubCategories</a>
-        &nbsp;&nbsp;|&nbsp;&nbsp;
-        {
-          !hasSubCategories ? <a href="#" onClick={::this.onDelete}>Delete</a> : null
-        }
+      <div className="category-tree-edit-table-row">
+        <span className="category-name" onClick={::this.toggleSubCategories} style={this.getPaddingLeft(level)}>
+          {Indicator} {name}
+        </span>
+        <span className="article-number" />
+        <span className="action">
+          <a href="#" onClick={::this.toggleAddSubcategoreis}>+ Add Child</a>
+          &nbsp;&nbsp;|&nbsp;&nbsp;
+          <a href="#" onClick={::this.toggleEdit}>Edit</a>
+          {
+            !hasSubCategories ? [
+              <span> &nbsp;&nbsp;|&nbsp;&nbsp;</span>,
+              <a href="#" onClick={::this.onDelete}>Delete</a>
+            ] : null
+          }
+        </span>
       </div>
     );
     const CreatingSubCategory = (
       <div>
         { ViewRow }
-        <div
-          key="editSubcategory"
-          style={paddingLeftStyle}>
-          <input
-            type="text"
-            value={editingSubcategoryName}
-            onChange={::this.onSubcategoryNameChange}
-          />
-          <a href="#" onClick={::this.saveSubcategory}>Save</a>
-          &nbsp;&nbsp;|&nbsp;&nbsp;
-          <a href="#" onClick={::this.toggleAddSubcategoreis}>Cancel</a>
+        <div className="category-tree-edit-table-row">
+          <span style={this.getPaddingLeft(level + 1)} className="category-name">
+            <input
+              type="text"
+              value={editingSubcategoryName}
+              onChange={::this.onSubcategoryNameChange}
+            />
+          </span>
+          <span className="article-number" />
+          <span className="action">
+            <a href="#" onClick={::this.saveSubcategory}>Save</a>
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="#" onClick={::this.toggleAddSubcategoreis}>Cancel</a>
+          </span>
         </div>
       </div>
     );

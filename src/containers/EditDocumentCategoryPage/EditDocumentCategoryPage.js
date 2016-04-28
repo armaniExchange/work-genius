@@ -4,6 +4,7 @@ import './_EditDocumentCategoryPage.scss';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import Paper from 'material-ui/lib/paper';
 
 import * as DocumentActions from '../../actions/document-page-actions';
 
@@ -11,6 +12,7 @@ import CategoryRow from '../../components/CategoryRow/CategoryRow';
 
 import Breadcrumb from '../../components/A10-UI/Breadcrumb';
 import BREADCRUMB from '../../constants/breadcrumb';
+
 
 class EditDocumentCategoryPage extends Component {
 
@@ -36,7 +38,7 @@ class EditDocumentCategoryPage extends Component {
     const { displayCategoriesId } = this.state;
     let result = displayCategoriesId;
     if (displayCategoriesId.includes(id)) {
-      if (forceEnable) {
+      if (forceEnable === true) {
         // skip remove
       } else {
         result = displayCategoriesId.filter(eachId => eachId !== id);
@@ -74,20 +76,33 @@ class EditDocumentCategoryPage extends Component {
     return (
       <div>
         <Breadcrumb data={BREADCRUMB.editDocumentCategory} />
-        <h3>Knowledge Tree</h3>
-        {
-          displayTree.map(row => {
-            return (
-              <CategoryRow
-                lastId={documentCategoriesLength}
-                key={row.id}
-                toggleSubCategories={::this.toggleSubCategories}
-                onSave={::this.onCategorySave}
-                onDelete={::this.onCategoryDelete}
-                {...row} />
-            );
-          })
-        }
+        <div className="edit-document-category-page">
+          <h3>Knowledge Tree</h3>
+          <Paper className="category-tree-edit-table">
+            <div className="category-tree-edit-table-header">
+              <div className="category-tree-edit-table-row">
+                <span className="category-name">Category Name</span>
+                <span className="article-number">Article Number</span>
+                <span className="action">Action</span>
+              </div>
+            </div>
+            <div className="category-tree-edit-table-body">
+              {
+                displayTree.map(row => {
+                  return (
+                    <CategoryRow
+                      lastId={documentCategoriesLength + ''}
+                      key={row.id}
+                      toggleSubCategories={::this.toggleSubCategories}
+                      onSave={::this.onCategorySave}
+                      onDelete={::this.onCategoryDelete}
+                      {...row} />
+                  );
+                })
+              }
+            </div>
+          </Paper>
+        </div>
       </div>
     );
   }
