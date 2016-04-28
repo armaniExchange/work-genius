@@ -18,7 +18,6 @@ class EditDocumentCategoryPage extends Component {
 
   constructor(props) {
     super(props);
-    this._counter = 0;
     this.state = { displayCategoriesId: [] };
   }
 
