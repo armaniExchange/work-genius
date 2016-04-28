@@ -8,7 +8,7 @@ class NodeLabel extends Component {
             (isLeaf ? '__leaf' : '') + (isSelected ? '--selected' : '');
         let countHtml = (
             <span className="category-tree-node__count">
-                {data.childrenCount}
+                {data.articlesCount}
             </span>
         );
         return (

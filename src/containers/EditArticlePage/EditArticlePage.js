@@ -35,7 +35,7 @@ class EditArticlePage extends Component {
     if (!this.isCreate()) {
       articleActions.fetchArticle(params.articleId);
     }
-    documentActions.fetchAllCategories();
+    documentActions.fetchDocumentCategories();
     documentActions.fetchAllTags();
   }
 
@@ -136,9 +136,9 @@ class EditArticlePage extends Component {
     });
   }
 
-  onCategoryIdChange(path) {
+  onCategoryIdChange(id) {
     this.setState({
-      editingCategoryId: path
+      editingCategoryId: id
     }, () => {
       ::this.ValidateForm();
     });
@@ -215,8 +215,8 @@ class EditArticlePage extends Component {
     return this._transformFromTree(categories).filter((item) => {
       return item.path !== 'root';
     }).map((item) => ({
-      label: item.path.replace('root/', '').replace(/\//gi, ' > '),
-      value: item.path
+      label: item.path ? item.path.replace('root/', '').replace(/\//gi, ' > ') : '',
+      value: item.id
     }));
   }
 
@@ -283,7 +283,7 @@ class EditArticlePage extends Component {
     const {
       params,
       files,
-      allCategories,
+      documentCategories,
       allTags
     } = this.props;
 
@@ -305,7 +305,7 @@ class EditArticlePage extends Component {
             categoryId={editingCategoryId}
             files={files}
             tagSuggestions={allTags}
-            allCategoriesOptions={::this._transformToOptions(allCategories)}
+            allCategoriesOptions={::this._transformToOptions(documentCategories)}
             documentType={editingDocumentType}
             priority={editingPriority}
             milestone={editingMilestone}
@@ -367,7 +367,7 @@ EditArticlePage.propTypes = {
   createdAt           : PropTypes.number,
   updatedAt           : PropTypes.number,
   params              : PropTypes.object,
-  allCategories       : PropTypes.object,
+  documentCategories       : PropTypes.object,
   allTags             : PropTypes.arrayOf(PropTypes.string),
   isEditing           : PropTypes.bool,
   articleActions      : PropTypes.object.isRequired,
@@ -385,17 +385,17 @@ EditArticlePage.defaultProps = {
   content             : '',
   createdAt           : 0,
   updatedAt           : 0,
-  allCategories       : {}
+  documentCategories       : {}
 };
 
 function mapStateToProps(state) {
   const {
-    allCategories,
+    documentCategories,
     allTags
   } = state.documentation.toJS();
 
   return Object.assign({}, state.article.toJS(), {
-    allCategories,
+    documentCategories,
     allTags
   });
 }

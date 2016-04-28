@@ -106,7 +106,7 @@ const schema = new GraphQLSchema({
       updateArticle                   : ArticleMutation.updateArticle,
       deleteArticle                   : ArticleMutation.deleteArticle,
       updateAssignmentCategory        : AssignmentCategoryMutation.updateAssignmentCategory,
-      createDocumentCategory          : DocumentCategoryMutation.createDocumentCategory,
+      upsertDocumentCategory          : DocumentCategoryMutation.upsertDocumentCategory,
       deleteDocumentCategory          : DocumentCategoryMutation.deleteDocumentCategory,
       //Bug page
       updateBug                       : BugMutation.updateBug,

@@ -9,7 +9,7 @@ import r from 'rethinkdb';
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 
 let mutation = {
-    'createDocumentCategory': {
+    'upsertDocumentCategory': {
         type: GraphQLString,
         description: 'insert a new category',
         args: {
@@ -24,7 +24,7 @@ let mutation = {
 
             try {
                 data = JSON.parse(data);
-                query = r.db('work_genius').table('document_categories').insert(data);
+                query = r.db('work_genius').table('document_categories').insert(data, {conflict: 'replace'});
                 connection = await r.connect({ host: DB_HOST, port: DB_PORT });
                 await query.run(connection);
                 await connection.close();
