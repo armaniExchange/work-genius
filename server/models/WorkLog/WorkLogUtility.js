@@ -11,7 +11,8 @@ export async function createWorkLog(worklog){
 
 	try {
 		
-		worklog.create_date = moment().utc().format('X') * 1000;
+		worklog.create_date = moment().utc().format('x');
+		worklog.update_date = worklog.create_date;
 		query = r.db('work_genius').table('worklog').insert(worklog);
 		connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 		let result = await query.run(connection);
