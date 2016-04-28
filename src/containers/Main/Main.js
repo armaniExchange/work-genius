@@ -79,7 +79,7 @@ class Main extends Component {
 
     let SubMenuSearchSectionProps = Object.assign({}, this.props.searchState, this.props.searchActions);
     // console.warn('SubMenuSearchSectionProps', SubMenuSearchSectionProps);
-		return (
+    return (
 			<section className="mdl-layout mdl-js-layout">
 				<AlertBox
 					type="error"

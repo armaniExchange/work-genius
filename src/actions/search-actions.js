@@ -69,30 +69,34 @@ let search = (searchfor,
       .then((body) => {
         console.warn(body);
         let data = body.data;
+        let _hits = data && data.hits || [];
+        let _total = data.hasOwnProperty('total') ? data.total : 0;
+        let _size = data.hasOwnProperty('size') ? data.size : 0;
+        let __from = data.hasOwnProperty('from') ? data.from : 0;
         switch (searchfor) {
           case 'ARTICLE':
           dispatch(searchArticleSuccess(
-          data.hits, data.total, data.size, data.from, 
+          _hits, _total, _size, __from, 
           searchq));
           break;
           case 'FILE':
           dispatch(searchFileSuccess(
-          data.hits, data.total, data.size, data.from, 
+          _hits, _total, _size, __from, 
           searchq));
           break;
           case 'WORKLOG':
           dispatch(searchWorklogSuccess(
-          data.hits, data.total, data.size, data.from, 
+          _hits, _total, _size, __from, 
           searchq));
           break;
           case 'COMMENT':
           dispatch(searchCommentSuccess(
-          data.hits, data.total, data.size, data.from, 
+          _hits, _total, _size, __from, 
           searchq));
           break;
           case 'BUGTRACKING':
           dispatch(searchBugtrackingSuccess(
-          data.hits, data.total, data.size, data.from, 
+          _hits, _total, _size, __from, 
           searchq));
           break;
         }
@@ -119,15 +123,9 @@ export function searchBugtracking(searchq, size=undefined, _from=undefined) {
   return search('BUGTRACKING', searchq, size, _from);
 };
 
-// Actions
-// import {
-//     setLoadingState,
-//     apiFailure
-// } from './app-actions';
-// import { setCurrentSelectedUserId } from './main-actions';
-// export function sortFeatureTableByCategory(category) {
-//     return {
-//         type: actionTypes.SORT_FEATURE_TABLE_BY_CATEGORY,
-//         category
-//     };
-// };
+export function changeSearchKeyword(newKeyword) {
+  return {
+    type: actionTypes.CHANGE_SEARCH_KEYWORD,
+    newKeyword
+  };
+};

@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import moment from 'moment';
 import Pagination from 'rc-pagination';
+import RaisedButton from 'material-ui/lib/raised-button';
 
 const tabMapping = {
   ARTICLE: {title: 'Article'},
@@ -79,22 +80,40 @@ export default class SearchSection extends Component {
     }
 
     let contentStyle = {background:'#dfdfdf',padding:'9px'};
+    let articleButtonProps = currentSearchTab==='ARTICLE' ? {secondary: true} : {};
+    let fileButtonProps = currentSearchTab==='FILE' ? {secondary: true} : {};
+    let worklogButtonProps = currentSearchTab==='WORKLOG' ? {secondary: true} : {};
+    let commentButtonProps = currentSearchTab==='COMMENT' ? {secondary: true} : {};
 
     return (
       <section className="search-section">
         <div className="search-section__header">
-          Toggle: <button type="button" onClick={()=>{
-            searchArticle('ajax', pagesize, 0);
-          }}>Knowledge</button>
-          <button type="button" onClick={()=>{
-            searchFile('with', pagesize, 0);
-          }}>Files</button>
+          <RaisedButton {...articleButtonProps}
+            onClick={()=>{
+              searchArticle(searchKeyword, pagesize, 0);
+            }}  
+            label="Knowledge" />
+          <RaisedButton {...fileButtonProps}
+            onClick={()=>{
+              searchFile(searchKeyword, pagesize, 0);
+            }}
+            label="File" />
+          <RaisedButton {...worklogButtonProps}
+            onClick={()=>{
+              searchWorklog(searchKeyword, pagesize, 0);
+            }}
+            label="Worklog" />
+          <RaisedButton {...commentButtonProps}
+            onClick={()=>{
+              searchComment(searchKeyword, pagesize, 0);
+            }}
+            label="Comment" />
         </div>
         <div className="search-section__body">
-          <h3><span style={{color:'#aaa'}}>{searchResultTitle}</span> result for "<em>{searchKeyword}</em>":</h3>
+          <h3 className="search-section__body-title" style={{display:searchResultTitle!=='' ? '' : 'none'}}><span style={{color:'#aaa'}}>{searchResultTitle}</span> result for "<em>{searchKeyword}</em>":</h3>
           <div className="search-section__body--article" style={articleBodyStyle}>
             {!articleSearchResult || !articleSearchResult.length ? 'No article.' : ''}
-            <ul>{articleSearchResult.map((item, idx)=>{
+            <ul className="search-section__body-list">{articleSearchResult.map((item, idx)=>{
               let _files = item._source && item._source.files;
               _files = _files || [];
 

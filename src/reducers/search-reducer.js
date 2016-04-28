@@ -50,6 +50,8 @@ export default function searchReducer(state = initialState, action) {
     case actionTypes.SEARCH_WORKLOG_SUCCESS:
     case actionTypes.SEARCH_COMMENT_SUCCESS:
       return typeSearchSuccess(state, action);
+    case actionTypes.CHANGE_SEARCH_KEYWORD:
+      return state.set('searchKeyword', action.newKeyword);
   }
   return state;
 }

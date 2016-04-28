@@ -11,10 +11,14 @@
         position: absolute;
         right: 0;
         display: block; /*change to none before go live*/
-        border: 3px solid #666;
+        border: 2px solid #ddd;
         width: 60vw;
-        background: #eee;
+        background: #f5f5f5;
         z-index:99;
+        .search-section{
+            width: 95%;
+            margin:auto;
+        }
     }
     &:hover {
         .search-box__result {
@@ -23,6 +27,9 @@
     }
 }
 
+.search-section__header{
+    margin: 12px 0 0;
+}
 .search-section-row{
     list-style-type: none;
 }
@@ -32,6 +39,15 @@
     margin:10px 0 0;
 }
 
+.search-section__body{
+    padding: 0 0 9px;
+    &-title{
+        margin: 9px 0 0;
+    }
+    &-list{
+        padding: 0;
+    }
+}
 
 .mdl-navigation__link__tag--active{
     font-weight: bold;
