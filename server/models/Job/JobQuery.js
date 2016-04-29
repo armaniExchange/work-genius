@@ -85,7 +85,7 @@ let JobQuery = {
 
 					userItem.jobs.forEach(dateItem => {
 						//find the weekend according to user timezone
-						dateItem.day_type = [0,6].includes(moment(tmpDate).utcOffset(userItem.timezone).day())? 'holiday':'workday';
+						dateItem.day_type = [0,6].includes(moment(dateItem.date).utcOffset(userItem.timezone).day())? 'holiday':'workday';
 						//set pto info
 						let findPTO = ptoList.find( pto => {
 							let startTime = Number.parseFloat(pto.start_time);
@@ -171,7 +171,8 @@ let JobQuery = {
 			    result = [];
 
 			try {
-				if(dateRange <= 0){
+				console.log(employeeId==null);
+				if(dateRange <= 0 || employeeId == null){
 					return result;
 				}
 				let endDate = startDate + (dateRange -1) * 1000 * 3600 * 24;

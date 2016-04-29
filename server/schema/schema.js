@@ -71,6 +71,7 @@ const schema = new GraphQLSchema({
       getOwnerRootCauseSummary : BugStats.getOwnerRootCauseSummary,
       //worklog
       getWorkLogByEmployeeId   : WorkLogQuery.getWorkLogByEmployeeId,
+      getWorkLogList           : WorkLogQuery.getWorkLogList,
       //job
       getJobList               : JobQuery.getJobList,
       getJobByEmployeeId       : JobQuery.getJobByEmployeeId

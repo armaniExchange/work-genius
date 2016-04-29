@@ -10,8 +10,9 @@ export async function createWorkLog(worklog){
 		query = null;
 
 	try {
-		
-		worklog.create_date = moment().utc().format('x');
+		if(!('create_date' in worklog)){
+			worklog.create_date = Number.parseFloat(moment().utc().format('x'));
+		}
 		worklog.update_date = worklog.create_date;
 		query = r.db('work_genius').table('worklog').insert(worklog);
 		connection = await r.connect({ host: DB_HOST, port: DB_PORT });
@@ -37,7 +38,7 @@ export async function updateWorkLog(id, worklog){
 		if(worklog.id){
 			delete worklog.id;
 		}
-		worklog.update_date = moment().utc().format('x');
+		worklog.update_date = Number.parseFloat(moment().utc().format('x'));
 		query = r.db('work_genius').table('worklog').get(id).update(worklog);
 		connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 		await query.run(connection);
