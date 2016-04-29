@@ -36,7 +36,7 @@
     list-style-type: none;
     h4 {
         font-weight: bold;
-        font-size:16px;
+        font-size:12px;
         font-family: Helvetica;
         margin:10px 0 0;
         a {
@@ -46,10 +46,23 @@
         }
     }
 }
+.search-section-row__doctype {
+    float:right;
+    color:#ccc;
+}
+
+.search-section-row .article-tag-list .tag{
+    height:auto;
+    padding: 0 4px;
+    cursor: default;
+    &:hover{
+        color: #39739d;
+    }
+}
+
 
 .search-section__body{
     padding: 0 0 9px;
-    margin: -28px 0 0;
     &-title{
         margin: 9px 0 0;
         font-size:13px;
@@ -58,8 +71,8 @@
         padding: 0;
     }
     .search-section__body-nothing {
-        margin: 40px 10px;
-        text-align: left;
+        margin: 80px 10px 40px;
+        text-align: center;
         font-size: 21px;
         color: #aaa;
     }
