@@ -29,7 +29,6 @@ class Editor extends Component {
 
   componentDidMount() {
     const { editorId } = this.state;
-    // document.getElementsByClassName(`${editorId}-edit-edit-button`)[0].click();
     /*eslint-disable */
     new window.MaterialTabs(document.getElementById(`editor-${editorId}`));
     /*eslint-enable  */
@@ -55,10 +54,13 @@ class Editor extends Component {
     return `${value.slice(0, cursorPosition)}${str}${value.slice(cursorPosition)}`;
   }
 
+  onChange() {
+    this.props.onChange.apply(this, arguments);
+  }
+
   render() {
     const {
       value,
-      onChange,
       options,
       placeholder,
     } = this.props;
@@ -67,7 +69,9 @@ class Editor extends Component {
       enablePreview
     } = this.state;
     return (
-      <div id={`editor-${editorId}`} className="mdl-tabs mdl-js-tabs mdl-js-ripple-effect component-editor">
+      <div
+        id={`editor-${editorId}`}
+        className="mdl-tabs mdl-js-tabs mdl-js-ripple-effect component-editor" >
         <div className="mdl-tabs__tab-bar">
           <a href={`#${editorId}-edit-panel`}
             onClick={::this.onEditPanelButtonClick}
@@ -91,7 +95,7 @@ class Editor extends Component {
               ref="codeMirror"
               options={options}
               value={value}
-              onChange={onChange}
+              onChange={::this.onChange}
             />
             {
               (placeholder && !value) && (

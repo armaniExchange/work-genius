@@ -14,23 +14,25 @@ import bugReview from './bug-review-reducer';
 import bugReport from './bug-report-reducer';
 import resourceMap from './resource-map-reducer';
 import workLog from './work-log-reducer';
+import documentTemplate from './document-template-reducer';
 
 const rootReducer = combineReducers({
-	app,
-	main,
-	demo,
+  app,
+  main,
+  demo,
   task,
-	search,
-	dataExplorer,
-	pto,
-	admin,
-	documentation,
-	article,
-	bugReview,
-	resourceMap,
-	workLog,
-	bugReport,
-	featureAnalysis
+  search,
+  dataExplorer,
+  pto,
+  admin,
+  documentation,
+  article,
+  bugReview,
+  resourceMap,
+  workLog,
+  bugReport,
+  featureAnalysis,
+  documentTemplate
 });
 
 export default rootReducer;

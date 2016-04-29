@@ -37,4 +37,16 @@
 		margin-bottom: 10px;
     display: block;
 	}
+  table {
+    width: 100%;
+    border: 1px solid lightgray;
+    th, td {
+      border: 1px solid lightgray;
+      padding: 10px;
+      text-align: center;
+    }
+    tr:nth-child(even) {
+      background-color: whitesmoke;
+    }
+  }
 }
