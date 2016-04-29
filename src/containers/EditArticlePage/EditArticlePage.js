@@ -20,6 +20,7 @@ class EditArticlePage extends Component {
     this.state = Object.assign(this.getEditingStateFromProps(props), {
       isPreviewVisible: false,
       isArticleFormValid: false,
+      isContentFromTemplate: false,
       enableErrorMessage: false
     });
   }
@@ -43,7 +44,7 @@ class EditArticlePage extends Component {
     if (!this.props.isLoaded && nextProps.isLoaded){
       // first time loaded
       const newState = this.getEditingStateFromProps(nextProps);
-      this.setState(newState);
+      this.setState(newState, () => {::this.ValidateForm();});
       return;
     }
 
@@ -61,12 +62,12 @@ class EditArticlePage extends Component {
         editingContent: this.state.editingContent.replace(this.getUploadingFileMarkdown(justUpdateFile), `[${name}](${url})`)
       });
     }
-    if (this.props.documentTemplate.id !== nextProps.documentTemplate.id) {
+    if (this.state.isContentFromTemplate || (this.props.documentTemplate.id !== nextProps.documentTemplate.id) ){
       this.setState({
+        isContentFromTemplate: true,
         editingContent: nextProps.documentTemplate.content
       });
     }
-
   }
 
   componentWillUnmount() {
@@ -120,8 +121,10 @@ class EditArticlePage extends Component {
   }
 
   onContentChange(newContent) {
-    console.log('onContentChange!!');
-    this.setState({ editingContent: newContent }, () => {
+    this.setState({ 
+      editingContent: newContent,
+      isContentFromTemplate: false
+    }, () => {
       ::this.ValidateForm();
     });
   }
@@ -148,9 +151,10 @@ class EditArticlePage extends Component {
     this.setState({ editingDocumentType: value }, ()=> {
       const {
         editingContent,
-        editingDocumentType
+        editingDocumentType,
+        isContentFromTemplate
       } = this.state;
-      if (editingContent.trim() === '' ) {
+      if (isContentFromTemplate || editingContent.trim() === '' ) {
         this.props.articleActions.fetchDocumentTemplate(editingDocumentType);
       }
     });
