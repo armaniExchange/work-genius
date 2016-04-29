@@ -5,6 +5,7 @@ export const PAGESIZE = 5;
 
 const initialState = Map({
   searchKeyword: '',
+  searchTimerId: null, //autoDoSearchTimerId after TextField was changed
   currentSearchTab: '',
   pagesize: PAGESIZE,
 
@@ -52,6 +53,8 @@ export default function searchReducer(state = initialState, action) {
       return typeSearchSuccess(state, action);
     case actionTypes.CHANGE_SEARCH_KEYWORD:
       return state.set('searchKeyword', action.newKeyword);
+    case actionTypes.SETUPPED_SEARCH_ON_KEYWORD_CHANGE_A_WHILE:
+      return state.set('searchTimerId', action.timerId);
   }
   return state;
 }

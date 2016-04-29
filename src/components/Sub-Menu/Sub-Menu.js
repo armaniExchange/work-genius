@@ -13,9 +13,10 @@ class SubMenu extends Component {
 	render () {
 		const { data, headerTitle } = this.props;
     const { 
-      changeSearchKeyword,
       searchKeyword,
       pagesize,
+      searchTimerId,
+      setupSearchOnKeyworkChangeAWhile,
       searchArticle
       } = this.props;//<--- form state.search only
 
@@ -51,9 +52,17 @@ class SubMenu extends Component {
 
           <div className="search-box">
             <TextField
-              onBlur={(evt)=>{
+              onChange={(evt)=>{
                 let val = evt.target.value;
-                val!=='' && changeSearchKeyword(val);
+                if (!val) {
+                  return;
+                }
+                //might no need val!=='' && changeSearchKeyword(val);
+
+                searchTimerId && clearTimeout(searchTimerId);
+                setupSearchOnKeyworkChangeAWhile(()=>{
+                  searchArticle(val, pagesize, 0);
+                });
               }}
               hintText="Search..." />
             <i className="material-icons" title="Search" onClick={()=>{
@@ -75,9 +84,10 @@ SubMenu.propTypes = {
 	data       : PropTypes.array.isRequired,
 	headerTitle: PropTypes.string,
 
-  changeSearchKeyword: PropTypes.func,
   searchKeyword: PropTypes.string,
   pagesize: PropTypes.number,
+  searchTimerId: PropTypes.number,
+  setupSearchOnKeyworkChangeAWhile: PropTypes.func,
   searchArticle: PropTypes.func
 };
 

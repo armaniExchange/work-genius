@@ -118,8 +118,8 @@ export default class SearchSection extends Component {
     let worklogButtonProps = currentSearchTab==='WORKLOG' ? {secondary: true} : {};
     let commentButtonProps = currentSearchTab==='COMMENT' ? {secondary: true} : {};
 
-    let tabLabelStyle = {'text-transform': 'none'};
-    let subTitleStyle = {'text-align':'right'};
+    let tabLabelStyle = {'textTransform': 'none'};
+    let subTitleStyle = {'textAlign':'right'};
     subTitleStyle.display = searchResultTitle!=='' ? 'none' : 'none';
 
     return (
@@ -154,7 +154,7 @@ export default class SearchSection extends Component {
           <div className="search-section__body-title" style={subTitleStyle}><span style={{color:'#aaa'}}>{searchResultTitle}</span> result for "<em>{searchKeyword}</em>":</div>
           <div className="search-section__body--article" style={articleBodyStyle}>
             <div className="search-section__body-nothing" style={{'display': !articleSearchResult || !articleSearchResult.length ? 'block' : 'none'}}>
-            No article.
+            No article for "{searchKeyword}".
             </div>
             <ul className="search-section__body-list">{articleSearchResult.map((item, idx)=>{
               let _files = item._source && item._source.files;
@@ -179,7 +179,7 @@ export default class SearchSection extends Component {
           </div>
           <div className="search-section__body--file" style={fileBodyStyle}>
             <div className="search-section__body-nothing" style={{'display': !fileSearchResult || !fileSearchResult.length ? 'block' : 'none'}}>
-            No file.
+            No file for "{searchKeyword}".
             </div>
             <ul className="search-section__body-list">{fileSearchResult.map((fileItem, idx)=>{
               let _source = fileItem._source;
@@ -194,7 +194,7 @@ export default class SearchSection extends Component {
           </div>
           <div className="search-section__body--worklog" style={worklogBodyStyle}>
             <div className="search-section__body-nothing" style={{'display': !worklogSearchResult || !worklogSearchResult.length ? 'block' : 'none'}}>
-            No worklog.
+            No worklog for "{searchKeyword}".
             </div>
             <ul className="search-section__body-list">{worklogSearchResult.map((item, idx)=>{
               return <li key={idx}>{item._id}</li>;
@@ -202,7 +202,7 @@ export default class SearchSection extends Component {
           </div>
           <div className="search-section__body--comment" style={commentBodyStyle}>
             <div className="search-section__body-nothing" style={{'display': !commentSearchResult || !commentSearchResult.length ? 'block' : 'none'}}>
-            No comment.
+            No comment for "{searchKeyword}".
             </div>
             <ul className="search-section__body-list">{commentSearchResult.map((item, idx)=>{
               let _source = item._source;

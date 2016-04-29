@@ -129,3 +129,19 @@ export function changeSearchKeyword(newKeyword) {
     newKeyword
   };
 };
+
+
+export function setuppedSearchOnKeyworkChangeAWhile(timerId) {
+  return {
+    type: actionTypes.SETUPPED_SEARCH_ON_KEYWORD_CHANGE_A_WHILE,
+    timerId
+  };
+};
+export function setupSearchOnKeyworkChangeAWhile(func) {
+  return (dispatch) => {
+    let _timerId = setTimeout(()=>{
+      func();
+    }, 900);
+    dispatch(setuppedSearchOnKeyworkChangeAWhile(_timerId));
+  };
+};
