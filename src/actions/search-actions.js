@@ -63,11 +63,9 @@ let search = (searchfor,
     if (_from!==undefined) {
       url += '&start=' + _from;
     }
-    console.warn(size, _from, url);
     return fetch(url, config)
       .then((res) => res.json())
       .then((body) => {
-        console.warn(body);
         let data = body.data;
         let _hits = data && data.hits || [];
         let _total = data.hasOwnProperty('total') ? data.total : 0;
@@ -127,5 +125,28 @@ export function changeSearchKeyword(newKeyword) {
   return {
     type: actionTypes.CHANGE_SEARCH_KEYWORD,
     newKeyword
+  };
+};
+
+
+export function setuppedSearchOnKeyworkChangeAWhile(timerId) {
+  return {
+    type: actionTypes.SETUPPED_SEARCH_ON_KEYWORD_CHANGE_A_WHILE,
+    timerId
+  };
+};
+export function setupSearchOnKeyworkChangeAWhile(func) {
+  return (dispatch) => {
+    let _timerId = setTimeout(()=>{
+      func();
+    }, 1500);
+    dispatch(setuppedSearchOnKeyworkChangeAWhile(_timerId));
+  };
+};
+
+export function setSearchBoxNeedShow(needShow) {
+  return {
+    type: actionTypes.SET_SEARCH_BOX_NEED_SHOW,
+    needShow
   };
 };

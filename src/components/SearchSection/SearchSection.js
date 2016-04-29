@@ -17,8 +17,40 @@ let highlightKeyword = (content, keyword) => {
   s = s.replace(new RegExp(keyword, 'ig'), '<b style="color:red;background:yellow">$&</b>');
   return s + suffix;
 };
+let getContentWithoutMarkdown = (content) => {
+  // no headline tag
+  content = content
+          .replace(/##### /g, '')
+          .replace(/#### /g, '')
+          .replace(/### /g, '')
+          .replace(/## /g, '')
+          .replace(/# /g, '');
+  // no href tag AND convert linkText to pureText
+  content = content.replace(/\[(.*?)]\(http.*?\)/g, '$1');
+  // no code tag
+  content = content.replace(/`/g, '');
+  // no bold tag
+  content = content.replace(/\*\*/g, '');
+  return content;
+};
 
 export default class SearchSection extends Component {
+  _renderDocType(docType) {
+    let documentType = docType.toUpperCase();
+    if (documentType==='BUGS') {
+      documentType = 'BUG';
+    }
+    if (documentType==='KNOWLEDGES') {
+      documentType = 'KNOWLEDGE';
+    }
+    return <span className="search-section-row__doctype">{'['+documentType+'] '}</span>;
+  };
+  _renderTags(aryTags, searchKeyword) {
+    return (<span className="article-tag-list">{aryTags.map((tag, idx)=>{
+          return <span key={idx} className="tag" dangerouslySetInnerHTML={{__html:highlightKeyword(tag, searchKeyword)}}></span>;
+        })}</span>);
+  };
+
   render() {
     let { 
         searchKeyword,
@@ -80,11 +112,15 @@ export default class SearchSection extends Component {
       commentFootStyle.display = 'none';
     }
 
-    let contentStyle = {background:'#dfdfdf',padding:'9px'};
+    let contentStyle = {background:'#f0f0f0',padding:'9px'};
     let articleButtonProps = currentSearchTab==='ARTICLE' ? {secondary: true} : {};
     let fileButtonProps = currentSearchTab==='FILE' ? {secondary: true} : {};
     let worklogButtonProps = currentSearchTab==='WORKLOG' ? {secondary: true} : {};
     let commentButtonProps = currentSearchTab==='COMMENT' ? {secondary: true} : {};
+
+    let tabLabelStyle = {'textTransform': 'none'};
+    let subTitleStyle = {'textAlign':'right'};
+    subTitleStyle.display = searchResultTitle!=='' ? 'none' : 'none';
 
     return (
       <section className="search-section">
@@ -93,68 +129,92 @@ export default class SearchSection extends Component {
             onClick={()=>{
               searchArticle(searchKeyword, pagesize, 0);
             }}  
-            label="Knowledge" />
+            label="Article"
+            labelStyle={tabLabelStyle} />
           <RaisedButton {...fileButtonProps}
             onClick={()=>{
               searchFile(searchKeyword, pagesize, 0);
             }}
-            label="File" />
+            label="File"
+            labelStyle={tabLabelStyle} />
           <RaisedButton {...worklogButtonProps}
             onClick={()=>{
               searchWorklog(searchKeyword, pagesize, 0);
             }}
-            label="Worklog" />
+            label="Work log"
+            labelStyle={tabLabelStyle} />
           <RaisedButton {...commentButtonProps}
             onClick={()=>{
               searchComment(searchKeyword, pagesize, 0);
             }}
-            label="Comment" />
+            label="Comment"
+            labelStyle={tabLabelStyle} />
         </div>
         <div className="search-section__body">
-          <div className="search-section__body-title" style={{display:searchResultTitle!=='' ? '' : 'none'}}><span style={{color:'#aaa'}}>{searchResultTitle}</span> result for "<em>{searchKeyword}</em>":</div>
+          <div className="search-section__body-title" style={subTitleStyle}><span style={{color:'#aaa'}}>{searchResultTitle}</span> result for "<em>{searchKeyword}</em>":</div>
           <div className="search-section__body--article" style={articleBodyStyle}>
-            {!articleSearchResult || !articleSearchResult.length ? 'No article.' : ''}
+            <div className="search-section__body-nothing" style={{'display': !articleSearchResult || !articleSearchResult.length ? 'block' : 'none'}}>
+            No article for "{searchKeyword}".
+            </div>
             <ul className="search-section__body-list">{articleSearchResult.map((item, idx)=>{
               let _files = item._source && item._source.files;
               _files = _files || [];
 
+              let articleContent = getContentWithoutMarkdown(item._source.content);
+
               return (<li key={idx} className="search-section-row search-section-row--article">
-                <h4><a href={DOCUMENT_URL_PREFIX + item._source.id} dangerouslySetInnerHTML={{__html:highlightKeyword(item._source.title, searchKeyword)}}></a></h4>
-                <div>{moment(item._source.updated_at).format('YYYY-MM-DD')}{' '}{'['+item._source.document_type+']'}</div>
-                <div style={contentStyle} dangerouslySetInnerHTML={{__html:highlightKeyword(item._source.content||'', searchKeyword)}}></div>
-                <div>Author: {item._source.author_name}</div>
-                <ul>
+                <h4>{this._renderDocType(item._source.document_type)}<a href={DOCUMENT_URL_PREFIX + item._source.id} dangerouslySetInnerHTML={{__html:highlightKeyword(item._source.title, searchKeyword)}}></a></h4>
+                <div style={contentStyle} dangerouslySetInnerHTML={{__html:highlightKeyword(articleContent||'', searchKeyword)}}></div>
+                <div style={{color:'#9e9e9e', display:'none'}}>Author: {item._source.author_name}{' '}{moment(item._source.updated_at).format('YYYY-MM-DD')}</div>
+                <ul style={{padding:'0'}}>
                   {_files.map((fileItem,fileIdx)=>{
-                    return (<li key={fileIdx} title={fileItem.type}>
+                    return (<li key={fileIdx} style={{float:'left', margin:'0 9px 0 0', 'listStyle':'none'}} title={fileItem.type}>
                     <a href={fileItem.url}>{fileItem.name}</a>
                     </li>);
                   })}
                 </ul>
+                {this._renderTags(item._source.tags, searchKeyword)}
               </li>);
             })}</ul>
           </div>
           <div className="search-section__body--file" style={fileBodyStyle}>
-            {!fileSearchResult || !fileSearchResult.length ? 'No file.' : ''}
-            <ul>{fileSearchResult.map((fileItem, idx)=>{
+            <div className="search-section__body-nothing" style={{'display': !fileSearchResult || !fileSearchResult.length ? 'block' : 'none'}}>
+            No file for "{searchKeyword}".
+            </div>
+            <ul className="search-section__body-list">{fileSearchResult.map((fileItem, idx)=>{
               let _source = fileItem._source;
               return (<li key={idx} className="search-section-row search-section-row--file" title={_source.type}>
-                    <h4><a href={_source.url}>{_source.name}</a></h4>
+                    <h4>{this._renderDocType(_source.article_document_type)}<a href={_source.url}>{_source.name}</a></h4>
+                    <div style={{'text-align':'right',color:'#666'}}>{_source.article_title}{' '}<span dangerouslySetInnerHTML={{__html: ' - ' + moment(_source.created_at).format('YYYY-MM-DD')}}></span></div>
                     <div style={contentStyle} dangerouslySetInnerHTML={{__html:highlightKeyword(_source.content||'', searchKeyword)}}></div>
-                    <div>{moment(_source.created_at).format('YYYY-MM-DD')}{' '}{'['+_source.article_document_type+']'}</div>
-                    <div>In document:{' '}{_source.article_title}{' ['}{_source.article_tags.join(',')}{'] '}{' '}<i>{_source.author_name}</i></div>
+                    {_source.author_name + ': '}
+                    {this._renderTags(_source.article_tags, searchKeyword)}
                   </li>);
             })}</ul>
           </div>
           <div className="search-section__body--worklog" style={worklogBodyStyle}>
-            {!worklogSearchResult || !worklogSearchResult.length ? 'No worklog.' : ''}
-            <ul>{worklogSearchResult.map((item, idx)=>{
+            <div className="search-section__body-nothing" style={{'display': !worklogSearchResult || !worklogSearchResult.length ? 'block' : 'none'}}>
+            No worklog for "{searchKeyword}".
+            </div>
+            <ul className="search-section__body-list">{worklogSearchResult.map((item, idx)=>{
               return <li key={idx}>{item._id}</li>;
             })}</ul>
           </div>
           <div className="search-section__body--comment" style={commentBodyStyle}>
-            {!commentSearchResult || !commentSearchResult.length ? 'No comment.' : ''}
-            <ul>{commentSearchResult.map((item, idx)=>{
-              return <li key={idx}>{item._id}</li>;
+            <div className="search-section__body-nothing" style={{'display': !commentSearchResult || !commentSearchResult.length ? 'block' : 'none'}}>
+            No comment for "{searchKeyword}".
+            </div>
+            <ul className="search-section__body-list">{commentSearchResult.map((item, idx)=>{
+              let _source = item._source;
+              return (<li className="search-section-row search-section-row--comment" key={idx}>
+                <h4>{this._renderDocType(_source.article_document_type)}
+                {'Comment on: '}
+                <a href={DOCUMENT_URL_PREFIX + _source.article_id} dangerouslySetInnerHTML={{__html:highlightKeyword(_source.article_title, searchKeyword)}}>
+                </a>
+                </h4>
+                <div style={contentStyle} dangerouslySetInnerHTML={{__html:highlightKeyword(getContentWithoutMarkdown(_source.content)||'', searchKeyword)}}></div>
+                {this._renderTags(_source.article_tags, searchKeyword)}
+              </li>);
             })}</ul>
           </div>
         </div>

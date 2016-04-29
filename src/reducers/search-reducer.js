@@ -5,6 +5,8 @@ export const PAGESIZE = 5;
 
 const initialState = Map({
   searchKeyword: '',
+  searchBoxNeedShow: undefined,
+  searchTimerId: null, //autoDoSearchTimerId after TextField was changed
   currentSearchTab: '',
   pagesize: PAGESIZE,
 
@@ -43,7 +45,6 @@ let typeSearchSuccess = (state, action) => {
 };
 
 export default function searchReducer(state = initialState, action) {
-  console.warn('action.type', action.type);
   switch (action.type) {
     case actionTypes.SEARCH_ARTICLE_SUCCESS:
     case actionTypes.SEARCH_FILE_SUCCESS:
@@ -52,6 +53,10 @@ export default function searchReducer(state = initialState, action) {
       return typeSearchSuccess(state, action);
     case actionTypes.CHANGE_SEARCH_KEYWORD:
       return state.set('searchKeyword', action.newKeyword);
+    case actionTypes.SETUPPED_SEARCH_ON_KEYWORD_CHANGE_A_WHILE:
+      return state.set('searchTimerId', action.timerId);
+    case actionTypes.SET_SEARCH_BOX_NEED_SHOW:
+      return state.set('searchBoxNeedShow', action.needShow);
   }
   return state;
 }
