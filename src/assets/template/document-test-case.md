@@ -1,12 +1,3 @@
-Unit Test Cover scope:
-1. long term automate run, discover axapi changes
-
-
-E2E Test
-
-
------------
-
 ## Feature Function:
 `know what this feature do`
 

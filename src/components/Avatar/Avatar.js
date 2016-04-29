@@ -21,6 +21,7 @@ class Avatar extends Component {
     return (
       <MaterialAvatar
         {...this.props}
+        title={`${user.name}, ${user.email}`}
         color={fullWhite}
         backgroundColor={blue900} >
         {::this.getShortName(user.name)}
