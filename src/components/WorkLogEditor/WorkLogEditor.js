@@ -95,7 +95,7 @@ class WorkLogEditor extends Component {
     let myTag = tags;
     myTag = myTag ? myTag : [];
     return (
-      <div className="article-editor" {...this.props} >
+      <div className="worklog-editor" {...this.props} >
         <TextField
           type="text"
           style={{width: '100%'}}
