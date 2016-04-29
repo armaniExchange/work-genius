@@ -22,7 +22,7 @@ let WorkLogMutation = {
 		resolve: async (root, { data }) => {
 			try{
 				let worklog = JSON.parse(data);
-				return await createWorkLog(data);
+				return await createWorkLog(worklog);
 			}catch(err){
 				console.log(err);
 				return 'Fail to create a worklog!';
@@ -46,7 +46,7 @@ let WorkLogMutation = {
 		resolve: async (root, { id,data }) => {
 			try{
 				let worklog = JSON.parse(data);
-				return await updateWorkLog(id,data);
+				return await updateWorkLog(id,worklog);
 			}catch(err){
 				console.log(err);
 				return 'Fail to update a worklog!';
