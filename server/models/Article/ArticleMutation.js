@@ -137,7 +137,7 @@ const ArticleMutation = {
 
           await transporter.sendMail({
             from: MAILER_ADDRESS,
-            to: user.email,
+            to: result.reportTo.map((emailName) => `${emailName}@a10networks.com`),
             subject: `[KB - New Document] ${result.title}`,
             html: parseMarkdown(generateEmailMarkdown({
               to: 'teams',
@@ -146,7 +146,7 @@ const ArticleMutation = {
               title: result.title,
               content: result.content
             })),
-            cc: result.reportTo.map((emailName) => `${emailName}@a10networks.com`)
+            cc: 'ax-web-DL@a10networks.com'
           });
 
           return result;
