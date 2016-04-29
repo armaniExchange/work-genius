@@ -45,7 +45,6 @@ let typeSearchSuccess = (state, action) => {
 };
 
 export default function searchReducer(state = initialState, action) {
-  console.warn('action.type', action.type);
   switch (action.type) {
     case actionTypes.SEARCH_ARTICLE_SUCCESS:
     case actionTypes.SEARCH_FILE_SUCCESS:

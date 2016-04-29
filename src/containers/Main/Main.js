@@ -106,7 +106,6 @@ class Main extends Component {
 		const { pathname } = this.props.location;
 
     let SubMenuSearchSectionProps = Object.assign({}, searchState, searchActions);
-    // console.warn('SubMenuSearchSectionProps', SubMenuSearchSectionProps);
     return (
 			<section className="mdl-layout mdl-js-layout">
 				<AlertBox

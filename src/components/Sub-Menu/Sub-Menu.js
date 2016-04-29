@@ -45,7 +45,6 @@ class SubMenu extends Component {
 
     const searchBoxResultStyle = {};
     searchBoxResultStyle.display = !searchKeyword ? 'none' : '';
-    console.warn('searchBoxNeedShow', searchBoxNeedShow, searchKeyword);
     let isSearchBoxShow = searchKeyword && searchBoxNeedShow;
 		return (
 			<header className="mdl-layout__header mdl-layout__header--level2">

@@ -63,11 +63,9 @@ let search = (searchfor,
     if (_from!==undefined) {
       url += '&start=' + _from;
     }
-    console.warn(size, _from, url);
     return fetch(url, config)
       .then((res) => res.json())
       .then((body) => {
-        console.warn(body);
         let data = body.data;
         switch (searchfor) {
           case 'ARTICLE':
