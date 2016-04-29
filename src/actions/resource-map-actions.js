@@ -425,7 +425,7 @@ function queryResourceMapDataByUser(startDate, days, userId) {
             }
         }
 
-        if (userId === '') {
+        if (userId === 'undefined' || userId === '') {
             dispatch(queryResourceMapDataFromServer(startDate, days));
         } else {
             dispatch(queryResourceMapDataFromServerByUser(startDate, days, userId));

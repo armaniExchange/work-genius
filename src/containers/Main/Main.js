@@ -11,6 +11,7 @@ import SubMenu from '../../components/Sub-Menu/Sub-Menu';
 // Actions
 import * as AppActions from '../../actions/app-actions';
 import * as MainActions from '../../actions/main-actions';
+import * as SearchActions from '../../actions/search-actions';
 
 class Main extends Component {
 	constructor(props) {
@@ -76,7 +77,9 @@ class Main extends Component {
 		// Location props are coming from react router
 		const { pathname } = this.props.location;
 
-		return (
+    let SubMenuSearchSectionProps = Object.assign({}, this.props.searchState, this.props.searchActions);
+    // console.warn('SubMenuSearchSectionProps', SubMenuSearchSectionProps);
+    return (
 			<section className="mdl-layout mdl-js-layout">
 				<AlertBox
 					type="error"
@@ -92,6 +95,7 @@ class Main extends Component {
 				    onNavItemsClick={this._navItemsClickHandler}
 				    onLogoutHandler={logout} />
 				<SubMenu
+            {...SubMenuSearchSectionProps}
 				    data={currentSelectedPageSubMenu}
 					headerTitle={this._mapPathNameToDisplayName(pathname, navItems)} />
 				<main className="mdl-layout__content">
@@ -106,23 +110,27 @@ class Main extends Component {
 
 Main.propTypes = {
 	mainState  : PropTypes.object.isRequired,
-	appState   : PropTypes.object.isRequired,
+  appState   : PropTypes.object.isRequired,
+	searchState   : PropTypes.object.isRequired,
 	appActions : PropTypes.object.isRequired,
-	mainActions: PropTypes.object.isRequired,
+  mainActions: PropTypes.object.isRequired,
+	searchActions: PropTypes.object.isRequired,
 	location   : PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
 	return {
-		mainState: state.main.toJS(),
-		appState: state.app.toJS()
+    mainState: state.main.toJS(),
+    appState: state.app.toJS(),
+		searchState: state.search.toJS()
 	};
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
 		appActions : bindActionCreators(AppActions, dispatch),
-		mainActions: bindActionCreators(MainActions, dispatch)
+    mainActions: bindActionCreators(MainActions, dispatch),
+		searchActions: bindActionCreators(SearchActions, dispatch)
 	};
 }
 

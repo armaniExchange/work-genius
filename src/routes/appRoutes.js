@@ -10,6 +10,7 @@ import ValidDemoPage from '../containers/ValidDemoPage/ValidDemoPage';
 import DashboardPage from '../containers/DashboardPage/DashboardPage';
 import BugTrackingPage from '../containers/KnowledgePage/BugTrackingPage';
 import TaskPage from '../containers/TaskPage/TaskPage';
+import SearchPage from '../containers/SearchPage/SearchPage';
 import PTOPage from '../containers/PTOPage/PTOPage';
 import PTOApplication from '../containers/PTOPage/PTO-Application';
 import PTOOvertime from '../containers/PTOPage/PTO-Overtime';
@@ -51,6 +52,7 @@ const appRoutes = () => (
         <IndexRoute component={requireAuth(DashboardPage)}/>
         <Route path="redux-demo" component={requireAuth(DemoPage)} />
         <Route path="task" component={requireAuth(TaskPage)} />
+        <Route path="search" component={requireAuth(SearchPage)} />
         <Route path="pto" component={requireAuth(PTOPage)}>
           <IndexRoute component={requireAuth(PTOApplication)} />
           <Route path="overtime" component={requireAuth(PTOOvertime)} />

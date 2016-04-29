@@ -12,7 +12,21 @@ import _ from 'lodash';
 
 _.merge(MENU, TECH_MENU);
 
-function generateTree(dataArr, root) {
+function countArticles(dataArr, root) {
+    let directChildren, subDataArr;
+    if (!root || dataArr.length === 0) {
+        return  0;
+    }
+    directChildren = dataArr.filter((node) => { return node.parentId === root.id; });
+    subDataArr = dataArr.filter((node) => { return node.parentId !== root.id; });
+
+    if (directChildren.length === 0) {
+        return root.articlesCount;
+    }
+    return directChildren.map((node) => {return countArticles(subDataArr, node);}).reduce((acc, x) => acc + x, 0);
+}
+
+function generateTree(dataArr, root, path) {
     let subTree, directChildren, subDataArr;
     if (!root || Object.keys(root).length === 0) {
         return {};
@@ -21,72 +35,33 @@ function generateTree(dataArr, root) {
         return {
             id: root.id,
             name: root.name,
-            subCategories: []
+            path: root.name === 'root' ? 'root' : `${path}/${root.name}`,
+            isCollapsed: root.name === 'root' ? false : true,
+            parentId: root.parentId,
+            children: [],
+            articlesCount: root.articlesCount
         };
     }
     directChildren = dataArr.filter((node) => { return node.parentId === root.id; });
     subDataArr = dataArr.filter((node) => { return node.parentId !== root.id; });
     subTree = directChildren.map((node) => {
-        return generateTree(subDataArr, node);
+        return generateTree(subDataArr, node, root.name === 'root' ? 'root' : `${path}/${root.name}`);
     });
     return {
         id: root.id,
         name: root.name,
-        subCategories: subTree
+        path: root.name === 'root' ? 'root' : `${path}/${root.name}`,
+        isCollapsed: root.name === 'root' ? false : true,
+        parentId: root.parentId,
+        children: subTree,
+        articlesCount: countArticles(dataArr, root)
     };
 };
 
-export function transformToTree(dataArr) {
+function transformToTree(dataArr) {
     let root = dataArr.filter((node) => { return !node.parentId; })[0],
         rest = dataArr.filter((node) => { return node.parentId; });
-    return generateTree(rest, root);
-}
-
-function generateTitleCountMap(articles) {
-    let result = {};
-
-    articles.forEach((article) => {
-        if (!result[article.categoryId]) {
-            result[article.categoryId] = 1;
-        } else {
-            result[article.categoryId] += 1;
-        }
-    });
-
-    return result;
-}
-
-function getChildren(root, path, titleCountMap) {
-    if (!root || typeof root !== 'object' || Object.keys(root).length <= 0) {
-        return [];
-    }
-    return Object.keys(root).map((key) => {
-        let newPath = `${path}/${key}`;
-        return {
-            name: key,
-            isCollapsed: true,
-            path: newPath,
-            children: getChildren(root[key], newPath, titleCountMap),
-            childrenCount: Object.keys(titleCountMap).reduce((acc, title) => {
-                return title.indexOf(newPath) >= 0 ? acc + titleCountMap[title] : acc;
-            }, 0)
-        };
-    });
-}
-
-function enhanceMenu(data, titleCountMap) {
-    let path = 'root',
-        articlesCount = Object.keys(titleCountMap).reduce((acc, title) => {
-            return title.indexOf(path) >= 0 ? acc + titleCountMap[title] : 0;
-        }, 0);
-    let result = {
-        name: 'Root',
-        isCollapsed: false,
-        path,
-        children: getChildren(data.root, path, titleCountMap),
-        childrenCount: articlesCount
-    };
-    return result;
+    return generateTree(rest, root, '');
 }
 
 function updateCollpaseStatus(root, path) {
@@ -110,8 +85,8 @@ function updateCollpaseStatus(root, path) {
 const initialState = Map({
   articleList: List.of(),
   articleTotalCount: 0,
-  allCategories: Map(enhanceMenu(MENU, {})),
   documentCategories: Map({}),
+  documentCategoriesLength: 0,
   currentSelectedCategory: Map({}),
   allTags: List.of(),
   allUsers: List.of(),
@@ -126,21 +101,10 @@ const initialState = Map({
   owner: ''
 });
 
-let isFirstTimeFetch = true;
-
 export default function documentReducer(state = initialState, action) {
   switch (action.type) {
     case actionTypes.FETCH_ARTICLES_SUCCESS:
-      if (isFirstTimeFetch) {
-        let newTitleCountMap = generateTitleCountMap(action.articleList);
-        isFirstTimeFetch = false;
-        return state.set('articleList', action.articleList)
-          .set('articleTotalCount', action.count)
-          .set('allCategories', enhanceMenu(MENU, newTitleCountMap));
-      } else {
-        return state.set('articleList', action.articleList)
-          .set('articleTotalCount', action.count);
-      }
+      return state.set('articleList', action.articleList).set('articleTotalCount', action.count);
     case actionTypes.FETCH_ALL_TAGS_SUCCESS:
       return state.set('allTags', action.allTags);
     case actionTypes.SET_SELECTED_CATEGORY:
@@ -148,8 +112,8 @@ export default function documentReducer(state = initialState, action) {
       if (action.data && action.data.isLeaf) {
         return state.set('currentSelectedCategory', action.data);
       } else {
-        updatedTree = updateCollpaseStatus(state.get('allCategories'), action.data.path);
-        return state.set('currentSelectedCategory', action.data).set('allCategories', updatedTree);
+        updatedTree = updateCollpaseStatus(state.get('documentCategories').toJS(), action.data.path);
+        return state.set('currentSelectedCategory', action.data).set('documentCategories', fromJS(updatedTree));
       }
     case actionTypes.DELETE_ARTICLE_SUCCESS:
       return state.set('articleList', state.get('articleList').filter(article => {
@@ -158,7 +122,7 @@ export default function documentReducer(state = initialState, action) {
     case actionTypes.FETCH_ALL_USERS_SUCCESS:
       return state.set('allUsers', fromJS(action.allUsers));
     case actionTypes.FETCH_DOCUMENT_CATEGORIES_SUCCESS:
-      return state.set('documentCategories', fromJS(transformToTree(action.data)));
+      return state.set('documentCategoriesLength', action.data.length).set('documentCategories', fromJS(transformToTree(action.data)));
     case actionTypes.FETCH_ALL_MILESTONES_SUCCESS:
       return state.set('allMilestones', action.allMilestones);
     case actionTypes.UPDATE_ARTICLES_QUERY:

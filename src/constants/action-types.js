@@ -14,6 +14,14 @@ export default keyMirror({
     SET_CURRENT_SELECTED_PAGE_NAME: null,
     SET_ALL_USER: null,
 
+    // Search page actions
+    SEARCH_ARTICLE_SUCCESS: null,
+    SEARCH_FILE_SUCCESS: null,
+    SEARCH_WORKLOG_SUCCESS: null,
+    SEARCH_COMMENT_SUCCESS: null,
+    SEARCH_BUGTRACKING_SUCCESS: null,
+    CHANGE_SEARCH_KEYWORD: null,
+
     // Task page actions
     SORT_FEATURE_TABLE_BY_CATEGORY: null,
     FILTER_FEATURE_TABLE: null,
@@ -124,6 +132,8 @@ export default keyMirror({
     UPDATE_ARTICLES_QUERY: null,
     FETCH_DOCUMENT_CATEGORIES_SUCCESS: null,
     FETCH_DOCUMENT_CATEGORIES: null,
+    UPSERT_DOCUMENT_CATEGORIES: null,
+    DELETE_DOCUMENT_CATEGORIES: null,
 
     // Feature analysis page actions
     CHANGE_ASSIGNMENT_CATEGORY_UPDATE_MSG_OPACITY: null,

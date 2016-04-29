@@ -4,175 +4,133 @@ import './_EditDocumentCategoryPage.scss';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-// import Table from 'material-ui/lib/table/table';
-// import TableHeaderColumn from 'material-ui/lib/table/table-header-column';
-// import TableRow from 'material-ui/lib/table/table-row';
-// import TableHeader from 'material-ui/lib/table/table-header';
-// import TableRowColumn from 'material-ui/lib/table/table-row-column';
-// import TableBody from 'material-ui/lib/table/table-body';
-// import RaisedButton from 'material-ui/lib/raised-button';
+import Paper from 'material-ui/lib/paper';
 
-// import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
-// import ArticleEditor from '../../components/ArticleEditor/ArticleEditor';
-
-// import * as ArticleActions from '../../actions/article-page-actions';
 import * as DocumentActions from '../../actions/document-page-actions';
 
 import CategoryRow from '../../components/CategoryRow/CategoryRow';
+
+import Breadcrumb from '../../components/A10-UI/Breadcrumb';
+import BREADCRUMB from '../../constants/breadcrumb';
 
 
 class EditDocumentCategoryPage extends Component {
 
   constructor(props) {
     super(props);
-    const initDisplayTree = props.data.children;
-    this.state = { displayTree: initDisplayTree };
+    this.state = { displayCategoriesId: [] };
   }
 
   componentDidMount() {
     this.props.documentActions.fetchDocumentCategories();
-
   }
 
-  toggleChildren({id, level, isDisplayChildren, children}) {
-    let { displayTree } = this.state;
-    const parentIndex = displayTree.findIndex(row => row.id === id);
+  onCategorySave(newData) {
+    this.props.documentActions.upsertDocumentCategory(newData);
+  }
 
-    if (isDisplayChildren) {
-      const modefiedChildren = children.map(child => Object.assign({}, child, {level: level + 1}));
-      displayTree.splice(parentIndex + 1, 0, ...modefiedChildren);
+  onCategoryRemove(id) {
+    this.props.documentActions.deleteDocumentCategory(id);
+  }
+
+  toggleChildren({id, forceEnable}) {
+    const { displayCategoriesId } = this.state;
+    let result = displayCategoriesId;
+    if (displayCategoriesId.includes(id)) {
+      if (forceEnable === true) {
+        // skip remove, keep it in displayCategoriesId
+      } else {
+        result = displayCategoriesId.filter(eachId => eachId !== id);
+      }
     } else {
-      displayTree.splice(parentIndex + 1, children.length);
+      result = [...displayCategoriesId, id];
     }
+    this.setState({displayCategoriesId: result});
+  }
 
-    displayTree[parentIndex].isDisplayChildren = isDisplayChildren;
-
-    this.setState({
-      displayTree
-    });
+  depthFirstFlat(node) {
+    const { displayCategoriesId } = this.state;
+    node.level = node.level || 0;
+    if (node.children && node.children.length > 0 && (node.name === 'root' || displayCategoriesId.includes(node.id))) {
+      node.collapsed = false;
+      const modifiedChildren = node.children.map(child => {
+          return Object.assign({}, child, {level: node.level + 1});
+        })
+        .map(this.depthFirstFlat.bind(this))
+        .reduce((prev, item) => [...prev, ...item], []);
+      return [node, ...modifiedChildren];
+    } else {
+      node.collapsed = true;
+      return [node];
+    }
   }
 
   render() {
     const {
-      displayTree
-    } = this.state;
-    const { documentCategories } = this.props;
-    console.log(documentCategories);
+        documentCategories,
+        documentCategoriesLength
+     } = this.props;
+    const displayTree = this.depthFirstFlat(documentCategories);
     return (
       <div>
-        <h3>Knowledge Tree</h3>
-        {
-          displayTree.map(row => {
-            return (
-              <CategoryRow
-                key={row.id}
-                toggleChildren={::this.toggleChildren}
-                {...row} />
-            );
-          })
-        }
-        {
-          /*
-          <Table>
-            <TableHeader displaySelectAll={false}>
-              <TableRow>
-                <TableHeaderColumn>Category Name</TableHeaderColumn>
-                <TableHeaderColumn>Article's Number</TableHeaderColumn>
-                <TableHeaderColumn>Action</TableHeaderColumn>
-              </TableRow>
-            </TableHeader>
-            <TableBody displayRowCheckbox={false}>
-              <TableRow>
-                <TableRowColumn>+ 3.2</TableRowColumn>
-                <TableRowColumn>100</TableRowColumn>
-                <TableRowColumn>
-                  <a href="#">Add Child</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-                  <a href="#">Edit</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-                  <a href="#">Remove</a>
-                </TableRowColumn>
-              </TableRow>
-            </TableBody>
-          </Table>
-           */
-        }
-
+        <Breadcrumb data={BREADCRUMB.editDocumentCategory} />
+        <div className="edit-document-category-page">
+          <h3>Knowledge Tree</h3>
+          <Paper className="category-tree-edit-table">
+            <div className="category-tree-edit-table-header">
+              <div className="category-tree-edit-table-row">
+                <span className="category-name">Category Name</span>
+                <span className="article-number">Article Number</span>
+                <span className="action">Action</span>
+              </div>
+            </div>
+            <div className="category-tree-edit-table-body">
+              {
+                displayTree.map(row => {
+                  return (
+                    <CategoryRow
+                      lastId={documentCategoriesLength + ''}
+                      key={row.id}
+                      toggleChildren={::this.toggleChildren}
+                      onSave={::this.onCategorySave}
+                      onRemove={::this.onCategoryRemove}
+                      {...row} />
+                  );
+                })
+              }
+            </div>
+          </Paper>
+        </div>
       </div>
     );
   }
 }
 
 EditDocumentCategoryPage.propTypes = {
-  data                   : PropTypes.object,
-  documentCategories     : PropTypes.object,
-  // id                  : PropTypes.string,
-  // title               : PropTypes.string,
-  // author              : PropTypes.shape({id: PropTypes.string, name: PropTypes.string}),
-  // tags                : PropTypes.arrayOf(PropTypes.string),
-  // files               : PropTypes.array,
-  // categoryId          : PropTypes.string,
-  // comments            : PropTypes.array,
-  // content             : PropTypes.string,
-  // documentType        : PropTypes.string,
-  // priority            : PropTypes.string,
-  // milestone           : PropTypes.string,
-  // reportTo            : PropTypes.arrayOf(PropTypes.string),
-  // createdAt           : PropTypes.number,
-  // updatedAt           : PropTypes.number,
-  // params              : PropTypes.object,
-  // allCategories       : PropTypes.object,
-  // allTags             : PropTypes.arrayOf(PropTypes.string),
-  // isEditing           : PropTypes.bool,
-  // articleActions      : PropTypes.object.isRequired,
-  documentActions     : PropTypes.object.isRequired,
-  // history             : PropTypes.object
+  documentCategories       : PropTypes.object,
+  documentCategoriesLength : PropTypes.number,
+  documentActions          : PropTypes.object.isRequired
 };
-const fakeData = {
-  id: '1',
-  name: 'root',
-  children: [
-    {
-      id: '2',
-      name: 'treeA'
-    },
-    {
-      id: '3',
-      name: 'treeB',
-      children: [
-        {
-          id: '4',
-          name: 'treeC'
-        }
-      ]
-    },
-  ]
-};
+
 EditDocumentCategoryPage.defaultProps = {
-  data                   : fakeData
-  // id                  : '',
-  // content             : '',
-  // author              : { id: '', name: ''},
-  // tags                : [],
-  // files               : [],
-  // comments            : [],
-  // content             : '',
-  // createdAt           : 0,
-  // updatedAt           : 0,
-  // allCategories       : {}
+  documentCategories     : PropTypes.object
 };
 
 function mapStateToProps(state) {
   const {
-    documentCategories
+    documentCategories,
+    documentCategoriesLength
   } = state.documentation.toJS();
 
   return Object.assign({}, {
-    documentCategories
+    documentCategories,
+    documentCategoriesLength
   });
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    documentActions: bindActionCreators(DocumentActions, dispatch)
+    documentActions: bindActionCreators(DocumentActions, dispatch),
   };
 }
 

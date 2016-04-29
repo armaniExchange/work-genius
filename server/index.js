@@ -12,6 +12,7 @@ import {
   fileDeleteHandler
 } from './models/File/FileMutation';
 import { fileDownloadHandler } from './models/File/FileQuery';// Constants
+import { searchArticleHandler, searchFileHandler, searchWorklogHandler, searchCommentHandler, searchBugtrackingHandler } from './models/Search/SearchQuery';
 import {
     SECURE_KEY,
     MAIL_TRANSPORTER_CONFIG
@@ -78,6 +79,24 @@ app.use('/graphql', graphqlHTTP(request => ({
     pretty: true,
     graphiql: true
 })));
+
+app.route('/search')
+  .get((req, res)=>{
+    var searchfor = req.query && req.query.searchfor;
+    switch (searchfor) {
+      case 'ARTICLE':
+      default:
+        return searchArticleHandler(req, res);
+      case 'FILE':
+        return searchFileHandler(req, res);
+      case 'WORKLOG':
+        return searchWorklogHandler(req, res);
+      case 'COMMENT':
+        return searchCommentHandler(req, res);
+      case 'BUGTRACKING':
+        return searchBugtrackingHandler(req, res);
+    }
+  });
 
 app.route('/files')
   .post(fileUploadHandler);

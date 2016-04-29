@@ -1,7 +1,177 @@
 export const MENU = {
    'root': {
       '3.2': {
-         'App': {},
+         'App': {
+   'DDos Protection' : {
+      'Mitigation Console' : {
+         'Destination Services' : {},
+         'Zone Services' : {}
+      },
+      'Protected Objects' : {
+         'Destination Services' : {},
+         'Destinations' : {},
+         'Groups' : {},
+         'Sources' : {},
+         'Zone Services' : {},
+         'Zones' : {}
+      },
+      'Settings' : {
+         'Black/White List Sync' : {},
+         'Global' : {}
+      },
+      'Templates' : {
+         'Action' : {
+            'Action List' : {},
+            'Violation Action' : {}
+         },
+         'Destination Service' : {
+            'DNS' : {},
+            'HTTP' : {},
+            'ICMP-v4' : {},
+            'ICMP-v6' : {},
+            'Logging' : {},
+            'Monitor' : {},
+            'Other' : {},
+            'SSL-L4' : {},
+            'TCP' : {},
+            'UDP' : {}
+         },
+         'General' : {
+            'Capture Configuration' : {},
+            'Certificate Management' : {},
+            'Class List' : {},
+            'DDos Script' : {},
+            'Domain Group' : {},
+            'Domain List' : {},
+            'GLID' : {},
+            'IPv4 NAT Pool' : {},
+            'IPv6 NAT Pool' : {},
+            'Source Based Policy' : {}
+         },
+         'Zone' : {
+            'DNS' : {},
+            'Encapsulation' : {},
+            'HTTP' : {},
+            'ICMP-v4' : {},
+            'ICMP-v6' : {},
+            'IP-Proto' : {},
+            'Logging' : {},
+            'SSL-L4' : {},
+            'TCP' : {},
+            'Threshold Profile' : {},
+            'UDP' : {}
+         }
+      }
+   },
+   'Dashboard' : {
+      'Incidents' : {
+         'Destination Services' : {},
+         'Zone Services' : {}
+      },
+      'Monitoring' : {
+         'Destination' : {
+            'Chart' : {},
+            'Statistics' : {}
+         },
+         'Global' : {
+            'Chart' : {},
+            'Statistics' : {}
+         },
+         'Zone' : {
+            'Chart' : {},
+            'Detail' : {},
+            'List' : {},
+            'Statistics' : {}
+         }
+      },
+      'System' : {}
+   },
+   'Networking' : {
+      'ARP' : {
+         'IPv4' : {},
+         'IPv6 Neighbor' : {}
+      },
+      'DNS' : {},
+      'Global' : {
+         'LLDP' : {},
+         'Netflow Monitor' : {},
+         'Settings' : {},
+         'sFlow' : {}
+      },
+      'Interface' : {
+         'Global' : {},
+         'LAN' : {},
+         'Loopback' : {},
+         'Management' : {},
+         'Transparent' : {},
+         'Trunk' : {},
+         'Virtual' : {}
+      },
+      'Route' : {
+         'IPv4 Static' : {},
+         'IPv6 Static' : {}
+      },
+      'VLAN' : {
+         'Global' : {},
+         'VLAN' : {}
+      }
+   },
+   'System' : {
+      'Action' : {
+         'Reboot' : {},
+         'Reload' : {},
+         'Shutdown' : {}
+      },
+      'Admin' : {
+         'Sessions' : {},
+         'Users' : {}
+      },
+      'Authentication' : {
+         'General' : {},
+         'LDAP Server' : {},
+         'RADIUS Server' : {},
+         'TACACS+ Server' : {}
+      },
+      'Diagnostics' : {
+         'AXDebug Config Files' : {},
+         'HTTP Log Files' : {},
+         'Show AXCore Files' : {},
+         'Show AXDebug Files' : {},
+         'ShowTech Files' : {}
+      },
+      'Maintenance' : {
+         'Backup' : {},
+         'Restore' : {},
+         'Upgrade' : {}
+      },
+      'Settings' : {
+         'Banner' : {},
+         'Boot' : {},
+         'CLI' : {},
+         'Logging' : {},
+         'MIB Download' : {},
+         'Time' : {},
+         'Web' : {},
+         'Web Certificate' : {}
+      },
+      'System Log' : {},
+      'VRRP-A' : {
+         'Failover Policy Template' : {},
+         'Force Self Standby' : {
+            'Persistent Standby' : {},
+            'Standby' : {}
+         },
+         'Interface' : {
+            'Ethernet' : {},
+            'Trunk' : {}
+         },
+         'Settings' : {
+            'Global' : {},
+            'VRID' : {}
+         }
+      }
+   }
+},
          'Framework': {}
       },
       '4.1': {

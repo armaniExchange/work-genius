@@ -18,7 +18,11 @@ let CategoryQuery = {
                 result = null,
                 query = null;
             try {
-                query = r.db('work_genius').table('document_categories').coerceTo('array');
+                query = r.db('work_genius').table('document_categories').merge((category) => {
+                    return {
+                        articlesCount: r.db('work_genius').table('articles').getAll(category('id'), {index: 'categoryId'}).count()
+                    };
+                }).coerceTo('array');
                 connection = await r.connect({ host: DB_HOST, port: DB_PORT });
                 result = await query.run(connection);
                 await connection.close();

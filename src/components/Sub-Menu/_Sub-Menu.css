@@ -7,6 +7,49 @@
         float: right;
         margin: 14px 0 0;
     }
+    &__result{
+        position: absolute;
+        margin-top: -10px;
+        right: 0;
+        display: none; /*change to none before go live*/
+        border: 2px solid #ddd;
+        width: 80vw;
+        background: #f5f5f5;
+        z-index:99;
+        box-shadow: 0 5px 6px #eee;
+        .search-section{
+            width: 95%;
+            margin:auto;
+        }
+    }
+    &:hover {
+        .search-box__result {
+            display: block;
+        }
+    }
+}
+
+.search-section__header{
+    margin: 12px 0 0;
+}
+.search-section-row{
+    list-style-type: none;
+}
+.search-section-row h4{
+    font-weight: bold;
+    font-size:15px;
+    margin:10px 0 0;
+}
+
+.search-section__body{
+    padding: 0 0 9px;
+    &-title{
+        margin: 9px 0 0;
+        font-size:13px;
+    }
+    &-list{
+        padding: 0;
+    }
 }
 
 .mdl-navigation__link__tag--active{
