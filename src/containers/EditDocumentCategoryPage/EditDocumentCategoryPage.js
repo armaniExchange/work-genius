@@ -50,12 +50,17 @@ class EditDocumentCategoryPage extends Component {
 
   depthFirstFlat(node) {
     const { displayCategoriesId } = this.state;
+    if (typeof node.name === 'undefined'){
+      return [];
+    }
     node.level = node.level || 0;
     if (node.children && node.children.length > 0 && (node.name === 'root' || displayCategoriesId.includes(node.id))) {
       node.collapsed = false;
-      const modifiedChildren = node.children.map(child => {
-          return Object.assign({}, child, {level: node.level + 1});
-        })
+      const modifiedChildren = node.children
+        .map(child => Object.assign({children: []}, child, {level: node.level + 1}))
+        // .sort(child => child.name)
+        // .reverse()
+        // .sort(child => child.children.length === 0 )
         .map(this.depthFirstFlat.bind(this))
         .reduce((prev, item) => [...prev, ...item], []);
       return [node, ...modifiedChildren];
@@ -86,17 +91,19 @@ class EditDocumentCategoryPage extends Component {
             </div>
             <div className="category-tree-edit-table-body">
               {
-                displayTree.map(row => {
+                displayTree.length > 0 ? displayTree.map(row => {
                   return (
                     <CategoryRow
-                      lastId={documentCategoriesLength + ''}
                       key={row.id}
+                      lastId={documentCategoriesLength + ''}
                       toggleChildren={::this.toggleChildren}
                       onSave={::this.onCategorySave}
                       onRemove={::this.onCategoryRemove}
                       {...row} />
                   );
-                })
+                }) : (
+                  <div style={{padding: 15, textAlign: 'center'}}>No data</div>
+                )
               }
             </div>
           </Paper>
@@ -113,7 +120,6 @@ EditDocumentCategoryPage.propTypes = {
 };
 
 EditDocumentCategoryPage.defaultProps = {
-  documentCategories     : PropTypes.object
 };
 
 function mapStateToProps(state) {

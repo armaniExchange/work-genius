@@ -94,7 +94,7 @@ class CategoryRow extends Component {
     } = this.state;
     const hasChildren = children && children.length > 0;
     const isRoot = name === 'root';
-    const Indicator = !hasChildren ? <span style={{width: 20, display: 'inline-block'}}/> : (
+    const Indicator = !hasChildren ? <span style={{width: 20, height: 18, display: 'inline-block'}}/> : (
       <span className={`tree-view_arrow${collapsed ? ' tree-view_arrow-collapsed': ''}`} />
     );
     const EditRow = (
@@ -134,8 +134,8 @@ class CategoryRow extends Component {
           </a>
           {
             !isRoot ? [
-              <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>,,
-              <a href="#" onClick={::this.toggleEdit}>
+              <span key="edit-speerate">&nbsp;&nbsp;|&nbsp;&nbsp;</span>,,
+              <a key="edit" href="#" onClick={::this.toggleEdit}>
                 <i className="fa fa-pencil" ariaHidden="true" />
                 &nbsp;Edit
               </a>
@@ -144,8 +144,8 @@ class CategoryRow extends Component {
 
           {
             !isRoot && !hasChildren ? [
-              <span> &nbsp;&nbsp;|&nbsp;&nbsp;</span>,
-              <a href="#" onClick={::this.onRemove}>
+              <span key="remove-seperate"> &nbsp;&nbsp;|&nbsp;&nbsp;</span>,
+              <a key="remove" href="#" onClick={::this.onRemove}>
                 <i className="fa fa-trash-o" ariaHidden="true" />
                 &nbsp;Remove
               </a>
