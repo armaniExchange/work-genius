@@ -20,6 +20,7 @@ class ArticleEditor extends Component {
     super(props);
     this.state = {
       isConfirmDeleteFileDialogVisible: false,
+      isConfirmOverwriteDocumentTemplateDialogVisible: false,
       isArticleFormValid: false,
       editingFile: null,
       enableTitleError: false,
@@ -64,6 +65,34 @@ class ArticleEditor extends Component {
     });
   }
 
+  onOverwriteDocumentTemplate() {
+    this.setState({
+      isConfirmOverwriteDocumentTemplateDialogVisible: true,
+    });
+  }
+
+  onConfirmOverwriteDocumentTemplate() {
+    const {
+      documentType,
+      content
+    } = this.props;
+    this.props.onDocumentTemplateUpdate({
+      id: documentType,
+      content
+    });
+  }
+
+  onCancelOverwriteDocumentTemplate() {
+
+  }
+
+  onConfirmOverwriteDocumentTemplateDialogRequestHide() {
+    this.setState({
+      isConfirmOverwriteDocumentTemplateDialogVisible: false
+    });
+  }
+
+
   onTitleChange() {
     this.props.onTitleChange.apply(this, arguments);
     this.setState({enableTitleError: true});
@@ -82,6 +111,10 @@ class ArticleEditor extends Component {
   onDocumentTypeChange() {
     this.props.onDocumentTypeChange.apply(this, arguments);
     this.setState({enableDocumentTypeError: true});
+  }
+
+  capitalizeFirst(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
   render() {
@@ -110,6 +143,7 @@ class ArticleEditor extends Component {
     } = this.props;
     const {
       isConfirmDeleteFileDialogVisible,
+      isConfirmOverwriteDocumentTemplateDialogVisible,
       enableTitleError,
       enableDocumentTypeError,
       enableCategoryError,
@@ -188,8 +222,18 @@ class ArticleEditor extends Component {
         <Editor
           ref="editor"
           value={content}
-          onChange={::this.onContentChange} />
+          onChange={::this.onContentChange}
+        />
+        {
+          documentType ? (
+            <a href="#" style={{float: 'right'}} onClick={::this.onOverwriteDocumentTemplate}>
+              &nbsp;<small>{`Save content as "${this.capitalizeFirst(documentType)}" Template`}</small>
+            </a>
+          ) : null
+        }
         <br />
+        <br />
+
         <label>Tags</label>
         <Select
           multi={true}
@@ -216,35 +260,45 @@ class ArticleEditor extends Component {
           onConfirm={::this.onConfirmDeleteFile}
           onCancel={::this.onCancelDeleteFile}
           onRequestClose={::this.onConfirmDeleteFileDialogRequestHide} />
+        <ConfirmDeleteDialog
+          title="Overwrite the Template"
+          submitText="Save"
+          open={isConfirmOverwriteDocumentTemplateDialogVisible}
+          onConfirm={::this.onConfirmOverwriteDocumentTemplate}
+          onCancel={::this.onCancelOverwriteDocumentTemplate}
+          onRequestClose={::this.onConfirmOverwriteDocumentTemplateDialogRequestHide}>
+          {`Are you sure you want to overwrite ${this.capitalizeFirst(documentType)} template?`}
+        </ConfirmDeleteDialog>
       </div>
     );
   }
 }
 
 ArticleEditor.propTypes = {
-  id                  : PropTypes.string,
-  title               : PropTypes.string,
-  content             : PropTypes.string,
-  tags                : PropTypes.arrayOf(PropTypes.string),
-  categoryId          : PropTypes.string,
-  files               : PropTypes.array,
-  allCategoriesOptions: PropTypes.array,
-  style               : PropTypes.object,
-  documentType        : PropTypes.string,
-  priority            : PropTypes.string,
-  milestone           : PropTypes.string,
-  reportTo            : PropTypes.arrayOf(PropTypes.string),
-  tagSuggestions      : PropTypes.arrayOf(PropTypes.string),
-  onContentChange     : PropTypes.func.isRequired,
-  onTitleChange       : PropTypes.func.isRequired,
-  onTagsChange        : PropTypes.func.isRequired,
-  onCategoryIdChange  : PropTypes.func.isRequired,
-  onFileUpload        : PropTypes.func.isRequired,
-  onFileRemove        : PropTypes.func.isRequired,
-  onDocumentTypeChange: PropTypes.func.isRequired,
-  onPriorityChange    : PropTypes.func.isRequired,
-  onMilestoneChange   : PropTypes.func.isRequired,
-  onReportToChange    : PropTypes.func.isRequired
+  id                       : PropTypes.string,
+  title                    : PropTypes.string,
+  content                  : PropTypes.string,
+  tags                     : PropTypes.arrayOf(PropTypes.string),
+  categoryId               : PropTypes.string,
+  files                    : PropTypes.array,
+  allCategoriesOptions     : PropTypes.array,
+  style                    : PropTypes.object,
+  documentType             : PropTypes.string,
+  priority                 : PropTypes.string,
+  milestone                : PropTypes.string,
+  reportTo                 : PropTypes.arrayOf(PropTypes.string),
+  tagSuggestions           : PropTypes.arrayOf(PropTypes.string),
+  onContentChange          : PropTypes.func.isRequired,
+  onTitleChange            : PropTypes.func.isRequired,
+  onTagsChange             : PropTypes.func.isRequired,
+  onCategoryIdChange       : PropTypes.func.isRequired,
+  onFileUpload             : PropTypes.func.isRequired,
+  onFileRemove             : PropTypes.func.isRequired,
+  onDocumentTypeChange     : PropTypes.func.isRequired,
+  onPriorityChange         : PropTypes.func.isRequired,
+  onMilestoneChange        : PropTypes.func.isRequired,
+  onReportToChange         : PropTypes.func.isRequired,
+  onDocumentTemplateUpdate : PropTypes.func.isRequired,
 };
 
 ArticleEditor.defaultProps = {
