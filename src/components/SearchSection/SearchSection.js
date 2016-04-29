@@ -45,6 +45,11 @@ export default class SearchSection extends Component {
     }
     return <span className="search-section-row__doctype">{'['+documentType+'] '}</span>;
   };
+  _renderTags(aryTags, searchKeyword) {
+    return (<span className="article-tag-list">{aryTags.map((tag)=>{
+          return <span className="tag" dangerouslySetInnerHTML={{__html:highlightKeyword(tag, searchKeyword)}}></span>;
+        })}</span>);
+  };
 
   render() {
     let { 
@@ -161,13 +166,14 @@ export default class SearchSection extends Component {
                 <h4>{this._renderDocType(item._source.document_type)}<a href={DOCUMENT_URL_PREFIX + item._source.id} dangerouslySetInnerHTML={{__html:highlightKeyword(item._source.title, searchKeyword)}}></a></h4>
                 <div style={contentStyle} dangerouslySetInnerHTML={{__html:highlightKeyword(articleContent||'', searchKeyword)}}></div>
                 <div style={{color:'#9e9e9e', display:'none'}}>Author: {item._source.author_name}{' '}{moment(item._source.updated_at).format('YYYY-MM-DD')}</div>
-                <ul>
+                <ul style={{padding:'0'}}>
                   {_files.map((fileItem,fileIdx)=>{
-                    return (<li key={fileIdx} title={fileItem.type}>
+                    return (<li key={fileIdx} style={{float:'left', margin:'0 9px 0 0', 'list-style':'none'}} title={fileItem.type}>
                     <a href={fileItem.url}>{fileItem.name}</a>
                     </li>);
                   })}
                 </ul>
+                {this._renderTags(item._source.tags, searchKeyword)}
               </li>);
             })}</ul>
           </div>
@@ -179,12 +185,10 @@ export default class SearchSection extends Component {
               let _source = fileItem._source;
               return (<li key={idx} className="search-section-row search-section-row--file" title={_source.type}>
                     <h4>{this._renderDocType(_source.article_document_type)}<a href={_source.url}>{_source.name}</a></h4>
-                    <div style={{float:'right',color:'#666'}}>{moment(_source.created_at).format('YYYY-MM-DD')}{' '}{_source.article_title}</div>
+                    <div style={{'text-align':'right',color:'#666'}}>{_source.article_title}{' '}<span dangerouslySetInnerHTML={{__html: ' - ' + moment(_source.created_at).format('YYYY-MM-DD')}}></span></div>
                     <div style={contentStyle} dangerouslySetInnerHTML={{__html:highlightKeyword(_source.content||'', searchKeyword)}}></div>
                     {_source.author_name + ': '}
-                    <span className="article-tag-list">{_source.article_tags.map((tag)=>{
-                      return <span className="tag">{tag}</span>;
-                    })}</span>
+                    {this._renderTags(_source.article_tags, searchKeyword)}
                   </li>);
             })}</ul>
           </div>
@@ -201,7 +205,15 @@ export default class SearchSection extends Component {
             No comment.
             </div>
             <ul className="search-section__body-list">{commentSearchResult.map((item, idx)=>{
-              return (<li className="search-section-row search-section-row--comment" key={idx}>{item._id}
+              let _source = item._source;
+              return (<li className="search-section-row search-section-row--comment" key={idx}>
+                <h4>{this._renderDocType(_source.article_document_type)}
+                {'Comment on: '}
+                <a href={DOCUMENT_URL_PREFIX + _source.article_id} dangerouslySetInnerHTML={{__html:highlightKeyword(_source.article_title, searchKeyword)}}>
+                </a>
+                </h4>
+                <div style={contentStyle} dangerouslySetInnerHTML={{__html:highlightKeyword(getContentWithoutMarkdown(_source.content)||'', searchKeyword)}}></div>
+                {this._renderTags(_source.article_tags, searchKeyword)}
               </li>);
             })}</ul>
           </div>
