@@ -1,0 +1,28 @@
+.work-log-content {
+  padding-left: 340px;
+  .left-side {
+    width: 300px;
+    position: absolute;
+    left: 40px;
+    top: 60px;
+  }
+  .main-content {
+    .top-selector {
+        height: 48px;
+        line-height: 48px;
+        display: block;
+    }
+
+    .pull-right {
+        float: right;
+    }
+
+    .pull-left{
+        float: left;
+    }
+
+    .work-log {
+        padding-top: 50px;
+    }
+  }
+}

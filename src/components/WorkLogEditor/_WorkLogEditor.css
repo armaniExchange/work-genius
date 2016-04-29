@@ -1,0 +1,24 @@
+.worklog-editor {
+  background: white;
+  border-radius: 5px;
+  border: 1px solid lightgray;
+  padding: 15px;
+  .drop-down-menu {
+    margin-left: -25px;
+    width: 100%;
+  }
+  .codemirror-wrapper {
+    border-radius: 5;
+    border: 1px solid lightgray;
+    background: none;
+    overflow: hidden;
+  }
+}
+
+.component-editor {
+
+  .CodeMirror {
+    height: 200px;
+    padding: 10px;
+  }
+}

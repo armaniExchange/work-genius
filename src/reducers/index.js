@@ -12,6 +12,7 @@ import featureAnalysis from './feature-analysis-reducer';
 import bugReview from './bug-review-reducer';
 import bugReport from './bug-report-reducer';
 import resourceMap from './resource-map-reducer';
+import workLog from './work-log-reducer';
 
 const rootReducer = combineReducers({
 	app,
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
 	article,
 	bugReview,
 	resourceMap,
+	workLog,
 	bugReport,
 	featureAnalysis
 });
