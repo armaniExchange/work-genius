@@ -12,6 +12,7 @@ export default keyMirror({
     CLEAR_ERROR_MESSAGE: null,
     SET_CURRENT_SELECTED_USER_ID: null,
     SET_CURRENT_SELECTED_PAGE_NAME: null,
+    SET_ALL_USER: null,
 
     // Search page actions
     SEARCH_ARTICLE_SUCCESS: null,
@@ -170,5 +171,29 @@ export default keyMirror({
     FETCH_RESOURCE_MAP_ALL_USERS: null,
     FETCH_RESOURCE_MAP_WORKLOG_ADD_MULTI: null,
     FETCH_RESOURCE_MAP_All_TAG: null,
-    FETCH_RESOURCE_MAP_NEW_TAG: null
+    FETCH_RESOURCE_MAP_NEW_TAG: null,
+
+    // Work Log actions
+    FETCH_WORKLOGS: null,
+    FETCH_WORKLOGS_SUCCESS: null,
+    FETCH_WORKLOGS_FAIL: null,
+    FETCH_WORKLOGS_TAG: null,
+    FETCH_WORKLOGS_TAG_ADD: null,
+    FETCH_WORKLOGS_LIST: null,
+    UPDATE_WORKLOGS_QUERY: null,
+
+    // Work Log Edit actions
+    FETCH_WORKLOG: null,
+    FETCH_WORKLOG_SUCCESS: null,
+    FETCH_WORKLOG_FAIL: null,
+    CREATE_WORKLOG: null,
+    CREATE_WORKLOG_SUCCESS: null,
+    CREATE_WORKLOG_FAIL: null,
+    UPDATE_WORKLOG: null,
+    UPDATE_WORKLOG_SUCCESS: null,
+    UPDATE_WORKLOG_FAIL: null,
+    DELETE_WORKLOG: null,
+    DELETE_WORKLOG_SUCCESS: null,
+    DELETE_WORKLOG_FAIL: null,
+    CLEAR_WORKLOG: null
 });

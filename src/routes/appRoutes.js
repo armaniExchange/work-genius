@@ -35,6 +35,7 @@ import FeatureAnalysisTreePage from '../containers/FeatureAnalysisPage/FeatureAn
 import FeatureAnalysisTablePage from '../containers/FeatureAnalysisPage/FeatureAnalysisTable';
 import MarkdownCheatSheet from '../containers/MarkdownCheatSheet/MarkdownCheatSheet';
 import EditDocumentCategoryPage from '../containers/EditDocumentCategoryPage/EditDocumentCategoryPage';
+import WorkLogPage from '../containers/WorkLogPage/WorkLogPage';
 
 // Utilities
 import requireAuth from '../containers/Require-Auth/Require-Auth';
@@ -79,6 +80,7 @@ const appRoutes = () => (
           <Route path="document/:articleId" component={requireAuth(ViewArticlePage)} />
           <Route path="document" component={requireAuth(DocumentPage)} />
           <Route path="bug-tracking" component={requireAuth(BugTrackingPage)} />
+          <Route path="work-log" component={requireAuth(WorkLogPage)} />
         </Route>
 
         {/* feature-analysis base*/}
