@@ -48,17 +48,11 @@ class CategoryRow extends Component {
     this.setState({isEditing: !isEditing});
   }
 
-  getNewId() {
-    const { lastId } = this.props;
-    return (parseInt(lastId) + 1) + ''; //transform to string
-  }
-
   saveSubcategory() {
     const { id, onSave } = this.props;
     const { editingChildName } = this.state;
     this.setState({isCreatingChild: false});
     onSave({
-      id: this.getNewId(),
       parentId: id,
       name: editingChildName
     });
