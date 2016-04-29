@@ -43,6 +43,18 @@ class Editor extends Component {
     this.setState({ enablePreview: true });
   }
 
+  getPosition(str, m, i) {
+     return str.split(m, i).join(m).length;
+  }
+
+  getValueOfInsertedStringAtCursor(str) {
+    const { doc }= this.refs.codeMirror.codeMirror;
+    const { line, ch } = doc.getCursor();
+    const value = doc.getValue();
+    const cursorPosition = this.getPosition(value, '\n', line) + ch + 1;
+    return `${value.slice(0, cursorPosition)}${str}${value.slice(cursorPosition)}`;
+  }
+
   render() {
     const {
       value,
@@ -76,6 +88,7 @@ class Editor extends Component {
         <div id={`${editorId}-edit-panel`}
           className="mdl-tabs__panel is-active component-edit-panel is-active">
             <Codemirror
+              ref="codeMirror"
               options={options}
               value={value}
               onChange={onChange}
