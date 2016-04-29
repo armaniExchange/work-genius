@@ -40,7 +40,7 @@ let JobQuery = {
 				}
 				let endDate = startDate + (dateRange -1) * 1000 * 3600 * 24;
 				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID)))
-					.pluck('id','name','location','timezone').coerceTo('array');
+					.pluck('id','name','location','timezone').orderBy('location').coerceTo('array');
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				//get all users
 				let users = await query.run(connection);
@@ -85,7 +85,7 @@ let JobQuery = {
 
 					userItem.jobs.forEach(dateItem => {
 						//find the weekend according to user timezone
-						dateItem.day_type = [0,6].includes(moment(dateItem.date).utcOffset(userItem.timezone).day())? 'holiday':'workday';
+						dateItem.day_type = [0,6].includes(moment(dateItem.date).day())? 'holiday':'workday';
 						//set pto info
 						let findPTO = ptoList.find( pto => {
 							let startTime = Number.parseFloat(pto.start_time);
@@ -171,7 +171,6 @@ let JobQuery = {
 			    result = [];
 
 			try {
-				console.log(employeeId==null);
 				if(dateRange <= 0 || employeeId == null){
 					return result;
 				}
@@ -206,7 +205,7 @@ let JobQuery = {
 					let tmpDate  = startDate + i * 1000 * 3600 * 24;
 					dateList.push({
 						date: tmpDate,
-						day_type: [0,6].includes(moment(tmpDate).utcOffset(user.timezone).day())? 'holiday':'workday'
+						day_type: [0,6].includes(moment(tmpDate).day())? 'holiday':'workday'
 					});
 				} 
 
