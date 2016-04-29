@@ -30,6 +30,8 @@ import JobMutation from '../models/Job/JobMutation.js';
 import JobQuery from '../models/Job/JobQuery.js';
 import DocumentCategoryQuery from '../models/DocumentCategory/DocumentCategoryQuery.js';
 import DocumentCategoryMutation from '../models/DocumentCategory/DocumentCategoryMutation.js';
+import DocumentTemplateQuery from '../models/DocumentTemplate/DocumentTemplateQuery.js';
+import DocumentTemplateMutation from '../models/DocumentTemplate/DocumentTemplateMutation.js';
 
 const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -58,8 +60,9 @@ const schema = new GraphQLSchema({
       getAllBugs               : BugQuery.getAllBugs,
       getAllBugTags            : BugTagQuery.getAllBugTags,
       getAllRelease            : BugTagQuery.getAllRelease,
-      getAllWorklogTags		   : BugTagQuery.getAllWorklogTags,
+      getAllWorklogTags		     : BugTagQuery.getAllWorklogTags,
       getAllDocumentCategories : DocumentCategoryQuery.getAllDocumentCategories,
+      getDcoumentTemplate      : DocumentTemplateQuery.getDcoumentTemplate,
       // Feature Analysis
       assignmentCategoryTree   : AssignmentCategoryQuery.getAssignmentCategoryTree,
       allAssignmentCategories  : AssignmentCategoryQuery.getAllAssignmentCategories,
@@ -109,6 +112,7 @@ const schema = new GraphQLSchema({
       updateAssignmentCategory        : AssignmentCategoryMutation.updateAssignmentCategory,
       upsertDocumentCategory          : DocumentCategoryMutation.upsertDocumentCategory,
       deleteDocumentCategory          : DocumentCategoryMutation.deleteDocumentCategory,
+      updateDocumentTemplate          : DocumentTemplateMutation.updateDocumentTemplate,
       //Bug page
       updateBug                       : BugMutation.updateBug,
       createBugTag                    : BugTagMutation.createBugTag,

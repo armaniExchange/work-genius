@@ -629,3 +629,116 @@ export function deleteComment({articleId, id}) {
       });
   };
 }
+
+export function fetchDocumentTemplateSuccess(documentTemplate) {
+  return {
+    type: actionTypes.FETCH_DOCUMENT_TEMPLATE_SUCCESS,
+    ...documentTemplate
+  };
+}
+
+export function fetchDocumentTemplateFail(error) {
+  return {
+    type: actionTypes.FETCH_DOCUMENT_TEMPLATE_FAIL,
+    error
+  };
+}
+
+export function fetchDocumentTemplate(id) {
+  return dispatch => {
+    dispatch({
+      type: actionTypes.FETCH_DOCUMENT_TEMPLATE,
+      id
+    });
+    dispatch(setLoadingState(true));
+
+    const config = {
+      method: 'POST',
+      body: `{
+          getDcoumentTemplate( id: "${id}" ) {
+            id,
+            content
+          }
+      }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((body) => {
+        if (body.errors) {
+          throw new Error(JSON.stringify(body.errors));
+        }
+        dispatch(fetchDocumentTemplateSuccess(body.data.getDcoumentTemplate));
+        dispatch(setLoadingState(false));
+      })
+      .catch((error) => {
+        dispatch(fetchDocumentTemplateFail(error));
+        dispatch(apiFailure(error));
+      });
+  };
+}
+
+
+export function updateDocumentTemplateSuccess(id) {
+  return {
+    type: actionTypes.UPDATE_DOCUMENT_TEMPLATE_SUCCESS,
+    id
+  };
+}
+
+export function updateDocumentTemplateFail(error) {
+  return {
+    type: actionTypes.UPDATE_DOCUMENT_TEMPLATE_FAIL,
+    error
+  };
+}
+
+export function updateDocumentTemplate(documentTemplate) {
+  return dispatch => {
+    dispatch({
+      type: actionTypes.UPDATE_DOCUMENT_TEMPLATE,
+      documentTemplate
+    });
+    documentTemplate.content.replace(/\\/g, '\\\\');
+    dispatch(setLoadingState(true));
+
+    const config = {
+      method: 'POST',
+      body: `
+        mutation RootMutationType {
+          updateDocumentTemplate( documentTemplate: ${stringifyObject(documentTemplate)}) {
+            id
+          }
+        }
+      `,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then(() => {
+        dispatch(updateDocumentTemplateSuccess(documentTemplate.id));
+        dispatch(setLoadingState(false));
+      })
+      .catch((error) => {
+        dispatch(updateDocumentTemplateFail(error));
+        dispatch(apiFailure(error));
+      });
+  };
+}
