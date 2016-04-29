@@ -97,7 +97,7 @@ const CommentMutation = {
 
             await transporter.sendMail({
               from: MAILER_ADDRESS,
-              to: user.email,
+              to: [commentedArticle.author.email, ...(commentedArticle.reportTo.map((emailName) => `${emailName}@a10networks.com`))],
               subject: `[KB New Comment] ${commentedArticle.title} `,
               html: parseMarkdown(generateEmailMarkdown({
                 to: commentedArticle.author.name,
@@ -106,7 +106,7 @@ const CommentMutation = {
                 title: commentedArticle.title,
                 content: comment.content
               })),
-              cc: [commentedArticle.author.email, ...(commentedArticle.reportTo.map((emailName) => `${emailName}@a10networks.com`))]
+              cc: 'ax-web-DL@a10networks.com'
             });
           }
 
