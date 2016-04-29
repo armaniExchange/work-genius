@@ -109,7 +109,7 @@ let JobQuery = {
 
 						//set public holiday info
 						let findHoliday = holidayList.find( holiday => {
-							return holiday.date == dateItem.date && holiday.location == userItem.location;
+							return moment(holiday.date).isSame(dateItem.date,'day') && holiday.location == userItem.location;
 						});
 						if(!!findHoliday){
 							dateItem.day_type = findHoliday.type;
@@ -244,7 +244,7 @@ let JobQuery = {
 
 					//set public holiday info
 					let findHoliday = holidayList.find( holiday => {
-						return holiday.date == dateItem.date && holiday.location == userItem.location;
+						return moment(holiday.date).isSame(dateItem.date,'day') && holiday.location == userItem.location;
 					});
 					if(!!findHoliday){
 						dateItem.day_type = findHoliday.type;

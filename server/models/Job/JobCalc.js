@@ -12,58 +12,66 @@ export async function getJobEndDate(job){
 		connection = null;
 	try{
 		//add default value
-		endDate = job.start_date;
 		if(job.duration <= 8){
-			endDate = job.start_date + job.duration * 1000 * 60 * 60;
+			endDate = job.start_date + job.duration * 1000 * 60 *60;
+			if(moment(job.start_date).isSame(endDate,'day')){
+				return endDate;
+			}
+		}else{
+			endDate = job.start_date;
 		}
-		else{
-			connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+		connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+		//get pto list
+		query = r.db('work_genius').table('pto')
+			.filter({applicant_id:job.employee_id})
+			.filter(r.row('status').eq('PENDING').or(r.row('status').eq('APPROVED')))
+			.filter(r.row('hours').coerceTo('number').ge(8))
+			.pluck('start_time','end_time','hours').coerceTo('array');
+		let ptoList = await query.run(connection);
 
-			//get pto list
-			query = r.db('work_genius').table('pto')
-				.filter({applicant_id:job.employee_id})
-				.filter(r.row('status').eq('PENDING').or(r.row('status').eq('APPROVED')))
-				.filter(r.row('hours').coerceTo('number').ge(8))
-				.pluck('start_time','end_time','hours').coerceTo('array');
-			let ptoList = await query.run(connection);
+		//get public holiday list
+		query = r.db('work_genius').table('users')
+			.get(job.employee_id).pluck('id','location','timezone');
+		let user = await query.run(connection);
+		let location = user.location;
+		query = r.db('work_genius').table('holiday').filter({'location':location})
+			.filter(r.row('date').ge(job.start_date))
+			.pluck('date','type').coerceTo('array');
+		let holidayList = await query.run(connection);
 
-			//get public holiday list
-			query = r.db('work_genius').table('users')
-				.get(job.employee_id).pluck('id','location','timezone');
-			let user = await query.run(connection);
-			let location = user.location;
-			query = r.db('work_genius').table('holiday').filter({'location':location})
-				.filter(r.row('date').ge(job.start_date))
-				.pluck('date','type').coerceTo('array');
-			let holidayList = await query.run(connection);
-
-			let duration = job.duration - 8,
-				tmpDate = job.start_date;
-			//calc the end date
-			while(duration >0 ){
-				tmpDate = tmpDate + 1000 * 60 *60 * 24;
-				let findPto = ptoList.find(pto => {
-					let startTime = Number.parseFloat(pto.start_time);
-					let endTime = Number.parseFloat(pto.end_time);
-					if(moment(startTime).isSame(endTime,'day')){
-						return moment(tmpDate).isSame(startTime,'day');
-					}else{
-						return moment(tmpDate).isBetween(startTime,endTime)
-							|| moment(tmpDate).isSame(startTime)
-							|| moment(tmpDate).isSame(endTime);
-					}
-				});
-				// check if public holiday
-				let findHoliday = holidayList.find( holiday => {
-					return holiday.date == tmpDate;
-				});
-				if(![0,6].includes(moment(tmpDate).utcOffset(user.timezone).day()) && !findPto && !findHoliday){
-					duration -= 8;
+		let duration = job.duration,
+			tmpDate = endDate;
+		//calc the end date
+		while(duration >0 ){
+			console.log('tmpDate:');
+			console.log(moment(tmpDate).format('YYYY-MM-DD'));
+			console.log();
+			let findPto = ptoList.find(pto => {
+				let startTime = Number.parseFloat(pto.start_time);
+				let endTime = Number.parseFloat(pto.end_time);
+				if(moment(startTime).isSame(endTime,'day')){
+					return moment(tmpDate).isSame(startTime,'day');
+				}else{
+					return moment(tmpDate).isBetween(startTime,endTime)
+						|| moment(tmpDate).isSame(startTime)
+						|| moment(tmpDate).isSame(endTime);
+				}
+			});
+			// check if public holiday
+			let findHoliday = holidayList.find( holiday => {
+				return moment(holiday.date).isSame(tmpDate,'day');
+			});
+			if(![0,6].includes(moment(tmpDate).utcOffset(user.timezone).day()) && !findPto && !findHoliday){
+				duration -= 8;
+				if(duration <=0 ){
+					break;
 				}
 			}
-			endDate = tmpDate;
-			await connection.close();
+			tmpDate = tmpDate + 1000 * 60 *60 * 24;
 		}
+		endDate = tmpDate;
+		await connection.close();
+		
 	}catch(err){
 		console.log(err);
 	}finally{
