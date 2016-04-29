@@ -61,7 +61,31 @@ class Main extends Component {
 		this.props.appActions.clearErrorMessage();
 	}
 
-	render() {
+  _renderInvisibleGlass() {
+    let {
+      searchKeyword, 
+      searchBoxNeedShow
+    } = this.props.searchState;
+    let {
+      setSearchBoxNeedShow
+    } = this.props.searchActions;
+    return (<div style={{display:searchKeyword && searchBoxNeedShow ? 'block' : 'none'}}>
+      <div onClick={()=>{
+        setSearchBoxNeedShow(false);
+      }} className="invisibleGlass" id="invisibleGlass1" />
+      <div onClick={()=>{
+        setSearchBoxNeedShow(false);
+      }} className="invisibleGlass" id="invisibleGlass2" />
+      <div onClick={()=>{
+        setSearchBoxNeedShow(false);
+      }} className="invisibleGlass" id="invisibleGlass3" />
+      <div onClick={()=>{
+        setSearchBoxNeedShow(false);
+      }} className="invisibleGlass" id="invisibleGlass4" />
+      </div>);
+  }
+
+  render() {
 		const {
 			navHeaderTitle,
 			navItems,
@@ -72,12 +96,16 @@ class Main extends Component {
 			errorMessage,
       		currentUser
 		} = this.props.appState;
+    const {
+      searchState,
+      searchActions
+    } = this.props;
 		const { logout } = this.props.appActions;
 
 		// Location props are coming from react router
 		const { pathname } = this.props.location;
 
-    let SubMenuSearchSectionProps = Object.assign({}, this.props.searchState, this.props.searchActions);
+    let SubMenuSearchSectionProps = Object.assign({}, searchState, searchActions);
     // console.warn('SubMenuSearchSectionProps', SubMenuSearchSectionProps);
     return (
 			<section className="mdl-layout mdl-js-layout">
@@ -103,6 +131,7 @@ class Main extends Component {
 						{this.props.children}
 				    </div>
 				</main>
+        {this._renderInvisibleGlass()}
 			</section>
 		);
 	}

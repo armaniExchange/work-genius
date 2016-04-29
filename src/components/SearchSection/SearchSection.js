@@ -46,8 +46,8 @@ export default class SearchSection extends Component {
     return <span className="search-section-row__doctype">{'['+documentType+'] '}</span>;
   };
   _renderTags(aryTags, searchKeyword) {
-    return (<span className="article-tag-list">{aryTags.map((tag)=>{
-          return <span className="tag" dangerouslySetInnerHTML={{__html:highlightKeyword(tag, searchKeyword)}}></span>;
+    return (<span className="article-tag-list">{aryTags.map((tag, idx)=>{
+          return <span key={idx} className="tag" dangerouslySetInnerHTML={{__html:highlightKeyword(tag, searchKeyword)}}></span>;
         })}</span>);
   };
 
@@ -168,7 +168,7 @@ export default class SearchSection extends Component {
                 <div style={{color:'#9e9e9e', display:'none'}}>Author: {item._source.author_name}{' '}{moment(item._source.updated_at).format('YYYY-MM-DD')}</div>
                 <ul style={{padding:'0'}}>
                   {_files.map((fileItem,fileIdx)=>{
-                    return (<li key={fileIdx} style={{float:'left', margin:'0 9px 0 0', 'list-style':'none'}} title={fileItem.type}>
+                    return (<li key={fileIdx} style={{float:'left', margin:'0 9px 0 0', 'listStyle':'none'}} title={fileItem.type}>
                     <a href={fileItem.url}>{fileItem.name}</a>
                     </li>);
                   })}

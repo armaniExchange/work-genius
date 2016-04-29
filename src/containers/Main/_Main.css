@@ -1,3 +1,35 @@
 .page-content {
 	padding: 20px 40px;
 }
+
+/** TODO: move glass to component*/
+.invisibleGlass {
+    position: absolute;
+    background: #000;
+    z-index: 50;
+    opacity: 0;
+}
+#invisibleGlass1 {
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 70px;
+}
+#invisibleGlass2 {
+    top: 120px;
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - 120px);
+}
+#invisibleGlass3 {
+    top: 70px;
+    left: 0;
+    width: calc(100vw - 380px);
+    height: 50px;
+}
+#invisibleGlass4 {
+    top: 70px;
+    right: 0;
+    width: 40px;
+    height: 50px;
+}

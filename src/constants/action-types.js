@@ -22,6 +22,7 @@ export default keyMirror({
     SEARCH_BUGTRACKING_SUCCESS: null,
     CHANGE_SEARCH_KEYWORD: null,
     SETUPPED_SEARCH_ON_KEYWORD_CHANGE_A_WHILE: null,
+    SET_SEARCH_BOX_NEED_SHOW: null,
 
     // Task page actions
     SORT_FEATURE_TABLE_BY_CATEGORY: null,

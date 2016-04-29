@@ -141,7 +141,14 @@ export function setupSearchOnKeyworkChangeAWhile(func) {
   return (dispatch) => {
     let _timerId = setTimeout(()=>{
       func();
-    }, 900);
+    }, 1500);
     dispatch(setuppedSearchOnKeyworkChangeAWhile(_timerId));
+  };
+};
+
+export function setSearchBoxNeedShow(needShow) {
+  return {
+    type: actionTypes.SET_SEARCH_BOX_NEED_SHOW,
+    needShow
   };
 };

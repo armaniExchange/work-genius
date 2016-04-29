@@ -10,13 +10,20 @@ import { ROOT_URL } from '../../constants/app';
 import SearchSection from '../SearchSection/SearchSection';
 
 class SubMenu extends Component {
+  _getSearchBoxClassName(needShow){
+    return 'search-box__search-result' 
+            + (needShow ? ' search-box__search-result--show' : '');
+  };
 	render () {
 		const { data, headerTitle } = this.props;
     const { 
+      changeSearchKeyword,
       searchKeyword,
+      searchBoxNeedShow,
       pagesize,
       searchTimerId,
       setupSearchOnKeyworkChangeAWhile,
+      setSearchBoxNeedShow,
       searchArticle
       } = this.props;//<--- form state.search only
 
@@ -37,10 +44,9 @@ class SubMenu extends Component {
 		});
 
     const searchBoxResultStyle = {};
-    if (!searchKeyword) {
-      searchBoxResultStyle.opacity = 0;
-    }
-    
+    searchBoxResultStyle.display = !searchKeyword ? 'none' : '';
+    console.warn('searchBoxNeedShow', searchBoxNeedShow, searchKeyword);
+    let isSearchBoxShow = searchKeyword && searchBoxNeedShow;
 		return (
 			<header className="mdl-layout__header mdl-layout__header--level2">
 			    <div className="mdl-layout__header-row">
@@ -52,14 +58,22 @@ class SubMenu extends Component {
 
           <div className="search-box">
             <TextField
+              onFocus={()=>{
+                setSearchBoxNeedShow(true);
+              }}
+              onClick={()=>{
+                setSearchBoxNeedShow(true);
+              }}
               onChange={(evt)=>{
                 let val = evt.target.value;
+                searchTimerId && clearTimeout(searchTimerId);
+                setSearchBoxNeedShow(true);
+
                 if (!val) {
+                  changeSearchKeyword('');
                   return;
                 }
-                //might no need val!=='' && changeSearchKeyword(val);
 
-                searchTimerId && clearTimeout(searchTimerId);
                 setupSearchOnKeyworkChangeAWhile(()=>{
                   searchArticle(val, pagesize, 0);
                 });
@@ -68,7 +82,14 @@ class SubMenu extends Component {
             <i className="material-icons" title="Search" onClick={()=>{
               searchArticle(searchKeyword, pagesize, 0);
             }}>search</i>
-            <div className="search-box__result" style={searchBoxResultStyle}>
+            <div className={this._getSearchBoxClassName(isSearchBoxShow)} style={searchBoxResultStyle}
+              onMouseOut={()=>{
+                // setSearchBoxNeedShow(false);
+              }}
+              onMouseOver={()=>{
+                setSearchBoxNeedShow(true);
+              }}
+            >
               <SearchSection {...this.props} />
             </div>
           </div>
@@ -85,9 +106,12 @@ SubMenu.propTypes = {
 	headerTitle: PropTypes.string,
 
   searchKeyword: PropTypes.string,
+  searchBoxNeedShow: PropTypes.bool,
   pagesize: PropTypes.number,
+  changeSearchKeyword: PropTypes.func,
   searchTimerId: PropTypes.number,
   setupSearchOnKeyworkChangeAWhile: PropTypes.func,
+  setSearchBoxNeedShow: PropTypes.func,
   searchArticle: PropTypes.func
 };
 
