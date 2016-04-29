@@ -23,8 +23,7 @@ class Editor extends Component {
     super(props);
     this.state = {
       editorId: _.uniqueId('editor-'),
-      enablePreview: false,
-      isFocus: false
+      enablePreview: false
     };
   }
 
@@ -33,10 +32,6 @@ class Editor extends Component {
     /*eslint-disable */
     new window.MaterialTabs(document.getElementById(`editor-${editorId}`));
     /*eslint-enable  */
-  }
-
-  componentWillReceiveProps() {
-    this.setState({ isFocus: false});
   }
 
   onEditPanelButtonClick() {
@@ -59,14 +54,8 @@ class Editor extends Component {
     return `${value.slice(0, cursorPosition)}${str}${value.slice(cursorPosition)}`;
   }
 
-  onFocus() {
-    this.setState({isFocus: true});
-  }
-
   onChange() {
-    if (this.state.isFocus) {
-      this.props.onChange.apply(this, arguments);
-    }
+    this.props.onChange.apply(this, arguments);
   }
 
   render() {
@@ -82,8 +71,7 @@ class Editor extends Component {
     return (
       <div
         id={`editor-${editorId}`}
-        className="mdl-tabs mdl-js-tabs mdl-js-ripple-effect component-editor"
-        onFocus={::this.onFocus} >
+        className="mdl-tabs mdl-js-tabs mdl-js-ripple-effect component-editor" >
         <div className="mdl-tabs__tab-bar">
           <a href={`#${editorId}-edit-panel`}
             onClick={::this.onEditPanelButtonClick}

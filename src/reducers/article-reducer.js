@@ -25,6 +25,7 @@ const initialState = OrderedMap({
   reportTo: List(),
   createdAt: 0,
   updatedAt: 0,
+  isLoaded: false,
   isEditing: true,
   isDeleting: false,
 });
@@ -56,7 +57,7 @@ export default function articleReducer(state = initialState, action) {
     case actionTypes.UPDATE_ARTICLE_SUCCESS:
       return articleToState(state, action).set('isEditing', false);
     case actionTypes.FETCH_ARTICLE_SUCCESS:
-      return articleToState(state, action);
+      return articleToState(state, action).set('isLoaded', true);
     case actionTypes.DELETE_ARTICLE:
       return state.set('isDeleting', true);
     case actionTypes.DELETE_ARTICLE_SUCCESS:

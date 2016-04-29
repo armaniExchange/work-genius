@@ -20,8 +20,7 @@ class EditArticlePage extends Component {
     this.state = Object.assign(this.getEditingStateFromProps(props), {
       isPreviewVisible: false,
       isArticleFormValid: false,
-      enableErrorMessage: false,
-      isContentFromTemplate: false
+      enableErrorMessage: false
     });
   }
 
@@ -40,6 +39,14 @@ class EditArticlePage extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+
+    if (!this.props.isLoaded && nextProps.isLoaded){
+      // first time loaded
+      const newState = this.getEditingStateFromProps(nextProps);
+      this.setState(newState);
+      return;
+    }
+
     if (this.props.isEditing && !nextProps.isEditing) {
       this.props.history.replace(`/main/knowledge/document/${nextProps.id}`);
       return;
@@ -54,20 +61,12 @@ class EditArticlePage extends Component {
         editingContent: this.state.editingContent.replace(this.getUploadingFileMarkdown(justUpdateFile), `[${name}](${url})`)
       });
     }
-
-    if (this.props.id === nextProps.id && thisFiles.length !== nextFiles.length) {
-      // fiile upload change files, but skip to set new state
-    } else {
-      // const newState = this.getEditingStateFromProps(nextProps);
-      // this.setState(newState);
-    }
-    const documentTemplateContent = nextProps.documentTemplate.content;
-    if (this.state.isContentFromTemplate || (!this.state.editingContent && documentTemplateContent)) {
+    if (this.props.documentTemplate.id !== nextProps.documentTemplate.id) {
       this.setState({
-        editingContent: documentTemplateContent,
-        isContentFromTemplate: true
+        editingContent: nextProps.documentTemplate.content
       });
     }
+
   }
 
   componentWillUnmount() {
@@ -121,6 +120,7 @@ class EditArticlePage extends Component {
   }
 
   onContentChange(newContent) {
+    console.log('onContentChange!!');
     this.setState({ editingContent: newContent }, () => {
       ::this.ValidateForm();
     });
@@ -148,10 +148,9 @@ class EditArticlePage extends Component {
     this.setState({ editingDocumentType: value }, ()=> {
       const {
         editingContent,
-        editingDocumentType,
-        isContentFromTemplate
+        editingDocumentType
       } = this.state;
-      if (editingContent.trim() === '' || isContentFromTemplate) {
+      if (editingContent.trim() === '' ) {
         this.props.articleActions.fetchDocumentTemplate(editingDocumentType);
       }
     });
@@ -373,6 +372,7 @@ EditArticlePage.propTypes = {
   documentCategories : PropTypes.object,
   allTags            : PropTypes.arrayOf(PropTypes.string),
   isEditing          : PropTypes.bool,
+  isLoaded           : PropTypes.bool,
   articleActions     : PropTypes.object.isRequired,
   documentActions    : PropTypes.object.isRequired,
   history            : PropTypes.object,
