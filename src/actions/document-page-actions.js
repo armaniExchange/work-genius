@@ -169,7 +169,7 @@ export function fetchAllTags() {
     const config = {
       method: 'POST',
       body: `{
-        tags
+        documentTags
       }`,
       headers: {
         'Content-Type': 'application/graphql',
@@ -184,7 +184,7 @@ export function fetchAllTags() {
         return res.json();
       })
       .then((body) => {
-        dispatch(fetchAllTagsSuccess(body.data.tags));
+        dispatch(fetchAllTagsSuccess(body.data.documentTags));
       })
       .catch((error) => {
         dispatch(fetchAllTagsFail(error));

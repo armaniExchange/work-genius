@@ -79,6 +79,7 @@ let CategoryQuery = {
           return acc.concat(article.tags);
         }, []);
         result = dedupe(result);
+        result = result.slice(0, 20);
         await connection.close();
       } catch (err) {
         return err;
