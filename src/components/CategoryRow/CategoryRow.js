@@ -188,22 +188,22 @@ class CategoryRow extends Component {
 }
 
 CategoryRow.propTypes = {
-  id                  : PropTypes.string,
-  parentId            : PropTypes.string,
-  lastId              : PropTypes.string,
-  name                : PropTypes.string,
-  level               : PropTypes.number,
-  collapsed              : PropTypes.bool,
-  children            : PropTypes.array,
-  toggleChildren      : PropTypes.func,
-  onSave              : PropTypes.func,
-  onRemove            : PropTypes.func,
-  articlesCount        : PropTypes.number
+  id             : PropTypes.string,
+  parentId       : PropTypes.string,
+  lastId         : PropTypes.string,
+  name           : PropTypes.string,
+  level          : PropTypes.number,
+  collapsed      : PropTypes.bool,
+  children       : PropTypes.array,
+  toggleChildren : PropTypes.func,
+  onSave         : PropTypes.func,
+  onRemove       : PropTypes.func,
+  articlesCount  : PropTypes.number
 };
 
 CategoryRow.defaultProps = {
-  level               : 0,
-  collapsed              : false
+  level          : 0,
+  collapsed      : false
 };
 
 export default CategoryRow;
