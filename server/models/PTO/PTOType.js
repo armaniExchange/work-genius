@@ -13,13 +13,13 @@ let PTOType = new GraphQLObjectType({
 			type: GraphQLID,
 			description: 'PTO ID'
 		},
-		'start_date': {
+		'start_time': {
 			type: GraphQLString,
-			description: 'PTO start date'
+			description: 'PTO start time'
 		},
-		'end_date': {
+		'end_time': {
 			type: GraphQLString,
-			description: 'PTO end date'
+			description: 'PTO end time'
 		},
 		'applicant': {
 			type: GraphQLString,
@@ -41,9 +41,9 @@ let PTOType = new GraphQLObjectType({
 			type: GraphQLString,
 			description: 'PTO application memo'
 		},
-		'apply_date': {
+		'apply_time': {
 			type: GraphQLString,
-			description: 'Date when this PTO application is applied'
+			description: 'Time when this PTO application is applied'
 		},
 		'applicant_email': {
 			type: GraphQLString,

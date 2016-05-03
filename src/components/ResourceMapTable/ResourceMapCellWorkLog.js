@@ -13,6 +13,33 @@ import Checkbox from 'rc-checkbox';
 
 const TAG = 'bgm-teal';
 
+var TooltipContent = ({item}) => {
+	return (
+		<div className="mdl-grid" style={{ width: '300px'}}>
+			<div className="mdl-cell mdl-cell--4-col"><label>Progress</label></div>
+			<div className="mdl-cell mdl-cell--8-col"><em>{item.progress}%</em></div>
+
+			<div className="mdl-cell mdl-cell--4-col"><label>Task</label></div>
+			<div className="mdl-cell mdl-cell--8-col"><span>{item.title}</span></div>
+
+			<div className="mdl-cell mdl-cell--4-col"><label>Start Date</label></div>
+			<div className="mdl-cell mdl-cell--8-col">
+				<span><em>{moment(item.start_date).format('YYYY-MM-DD')}</em></span>
+			</div>
+
+			<div className="mdl-cell mdl-cell--4-col"><label>Duration</label></div>
+			<div className="mdl-cell mdl-cell--8-col">
+				<span><em>{item.duration ? item.duration : 0}</em> Hours</span>
+			</div>
+
+			<div className="mdl-cell mdl-cell--4-col"><label>Work Log</label></div>
+			<div className="mdl-cell mdl-cell--8-col">
+				<span>{item.content}</span>
+			</div>
+		</div>
+	);
+};
+
 class ResourceMapCellWorkLog extends Component {
 
 	constructor() {
@@ -37,8 +64,9 @@ class ResourceMapCellWorkLog extends Component {
 		let offerItem = {};
 		offerItem.id = item.id;
 		// offerItem.data = {status: item.status};
+		item.progress = 100;
 		offerItem.data = item;
-		offerItem.isStatus = true;
+		// offerItem.isStatus = true;
 		offerItem.employee_id = config.userId;
 		offerItem.date = config.date;
 		onSubmitStatus(offerItem);
@@ -69,96 +97,84 @@ class ResourceMapCellWorkLog extends Component {
 		const {
 			config
 		} = this.props;
-		var items = config.worklog_items;
+		var items = config.job_items;
 		var timer = undefined;
 		var doubleEvent = false;
-		// console.log(items);
-		var worklogHtml = items.map((item, index) => {
-			// console.log(item);
+		var worklogHtml = (<div/>);
+		if (items instanceof Array) {
+			worklogHtml = items.map((item, index) => {
 
-			let __onClickWorkLogItem = (e) => {
-				e.stopPropagation();
-				doubleEvent = false;
-				clearTimeout(timer);
-	            timer = setTimeout(() => {
-	            	if (!doubleEvent) {
-	            		this._onClickWorkLogItem(item);
-	            	}
-	            }, 300);
-				// this._onClickWorkLogItem(item);
-			};
+				let __onClickWorkLogItem = (e) => {
+					e.stopPropagation();
+					doubleEvent = false;
+					clearTimeout(timer);
+		            timer = setTimeout(() => {
+		            	if (!doubleEvent) {
+		            		this._onClickWorkLogItem(item);
+		            	}
+		            }, 300);
+					// this._onClickWorkLogItem(item);
+				};
 
-			let __onClickCheckBox = (e) => {
-				e.stopPropagation();
-			};
+				let __onClickCheckBox = (e) => {
+					e.stopPropagation();
+				};
 
-			let __onChangeCheckBox = (e) => {
-				e.stopPropagation();
+				let __onChangeCheckBox = (e) => {
+					e.stopPropagation();
 
-				item.status = e.target.checked ? 1 : 0;
-				this._onSubmitCheckBoxItem(item);
-			};
+					item.status = e.target.checked ? 1 : 0;
+					this._onSubmitCheckBoxItem(item);
+				};
 
-			let __onDblclickWorkLogItem = (e) => {
-				e.stopPropagation();
-				doubleEvent = true;
-				this.setState({open: true, selectedItem: item});
-			};
-			let className = 'progress__bar ';
-			let classNameProgress = 'progress progress--active ';
-			var defaultColor = (item.color && item.color !== '') ? item.color : TAG;
-			className += defaultColor;
-			classNameProgress += defaultColor + '-light';
-			item.progress = item.progress ? item.progress : 0;
+				let __onDblclickWorkLogItem = (e) => {
+					e.stopPropagation();
+					doubleEvent = true;
+					this.setState({open: true, selectedItem: item});
+				};
 
-			let itemDate = item.start_date;
-			console.log(item.status);
-			return (
-				<div className="cell-top-item-inner-text" key={index}>
-					<div className="worklog-layout--checkbox">
-						<Checkbox
-							onClick={__onClickCheckBox}
-							checked = {item.status}
-							onChange={__onChangeCheckBox}
-						/>
+				let className = 'progress__bar ';
+				let classNameProgress = 'progress progress--active ';
+				var defaultColor = (item.color && item.color !== '') ? item.color : TAG;
+				className += defaultColor;
+				classNameProgress += defaultColor + '-light';
+				item.progress = item.progress ? item.progress : 0;
+
+				return (
+					<div
+						className="cell-top-item-inner-text"
+						key={index}
+					>
+						<div className="worklog-layout--checkbox">
+							<Checkbox
+								onClick={__onClickCheckBox}
+								checked = {item.status}
+								onChange={__onChangeCheckBox}
+							/>
+						</div>
+						<div className={'worklog-layout--text'} onClick={__onClickWorkLogItem} onDoubleClick={__onDblclickWorkLogItem}>
+						    <div className={classNameProgress}>
+								  <b className={className} style={{ width: item.progress + '%' }}>
+								  	<Tooltip
+										placement="top"
+										overlay={
+											(<TooltipContent item={item} />)
+										}
+										mouseEnterDelay={1}
+										arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+									>
+									    <span className="label-default-style c-white">
+									      <strong>{item.progress}%</strong> {item.title}
+									    </span>
+								    </Tooltip>
+								  </b>
+								</div>
+						</div>
 					</div>
-					<div className={'worklog-layout--text'} onClick={__onClickWorkLogItem} onDoubleClick={__onDblclickWorkLogItem}>
-					    <div className={classNameProgress}>
-							  <b className={className} style={{ width: item.progress + '%' }}>
-							  	<Tooltip
-									placement="top"
-									overlay={
-										(
-											<div>
-												<label>Progress: </label>
-												<span><em>{item.progress}%</em></span>
-												<br />
-												<label>Task: </label>
-												<span><em>{item.task}</em></span>
-												<br />
-												<label>Start Date: </label>
-												<span><em>{moment(itemDate).format('YYYY-MM-DD')}</em></span>
-												<br />
-												<label>Duration: </label>
-												<span><em>{item.duration ? item.duration : 0}</em> Hours</span>
-												<br />
-												<label>Work Log: </label>
-												<span>{item.content}</span>
-											</div>
-										)
-									}
-									arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
-								>
-								    <span className="label-default-style c-white">
-								      <strong>{item.progress}%</strong> {item.task}
-								    </span>
-							    </Tooltip>
-							  </b>
-							</div>
-					</div>
-				</div>
-			);
-		});
+				);
+			});
+		}
+
 		const actions = [
 		      <FlatButton
 		        label="Cancel"

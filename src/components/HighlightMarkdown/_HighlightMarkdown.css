@@ -1,0 +1,52 @@
+.highlight-markdown {
+  font-size: 18px;
+
+  h1, h2 {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+  }
+
+  h1 {
+    font-size: 2.25em;
+  }
+  h2 {
+    font-size: 1.75em;
+
+  }
+  h3 {
+    font-size: 1.5em;
+  }
+  h4 {
+    font-size: 1.25em;
+  }
+
+  h5 {
+    font-size: 1em;
+  }
+
+  ul, ol, p {
+    font-size: 1em;
+    line-height: 1.4;
+  }
+  pre {
+    font-size: 16px;
+  }
+	img {
+		max-width: 100%;
+		margin-top: 10px;
+		margin-bottom: 10px;
+    display: block;
+	}
+  table {
+    width: 100%;
+    border: 1px solid lightgray;
+    th, td {
+      border: 1px solid lightgray;
+      padding: 10px;
+      text-align: center;
+    }
+    tr:nth-child(even) {
+      background-color: whitesmoke;
+    }
+  }
+}

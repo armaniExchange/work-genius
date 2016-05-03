@@ -106,7 +106,8 @@ let BugStats = {
 				'GUI Not Supported',
 				'Duplicate',
 				'NAB/By Design',
-				'Working in current build'
+				'Working in current build',
+				'Enhancement'
 			];
 
 			try {

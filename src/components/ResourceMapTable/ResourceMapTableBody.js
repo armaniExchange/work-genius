@@ -6,6 +6,7 @@ import moment from 'moment';
 import ResourceMapCellAddButton from './ResourceMapCellAddButton.js';
 import ResourceMapCellPto from './ResourceMapCellPto.js';
 import ResourceMapCellWorkLog from './ResourceMapCellWorkLog.js';
+import ResourceMapCellHoliday from './ResourceMapCellHoliday.js';
 
 import Td from '../A10-UI/Table/Td';
 
@@ -32,16 +33,17 @@ const RESOURCE_MAP_CELLS = {
             />
         );
     },
-    holiday: (config, onModalHander, onSubmitStatus, onDeleteItemHander) => {
-        return (
-            <ResourceMapCellWorkLog
-                config={config}
-                className={'holiday-style'}
-                onModalHander={onModalHander}
-                onSubmitStatus={onSubmitStatus}
-                onDeleteItemHander={onDeleteItemHander}
-            />
-        );
+    holiday: (config) => {
+        // return (
+        //     <ResourceMapCellWorkLog
+        //         config={config}
+        //         className={'holiday-style'}
+        //         onModalHander={onModalHander}
+        //         onSubmitStatus={onSubmitStatus}
+        //         onDeleteItemHander={onDeleteItemHander}
+        //     />
+        // );
+        return (<ResourceMapCellHoliday config={config} />);
     }
 };
 
@@ -73,40 +75,50 @@ class ResourceMapTableBody extends Component {
         if (data.length > 0) {
             // var moreItems = {};
         	bodyHtml = data.map((resource, bodyIndex) => {
-                let worklogs = resource.worklogs;
+                let worklogs = resource.jobs;
                 var user = resource.name;
                 var userId = resource.id;
                 let userHtml = (<Td key={0} colSpan={1} className={'cell-layout-style'}>{user}</Td>);
                 let itemsHtml = worklogs.map((itemValue, itemIndex) => {
                     // If the day is weekday, will be show weekday style.
                     let currentDay = moment(startDate).add(itemIndex, 'days');
-                    let day = currentDay.isoWeekday();
-                    let className = 'cell-layout-style ';
-                    if (day === 6 || day === 7) {
-                        className += 'weekend-style';
-                    }
 
                     // Got work log items, and show item cells.
-                    let item = itemValue.worklog_items;
+                    // let item = itemValue.worklog_items;
                     let cellFunc = undefined; // Different cell function, show different style.
-                    let config = {};    // The cell need config.
+                    // let config = {};    // The cell need config.
                     var cellHtml = '';  // The style of final.
-                    if (item != null) {
                         let type = itemValue.day_type;
-                        config = itemValue;
+                    if (RESOURCE_MAP_CELLS.hasOwnProperty(type)) {
                         cellFunc = RESOURCE_MAP_CELLS[type];
                     }
-                    config.user = user;
-                    config.userId = userId;
-                    config.date = currentDay;
+                    // cellFunc = RESOURCE_MAP_CELLS[type];
+                    // if (type != null) {
+                    //     config = itemValue;
+                    //     cellFunc = RESOURCE_MAP_CELLS[type];
+                    // }
+                    itemValue.user = user;
+                    itemValue.userId = userId;
+                    itemValue.date = currentDay;
                     if (cellFunc !== undefined) {
-                        cellHtml = cellFunc(config, onModalHander, onSubmitStatus, onDeleteItemHander);
+                        cellHtml = cellFunc(itemValue, onModalHander, onSubmitStatus, onDeleteItemHander);
                     }
                     // var defaultCellHtml = RESOURCE_MAP_CELLS[ RESOURCE_MAP_CELLS_DEFAULT_TYPE ](config, onModalHander);
 
                     let __onShowModalHandler = () => {
-                        this._onShowModalHandler(config);
+                        this._onShowModalHandler(itemValue);
                     };
+
+                    // let day = currentDay.isoWeekday();
+                    let className = 'cell-layout-style';
+                    // if (day === 6 || day === 7) {
+                    //     className += '__weekday';
+                    // } else
+                    if (type === 'pto') {
+                        className += '__pto';
+                    } else if (type === 'holiday') {
+                        className += '__holiday';
+                    }
 
                     return (
                         <Td

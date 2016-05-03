@@ -13,6 +13,8 @@ import TimePicker from 'material-ui/lib/time-picker/time-picker';
 import SelectField from 'material-ui/lib/select-field';
 import MenuItem from 'material-ui/lib/menus/menu-item';
 
+import Select from 'react-select';
+
 let ModalHeader = ({isEdit}) => {
 	return (
 		<Modal.Header closeButton>
@@ -45,6 +47,8 @@ class ResourceMapModalWorkLog extends Component {
 		this._onSubmitMultiItems = ::this._onSubmitMultiItems;
 		// Select Release Change.
 		this._handleSelectReleaseChange = ::this._handleSelectReleaseChange;
+		// Select Tag
+		this._onSelectTag = ::this._onSelectTag;
 		// Change start date
 		this._changeStartDate = ::this._changeStartDate;
 		// Change start time
@@ -56,17 +60,30 @@ class ResourceMapModalWorkLog extends Component {
 			color: '',
 			selectDate: '',
 			selectTime: '',
-			release: ''
+			release: '',
+			tags: ''
 		};
 	}
 
 	componentWillReceiveProps (nextProps) {
-		const { defaultModalInfos } = nextProps;
-		this.setState({
-			release: defaultModalInfos.release,
-			progress: defaultModalInfos.progress,
-			color: defaultModalInfos.color
-		});
+		const { show, defaultModalInfos } = nextProps;
+		defaultModalInfos.tags = defaultModalInfos.tags ? defaultModalInfos.tags : [];
+		if (show) {
+			let tag = this.state.tags !== '' ? this.state.tags : defaultModalInfos.tags.join(',');
+			this.setState({
+				release: defaultModalInfos.release,
+				progress: defaultModalInfos.progress,
+				color: defaultModalInfos.color,
+				tags: tag
+			});
+		} else {
+			this.setState({
+				release: '',
+				progress: 0,
+				color: '',
+				tags: ''
+			});
+		}
 	}
 
 
@@ -89,18 +106,35 @@ class ResourceMapModalWorkLog extends Component {
 			progressValue = progressField.getValue();
 		}
 		if (taskValue !== undefined && taskValue !== '') {
-			let startDate = this.state.startDate ? this.state.selectDate : defaultModalInfos.date;
-			let times = moment(startDate).format('X') * 1000 + this.state.selectTime;
+			let startDate;
+			if (defaultModalInfos.id !== undefined) {
+				startDate = this.state.selectDate ? this.state.selectDate : defaultModalInfos.start_date;
+			} else {
+				startDate = this.state.selectDate ? this.state.selectDate : defaultModalInfos.date;
+			}
+			let times;
+			if (this.state.selectTime) {
+				times = moment(moment(startDate).format('YYYY-MM-DD')).format('X') * 1000 + this.state.selectTime;
+			} else {
+				times = moment(startDate).format('X') * 1000;;
+			}
+			let status = defaultModalInfos.status ? defaultModalInfos.status : 0;
+			// If progress is 100%, the status is 1;
+			status = parseInt(progressValue) >= 100 ? 1 : 0;
+			let color = (this.state.color === undefined || this.state.color === '')
+				? this._$defaultColor() : this.state.color;
 			let data = {
+				'employee_id': defaultModalInfos.userId,
 				'id': defaultModalInfos.id,
-				'task': taskValue,
+				'title': taskValue,
 				'content': workValue,
 				'progress': parseInt(progressValue),
-				'color': this.state.color,
+				'color': color,
 				'start_date': parseInt(times),
 				'duration': parseInt(durationField.getValue()),
 				'release': this.state.release,
-				'status': defaultModalInfos.status ? defaultModalInfos.status : 0
+				'status': status,
+				'tags': this.state.tags.split(',')
 			};
 			let item = {
 				id: defaultModalInfos.id,
@@ -111,6 +145,15 @@ class ResourceMapModalWorkLog extends Component {
 			this._onCloseModelHandler();
 		}
 		// this._$PrintFormData(this);
+	}
+
+	_$defaultColor() {
+		let list = [ 'bgm-teal', 'bgm-red', 'bgm-pink', 'bgm-blue', 'bgm-lime',
+					 'bgm-green', 'bgm-cyan', 'bgm-orange', 'bgm-purple'];
+
+		var Rand = Math.random();
+		let num = Math.round(Rand * 9);
+		return list[num];
 	}
 
 	/**
@@ -126,12 +169,17 @@ class ResourceMapModalWorkLog extends Component {
 			console.log('Progress Value: ' + progressField.getValue());
 		}
 
-		let startDate = self.state.startDate ? self.state.selectDate : defaultModalInfos.date;
+		let startDate = self.state.selectDate ? self.state.selectDate : defaultModalInfos.date;
+		console.log(self.state.startDate);
+		console.log(self.state.selectDate);
+		console.log(self.state.selectTime);
+		startDate instanceof moment ? console.log(startDate.format('YYYY-MM-DD')) : console.log(startDate);
 		console.log('Tag Color Value: ' + self.state.color);
 		console.log('Start Date: ' + startDate);
 		console.log('Start Time: ' + self.state.selectTime);
 		console.log('Duration Value: ' + durationField.getValue());
 		console.log('Release: ' + self.state.release);
+		console.log('Tags: ' + self.state.tags);
 	}
 
 	_onSubmitSingleItem() {
@@ -206,6 +254,20 @@ class ResourceMapModalWorkLog extends Component {
 		this.setState({color: color});
 	}
 
+	_onSelectTag(type) {
+		this.setState({tags: type});
+		let types = type.split(',');
+		const { tags, onAddTagHandler } = this.props;
+		for (let newType of types) {
+			let tag = tags.find((inTag) => {
+				return inTag.tag_name === newType;
+			});
+			if (newType !== undefined && tag === undefined) {
+				onAddTagHandler(newType);
+			}
+		}
+ 	}
+
 	_changeStartDate(date) {
 		// const { startDate } = this.refs;
 		// startDate.value = date;
@@ -226,19 +288,21 @@ class ResourceMapModalWorkLog extends Component {
 		endDate.value = date;
 	}
 
-
 	render() {
 		const {
 			show,
+			tags,
 			defaultModalInfos
 		} = this.props;
 
 		defaultModalInfos.progress = defaultModalInfos.progress ? defaultModalInfos.progress : 0;
 		let showDoneClassName = 'material-icons icon-layout';
 		let hideDoneClassName = 'material-icons icon-layout icon-layou-display';
-		let nowDate = defaultModalInfos.date;
-		if (nowDate) {
-			nowDate = moment(nowDate).format('YYYY-MM-DD');
+		let nowDate;
+		if (defaultModalInfos.id) {
+			nowDate = moment(defaultModalInfos.start_date).format('YYYY-MM-DD hh:mm a');
+		} else {
+			nowDate = moment(defaultModalInfos.date).format('YYYY-MM-DD hh:mm a');
 		}
 
 		let releaseOptions = ['4.1.0', '4.1.1', '3.2.1'];
@@ -291,7 +355,7 @@ class ResourceMapModalWorkLog extends Component {
 					<TextField
 						type="text"
 						className="text-area-style"
-						defaultValue={defaultModalInfos.task}
+						defaultValue={defaultModalInfos.title}
 						ref="taskField"
 					/>
 				</div>
@@ -313,6 +377,7 @@ class ResourceMapModalWorkLog extends Component {
 					</div>
 					<div className="col-xs-6 layout-design-over">
 					<TimePicker
+						defaultTime={new Date(nowDate)}
 						onChange={this._changeStartTime}
 					/>
 					</div>
@@ -354,11 +419,26 @@ class ResourceMapModalWorkLog extends Component {
 							multiLine={true}
 							rowsMax={15}
 							defaultValue={defaultModalInfos.content}
-							rows={8}
+							rows={7}
 							ref="workLogField"
 						/>
 					</div>
 				</div>
+				<div className="form-group">
+					<label className="col-xs-3 control-label">Tag</label>
+					<div className="col-xs-9">
+						<Select
+							multi={true}
+							allowCreate={true}
+              name="menu_tag"
+              value={this.state.tags}
+              options={tags.map((tag) => {
+              	return {label: tag.tag_name, value: tag.tag_name};
+              })}
+              onChange={this._onSelectTag}
+            />
+		      </div>
+		    </div>
 				<div className="form-group">
 					<label className="col-xs-3 control-label">Progress</label>
 					<div className="col-xs-9">
@@ -406,10 +486,12 @@ class ResourceMapModalWorkLog extends Component {
 
 ResourceMapModalWorkLog.propTypes = {
 	show               : PropTypes.bool.isRequired,
+	tags               : PropTypes.array.isRequired,
 	defaultModalInfos  : PropTypes.object.isRequired,
 	onModalSubmit      : PropTypes.func.isRequired,
 	onModalHander      : PropTypes.func.isRequired,
-	onModalSubmitMulti : PropTypes.func.isRequired
+	onModalSubmitMulti : PropTypes.func.isRequired,
+	onAddTagHandler    : PropTypes.func.isRequired
 };
 
 ResourceMapModalWorkLog.defaultProps = {

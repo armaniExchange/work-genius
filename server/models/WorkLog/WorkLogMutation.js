@@ -7,6 +7,7 @@ import {
 import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
+import { createWorkLog , updateWorkLog} from './WorkLogUtility.js';
 
 let WorkLogMutation = {
 	'createWorkLog': {
@@ -19,25 +20,14 @@ let WorkLogMutation = {
 			}
 		},
 		resolve: async (root, { data }) => {
-			let connection = null,
-				query = null;
-
-			try {
-				
+			try{
 				let worklog = JSON.parse(data);
-
-				query = r.db('work_genius').table('worklog').insert(worklog);
-				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				let result = await query.run(connection);
-				await connection.close();
-				let id = '';
-		        if (result && result.generated_keys && result.generated_keys.length > 0){
-		          id = result.generated_keys[0];
-		        }
-		        return id;
-			} catch (err) {
+				return await createWorkLog(worklog);
+			}catch(err){
+				console.log(err);
 				return 'Fail to create a worklog!';
 			}
+			
 		}
 	},
 	'updateWorkLog': {
@@ -54,23 +44,14 @@ let WorkLogMutation = {
 			}
 		},
 		resolve: async (root, { id,data }) => {
-			let connection = null,
-				query = null;
-
-			try {
-				
+			try{
 				let worklog = JSON.parse(data);
-				if(worklog.id){
-					delete worklog.id;
-				}
-				query = r.db('work_genius').table('worklog').get(id).update(worklog);
-				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				await query.run(connection);
-				await connection.close();
-			} catch (err) {
+				return await updateWorkLog(id,worklog);
+			}catch(err){
+				console.log(err);
 				return 'Fail to update a worklog!';
 			}
-			return 'Update worklog successfully!';
+		
 		}
 	},
 	'deleteWorkLog': {
@@ -96,37 +77,6 @@ let WorkLogMutation = {
 				return 'Fail to delete a worklog!';
 			}
 			return 'Delete worklog successfully!';
-		}
-	},
-	'createWorkLogBatch': {
-		type: GraphQLString,
-		description: 'create a batch of worklog ',
-        args: {
-			data: {
-				type: GraphQLString,
-				description: 'new worklog array'
-			}
-		},
-		resolve: async (root, { data }) => {
-			let connection = null,
-				query = null;
-
-			try {
-				
-				let worklogObj = JSON.parse(data);
-
-				query = r.db('work_genius').table('worklog').insert(worklogObj.worklog);
-				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				let result = await query.run(connection);
-				await connection.close();
-				let idList = [];
-		        if (result && result.generated_keys){
-		          idList = result.generated_keys;
-		        }
-		        return idList;
-			} catch (err) {
-				return 'Fail to create a batch of worklog!';
-			}
 		}
 	}
 

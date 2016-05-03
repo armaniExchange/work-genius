@@ -10,6 +10,7 @@ import ValidDemoPage from '../containers/ValidDemoPage/ValidDemoPage';
 import DashboardPage from '../containers/DashboardPage/DashboardPage';
 import BugTrackingPage from '../containers/KnowledgePage/BugTrackingPage';
 import TaskPage from '../containers/TaskPage/TaskPage';
+import SearchPage from '../containers/SearchPage/SearchPage';
 import PTOPage from '../containers/PTOPage/PTOPage';
 import PTOApplication from '../containers/PTOPage/PTO-Application';
 import PTOOvertime from '../containers/PTOPage/PTO-Overtime';
@@ -32,6 +33,9 @@ import ViewArticlePage from '../containers/ViewArticlePage/ViewArticlePage';
 import FeatureAnalysisPage from '../containers/FeatureAnalysisPage/FeatureAnalysisPage';
 import FeatureAnalysisTreePage from '../containers/FeatureAnalysisPage/FeatureAnalysisTree';
 import FeatureAnalysisTablePage from '../containers/FeatureAnalysisPage/FeatureAnalysisTable';
+import MarkdownCheatSheet from '../containers/MarkdownCheatSheet/MarkdownCheatSheet';
+import EditDocumentCategoryPage from '../containers/EditDocumentCategoryPage/EditDocumentCategoryPage';
+import WorkLogPage from '../containers/WorkLogPage/WorkLogPage';
 
 // Utilities
 import requireAuth from '../containers/Require-Auth/Require-Auth';
@@ -48,6 +52,7 @@ const appRoutes = () => (
         <IndexRoute component={requireAuth(DashboardPage)}/>
         <Route path="redux-demo" component={requireAuth(DemoPage)} />
         <Route path="task" component={requireAuth(TaskPage)} />
+        <Route path="search" component={requireAuth(SearchPage)} />
         <Route path="pto" component={requireAuth(PTOPage)}>
           <IndexRoute component={requireAuth(PTOApplication)} />
           <Route path="overtime" component={requireAuth(PTOOvertime)} />
@@ -70,9 +75,12 @@ const appRoutes = () => (
         {/* Knowlege base*/}
         <Route path="knowledge" component={requireAuth(KnowledgePage)}>
           <Route path="document/edit/:articleId" component={requireAuth(EditArticlePage)} />
+          <Route path="document/markdown-cheatsheet" component={requireAuth(MarkdownCheatSheet)} />
+          <Route path="document/category/edit" component={requireAuth(EditDocumentCategoryPage)} />
           <Route path="document/:articleId" component={requireAuth(ViewArticlePage)} />
           <Route path="document" component={requireAuth(DocumentPage)} />
           <Route path="bug-tracking" component={requireAuth(BugTrackingPage)} />
+          <Route path="work-log" component={requireAuth(WorkLogPage)} />
         </Route>
 
         {/* feature-analysis base*/}

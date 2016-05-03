@@ -1,7 +1,177 @@
 export const MENU = {
    'root': {
       '3.2': {
-         'App': {},
+         'App': {
+   'DDos Protection' : {
+      'Mitigation Console' : {
+         'Destination Services' : {},
+         'Zone Services' : {}
+      },
+      'Protected Objects' : {
+         'Destination Services' : {},
+         'Destinations' : {},
+         'Groups' : {},
+         'Sources' : {},
+         'Zone Services' : {},
+         'Zones' : {}
+      },
+      'Settings' : {
+         'Black/White List Sync' : {},
+         'Global' : {}
+      },
+      'Templates' : {
+         'Action' : {
+            'Action List' : {},
+            'Violation Action' : {}
+         },
+         'Destination Service' : {
+            'DNS' : {},
+            'HTTP' : {},
+            'ICMP-v4' : {},
+            'ICMP-v6' : {},
+            'Logging' : {},
+            'Monitor' : {},
+            'Other' : {},
+            'SSL-L4' : {},
+            'TCP' : {},
+            'UDP' : {}
+         },
+         'General' : {
+            'Capture Configuration' : {},
+            'Certificate Management' : {},
+            'Class List' : {},
+            'DDos Script' : {},
+            'Domain Group' : {},
+            'Domain List' : {},
+            'GLID' : {},
+            'IPv4 NAT Pool' : {},
+            'IPv6 NAT Pool' : {},
+            'Source Based Policy' : {}
+         },
+         'Zone' : {
+            'DNS' : {},
+            'Encapsulation' : {},
+            'HTTP' : {},
+            'ICMP-v4' : {},
+            'ICMP-v6' : {},
+            'IP-Proto' : {},
+            'Logging' : {},
+            'SSL-L4' : {},
+            'TCP' : {},
+            'Threshold Profile' : {},
+            'UDP' : {}
+         }
+      }
+   },
+   'Dashboard' : {
+      'Incidents' : {
+         'Destination Services' : {},
+         'Zone Services' : {}
+      },
+      'Monitoring' : {
+         'Destination' : {
+            'Chart' : {},
+            'Statistics' : {}
+         },
+         'Global' : {
+            'Chart' : {},
+            'Statistics' : {}
+         },
+         'Zone' : {
+            'Chart' : {},
+            'Detail' : {},
+            'List' : {},
+            'Statistics' : {}
+         }
+      },
+      'System' : {}
+   },
+   'Networking' : {
+      'ARP' : {
+         'IPv4' : {},
+         'IPv6 Neighbor' : {}
+      },
+      'DNS' : {},
+      'Global' : {
+         'LLDP' : {},
+         'Netflow Monitor' : {},
+         'Settings' : {},
+         'sFlow' : {}
+      },
+      'Interface' : {
+         'Global' : {},
+         'LAN' : {},
+         'Loopback' : {},
+         'Management' : {},
+         'Transparent' : {},
+         'Trunk' : {},
+         'Virtual' : {}
+      },
+      'Route' : {
+         'IPv4 Static' : {},
+         'IPv6 Static' : {}
+      },
+      'VLAN' : {
+         'Global' : {},
+         'VLAN' : {}
+      }
+   },
+   'System' : {
+      'Action' : {
+         'Reboot' : {},
+         'Reload' : {},
+         'Shutdown' : {}
+      },
+      'Admin' : {
+         'Sessions' : {},
+         'Users' : {}
+      },
+      'Authentication' : {
+         'General' : {},
+         'LDAP Server' : {},
+         'RADIUS Server' : {},
+         'TACACS+ Server' : {}
+      },
+      'Diagnostics' : {
+         'AXDebug Config Files' : {},
+         'HTTP Log Files' : {},
+         'Show AXCore Files' : {},
+         'Show AXDebug Files' : {},
+         'ShowTech Files' : {}
+      },
+      'Maintenance' : {
+         'Backup' : {},
+         'Restore' : {},
+         'Upgrade' : {}
+      },
+      'Settings' : {
+         'Banner' : {},
+         'Boot' : {},
+         'CLI' : {},
+         'Logging' : {},
+         'MIB Download' : {},
+         'Time' : {},
+         'Web' : {},
+         'Web Certificate' : {}
+      },
+      'System Log' : {},
+      'VRRP-A' : {
+         'Failover Policy Template' : {},
+         'Force Self Standby' : {
+            'Persistent Standby' : {},
+            'Standby' : {}
+         },
+         'Interface' : {
+            'Ethernet' : {},
+            'Trunk' : {}
+         },
+         'Settings' : {
+            'Global' : {},
+            'VRID' : {}
+         }
+      }
+   }
+},
          'Framework': {}
       },
       '4.1': {
@@ -540,27 +710,39 @@ export const MENU = {
             }
          },
          'Framework': {}
-      }
-   }
+     },
+     'Layer': {
+         'GUI': {},
+         'GUI Framework': {
+             'Unit Test': {},
+             'Django': {},
+             'AngularJS': {},
+             'React JS': {},
+             'GUI Server': {}
+         },
+         'AXAPI': {},
+         'Backend': {},
+         'Technology': {
+             'Design Pattern': {},
+             'Best Coding Practice': {},
+             'Helper Function': {}
+         }
+     },
+     'Daily Working' : {}
+ }
 };
 
 // var s='';
-// var record = {};
+// var counter = 0;
 // function f(o, parentKey){
 //   for(var k in o){
 //     if(!o.hasOwnProperty(k)){continue;}
-//     var suffix = record[k] ? (record[k]+'') : '';
-//     var k_and_suffix = k+suffix;
-//      s+="r.db('work_genius').table('assignment_categories').insert({id:'"+k_and_suffix+"',name:'"+k+"',parentId:'"+parentKey+"'});" + "\r\n";
-//     if (record.hasOwnProperty(k)){
-//       record[k]++;
-//     } else {
-//       record[k] = 1;
-//     }
+//     counter += 1
+//      s+="r.db('work_genius').table('document_categories').insert({id:'"+counter+"',name:'"+k+"',parentId:'"+parentKey+"'});" + "\r\n";
 //     if(typeof o[k]==='object'){
-//       f(o[k], k_and_suffix);
+//       f(o[k], counter);
 //     }
 //   }
 // }
-// f(obj, 'root');
+// f(MENU, null);
 // console.log(s);

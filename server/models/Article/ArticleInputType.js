@@ -21,16 +21,8 @@ const ArticleInputType = new GraphQLInputObjectType({
       type: new GraphQLList(GraphQLString),
       description: 'Article\'s tags'
     },
-    category: {
-      type: new GraphQLInputObjectType({
-        name: 'CategoryInputType',
-        fields: {
-          'id': {
-            type: GraphQLID,
-            description: 'Category ID'
-          }
-        }
-      }),
+    categoryId: {
+      type: GraphQLString,
       description: 'Article\'s categories'
     },
     content: {

@@ -12,7 +12,6 @@ import {
 // RethinkDB
 import r from 'rethinkdb';
 
-import { getChildren } from '../AssignmentCategory/utils.js';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 
@@ -20,7 +19,6 @@ export const getArticleDetail = article => {
   const dbWorkGenius = r.db('work_genius');
   return {
     author: dbWorkGenius.table('users').get(article('authorId')).default(null),
-    category: dbWorkGenius.table('categories').get(article('categoryId')).default(null),
     files: dbWorkGenius.table('files')
       .getAll(
         r.args(article('filesId').default([]).coerceTo('array').append('prevent-empty-error'))
@@ -100,11 +98,10 @@ let ArticleQuery = {
       let result,
         connection = null,
         count = 0,
-        allChildrenCategory = null,
         filterFunc = article => {
           let predicate = r.expr(true);
           if (categoryId) {
-            predicate = predicate.and(r.expr([categoryId, ...allChildrenCategory]).contains(article('categoryId')));
+            predicate = predicate.and(article('categoryId').eq(categoryId));
           }
           if (tag) {
             predicate = predicate.and(article('tags').contains(tag));
@@ -117,16 +114,7 @@ let ArticleQuery = {
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 
         page = page || 1;
-        pageLimit = pageLimit || 5;
-
-        if (categoryId){
-          const queryCategories = r.db('work_genius')
-            .table('categories')
-            .coerceTo('array');
-          result = await queryCategories.run(connection);
-          allChildrenCategory = getChildren(result, {id: categoryId})
-            .map(category => category.id);
-        }
+        pageLimit = pageLimit || 20;
 
         let filterObj = {
           authorId,

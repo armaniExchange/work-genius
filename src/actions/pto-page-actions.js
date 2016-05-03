@@ -115,11 +115,11 @@ export function fetchPTOApplications(userId, timeRange) {
             body: `{
                 ptoApplications(applicantId: "${userId}", timeRange: ${timeRange}) {
                     id,
-                    start_date,
-                    end_date,
+                    start_time,
+                    end_time,
                     hours,
                     applicant,
-                    apply_date,
+                    apply_time,
                     status,
                     memo,
                     applicant_email
@@ -148,10 +148,10 @@ export function fetchOvertimeApplications(userId, timeRange) {
             body: `{
                 overtimeApplications(applicantId: "${userId}", timeRange: ${timeRange}) {
                     id,
-                    start_date,
+                    start_time,
                     hours,
                     applicant,
-                    apply_date,
+                    apply_time,
                     status,
                     memo,
                     applicant_email
@@ -182,7 +182,7 @@ export function fetchUsersWithPTO() {
                     id,
                     name,
                     pto {
-                        end_date
+                        end_time
                     }
                 }
             }`,
@@ -302,7 +302,7 @@ export function createPTOApplication(data) {
         let config = {
                 method: 'POST',
                 body: `mutation RootMutationType {
-                    createPTOApplication(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+                    createPTOAndRefreshJob(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
                 }`,
                 headers: {
                     'Content-Type': 'application/graphql',
@@ -389,7 +389,7 @@ export function setPTOApplicationStatus(id, status, hours) {
         let config = {
                 method: 'POST',
                 body: `mutation RootMutationType {
-                    updatePTOApplicationStatus(id:"${id}", status:"${status}", hours:${hours})
+                    updatePTOStatusAndRefreshJob(id:"${id}", status:"${status}", hours:${hours})
                 }`,
                 headers: {
                     'Content-Type': 'application/graphql',

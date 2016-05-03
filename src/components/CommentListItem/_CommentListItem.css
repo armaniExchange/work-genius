@@ -46,11 +46,12 @@
         right: 5px;
       }
       .message {
-        padding: 15px;
+        padding: 20px 40px;
         min-height: 4em;
       }
       .time {
         text-align: right;
+        margin-top: 10px;
         color: gray;
       }
     }

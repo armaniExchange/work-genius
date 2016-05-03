@@ -6,8 +6,10 @@ import {
 // RethinkDB
 import r from 'rethinkdb';
 // Constants
-import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
-
+import { DB_HOST, DB_PORT, MAILER_ADDRESS } from '../../constants/configurations.js';
+import { getArticleLink } from '../Article/ArticleMutation';
+import generateEmailMarkdown from '../../libraries/generateEmailMarkdown';
+import parseMarkdown from '../../libraries/parseMarkdown';
 import CommentType from './CommentType.js';
 import CommentInputType from './CommentInputType.js';
 
@@ -59,11 +61,11 @@ const CommentMutation = {
         description: 'The article ID'
       }
     },
-    resolve: async (root, { comment, articleId }) => {
+    resolve: async ({ req, transporter }, { comment, articleId }) => {
       try {
         const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         let result = null;
-        const user = root.req.decoded;
+        const user = req.decoded;
         const now = new Date().getTime();
 
         result = await r.db('work_genius')
@@ -87,6 +89,25 @@ const CommentMutation = {
                 commentsId: r.row('commentsId').default([]).append(id)
               })
               .run(connection);
+            const commentedArticle = await r.db('work_genius')
+              .table('articles')
+              .get(articleId)
+              .merge(article => {return {author: r.db('work_genius').table('users').get(article('authorId')).default(null)};})
+              .run(connection);
+
+            await transporter.sendMail({
+              from: MAILER_ADDRESS,
+              to: [commentedArticle.author.email, ...(commentedArticle.reportTo.map((emailName) => `${emailName}@a10networks.com`))],
+              subject: `[KB New Comment] ${commentedArticle.title} `,
+              html: parseMarkdown(generateEmailMarkdown({
+                to: commentedArticle.author.name,
+                beginning: `${user.name} commented your document on KB.`,
+                url: getArticleLink(articleId),
+                title: commentedArticle.title,
+                content: comment.content
+              })),
+              cc: 'ax-web-DL@a10networks.com'
+            });
           }
 
           result = await r.db('work_genius')
@@ -105,6 +126,51 @@ const CommentMutation = {
           await connection.close();
           throw 'No generated_keys found';
         }
+      } catch (err) {
+        return err;
+      }
+    }
+  },
+
+  updateComment: {
+    type: CommentType,
+    description: 'Update a comment',
+    args: {
+      comment: { type: CommentInputType },
+      articleId: {
+        type: GraphQLID,
+        description: 'The article ID'
+      }
+    },
+    resolve: async ({ req, transporter }, { comment, articleId }) => {
+      try {
+        const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+        let result = null;
+        const user = req.decoded;
+        const now = new Date().getTime();
+
+        result = await r.db('work_genius')
+          .table('comments')
+          .get(comment.id)
+          .update({
+            content: comment.content,
+            updatedAt: now
+          })
+          .run(connection);
+
+        result = await r.db('work_genius')
+          .table('comments')
+          .get(comment.id)
+          .merge(commentItem => {
+            return {
+              author: r.db('work_genius').table('users').get(commentItem('authorId')).default(null),
+            };
+          })
+          .run(connection);
+        await connection.close();
+
+        return result;
+
       } catch (err) {
         return err;
       }

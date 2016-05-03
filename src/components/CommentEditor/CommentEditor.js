@@ -6,7 +6,6 @@ import RaisedButton from 'material-ui/lib/raised-button';
 import Editor from '../../components/Editor/Editor';
 import Avatar from '../../components/Avatar/Avatar';
 
-
 // Styles
 import './_CommentEditor.css';
 import '../CommentListItem/_CommentListItem.css';
@@ -39,16 +38,18 @@ class CommentEditor extends Component {
       editingContent,
     } = this.state;
     const {
-      currentUser
+      currentUser,
+      onCancel
     } = this.props;
-    const commentButtonStyle = {
+    const buttonStyle = {
       marginTop: 10,
       marginBottom: 10,
+      marginLeft: 10,
       float: 'right'
     };
     return (
       <div
-        className="component-comment-list-item">
+        className="component-comment-list-item editor">
         <div className="component-comment-list-item-wrapper">
           <div className="content">
             <Paper className="message">
@@ -59,12 +60,19 @@ class CommentEditor extends Component {
             </Paper>
             <RaisedButton
               disabled={!editingContent}
-              style={commentButtonStyle}
+              style={buttonStyle}
               label="Comment"
               primary={true}
               onClick={::this.onSubmit} />
+            {
+              typeof onCancel === 'function' ? (
+                <RaisedButton
+                  style={buttonStyle}
+                  label="Cancel"
+                  onClick={onCancel} />
+              ) : null
+            }
           </div>
-
           <div className="author right">
             <Avatar user={currentUser} />
             <div className="avatar-triangle" />
@@ -78,7 +86,8 @@ class CommentEditor extends Component {
 CommentEditor.propTypes = {
   content         : PropTypes.string,
   currentUser     : PropTypes.object,
-  onSubmit        : PropTypes.func
+  onSubmit        : PropTypes.func,
+  onCancel        : PropTypes.func
 };
 
 CommentEditor.defaultProps = {

@@ -25,13 +25,6 @@ class DocumentPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // the query state
-      currentPage: 1,
-      tag: '',
-      documentType: '',
-      priority: '',
-      milestone: '',
-      authorId: '',
       // the delete state
       isConfirmDeleteArticleDialogVisible: false,
       editingArticle: null
@@ -40,36 +33,48 @@ class DocumentPage extends Component {
 
   componentWillMount() {
     const {
-      fetchArticles,
-      fetchAllCategories,
+      fetchDocumentCategories,
       fetchAllTags,
       fetchAllUsers,
       fetchAllMilestones
     } = this.props.documentActions;
 
     // Todo: find a better way to handle jumpling this page from other page
-      fetchAllCategories();
-      fetchAllTags();
-      fetchArticles();
-      fetchAllUsers();
-      fetchAllMilestones();
+    fetchDocumentCategories();
+    fetchAllTags();
+    fetchAllUsers();
+    fetchAllMilestones();
+    this.queryArticles();
   }
 
   // fetch articles with query
-  //
   onTagChange(tag) {
-    this.setState({tag}, this.queryArticles);
+    this.props.documentActions.updateArticlesQuery({tag, currentPage: 1});
+    setTimeout(() => this.queryArticles(), 0);
   }
 
   onFilterChange(filter) {
-    this.setState(filter, this.queryArticles);
-
+    this.props.documentActions.updateArticlesQuery(Object.assign(filter, {currentPage: 1}));
+    setTimeout(() => this.queryArticles(), 0);
   }
 
   onPaginate(page) {
-    this.setState({
-      currentPage: page
-    }, this.queryArticles);
+    this.props.documentActions.updateArticlesQuery({currentPage: page});
+    setTimeout(() => this.queryArticles(), 0);
+  }
+
+  resetQueryAndFetchArticles() {
+    this.props.documentActions.updateArticlesQuery({
+      currentPage: 1,
+      tag: '',
+      documentType: '',
+      priority: '',
+      milestone: '',
+      owner: '',
+      categoryId: ''
+    });
+    setTimeout(() => this.queryArticles(), 0);
+
   }
 
   queryArticles() {
@@ -80,7 +85,8 @@ class DocumentPage extends Component {
       priority,
       milestone,
       owner,
-    } = this.state;
+      categoryId
+    } = this.props;
     let query = {
       page: currentPage,
       tag: tag,
@@ -88,6 +94,7 @@ class DocumentPage extends Component {
       documentType,
       priority,
       milestone,
+      categoryId
     };
     Object.keys(query).forEach((key) => {
       if (!query[key]) { delete query[key]; }
@@ -105,7 +112,6 @@ class DocumentPage extends Component {
   }
 
   onConfirmDeleteArticle(deletingArticle) {
-    // console.log(`delete article id:${deletingArticle.id} index:${deletingArticle.index}`);
     this.props.articleActions.deleteArticle(deletingArticle.id);
   }
 
@@ -122,14 +128,13 @@ class DocumentPage extends Component {
   onCancelDeleteArticle() {}
 
   renderArticleList() {
-    const { articleList } = this.props;
+    const {
+      articleList,
+      tag
+    } = this.props;
     if (articleList.length === 0) {
       return (
-        <div style={{
-          textAlign: 'center',
-          padding: 30,
-          color: 'gray'
-        }}>
+        <div className="blank-article">
           <i className="fa fa-file-text-o fa-5x"/>
           <h3>No matching items found.</h3>
         </div>
@@ -141,7 +146,9 @@ class DocumentPage extends Component {
           <ArticleListItem
             key={index}
             index={index}
+            activeTag={tag}
             onDelete={::this.onArticleDelete}
+            onActiveTagChange={::this.onTagChange}
             {...article}/>
         );
       })
@@ -151,25 +158,40 @@ class DocumentPage extends Component {
   _onNodeClick(item) {
     this.props.documentActions.setSelectedCategory({...item, isLeaf: false});
   }
-  _onLeafClick(item) {
-    this.props.documentActions.setSelectedCategory({...item, isLeaf: true});
+
+  _setAndFetchCategory(item) {
+    const { documentActions } = this.props;
+    documentActions.setSelectedCategory({...item, isLeaf: true});
+    this.props.documentActions.updateArticlesQuery({
+      categoryId: item.id || '',
+      currentPage: 1
+    });
+    setTimeout(() => this.queryArticles(), 0);
+  }
+
+  _clearCategory() {
+    this._setAndFetchCategory({});
   }
 
   render() {
-    const PAGE_SIZE = 5;
+    const PAGE_SIZE = 20;
     const {
       allUsers,
       allMilestones,
       allTags,
-      allCategories,
+      documentCategories,
       articleTotalCount,
-      currentSelectedCategory
+      currentSelectedCategory,
+      documentType,
+      priority,
+      milestone,
+      owner,
+      tag,
+      currentPage
     } = this.props;
     const {
       isConfirmDeleteArticleDialogVisible,
-      editingArticle,
-      currentPage,
-      tag
+      editingArticle
     } = this.state;
 
     return (
@@ -179,28 +201,36 @@ class DocumentPage extends Component {
           <div className="left-navigation">
             <Link to="/main/knowledge/document/edit/new">
               <RaisedButton
-                label="+ Create a Document"
+                label="+ Create Document"
                 secondary={true} />
             </Link>
-            <h5>Hot tags</h5>
+            <h5>HOT TAGS</h5>
             <ArticleTagList
+              onChange={::this.onTagChange}
               tags={allTags}
-              value={tag}
-              onChange={::this.onTagChange} />
-            <div>
-              <h5>Tree</h5>
-                <CategoryTree
-                data={allCategories}
-                selectedPath={currentSelectedCategory.path}
-                onNodeClick={::this._onNodeClick}
-                onLeafClick={::this._onLeafClick} />
+              value={tag} />
+            <div className="knowledge-tree-label">
+              <h5>KNOWLEDGE TREE</h5>
+              <Link to="/main/knowledge/document/category/edit">
+                <i className="fa fa-pencil" ariaHidden="true" />
+              </Link>
             </div>
+            <CategoryTree
+              data={documentCategories}
+              selectedPath={currentSelectedCategory.path}
+              onNodeClick={::this._onNodeClick}
+              onLeafClick={::this._setAndFetchCategory} />
           </div>
           <div className="main-content">
             <DocumentFilterSelectGroup
               allUsers={allUsers}
               allMilestones={allMilestones}
+              documentType={documentType}
+              priority={priority}
+              milestone={milestone}
+              owner={owner}
               onChange={::this.onFilterChange}
+              onClearAll={::this.resetQueryAndFetchArticles}
             />
             { this.renderArticleList() }
             {
@@ -227,15 +257,23 @@ class DocumentPage extends Component {
 }
 
 DocumentPage.propTypes = {
-  articleList            : PropTypes.array,
-  articleTotalCount      : PropTypes.number,
-  allCategories          : PropTypes.object,
-  currentSelectedCategory: PropTypes.object,
-  allTags                : PropTypes.array,
-  allUsers               : PropTypes.array,
-  allMilestones          : PropTypes.array,
-  documentActions        : PropTypes.object.isRequired,
-  articleActions         : PropTypes.object.isRequired
+  articleList             : PropTypes.array,
+  articleTotalCount       : PropTypes.number,
+  documentCategories      : PropTypes.object,
+  currentSelectedCategory : PropTypes.object,
+  allTags                 : PropTypes.array,
+  allUsers                : PropTypes.array,
+  allMilestones           : PropTypes.array,
+  documentActions         : PropTypes.object.isRequired,
+  articleActions          : PropTypes.object.isRequired,
+  // query object
+  currentPage             : PropTypes.number,
+  tag                     : PropTypes.string,
+  documentType            : PropTypes.string,
+  priority                : PropTypes.string,
+  milestone               : PropTypes.string,
+  owner                   : PropTypes.string,
+  categoryId              : PropTypes.string,
 };
 
 function mapStateToProps(state) {

@@ -1,15 +1,44 @@
 .component-editor {
-  border-radius: 5px;
-  border: 1px solid lightgray;
-  background: none;
-  overflow: hidden;
-  -webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC);
-  position: relative;
+
+  .help {
+    line-height: 48px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 14px;
+    text-transform: uppercase;
+    color: rgba(0,0,0, 0.54);
+    margin-left: auto;
+    margin-right: 10px;
+  }
+
+  .component-edit-panel,
+  .component-preview-panel {
+    border: 1px solid lightgray;
+    background: none;
+    overflow: hidden;
+    position: relative;
+    min-height: 100px;
+  }
+  .component-edit-panel {
+
+  }
+  .component-preview-panel {
+    padding: 20px;
+  }
   .placeholder {
     color: gray;
     position: absolute;
-    left: 3px;
-    top: 3px;
+    left: 15px;
+    top: 15px;
     z-index: 1;
+  }
+  .mdl-tabs__tab-bar {
+    border-bottom: none;
+    justify-content: flex-start;
+    padding-left: 10px;
+  }
+  .CodeMirror {
+    height: 400px;
+    padding: 10px;
   }
 }

@@ -46,9 +46,13 @@ var config = {
                 test : /\.(woff|woff2|ttf|eot|svg)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
                 loader: 'url?limit=8192&name=assets/fonts/[name].[ext]'
             },
-            { 
-                test: /\.json$/, 
+            {
+                test: /\.json$/,
                 loader: 'json-loader'
+            },
+            {
+                test : /\.md?$/,
+                loader: 'raw'
             }
         ]
     },

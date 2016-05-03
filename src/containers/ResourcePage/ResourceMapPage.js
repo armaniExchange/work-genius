@@ -27,14 +27,17 @@ class ResourceMapPage extends Component{
 
 	componentWillMount() {
 		let defaultStartDate = moment().isoWeekday(1).format('YYYY-MM-DD');
+        console.log(defaultStartDate);
 		const {
             totalDays,
 			queryResourceMapData,
-            fetchAllUsersRequest
+            fetchAllUsersRequest,
+            queryResourceMapTags
 		} = this.props;
         // User id default is 0, current user.
 		queryResourceMapData(defaultStartDate, totalDays, 0);
         fetchAllUsersRequest();
+        queryResourceMapTags();
 	}
 
 	_changeStartDate(date) {
@@ -64,7 +67,8 @@ class ResourceMapPage extends Component{
 			fetchResourceMapModalHandler,
             fetchResourceMapStatus,
             fetchResourceMapAddMulti,
-            fetchResourceMapDeleteItem
+            fetchResourceMapDeleteItem,
+            addResourceMapTag
 		} = this.props;
         let userObj = allUsers.find((user) => {
             return String(user.id) === String(currentUserId);
@@ -78,7 +82,7 @@ class ResourceMapPage extends Component{
                         <label>Date:&nbsp;</label>
                     </div>
                     <div className = "pull-left">
-                        <DatePicker className="option-layout" defaultDate={String(startDate)} placeholder="Start Date" onChange={this._changeStartDate} />
+                        <DatePicker className="option-layout" defaultDate={startDate} placeholder="Start Date" onChange={this._changeStartDate} />
                     </div>
                     <div className = "top-selector pull-left">
                         &nbsp;&nbsp;&nbsp;
@@ -120,6 +124,7 @@ class ResourceMapPage extends Component{
                     onSubmitStatus={fetchResourceMapStatus}
                     onSubmitMulti={fetchResourceMapAddMulti}
                     onDeleteItemHander={fetchResourceMapDeleteItem}
+                    onAddTagHandler={addResourceMapTag}
 					{...this.props}
 				/>
 			</section>
@@ -133,12 +138,15 @@ ResourceMapPage.propTypes = {
     data                           : PropTypes.array.isRequired,
     allUsers                       : PropTypes.array.isRequired,
     currentUserId                  : PropTypes.string.isRequired,
+    tags                           : PropTypes.array.isRequired,
     queryResourceMapData           : PropTypes.func.isRequired,
     fetchAllUsersRequest           : PropTypes.func.isRequired,
 
     fetchResourceMapDeleteItem     : PropTypes.func.isRequired,
     fetchResourceMapStatus         : PropTypes.func.isRequired,
     fetchResourceMapAddMulti       : PropTypes.func.isRequired,
+    queryResourceMapTags           : PropTypes.func.isRequired,
+    addResourceMapTag              : PropTypes.func.isRequired,
 
     // Modal handle options.
     show                           : PropTypes.bool.isRequired,
@@ -152,6 +160,7 @@ ResourceMapPage.defaultProps = {
     totalDays     : 7,
     show          : false,
     data          : [],
+    tags          : [],
     currentUserId : ''
 };
 

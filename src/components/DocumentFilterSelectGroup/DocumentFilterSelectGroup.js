@@ -1,47 +1,29 @@
 import React, { Component, PropTypes } from 'react';
-import SelectField from 'material-ui/lib/SelectField';
-import RaisedButton from 'material-ui/lib/raised-button';
-import MenuItem from 'material-ui/lib/menus/menu-item';
+import FlatButton from 'material-ui/lib/flat-button';
 
-import ArticleDocumentTypeSelect from '../../components/ArticleDocumentTypeSelect/ArticleDocumentTypeSelect';
-import ArticlePrioritySelect from '../../components/ArticlePrioritySelect/ArticlePrioritySelect';
+import { DOCUMENT_TYPE_OPTIONS, PRIORITY_OPTIONS } from '../../constants/config';
+import capitalizeFirstLetter from '../../libraries/capitalizeFirstLetter';
+import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 
 // Styles
 import './_DocumentFilterSelectGroup.css';
 
 class DocumentFilterSelectGroup extends Component {
-  constructor(props) {
-    super(props);
-    this.state = this._getInitialState();
+
+  onDocumentTypeChange(value) {
+    this.props.onChange({documentType: value});
   }
 
-  _getInitialState() {
-    return {
-      documentType: '',
-      priority: '',
-      milestone: '',
-      owner: ''
-    };
+  onPriorityChange(value) {
+    this.props.onChange({priority: value});
   }
 
-  onDocumentTypeChange(event, index, value) {
-    this.setState({documentType: value}, this.triggerChange);
+  onMilestoneChange(value) {
+    this.props.onChange({milestone: value});
   }
 
-  onPriorityChange(event, index, value) {
-    this.setState({priority: value}, this.triggerChange);
-  }
-
-  onMilestoneChange(event, index, value) {
-    this.setState({milestone: value}, this.triggerChange);
-  }
-
-  onOwnerChange(event, index, value) {
-    this.setState({owner: value}, this.triggerChange);
-  }
-
-  clearFilter() {
-    this.setState(this._getInitialState(), this.triggerChange);
+  onOwnerChange(value) {
+    this.props.onChange({owner: value});
   }
 
   triggerChange() {
@@ -51,75 +33,79 @@ class DocumentFilterSelectGroup extends Component {
   render() {
     const {
       allUsers,
-      allMilestones
-    } = this.props;
-    const {
+      allMilestones,
       documentType,
       priority,
       milestone,
-      owner
-    } = this.state;
+      owner,
+      onClearAll
+    } = this.props;
 
     return (
       <div className="document-filter-select-group">
-        <ArticleDocumentTypeSelect
-          value={documentType}
-          onChange={::this.onDocumentTypeChange}
-        />
-        <ArticlePrioritySelect
-          value={priority}
-          onChange={::this.onPriorityChange}
-        />
-        <SelectField
-          value={milestone}
-          onChange={::this.onMilestoneChange}
-          floatingLabelText="Milestone"
-          autoWidth={false} >
-          <MenuItem value="" primaryText="&nbsp;" />
-          {allMilestones.map((item, index) => {
-            return(
-              <MenuItem
-               key={index}
-               value={item}
-               primaryText={item} />
-            );
+        <label>Document Type:&nbsp;</label>
+        <DropDownList
+          isNeedAll={true}
+          title={documentType ? capitalizeFirstLetter(documentType) : 'All'}
+          onOptionClick={::this.onDocumentTypeChange}
+          aryOptionConfig={DOCUMENT_TYPE_OPTIONS.map(item => {
+            return { title: capitalizeFirstLetter(item), value: item};
           })}
-        </SelectField>
-        <SelectField
-          floatingLabelText="Owner"
-          value={owner}
-          onChange={::this.onOwnerChange}
-        >
-          <MenuItem value="" primaryText="&nbsp;" />
-          {allUsers.map((user, index) => {
-            return(
-              <MenuItem
-               key={index}
-               value={user.id}
-               primaryText={user.name} />
-            );
+        />
+        <label>Priority:&nbsp;</label>
+        <DropDownList
+          isNeedAll={true}
+          title={priority ? capitalizeFirstLetter(priority) : 'All'}
+          onOptionClick={::this.onPriorityChange}
+          aryOptionConfig={PRIORITY_OPTIONS.map(item => {
+            return { title: capitalizeFirstLetter(item), value: item};
           })}
-        </SelectField>
-        <div style={{flex: 1}} />
-        <RaisedButton
-          style={{marginTop: 28}}
-          label="Show All"
+        />
+        <label>Milestone:&nbsp;</label>
+        <DropDownList
+          isNeedAll={true}
+          title={milestone ? milestone : 'All'}
+          onOptionClick={::this.onMilestoneChange}
+          aryOptionConfig={allMilestones.map(item => {
+            return { title: item, value: item};
+          })}
+        />
+        <label>Owner:&nbsp;</label>
+        <DropDownList
+          isNeedAll={true}
+          title={owner ? allUsers.filter(user=> user.id === owner)[0].name : 'All'}
+          onOptionClick={::this.onOwnerChange}
+          aryOptionConfig={allUsers.map(item => {
+            return { title: item.name, value: item.id};
+          })}
+        />
+
+        <FlatButton
+          style={{float: 'right'}}
+          label="All Articles"
           secondary={true}
-          onClick={::this.clearFilter}/>
+          onClick={onClearAll}/>
       </div>
     );
   }
 }
 
 DocumentFilterSelectGroup.propTypes = {
-  onChange      : PropTypes.func.isRequired,
-  allUsers      : PropTypes.array,
-  allMilestones : PropTypes.array
+  onChange           : PropTypes.func.isRequired,
+  onClearAll         : PropTypes.func,
+  allUsers           : PropTypes.array,
+  allMilestones      : PropTypes.array,
+  currentPage        : PropTypes.number,
+  tag                : PropTypes.string,
+  documentType       : PropTypes.string,
+  priority           : PropTypes.string,
+  milestone          : PropTypes.string,
+  owner              : PropTypes.string,
 };
 
 DocumentFilterSelectGroup.defaultProps = {
-  allUsers      : [],
-  allMilestones : []
+  allUsers           : [],
+  allMilestones      : []
 };
 
 export default DocumentFilterSelectGroup;

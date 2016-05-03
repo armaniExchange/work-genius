@@ -12,12 +12,17 @@ import ArticleEditor from '../../components/ArticleEditor/ArticleEditor';
 import * as ArticleActions from '../../actions/article-page-actions';
 import * as DocumentActions from '../../actions/document-page-actions';
 
+
 class EditArticlePage extends Component {
 
   constructor(props) {
     super(props);
-    this.state = this.getEditingStateFromProps(props);
-    this.state.isPreviewVisible = false;
+    this.state = Object.assign(this.getEditingStateFromProps(props), {
+      isPreviewVisible: false,
+      isArticleFormValid: false,
+      isContentFromTemplate: false,
+      enableErrorMessage: false
+    });
   }
 
   componentWillMount() {
@@ -30,11 +35,19 @@ class EditArticlePage extends Component {
     if (!this.isCreate()) {
       articleActions.fetchArticle(params.articleId);
     }
-    documentActions.fetchAllCategories();
+    documentActions.fetchDocumentCategories();
     documentActions.fetchAllTags();
   }
 
   componentWillReceiveProps(nextProps) {
+
+    if (!this.props.isLoaded && nextProps.isLoaded){
+      // first time loaded
+      const newState = this.getEditingStateFromProps(nextProps);
+      this.setState(newState, () => {::this.ValidateForm();});
+      return;
+    }
+
     if (this.props.isEditing && !nextProps.isEditing) {
       this.props.history.replace(`/main/knowledge/document/${nextProps.id}`);
       return;
@@ -49,12 +62,11 @@ class EditArticlePage extends Component {
         editingContent: this.state.editingContent.replace(this.getUploadingFileMarkdown(justUpdateFile), `[${name}](${url})`)
       });
     }
-
-    if (this.props.id === nextProps.id && thisFiles.length !== nextFiles.lengh) {
-      // fiile upload change files, but skip to set new state
-    } else {
-      const newState = this.getEditingStateFromProps(nextProps);
-      this.setState(newState);
+    if (this.state.isContentFromTemplate || (this.props.documentTemplate.id !== nextProps.documentTemplate.id) ){
+      this.setState({
+        isContentFromTemplate: true,
+        editingContent: nextProps.documentTemplate.content
+      });
     }
   }
 
@@ -66,12 +78,24 @@ class EditArticlePage extends Component {
     return this.props.params.articleId === 'new';
   }
 
+  ValidateForm(){
+    const {
+      editingTitle,
+      editingCategoryId,
+      editingContent
+    } = this.state;
+    const isValid = !!editingTitle.trim() && !!editingCategoryId && !!editingContent.trim();
+    this.setState({
+      isArticleFormValid: isValid
+    });
+  }
+
   getEditingStateFromProps(props) {
     const {
       title,
       content,
       tags,
-      category,
+      categoryId,
       documentType,
       priority,
       milestone,
@@ -82,7 +106,7 @@ class EditArticlePage extends Component {
       editingTitle: title,
       editingContent: content,
       editingTags: tags,
-      editingCategory: category,
+      editingCategoryId: categoryId,
       editingDocumentType: documentType,
       editingPriority: priority,
       editingMilestone: milestone,
@@ -97,12 +121,17 @@ class EditArticlePage extends Component {
   }
 
   onContentChange(newContent) {
-    this.setState({ editingContent: newContent});
+    this.setState({ 
+      editingContent: newContent,
+      isContentFromTemplate: false
+    }, () => {
+      ::this.ValidateForm();
+    });
   }
 
   onTitleChange(event){
-    this.setState({
-      editingTitle: event.target.value
+    this.setState({ editingTitle: event.target.value }, () => {
+      ::this.ValidateForm();
     });
   }
 
@@ -112,40 +141,42 @@ class EditArticlePage extends Component {
     });
   }
 
-  onCategoryChange(path) {
-    this.setState({
-      editingCategory: {id: path}
+  onCategoryIdChange(id) {
+    this.setState({ editingCategoryId: id }, () => {
+      ::this.ValidateForm();
     });
   }
 
   onDocumentTypeChange(event, index, value) {
-    this.setState({
-      editingDocumentType:value
+    this.setState({ editingDocumentType: value }, ()=> {
+      const {
+        editingContent,
+        editingDocumentType,
+        isContentFromTemplate
+      } = this.state;
+      if (isContentFromTemplate || editingContent.trim() === '' ) {
+        this.props.articleActions.fetchDocumentTemplate(editingDocumentType);
+      }
     });
   }
 
   onPriorityChange(event, index, value) {
-    this.setState({
-      editingPriority: value
-    });
+    this.setState({ editingPriority: value });
   }
 
   onMilestoneChange(value) {
-    this.setState({
-      editingMilestone: value
-    });
+    this.setState({ editingMilestone: value });
   }
 
   onReportToChange(val, items) {
-    this.setState({
-      editingReportTo: items.map(item => item.value)
-    });
+    this.setState({ editingReportTo: items.map(item => item.value) });
   }
 
   onFileUpload(file) {
     const { id, files } = this.props;
+    const mdImageSymbol = file.type.includes('image') ? '!' : '';
     this.setState({
-      editingContent: this.state.editingContent + '\n' + this.getUploadingFileMarkdown(file)
+      editingContent: this.refs.articleEditor.getValueOfInsertedStringAtCursor(`\n${mdImageSymbol}${this.getUploadingFileMarkdown(file)}`)
     });
     this.props.articleActions.uploadArticleFile({
       articleId: id,
@@ -178,18 +209,17 @@ class EditArticlePage extends Component {
   }
 
   getUploadingFileMarkdown(file) {
-    const mdImageSymbol = file.type.includes('image') ? '!' : '';
-    return `${mdImageSymbol}[Uploading ${file.name} ...]()`;
+    return `[Uploading ${file.name} ...]()`;
   }
   _transformToOptions(categories) {
     return this._transformFromTree(categories).filter((item) => {
       return item.path !== 'root';
     }).map((item) => ({
-      label: item.path.replace('root/', '').replace(/\//gi, ' > '),
-      value: item.path
+      label: item.path ? item.path.replace('root/', '').replace(/\//gi, ' > ') : '',
+      value: item.id
     }));
   }
-  
+
   _transformFromTree(categories) {
     if (!categories || typeof categories !== 'object' || Array.isArray(categories)) {
       return [];
@@ -197,10 +227,11 @@ class EditArticlePage extends Component {
     if (!categories.children || categories.children.length === 0) {
       return [categories];
     }
-    let rest = categories.children.reduce((result, next) => {
-      return result.concat(this._transformFromTree(next));
-    }, []);
-    return [{path: categories.path}, ...rest];
+    return categories.children.reduce((result, next) => result.concat(this._transformFromTree(next)), []);
+  }
+
+  onDocumentTemplateUpdate(documentTemplate) {
+    this.props.articleActions.updateDocumentTemplate(documentTemplate);
   }
 
   onSubmit() {
@@ -212,7 +243,7 @@ class EditArticlePage extends Component {
     const {
       editingTitle,
       editingTags,
-      editingCategory,
+      editingCategoryId,
       editingContent,
       editingDocumentType,
       editingPriority,
@@ -223,16 +254,17 @@ class EditArticlePage extends Component {
       createArticle,
       updateArticle
     } = articleActions;
+
     const postArticle = this.isCreate() ? createArticle : updateArticle;
     const idField = this.isCreate() ? null : {id: params.articleId};
     postArticle(Object.assign({
       title: editingTitle,
       tags: editingTags,
-      category: editingCategory,
+      categoryId: editingCategoryId,
       content: editingContent,
-      documentType: editingDocumentType,
-      priority: editingPriority,
-      milestone: editingMilestone,
+      documentType: editingDocumentType || '',
+      priority: editingPriority || '',
+      milestone: editingMilestone || '',
       reportTo: editingReportTo,
       files: files.map(file => {return {id: file.id};})
     }, idField));
@@ -243,18 +275,19 @@ class EditArticlePage extends Component {
       editingContent,
       editingTitle,
       editingTags,
-      editingCategory,
+      editingCategoryId,
       editingDocumentType,
       editingPriority,
       editingMilestone,
       editingReportTo,
-      isPreviewVisible
+      isPreviewVisible,
+      isArticleFormValid
     } = this.state;
 
     const {
       params,
       files,
-      allCategories,
+      documentCategories,
       allTags
     } = this.props;
 
@@ -270,20 +303,21 @@ class EditArticlePage extends Component {
         <h3>{pageTitle}</h3>
         <div className="article-editor-wrapper" style={editorStyle}>
           <ArticleEditor
+            ref="articleEditor"
             title={editingTitle}
             tags={editingTags}
             content={editingContent}
-            category={editingCategory}
+            categoryId={editingCategoryId}
             files={files}
             tagSuggestions={allTags}
-            allCategoriesOptions={::this._transformToOptions(allCategories)}
+            allCategoriesOptions={::this._transformToOptions(documentCategories)}
             documentType={editingDocumentType}
             priority={editingPriority}
             milestone={editingMilestone}
             reportTo={editingReportTo}
             onTagsChange={::this.onTagsChange}
             onTitleChange={::this.onTitleChange}
-            onCategoryChange={::this.onCategoryChange}
+            onCategoryIdChange={::this.onCategoryIdChange}
             onContentChange={::this.onContentChange}
             onFileUpload={::this.onFileUpload}
             onFileRemove={::this.onFileRemove}
@@ -291,6 +325,7 @@ class EditArticlePage extends Component {
             onPriorityChange={::this.onPriorityChange}
             onMilestoneChange={::this.onMilestoneChange}
             onReportToChange={::this.onReportToChange}
+            onDocumentTemplateUpdate={::this.onDocumentTemplateUpdate}
           />
         </div>
         {
@@ -305,7 +340,7 @@ class EditArticlePage extends Component {
         <RaisedButton
           label="Submit"
           primary={true}
-          disabled={!editingTitle || !editingCategory}
+          disabled={!isArticleFormValid}
           onClick={::this.onSubmit}
           style={{margin: 10}} />
         <RaisedButton
@@ -323,51 +358,55 @@ class EditArticlePage extends Component {
 }
 
 EditArticlePage.propTypes = {
-  id                  : PropTypes.string,
-  title               : PropTypes.string,
-  author              : PropTypes.shape({id: PropTypes.string, name: PropTypes.string}),
-  tags                : PropTypes.arrayOf(PropTypes.string),
-  files               : PropTypes.array,
-  category            : PropTypes.object,
-  comments            : PropTypes.array,
-  content             : PropTypes.string,
-  documentType        : PropTypes.string,
-  priority            : PropTypes.string,
-  milestone           : PropTypes.string,
-  reportTo            : PropTypes.arrayOf(PropTypes.string),
-  createdAt           : PropTypes.number,
-  updatedAt           : PropTypes.number,
-  params              : PropTypes.object,
-  allCategories       : PropTypes.object,
-  allTags             : PropTypes.arrayOf(PropTypes.string),
-  isEditing           : PropTypes.bool,
-  articleActions      : PropTypes.object.isRequired,
-  documentActions     : PropTypes.object.isRequired,
-  history             : PropTypes.object
+  id                 : PropTypes.string,
+  title              : PropTypes.string,
+  author             : PropTypes.shape({id: PropTypes.string, name: PropTypes.string}),
+  tags               : PropTypes.arrayOf(PropTypes.string),
+  files              : PropTypes.array,
+  categoryId         : PropTypes.string,
+  comments           : PropTypes.array,
+  content            : PropTypes.string,
+  documentType       : PropTypes.string,
+  priority           : PropTypes.string,
+  milestone          : PropTypes.string,
+  reportTo           : PropTypes.arrayOf(PropTypes.string),
+  createdAt          : PropTypes.number,
+  updatedAt          : PropTypes.number,
+  params             : PropTypes.object,
+  documentCategories : PropTypes.object,
+  allTags            : PropTypes.arrayOf(PropTypes.string),
+  isEditing          : PropTypes.bool,
+  isLoaded           : PropTypes.bool,
+  articleActions     : PropTypes.object.isRequired,
+  documentActions    : PropTypes.object.isRequired,
+  history            : PropTypes.object,
+  documentTemplate   : PropTypes.object
 };
 
 EditArticlePage.defaultProps = {
-  id                  : '',
-  content             : '',
-  author              : { id: '', name: ''},
-  tags                : [],
-  files               : [],
-  comments            : [],
-  content             : '',
-  createdAt           : 0,
-  updatedAt           : 0,
-  allCategories       : {}
+  id                 : '',
+  content            : '',
+  author             : { id: '', name: ''},
+  tags               : [],
+  files              : [],
+  comments           : [],
+  content            : '',
+  createdAt          : 0,
+  updatedAt          : 0,
+  documentCategories : {},
+  documentTemplate   : {}
 };
 
 function mapStateToProps(state) {
   const {
-    allCategories,
-    allTags
+    documentCategories,
+    allTags,
   } = state.documentation.toJS();
-
+  const documentTemplate = state.documentTemplate.toJS();
   return Object.assign({}, state.article.toJS(), {
-    allCategories,
-    allTags
+    documentCategories,
+    allTags,
+    documentTemplate
   });
 }
 

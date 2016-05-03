@@ -26,6 +26,7 @@ const initialState = Map({
 	// ),
 	data: List.of(),
     allUsers: List.of(),
+    tags: List.of(),
     currentUserId: '',
 	show: false,
     defaultModalInfos: Map({})
@@ -132,6 +133,9 @@ function checkWorkLogsData(worklogs, item) {
 
 var taskStateActions = {
     handle: function (state, item) {
+        console.log('item:');
+        console.log(item);
+        console.log();
         var employeeId = item.employee_id;
         if (employeeId === undefined || employeeId === -1) {
             return state;
@@ -144,9 +148,9 @@ var taskStateActions = {
             oldData = state.get('data');
         oldData.map((data) => {
             if (data.get('id') === item.employee_id) {
-                let worklogs = data.get('worklogs');
+                let worklogs = data.get('jobs');
                 worklogs = self.byDaysHandle(worklogs, item.data);
-                data = data.set('worklogs', worklogs);
+                data = data.set('jobs', worklogs);
             }
             newData = newData.push(data);
         });
@@ -160,32 +164,40 @@ var taskStateActions = {
         // let millisecondEndDate = startDate + item.duration * 60 * 60 * 1000;
 
         var newWorklog = [];
-
+        let duration = item.duration ? item.duration : 0;
         dayWorkLog.map((worklog) => {
             // let currentMilliseconds = millisecondStartDate + index * millisecondOneDay;
             let worklogDate = worklog.date instanceof moment ? worklog.date.format('X') * 1000 : worklog.date;
             // self.isSelectDate(worklogDate, millisecondStartDate, startDate, item.duration);
-            if (self.isSelectDate(worklogDate, millisecondStartDate, item.duration)) {
-                let worklogItems = worklog.worklog_items;
-                // Delete items by id
-                if (item.isDelete) {
-                    worklogItems = self.deleteWorkItem(worklogItems, item);
-                } else if (worklogItems === undefined || worklogItems === null) {
-                    worklogItems = [];
-                    worklogItems.push(item);
-                } else {
-                    let logItem = worklogItems.find((log) => {
-                        return log.id === item.id;
-                    });
-                    if (logItem === undefined) {
+            if (worklog.day_type !== 'workday') {
+                if (self.isSelectDate(worklogDate, millisecondStartDate, duration)) {
+                    duration += 8;
+                }
+            } else {
+                var worklogItems = worklog.job_items;
+                if (self.isSelectDate(worklogDate, millisecondStartDate, duration)) {
+                    // Delete items by id
+                    if (item.isDelete) {
+                        worklogItems = self.deleteWorkItem(worklogItems, item);
+                    } else if (worklogItems === undefined || worklogItems === null) {
+                        worklogItems = [];
                         worklogItems.push(item);
                     } else {
-                        logItem.content = item.content;
-                        logItem.progress = item.progress;
-                        self.copyValue(logItem, item);
+                        let logItem = worklogItems.find((log) => {
+                            return log.id === item.id;
+                        });
+                        if (logItem === undefined) {
+                            worklogItems.push(item);
+                        } else {
+                            logItem.content = item.content;
+                            logItem.progress = item.progress;
+                            self.copyValue(logItem, item);
+                        }
                     }
+                } else {
+                    worklogItems = self.deleteWorkItem(worklogItems, item);
                 }
-                worklog.worklog_items = worklogItems;
+                worklog.job_items = worklogItems;
             }
             newWorklog.push(worklog);
         });
@@ -198,16 +210,17 @@ var taskStateActions = {
      * duration      Duration day
      */
     isSelectDate: function(selectDate, startDate, duration) {
-        if (duration === 0) {
+        // If duration is less than 8, will be compare the start date.
+        if (duration === undefined || duration < 8) {
             return (selectDate === startDate);
         }
 
-        let day = moment(selectDate).isoWeekday();
-        if (day === 6 || day === 7) {
-            return false;
-        }
-
-        let index = ( duration > 8 && (duration % 8) === 0) ? (duration / 8) : (duration / 8) + 1;
+        // If the select date is weekday, will return false.
+        // let day = moment(selectDate).isoWeekday();
+        // if (day === 6 || day === 7) {
+        //     return false;
+        // }
+        let index = duration / 8;
         let millisecondOneDay = 24 * 60 * 60 * 1000;
         for (let i = 0; i < index; i ++) {
             if (selectDate === startDate + i * millisecondOneDay) {
@@ -256,6 +269,20 @@ function upsertUserItemData(state, item) {
     return state.set('data', newData);
 }
 
+function setAllTags(state, tags) {
+    let formatedData = formatResponse(tags);
+    return state
+        .set(`tags`, formatedData);
+}
+
+function setTag(state, tag) {
+    let tags = state.get(`tags`).toJS();
+    tags.push(tag);
+    let formatedData = formatResponse(tags);
+    return state
+        .set(`tags`, formatedData);
+}
+
 export default function resourceMapReducer(state = initialState, action) {
 	var nextState = state;
 	switch (action.type){
@@ -277,6 +304,12 @@ export default function resourceMapReducer(state = initialState, action) {
         return nextState;
     case actionTypes.FETCH_RESOURCE_MAP_ALL_USERS:
         nextState = setAllUsers(nextState, action.data);
+        return nextState;
+    case actionTypes.FETCH_RESOURCE_MAP_All_TAG:
+        nextState = setAllTags(nextState, action.tags);
+        return nextState;
+    case actionTypes.FETCH_RESOURCE_MAP_NEW_TAG:
+        nextState = setTag(nextState, action.tag);
         return nextState;
 	default:
 		return nextState;

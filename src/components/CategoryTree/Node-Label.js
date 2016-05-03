@@ -6,9 +6,9 @@ class NodeLabel extends Component {
         const { key, data, isLeaf, isSelected, onClickHandler } = this.props;
         let nodeClasses = 'category-tree-node' +
             (isLeaf ? '__leaf' : '') + (isSelected ? '--selected' : '');
-        let countHtml = isLeaf ? null : (
+        let countHtml = (
             <span className="category-tree-node__count">
-                {data.childrenCount}
+                {data.articlesCount}
             </span>
         );
         return (

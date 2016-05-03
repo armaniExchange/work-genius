@@ -9,7 +9,7 @@ import {
 
 const CategoryType = new GraphQLObjectType({
   name: 'Category',
-  descriptyion: 'An documentation article',
+  description: 'An documentation article',
   fields: () => ({
     id: {
       type: GraphQLID,

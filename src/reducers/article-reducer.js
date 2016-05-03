@@ -5,7 +5,6 @@
 import { List , OrderedMap, fromJS} from 'immutable';
 // Constants
 import actionTypes from '../constants/action-types';
-import { SERVER_FILES_URL } from '../constants/config';
 
 const initialState = OrderedMap({
   // data of article
@@ -19,36 +18,29 @@ const initialState = OrderedMap({
     id: '',
     name: ''
   }),
-  category: OrderedMap({
-    id: ''
-  }),
+  categoryId: '',
   tags: List(),
   files: List(),
   comments: List(),
   reportTo: List(),
   createdAt: 0,
   updatedAt: 0,
+  isLoaded: false,
   isEditing: true,
   isDeleting: false,
 });
 
-const getFileUrl = (id) => {
-  return `${SERVER_FILES_URL}/${id}`;
-};
 
 const articleToState = (state, action) => {
-  const withUrlFiles = action.files ? action.files.map(file => {
-    return Object.assign({}, file, {url: getFileUrl(file.id)});
-  }) : [];
   return state.set('id', action.id)
     .set('title', action.title)
     .set('documentType', action.documentType)
     .set('priority', action.priority)
     .set('milestone', action.milestone)
     .set('author', OrderedMap(action.author))
-    .set('category', OrderedMap(action.category))
+    .set('categoryId', action.categoryId)
     .set('tags', List(action.tags || []))
-    .set('files', fromJS(withUrlFiles || []))
+    .set('files', fromJS(action.files || []))
     .set('comments', fromJS(action.comments || []))
     .set('reportTo', List(action.reportTo || []))
     .set('content', action.content)
@@ -58,15 +50,14 @@ const articleToState = (state, action) => {
 
 export default function articleReducer(state = initialState, action) {
   const files = state.get('files');
-
-  let comments = state.get('comments');
+  const comments = state.get('comments');
 
   switch (action.type) {
     case actionTypes.CREATE_ARTICLE_SUCCESS:
     case actionTypes.UPDATE_ARTICLE_SUCCESS:
       return articleToState(state, action).set('isEditing', false);
     case actionTypes.FETCH_ARTICLE_SUCCESS:
-      return articleToState(state, action);
+      return articleToState(state, action).set('isLoaded', true);
     case actionTypes.DELETE_ARTICLE:
       return state.set('isDeleting', true);
     case actionTypes.DELETE_ARTICLE_SUCCESS:
@@ -93,7 +84,7 @@ export default function articleReducer(state = initialState, action) {
           return item.delete('loaded')
             .delete('total')
             .delete('isUploading')
-            .set('url', getFileUrl(action.file.id))
+            .set('url', action.file.url)
             .set('id', action.file.id);
       }));
     case actionTypes.REMOVE_ARTICLE_FILE_SUCCESS:
@@ -102,6 +93,13 @@ export default function articleReducer(state = initialState, action) {
       }));
     case actionTypes.CREATE_COMMENT_SUCCESS:
       return state.set('comments', comments.push(fromJS(action.comment)));
+    case actionTypes.UPDATE_COMMENT_SUCCESS:
+      return state.set('comments', comments.update(comments.findIndex((item) => {
+        return item.get('id') === action.comment.id;
+      }), (item) => {
+        return item.set('content', action.comment.content)
+          .set('updatedAt', action.comment.updatedAt);
+      }));
     case actionTypes.DELETE_COMMENT_SUCCESS:
       return state.set('comments', comments.filter(removedComment => {
         return removedComment.get('id') !== action.id;

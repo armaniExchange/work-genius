@@ -1,8 +1,6 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import TextField from 'material-ui/lib/text-field';
-// import SelectField from 'material-ui/lib/SelectField';
-// import MenuItem from 'material-ui/lib/menus/menu-item';
 import Select from 'react-select';
 import Dropzone from 'react-dropzone';
 
@@ -22,8 +20,18 @@ class ArticleEditor extends Component {
     super(props);
     this.state = {
       isConfirmDeleteFileDialogVisible: false,
-      editingFile: null
+      isConfirmOverwriteDocumentTemplateDialogVisible: false,
+      isArticleFormValid: false,
+      editingFile: null,
+      enableTitleError: false,
+      enableDocumentTypeError: false,
+      enableCategoryError: false,
+      enableContentError: false
     };
+  }
+
+  getValueOfInsertedStringAtCursor(str) {
+    return this.refs.editor.getValueOfInsertedStringAtCursor(str);
   }
 
   onFileChange(files) {
@@ -57,6 +65,58 @@ class ArticleEditor extends Component {
     });
   }
 
+  onOverwriteDocumentTemplate() {
+    this.setState({
+      isConfirmOverwriteDocumentTemplateDialogVisible: true,
+    });
+  }
+
+  onConfirmOverwriteDocumentTemplate() {
+    const {
+      documentType,
+      content
+    } = this.props;
+    this.props.onDocumentTemplateUpdate({
+      id: documentType,
+      content
+    });
+  }
+
+  onCancelOverwriteDocumentTemplate() {
+
+  }
+
+  onConfirmOverwriteDocumentTemplateDialogRequestHide() {
+    this.setState({
+      isConfirmOverwriteDocumentTemplateDialogVisible: false
+    });
+  }
+
+
+  onTitleChange() {
+    this.props.onTitleChange.apply(this, arguments);
+    this.setState({enableTitleError: true});
+  }
+
+  onCategoryIdChange() {
+    this.props.onCategoryIdChange.apply(this, arguments);
+    this.setState({enableCategoryError: true});
+  }
+
+  onContentChange() {
+    this.props.onContentChange.apply(this, arguments);
+    this.setState({enableContentError: true});
+  }
+
+  onDocumentTypeChange() {
+    this.props.onDocumentTypeChange.apply(this, arguments);
+    this.setState({enableDocumentTypeError: true});
+  }
+
+  capitalizeFirst(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
   render() {
     const dropzoneStyle = {
       width: '100%',
@@ -68,29 +128,30 @@ class ArticleEditor extends Component {
       title,
       content,
       tags,
-      category,
+      categoryId,
       files,
       reportTo,
       allCategoriesOptions,
       tagSuggestions,
-      onTitleChange,
       documentType,
       priority,
       milestone,
-      onDocumentTypeChange,
       onPriorityChange,
       onMilestoneChange,
       onReportToChange,
-      onContentChange,
-      onTagsChange,
-      onCategoryChange
+      onTagsChange
     } = this.props;
     const {
       isConfirmDeleteFileDialogVisible,
+      isConfirmOverwriteDocumentTemplateDialogVisible,
+      enableTitleError,
+      enableDocumentTypeError,
+      enableCategoryError,
+      enableContentError,
       editingFile
     } = this.state;
-
-    const hidePriorityAndMilestoneSelectStyle = !documentType || documentType === 'knowledges' ?
+    const isDocumentTypeKnowlegesOrNull = !documentType || documentType === 'knowledges';
+    const hidePriorityAndMilestoneSelectStyle =  isDocumentTypeKnowlegesOrNull ?
       {visibility: 'hidden'} : null;
 
     return (
@@ -99,14 +160,15 @@ class ArticleEditor extends Component {
         <TextField
           style={{width: '100%'}}
           hintText="Title"
-          errorText={!title && 'This field is required'}
+          errorText={enableTitleError && !title && 'This field is required'}
           value={title}
-          onChange={onTitleChange} />
+          onChange={::this.onTitleChange} />
         <br />
         <div className="select-field-group">
           <ArticleDocumentTypeSelect
             value={documentType}
-            onChange={onDocumentTypeChange}
+            errorText={enableDocumentTypeError && !documentType && 'This field is required'}
+            onChange={::this.onDocumentTypeChange}
           />
           <ArticlePrioritySelect
             style={hidePriorityAndMilestoneSelectStyle}
@@ -121,32 +183,57 @@ class ArticleEditor extends Component {
         </div>
         <br />
         <label>Category</label>
+        <small style={{color: 'red'}}>
+          <span>&nbsp;&nbsp;*</span>
+          {enableCategoryError && !categoryId && <span> This field is required</span>}
+        </small>
+
         <Select
-          value={category.id}
+          placeholder="Category is required field"
+          value={categoryId}
           options={allCategoriesOptions}
-          onChange={onCategoryChange}/>
-        {/*<SelectField
-          errorText={categoryErrorText}
-          style={{width: '100%'}}
-          autoWidth={false}
-          maxHeight={allCategoriesMaxHeight}
-          value={category.id}
-          onChange={onCategoryChange} >
-          {allCategoryItems}
-        </SelectField>*/}
-        <label>Report To</label>
-        <Select
-          multi={true}
-          allowCreate={true}
-          value={reportTo.map( item => {return {value: item, label: item};})}
-          onChange={onReportToChange}
-        />
+          onChange={::this.onCategoryIdChange}/>
+
+        {
+          isDocumentTypeKnowlegesOrNull ? null : (
+            <div className="report-to" style={{position: 'relative'}}>
+              <br />
+              <label>Report To</label>
+              <div className="wrapper">
+                <Select
+                  multi={true}
+                  allowCreate={true}
+                  value={reportTo.map( item => {return {value: item, label: item};})}
+                  addLabelText={'Add "{label}"@a10networks.com?'}
+                  onChange={onReportToChange}
+                />
+                <span className="postfix-email">@a10networks.com</span>
+              </div>
+            </div>
+          )
+        }
+
         <br />
         <label>Content</label>
+        <small style={{color: 'red'}}>
+          <span>&nbsp;&nbsp;*</span>
+          {enableContentError && !content.trim() && <span> This field is required</span>}
+        </small>
         <Editor
+          ref="editor"
           value={content}
-          onChange={onContentChange} />
+          onChange={::this.onContentChange}
+        />
+        {
+          documentType ? (
+            <a href="#" style={{float: 'right'}} onClick={::this.onOverwriteDocumentTemplate}>
+              &nbsp;<small>{`Save content as "${this.capitalizeFirst(documentType)}" Template`}</small>
+            </a>
+          ) : null
+        }
         <br />
+        <br />
+
         <label>Tags</label>
         <Select
           multi={true}
@@ -173,41 +260,51 @@ class ArticleEditor extends Component {
           onConfirm={::this.onConfirmDeleteFile}
           onCancel={::this.onCancelDeleteFile}
           onRequestClose={::this.onConfirmDeleteFileDialogRequestHide} />
+        <ConfirmDeleteDialog
+          title="Overwrite the Template"
+          submitText="Save"
+          open={isConfirmOverwriteDocumentTemplateDialogVisible}
+          onConfirm={::this.onConfirmOverwriteDocumentTemplate}
+          onCancel={::this.onCancelOverwriteDocumentTemplate}
+          onRequestClose={::this.onConfirmOverwriteDocumentTemplateDialogRequestHide}>
+          {`Are you sure you want to overwrite ${this.capitalizeFirst(documentType)} template?`}
+        </ConfirmDeleteDialog>
       </div>
     );
   }
 }
 
 ArticleEditor.propTypes = {
-  id                  : PropTypes.string,
-  title               : PropTypes.string,
-  content             : PropTypes.string,
-  tags                : PropTypes.arrayOf(PropTypes.string),
-  category            : PropTypes.object,
-  files               : PropTypes.array,
-  allCategoriesOptions: PropTypes.array,
-  style               : PropTypes.object,
-  documentType        : PropTypes.string,
-  priority            : PropTypes.string,
-  milestone           : PropTypes.string,
-  reportTo            : PropTypes.arrayOf(PropTypes.string),
-  tagSuggestions      : PropTypes.arrayOf(PropTypes.string),
-  onContentChange     : PropTypes.func.isRequired,
-  onTitleChange       : PropTypes.func.isRequired,
-  onTagsChange        : PropTypes.func.isRequired,
-  onCategoryChange    : PropTypes.func.isRequired,
-  onFileUpload        : PropTypes.func.isRequired,
-  onFileRemove        : PropTypes.func.isRequired,
-  onDocumentTypeChange: PropTypes.func.isRequired,
-  onPriorityChange    : PropTypes.func.isRequired,
-  onMilestoneChange   : PropTypes.func.isRequired,
-  onReportToChange    : PropTypes.func.isRequired
+  id                       : PropTypes.string,
+  title                    : PropTypes.string,
+  content                  : PropTypes.string,
+  tags                     : PropTypes.arrayOf(PropTypes.string),
+  categoryId               : PropTypes.string,
+  files                    : PropTypes.array,
+  allCategoriesOptions     : PropTypes.array,
+  style                    : PropTypes.object,
+  documentType             : PropTypes.string,
+  priority                 : PropTypes.string,
+  milestone                : PropTypes.string,
+  reportTo                 : PropTypes.arrayOf(PropTypes.string),
+  tagSuggestions           : PropTypes.arrayOf(PropTypes.string),
+  onContentChange          : PropTypes.func.isRequired,
+  onTitleChange            : PropTypes.func.isRequired,
+  onTagsChange             : PropTypes.func.isRequired,
+  onCategoryIdChange       : PropTypes.func.isRequired,
+  onFileUpload             : PropTypes.func.isRequired,
+  onFileRemove             : PropTypes.func.isRequired,
+  onDocumentTypeChange     : PropTypes.func.isRequired,
+  onPriorityChange         : PropTypes.func.isRequired,
+  onMilestoneChange        : PropTypes.func.isRequired,
+  onReportToChange         : PropTypes.func.isRequired,
+  onDocumentTemplateUpdate : PropTypes.func.isRequired,
 };
 
 ArticleEditor.defaultProps = {
   title               : '',
   content             : '',
-  category            : {},
+  categoryId          : '',
   tags                : [],
   files               : [],
   allCategoriesOptions: [],

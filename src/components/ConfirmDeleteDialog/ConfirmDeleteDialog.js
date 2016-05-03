@@ -33,6 +33,7 @@ class ConfirmDeleteDialog extends Component {
   render() {
     const {
       title,
+      submitText,
       open,
       children,
       onRequestClose
@@ -45,7 +46,7 @@ class ConfirmDeleteDialog extends Component {
         onTouchTap={::this.onCancel}
       />,
       <FlatButton
-        label="Delete"
+        label={submitText}
         primary={true}
         keyboardFocused={true}
         onTouchTap={::this.onConfirm}
@@ -70,6 +71,7 @@ ConfirmDeleteDialog.propTypes = {
   title           : PropTypes.string,
   open            : PropTypes.bool,
   data            : PropTypes.object,
+  submitText      : PropTypes.string,
   onRequestClose  : PropTypes.func.isRequired,
   onConfirm       : PropTypes.func.isRequired,
   onCancel        : PropTypes.func.isRequired
@@ -77,8 +79,9 @@ ConfirmDeleteDialog.propTypes = {
 
 
 ConfirmDeleteDialog.defaultProps = {
-  title: 'Delete',
-  children: 'Do you want to delete this ?'
+  title      : 'Delete',
+  children   : 'Do you want to delete this ?',
+  submitText : 'Delete'
 };
 
 export default ConfirmDeleteDialog;

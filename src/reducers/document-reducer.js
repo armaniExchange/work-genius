@@ -6,43 +6,62 @@ import { Map, List, fromJS } from 'immutable';
 // Constants
 import actionTypes from '../constants/action-types';
 import { MENU } from '../constants/menu';
+import { TECH_MENU } from '../constants/tec-menu';
+import _ from 'lodash';
 
-function getChildrenCount(root) {
-    if (!root || typeof root !== 'object' || Object.keys(root).length <= 0) {
-        return 0;
+
+_.merge(MENU, TECH_MENU);
+
+function countArticles(dataArr, root) {
+    let directChildren, subDataArr;
+    if (!root || dataArr.length === 0) {
+        return  0;
     }
-    return Object.keys(root).reduce((result, next) => {
-        let childs = getChildrenCount(root[next]);
-        return result + (childs === 0 ? 1 : childs);
-    }, 0);
+    directChildren = dataArr.filter((node) => { return node.parentId === root.id; });
+    subDataArr = dataArr.filter((node) => { return node.parentId !== root.id; });
+
+    if (directChildren.length === 0) {
+        return root.articlesCount;
+    }
+    return directChildren.map((node) => {return countArticles(subDataArr, node);}).reduce((acc, x) => acc + x, 0);
 }
 
-function getChildren(root, path) {
-    if (!root || typeof root !== 'object' || Object.keys(root).length <= 0) {
-        return [];
+function generateTree(dataArr, root, path) {
+    let subTree, directChildren, subDataArr;
+    if (!root || Object.keys(root).length === 0) {
+        return {};
     }
-    return Object.keys(root).map((key) => {
-        let newPath = `${path}/${key}`;
+    if (dataArr.length === 0) {
         return {
-            name: key,
-            isCollapsed: true,
-            path: newPath,
-            children: getChildren(root[key], newPath),
-            childrenCount: getChildrenCount(root[key])
+            id: root.id,
+            name: root.name,
+            path: root.name === 'root' ? 'root' : `${path}/${root.name}`,
+            isCollapsed: root.name === 'root' ? false : true,
+            parentId: root.parentId,
+            children: [],
+            articlesCount: root.articlesCount
         };
+    }
+    directChildren = dataArr.filter((node) => { return node.parentId === root.id; });
+    subDataArr = dataArr.filter((node) => { return node.parentId !== root.id; });
+    subTree = directChildren.map((node) => {
+        return generateTree(subDataArr, node, root.name === 'root' ? 'root' : `${path}/${root.name}`);
     });
-}
-
-function enhanceMenu(data) {
-    let path = 'root';
-    let result = {
-        name: 'root',
-        isCollapsed: false,
-        path,
-        children: getChildren(data.root, path),
-        childrenCount: getChildrenCount(data.root)
+    return {
+        id: root.id,
+        name: root.name,
+        path: root.name === 'root' ? 'root' : `${path}/${root.name}`,
+        isCollapsed: root.name === 'root' ? false : true,
+        parentId: root.parentId,
+        children: subTree,
+        articlesCount: countArticles(dataArr, root)
     };
-    return result;
+};
+
+function transformToTree(dataArr) {
+    let root = dataArr.filter((node) => { return !node.parentId; })[0],
+        rest = dataArr.filter((node) => { return node.parentId; });
+    return generateTree(rest, root, '');
 }
 
 function updateCollpaseStatus(root, path) {
@@ -66,18 +85,26 @@ function updateCollpaseStatus(root, path) {
 const initialState = Map({
   articleList: List.of(),
   articleTotalCount: 0,
-  allCategories: enhanceMenu(MENU),
+  documentCategories: Map({}),
+  documentCategoriesLength: 0,
   currentSelectedCategory: Map({}),
   allTags: List.of(),
   allUsers: List.of(),
   allMilestones: List.of(),
+  // query object
+  categoryId: '',
+  currentPage: 1,
+  tag: '',
+  documentType: '',
+  priority: '',
+  milestone: '',
+  owner: ''
 });
 
 export default function documentReducer(state = initialState, action) {
   switch (action.type) {
     case actionTypes.FETCH_ARTICLES_SUCCESS:
-      return state.set('articleList', action.articleList)
-        .set('articleTotalCount', action.count);
+      return state.set('articleList', action.articleList).set('articleTotalCount', action.count);
     case actionTypes.FETCH_ALL_TAGS_SUCCESS:
       return state.set('allTags', action.allTags);
     case actionTypes.SET_SELECTED_CATEGORY:
@@ -85,8 +112,8 @@ export default function documentReducer(state = initialState, action) {
       if (action.data && action.data.isLeaf) {
         return state.set('currentSelectedCategory', action.data);
       } else {
-        updatedTree = updateCollpaseStatus(state.get('allCategories'), action.data.path);
-        return state.set('currentSelectedCategory', action.data).set('allCategories', updatedTree);
+        updatedTree = updateCollpaseStatus(state.get('documentCategories').toJS(), action.data.path);
+        return state.set('currentSelectedCategory', action.data).set('documentCategories', fromJS(updatedTree));
       }
     case actionTypes.DELETE_ARTICLE_SUCCESS:
       return state.set('articleList', state.get('articleList').filter(article => {
@@ -94,9 +121,17 @@ export default function documentReducer(state = initialState, action) {
       }));
     case actionTypes.FETCH_ALL_USERS_SUCCESS:
       return state.set('allUsers', fromJS(action.allUsers));
+    case actionTypes.FETCH_DOCUMENT_CATEGORIES_SUCCESS:
+      return state.set('documentCategoriesLength', action.data.length).set('documentCategories', fromJS(transformToTree(action.data)));
     case actionTypes.FETCH_ALL_MILESTONES_SUCCESS:
       return state.set('allMilestones', action.allMilestones);
+    case actionTypes.UPDATE_ARTICLES_QUERY:
+      const queryParams = ['categoryId', 'currentPage', 'tag', 'documentType', 'priority', 'milestone', 'owner'];
+      queryParams.forEach((item) => {
+        state = state.set(item, typeof action[item] === 'undefined' ? state.get(item) : action[item]);
+      });
+      return state;
     default:
-        return state;
+      return state;
   }
 };

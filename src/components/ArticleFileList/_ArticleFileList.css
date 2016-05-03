@@ -3,7 +3,7 @@
   & > span {
     display: inline-block;
     margin-right: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     .remove-button {
       cursor: pointer;
       color: gray;

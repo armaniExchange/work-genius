@@ -48,6 +48,7 @@ const initialState = Map({
         Map({ label: 'Duplicate', value: 'Duplicate' }),
         Map({ label: 'NAB/By Design', value: 'NAB/By Design' }),
         Map({ label: 'Working in current build', value: 'Working in current build' }),
+        Map({ label: 'Enhancement', value: 'Enhancement' }),
         Map({ label: 'Others', value: 'Others' })
     ),
     optionsReviewTags: List.of(

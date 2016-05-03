@@ -8,7 +8,7 @@ import {
 } from 'graphql';
 import PTOType from '../PTO/PTOType.js';
 import TaskType from '../Task/TaskType.js';
-import WorkLog_Type from '../WorkLog/WorkLogType.js';
+import JobType from '../Job/JobType.js';
 
 let UserType = new GraphQLObjectType({
 	name: 'User',
@@ -94,9 +94,9 @@ let UserType = new GraphQLObjectType({
 			type: GraphQLInt,
 			description: 'User\'s leftover hours'
 		},
-		worklogs: {
+		jobs: {
 			type: new GraphQLList(new GraphQLObjectType({
-				name: 'UserWorkLog',
+				name: 'UserJobs',
 				fields:{
 					date: {
 			        	type: GraphQLFloat,
@@ -106,17 +106,25 @@ let UserType = new GraphQLObjectType({
 			            type: GraphQLString,
 			            description: 'workday/pto/holiday'
 			        },
-			        worklog_items: {
-			            type: new GraphQLList(WorkLog_Type),
-			            description: 'workday/pto/holiday'
+			        'pto_hours': {
+			            type: GraphQLInt,
+			            description: 'pto hours'
+			        },
+			        job_items: {
+			            type: new GraphQLList(JobType),
+			            description: 'job items'
 			        }
 				}
 			})),
-			description: 'worklog list'
+			description: 'job list'
 		},
 		location: {
 			type: GraphQLString,
 			description: 'location'
+		},
+		timezone: {
+			type: GraphQLInt,
+			description: 'timezone'
 		}
 	})
 });

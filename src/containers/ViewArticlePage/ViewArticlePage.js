@@ -6,15 +6,15 @@ import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import RaisedButton from 'material-ui/lib/raised-button';
-import moment from 'moment';
 import Paper from 'material-ui/lib/paper';
 
 import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
-import ArticleFileList from '../../components/ArticleFileList/ArticleFileList';
+
 import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
 import CommentEditor from '../../components/CommentEditor/CommentEditor';
 import CommentListItem from '../../components/CommentListItem/CommentListItem';
 import ConfirmDeleteDialog from '../../components/ConfirmDeleteDialog/ConfirmDeleteDialog';
+import ArticleMetadata from '../../components/ArticleMetadata/ArticleMetadata';
 
 import * as ArticleActions from '../../actions/article-page-actions';
 
@@ -76,6 +76,12 @@ class ViewArticlePage extends Component {
     });
   }
 
+  onCommentUpdate(updatedComment) {
+    this.props.articleActions.updateComment({
+      articleId: this.props.id,
+      comment: updatedComment
+    });
+  }
 
   onConfirmDeleteCommentDialogRequestHide() {
     this.setState({
@@ -112,29 +118,17 @@ class ViewArticlePage extends Component {
       tags,
       comments,
       updatedAt,
-      createdAt,
       currentUser
     } = this.props;
     const {
       isConfirmDeleteArticleDialogVisible,
       isConfirmDeleteCommentDialogVisible
     } = this.state;
-
-    const paperStyle = {
-      position: 'relative',
-      padding: 15,
-      marginBottom: 20,
-    };
-
     return (
       <section className="view-article-page">
-        <Paper style={paperStyle} zDepth={1}>
+        <Paper className="header" zDepth={1}>
           <h3>{title}</h3>
-          <div style={{
-            position: 'absolute',
-            top: 5,
-            right: 5
-          }}>
+          <div className="toolbar">
             <Link to={`/main/knowledge/document/edit/${id}`}>
               <RaisedButton
                 style={{margin: 10}}
@@ -147,28 +141,16 @@ class ViewArticlePage extends Component {
               onClick={::this.onArticleDelete} />
           </div>
           <hr />
-          <div>
-            <span>Author: {author && author.name}&nbsp;</span>
-            &nbsp;&nbsp;
-            <span style={{color: 'gray'}}>
-              {moment(updatedAt || createdAt).format('YYYY-MM-DD')}&nbsp;
-            </span>
-            &nbsp;&nbsp;
-            <span>
-              <i className="fa fa-comments"/>&nbsp;
-              Comments: {comments.length}&nbsp;
-            </span>
-            &nbsp;&nbsp;
-            <span>
-              <i className="fa fa-paperclip"/>&nbsp;
-              <span>{`attachments(${files.length}):`}&nbsp;</span>
-              <ArticleFileList files={files} />
-            </span>
-          </div>
+          <ArticleMetadata
+            author={author}
+            updatedAt={updatedAt}
+            comments={comments}
+            files={files}
+          />
           <br />
           <ArticleTagList tags={tags} />
         </Paper>
-        <Paper className="article-viewer" style={paperStyle} zDepth={1}>
+        <Paper className="body" zDepth={1}>
           <HighlightMarkdown source={content} />
         </Paper>
         <h5>Comments</h5>
@@ -178,8 +160,9 @@ class ViewArticlePage extends Component {
               <CommentListItem
                 {...comment}
                 key={comment.id}
-                currentUserId={currentUser.id}
-                onDeleteClick={::this.onCommentDelete} />
+                currentUser={currentUser}
+                onDeleteClick={::this.onCommentDelete}
+                onSubmit={::this.onCommentUpdate}/>
             );
           })
         }
