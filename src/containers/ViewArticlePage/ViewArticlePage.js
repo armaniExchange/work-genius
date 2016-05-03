@@ -147,10 +147,8 @@ class ViewArticlePage extends Component {
             comments={comments}
             files={files}
           />
-          <br />
           <ArticleTagList tags={tags} />
-          <br />
-          <div style={{textAlign: 'right'}}>
+          <div style={{textAlign: 'right', marginTop: '1em'}}>
             <a href={`${SERVER_EXPORT_URL}/document/${id}?token=${localStorage.token}`}>
               <i className="fa fa-download" ariaHidden="true" />&nbsp;
               Download PDF

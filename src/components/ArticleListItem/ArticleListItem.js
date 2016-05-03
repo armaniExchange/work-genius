@@ -76,7 +76,6 @@ class ArticleListItem extends Component {
           comments={comments}
           files={files}
         />
-        <br />
         <ArticleTagList
           tags={tags}
           value={activeTag}
