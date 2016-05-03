@@ -17,6 +17,7 @@ import {
     SECURE_KEY,
     MAIL_TRANSPORTER_CONFIG
 } from './constants/configurations.js';
+import { articleExportHandler } from './models/Article/ArticleExport.js';
 
 const PORT = 3000;
 let app = express();
@@ -103,6 +104,8 @@ app.route('/files')
 app.route('/files/:id')
  .get(fileDownloadHandler)
  .delete(fileDeleteHandler);
+
+app.get('/export/document/:articleId', articleExportHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is listening at port: ${PORT}`);

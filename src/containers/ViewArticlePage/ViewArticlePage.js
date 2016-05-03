@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import RaisedButton from 'material-ui/lib/raised-button';
 import Paper from 'material-ui/lib/paper';
-
+import { SERVER_EXPORT_URL } from '../../constants/config';
 import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
 
 import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
@@ -147,6 +147,10 @@ class ViewArticlePage extends Component {
             comments={comments}
             files={files}
           />
+          <a href={`${SERVER_EXPORT_URL}/document/${id}?token=${localStorage.token}`}>
+            <i className="fa fa-download" ariaHidden="true" />&nbsp;
+            Save as PDF
+          </a>
           <br />
           <ArticleTagList tags={tags} />
         </Paper>
