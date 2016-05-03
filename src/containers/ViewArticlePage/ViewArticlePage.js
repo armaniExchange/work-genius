@@ -147,12 +147,15 @@ class ViewArticlePage extends Component {
             comments={comments}
             files={files}
           />
-          <a href={`${SERVER_EXPORT_URL}/document/${id}?token=${localStorage.token}`}>
-            <i className="fa fa-download" ariaHidden="true" />&nbsp;
-            Save as PDF
-          </a>
           <br />
           <ArticleTagList tags={tags} />
+          <br />
+          <div style={{textAlign: 'right'}}>
+            <a href={`${SERVER_EXPORT_URL}/document/${id}?token=${localStorage.token}`}>
+              <i className="fa fa-download" ariaHidden="true" />&nbsp;
+              Download PDF
+            </a>
+          </div>
         </Paper>
         <Paper className="body" zDepth={1}>
           <HighlightMarkdown source={content} />
