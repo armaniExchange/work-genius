@@ -121,7 +121,7 @@ class EditArticlePage extends Component {
   }
 
   onContentChange(newContent) {
-    this.setState({ 
+    this.setState({
       editingContent: newContent,
       isContentFromTemplate: false
     }, () => {
@@ -165,6 +165,9 @@ class EditArticlePage extends Component {
   }
 
   onMilestoneChange(value) {
+    if (typeof value === 'string' ) {
+      value = value.trim();
+    }
     this.setState({ editingMilestone: value });
   }
 
