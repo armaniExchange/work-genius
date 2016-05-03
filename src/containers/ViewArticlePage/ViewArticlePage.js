@@ -149,7 +149,7 @@ class ViewArticlePage extends Component {
           />
           <ArticleTagList tags={tags} />
           <div style={{textAlign: 'right', marginTop: '1em'}}>
-            <a href={`${SERVER_EXPORT_URL}/document/${id}?token=${localStorage.token}`}>
+            <a href={`${SERVER_EXPORT_URL}/document/${id}?token=${localStorage.token}`} download>
               <i className="fa fa-download" ariaHidden="true" />&nbsp;
               Download PDF
             </a>

@@ -82,7 +82,7 @@ class ArticleFileList extends Component {
                 &nbsp;
                 <i className={`fa ${this.getMimeTypeIcon(file.type)}`} />
                 &nbsp;
-                <a href={`${file.url}?token=${localStorage.token}`} >{file.name}</a>
+                <a href={`${file.url}?token=${localStorage.token}`} download>{file.name}</a>
                 &nbsp;
                 {
                   enableRemove && !file.uploading && (
