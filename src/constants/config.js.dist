@@ -4,6 +4,7 @@ export const SERVER_API_URL = `http://${SERVER_HOST}:3000/graphql`;
 export const SERVER_LOGIN_URL = `http://${SERVER_HOST}:3000/login`;
 export const SERVER_SEARCH_API_URL = `http://${SERVER_HOST}:3000/search`;
 export const SERVER_FILES_URL = `http://${SERVER_HOST}:3000/files`;
+export const SERVER_EXPORT_URL = `http://${SERVER_HOST}:3000/export`;
 
 export const PRIVILEGE = {
   ADMIN: 10,
