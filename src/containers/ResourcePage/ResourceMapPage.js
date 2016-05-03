@@ -30,6 +30,7 @@ class ResourceMapPage extends Component{
         console.log(defaultStartDate);
 		const {
             totalDays,
+            queryResourceMapRelease,
 			queryResourceMapData,
             fetchAllUsersRequest,
             queryResourceMapTags
@@ -37,6 +38,7 @@ class ResourceMapPage extends Component{
         // User id default is 0, current user.
 		queryResourceMapData(defaultStartDate, totalDays, 0);
         fetchAllUsersRequest();
+        queryResourceMapRelease();
         queryResourceMapTags();
 	}
 
@@ -68,7 +70,8 @@ class ResourceMapPage extends Component{
             fetchResourceMapStatus,
             fetchResourceMapAddMulti,
             fetchResourceMapDeleteItem,
-            addResourceMapTag
+            addResourceMapTag,
+            addResourceMapRelease
 		} = this.props;
         let userObj = allUsers.find((user) => {
             return String(user.id) === String(currentUserId);
@@ -125,6 +128,7 @@ class ResourceMapPage extends Component{
                     onSubmitMulti={fetchResourceMapAddMulti}
                     onDeleteItemHander={fetchResourceMapDeleteItem}
                     onAddTagHandler={addResourceMapTag}
+                    onAddReleaseHandler={addResourceMapRelease}
 					{...this.props}
 				/>
 			</section>
@@ -139,6 +143,7 @@ ResourceMapPage.propTypes = {
     allUsers                       : PropTypes.array.isRequired,
     currentUserId                  : PropTypes.string.isRequired,
     tags                           : PropTypes.array.isRequired,
+    releases                       : PropTypes.array.isRequired,
     queryResourceMapData           : PropTypes.func.isRequired,
     fetchAllUsersRequest           : PropTypes.func.isRequired,
 
@@ -147,6 +152,8 @@ ResourceMapPage.propTypes = {
     fetchResourceMapAddMulti       : PropTypes.func.isRequired,
     queryResourceMapTags           : PropTypes.func.isRequired,
     addResourceMapTag              : PropTypes.func.isRequired,
+    queryResourceMapRelease        : PropTypes.func.isRequired,
+    addResourceMapRelease          : PropTypes.func.isRequired,
 
     // Modal handle options.
     show                           : PropTypes.bool.isRequired,
