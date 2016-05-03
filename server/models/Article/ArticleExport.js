@@ -19,7 +19,10 @@ export const articleExportHandler = async (req, res) => {
     res.setHeader('Content-type', 'application/pdf');
     await connection.close();
 
-    markdownpdf().from.string(result.content)
+    markdownpdf({
+        cssPath: 'server/libraries/github-markdown.css'
+      })
+      .from.string(result.content)
       .to.buffer((err, buffer) => {
         if (err) { throw err; }
         streamifier.createReadStream(buffer).pipe(res);
