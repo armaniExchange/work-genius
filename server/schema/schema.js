@@ -32,6 +32,8 @@ import DocumentCategoryQuery from '../models/DocumentCategory/DocumentCategoryQu
 import DocumentCategoryMutation from '../models/DocumentCategory/DocumentCategoryMutation.js';
 import DocumentTemplateQuery from '../models/DocumentTemplate/DocumentTemplateQuery.js';
 import DocumentTemplateMutation from '../models/DocumentTemplate/DocumentTemplateMutation.js';
+import GroupMutation from '../models/Group/GroupMutation.js';
+import GroupQuery from '../models/Group/GroupQuery.js';
 
 const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -49,6 +51,7 @@ const schema = new GraphQLSchema({
       allUserWithPrivilege     : UserQuery.allUserWithPrivilege,
       currentUser              : UserQuery.currentUser,
       allUsers                 : UserQuery.allUsers,
+      allUsersWithGroup        : UserQuery.allUsersWithGroup,
       // Document page
       allCategories            : CategoryQuery.getAllCategories,
       getAllMilestones         : CategoryQuery.getAllMilestones,
@@ -77,7 +80,9 @@ const schema = new GraphQLSchema({
       getWorkLogList           : WorkLogQuery.getWorkLogList,
       //job
       getJobList               : JobQuery.getJobList,
-      getJobByEmployeeId       : JobQuery.getJobByEmployeeId
+      getJobByEmployeeId       : JobQuery.getJobByEmployeeId,
+      //group
+      getAllGroups             : GroupQuery.getAllGroups
     }
   }),
   mutation: new GraphQLObjectType({
@@ -125,7 +130,12 @@ const schema = new GraphQLSchema({
       //job page
       createJobAndWorkLog             : JobMutation.createJobAndWorkLog,
       updateJobAndWorkLog             : JobMutation.updateJobAndWorkLog,
-      deleteJob                       : JobMutation.deleteJob
+      deleteJob                       : JobMutation.deleteJob,
+      //group page
+      createGroup                     : GroupMutation.createGroup,
+      updateGroup                     : GroupMutation.updateGroup,
+      deleteGroup                     : GroupMutation.deleteGroup
+
 
     }
   })
