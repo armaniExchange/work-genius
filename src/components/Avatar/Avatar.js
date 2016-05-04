@@ -9,6 +9,7 @@ import './_Avatar.css';
 class Avatar extends Component {
 
   getShortName(name) {
+    name = name || '?';
     return name.split(' ')
       .filter((item, index)=> index <= 1 )
       .map(subStr => subStr[0].toUpperCase())
@@ -16,15 +17,16 @@ class Avatar extends Component {
   }
 
   render() {
-    const { user } = this.props;
+    const { name, email } = this.props.user || {};
     const { fullWhite, blue900 } = colors;
+
     return (
       <MaterialAvatar
         {...this.props}
-        title={`${user.name}, ${user.email}`}
+        title={`${name || 'Unknown user'}, ${email}`}
         color={fullWhite}
         backgroundColor={blue900} >
-        {::this.getShortName(user.name)}
+        {::this.getShortName(name)}
       </MaterialAvatar>
     );
   }
@@ -35,7 +37,7 @@ Avatar.propTypes = {
 };
 
 Avatar.defaultProps = {
-  id                : '',
+  id                : ''
 };
 
 export default Avatar;
