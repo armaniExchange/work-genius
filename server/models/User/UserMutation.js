@@ -72,7 +72,7 @@ let findUserPromise = function(ad, username) {
     return new Promise((resolve, reject) => {
         let query = {
             filter: '(sAMAccountName=' + username + ')',
-            attributes: ['displayName', 'mail', 'title', 'sAMAccountName', 'uSNCreated', 'givenName']
+            attributes: ['displayName', 'mail', 'title', 'sAMAccountName', 'givenName']
         };
 
         ad.findUser(query, username, function(err, results) {
@@ -125,6 +125,7 @@ export const loginHandler = async (req, res) => {
     try {
         let loginInfo = await loginPromise(account, password);
         let privilege = 0;
+
         switch(loginInfo['sAMAccountName']) {
             case 'zli':
             case 'stsai':
@@ -133,35 +134,44 @@ export const loginHandler = async (req, res) => {
             default:
                 privilege = 5;
         }
+
         let user = {
-            id: loginInfo['uSNCreated'],
+            id: loginInfo['mail'],
             name: loginInfo['displayName'],
             nickname: loginInfo['givenName'],
             email: loginInfo['mail'],
             title: loginInfo['title'],
             privilege: privilege
         };
+
         let token = jwt.sign(user, SECURE_KEY, {
             expiresIn: '30 days'
         });
+
         let connection = null,
             result = null,
             query = null;
+
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         query = r.db('work_genius').table('users').get(user.id);
         result = await query.run(connection);
+
         if (!result) {
             query = r.db('work_genius').table('users').insert(user);
         } else {
             query = r.db('work_genius').table('users').get(user.id).update(user);
         }
+
         result = await query.run(connection);
+
         await connection.close();
+
         res.json({
             success: true,
             token: token,
             user: user
         });
+        
     } catch (err) {
         res.status(401).send({
             success: false,
