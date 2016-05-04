@@ -180,6 +180,8 @@ export default keyMirror({
     FETCH_RESOURCE_MAP_WORKLOG_ADD_MULTI: null,
     FETCH_RESOURCE_MAP_All_TAG: null,
     FETCH_RESOURCE_MAP_NEW_TAG: null,
+    FETCH_RESOURCE_MAP_ALL_RELEASE: null,
+    FETCH_RESOURCE_MAP_NEW_RELEASE: null,
 
     // Work Log actions
     FETCH_WORKLOGS: null,

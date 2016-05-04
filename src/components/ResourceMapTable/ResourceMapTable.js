@@ -18,13 +18,15 @@ class ResourceMapTable extends Component {
 			data,
 			show,
             tags,
+            releases,
 			onModalHander,
             onSubmitStatus,
             onSubmitMulti,
             onDeleteItemHander,
             upsertWorklogItem,
             defaultModalInfos,
-            onAddTagHandler
+            onAddTagHandler,
+            onAddReleaseHandler
 		} = this.props;
 		return (
 			<div>
@@ -44,11 +46,13 @@ class ResourceMapTable extends Component {
                 <ResourceMapModalWorkLog
                 	show={show}
                     tags={tags}
+                    releases={releases}
                 	onModalHander={onModalHander}
                     onModalSubmit={upsertWorklogItem}
                     onModalSubmitMulti={onSubmitMulti}
                     defaultModalInfos={defaultModalInfos}
                     onAddTagHandler={onAddTagHandler}
+                    onAddReleaseHandler={onAddReleaseHandler}
                 />
             </div>
         );
@@ -61,13 +65,15 @@ ResourceMapTable.propTypes = {
     show               : PropTypes.bool.isRequired,
     data               : PropTypes.array.isRequired,
     tags               : PropTypes.array.isRequired,
+    releases           : PropTypes.array.isRequired,
     defaultModalInfos  : PropTypes.object.isRequired,
     upsertWorklogItem  : PropTypes.func.isRequired,
     onModalHander      : PropTypes.func.isRequired,
     onSubmitStatus     : PropTypes.func.isRequired,
     onSubmitMulti      : PropTypes.func.isRequired,
     onDeleteItemHander : PropTypes.func.isRequired,
-    onAddTagHandler    : PropTypes.func.isRequired
+    onAddTagHandler    : PropTypes.func.isRequired,
+    onAddReleaseHandler: PropTypes.func.isRequired
 };
 
 ResourceMapTable.defaultProps = {
