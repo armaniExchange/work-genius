@@ -171,6 +171,47 @@ let UserQuery = {
 				return err;
 			}
 		}
+	},
+	'allUsersWithGroup': {
+		type: new GraphQLList(UserType),
+		description: 'Get all users with group',
+		resolve: async () => {
+			let connection = null,
+				users = null,
+			    query = null;
+
+			try {
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				query = r.db('work_genius').table('users')
+					.filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID)))
+					.coerceTo('array');
+				users = await query.run(connection);
+
+				//get all groups
+				query = r.db('work_genius').table('groups').coerceTo('array');
+				let groups = await query.run(connection);
+
+				//replace the group id array by group object array
+				users.forEach(user => {
+					let groupsOfUser = [];
+					if(user.groups){
+						user.groups.forEach(groupId => {
+							let group = groups.find(groupObj => {
+								return groupObj.id === groupId;
+							});
+							if(group){
+								groupsOfUser.push(group);
+							}
+						})
+					}
+					user.groups = groupsOfUser;
+				});
+				await connection.close();
+				return users;
+			} catch (err) {
+				return err;
+			}
+		}
 	}
 };
 
