@@ -5,7 +5,7 @@ import {
     apiFailure
 } from './app-actions';
 
-const DOCUMENT_CATEGORY_UPDATE_TIME_MIN = 10;
+const DOCUMENT_CATEGORY_UPDATE_TIME_MIN = 30;
 
 export function setSelectedCategory(data) {
 	return {
@@ -299,29 +299,36 @@ export function updateArticlesQuery(query) {
 
 function forceDocumentCategoriesUpdateNextTime() {
   // when really need to fetch docment categories from server
-  const localDocumentCategoriesData = localStorage['documentCategoriesData'];
-  if (localDocumentCategoriesData) {
-    let parsedDocumentCategoriesData = JSON.parse(localDocumentCategoriesData);
-    parsedDocumentCategoriesData.enableForceUpdate = true;
-    localStorage['documentCategoriesData'] = JSON.stringify(parsedDocumentCategoriesData);
+  const localDocumentCategoriesBody = localStorage['documentCategoriesBody'];
+  if (localDocumentCategoriesBody) {
+    let parsedDocumentCategoriesBody = JSON.parse(localDocumentCategoriesBody);
+    parsedDocumentCategoriesBody.enableForceUpdate = true;
+    localStorage['documentCategoriesBody'] = JSON.stringify(parsedDocumentCategoriesBody);
   }
 }
 
-function setDocumentCategoriesCached(documentCategories) {
-  documentCategories.updatedAt = new Date().getTime();
-  localStorage['documentCategoriesData'] = JSON.stringify(documentCategories);
+export function fetchDocumentCategoriesSuccess(data) {
+  return {
+    type: actionTypes.FETCH_DOCUMENT_CATEGORIES_SUCCESS,
+    data
+  };
+}
+
+function setDocumentCategoriesBodyCached(documentCategoriesBody) {
+  documentCategoriesBody.updatedAt = new Date().getTime();
+  localStorage['documentCategoriesBody'] = JSON.stringify(documentCategoriesBody);
 }
 
 function getCachedDocumentCategoriesOrFetchIt(config) {
   return new Promise((resolve, reject) => {
-    const localDocumentCategoriesData = localStorage['documentCategoriesData'];
-    if (localDocumentCategoriesData) {
-      const parsedDocumentCategoriesData = JSON.parse(localDocumentCategoriesData);
-      if (!parsedDocumentCategoriesData.enableForceUpdate && new Date().getTime() - parsedDocumentCategoriesData.updatedAt < DOCUMENT_CATEGORY_UPDATE_TIME_MIN * 60 *1000) {
-        resolve(parsedDocumentCategoriesData);
+    const localDocumentCategoriesBody = localStorage['documentCategoriesBody'];
+    if (localDocumentCategoriesBody) {
+      const parsedDocumentCategoriesBody = JSON.parse(localDocumentCategoriesBody);
+      if (!parsedDocumentCategoriesBody.enableForceUpdate &&
+        new Date().getTime() - parsedDocumentCategoriesBody.updatedAt < DOCUMENT_CATEGORY_UPDATE_TIME_MIN * 60 *1000) {
+        resolve(parsedDocumentCategoriesBody);
       }
     }
-
     // event use cached result, still fetch in background for next time
     fetch(SERVER_API_URL, config)
       .then((res) => {
@@ -331,19 +338,12 @@ function getCachedDocumentCategoriesOrFetchIt(config) {
         return res.json();
       })
       .then(body => {
-        setDocumentCategoriesCached(body);
+        setDocumentCategoriesBodyCached(body);
         // if resolved with cached result before, this resolve will be ignored
         resolve(body);
       })
       .catch(reject);
   });
-}
-
-export function fetchDocumentCategoriesSuccess(data) {
-  return {
-    type: actionTypes.FETCH_DOCUMENT_CATEGORIES_SUCCESS,
-    data
-  };
 }
 
 export function fetchDocumentCategories() {
