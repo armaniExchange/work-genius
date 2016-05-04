@@ -24,8 +24,9 @@ class CategoryRow extends Component {
     toggleChildren({id, forceEnable});
   }
 
-  toggleAddSubcategoreis() {
+  toggleAddSubcategoreis(event) {
     const { isCreatingChild } = this.state;
+    event.preventDefault();
     if (!isCreatingChild) {
       this.toggleChildren(true);
     }
@@ -48,9 +49,10 @@ class CategoryRow extends Component {
     this.setState({isEditing: !isEditing});
   }
 
-  saveSubcategory() {
+  saveSubcategory(event) {
     const { id, onSave } = this.props;
     const { editingChildName } = this.state;
+    event.preventDefault();
     this.setState({isCreatingChild: false});
     onSave({
       parentId: id,
@@ -58,9 +60,10 @@ class CategoryRow extends Component {
     });
   }
 
-  save() {
+  save(event) {
     const { id, parentId, onSave } = this.props;
     const { editingName } = this.state;
+    event.preventDefault();
     this.setState({isEditing: false});
     onSave({
       id,
@@ -69,8 +72,9 @@ class CategoryRow extends Component {
     });
   }
 
-  onRemove() {
+  onRemove(event) {
     const { id, onRemove } = this.props;
+    event.preventDefault();
     onRemove(id);
   }
 

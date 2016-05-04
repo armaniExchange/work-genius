@@ -319,7 +319,7 @@ function setDocumentCategoriesBodyCached(documentCategoriesBody) {
   localStorage['documentCategoriesBody'] = JSON.stringify(documentCategoriesBody);
 }
 
-function getCachedDocumentCategoriesOrFetchIt(config) {
+function getCachedDocumentCategoriesOrFetchIt(dispatch, config) {
   return new Promise((resolve, reject) => {
     const localDocumentCategoriesBody = localStorage['documentCategoriesBody'];
     if (localDocumentCategoriesBody) {
@@ -327,6 +327,10 @@ function getCachedDocumentCategoriesOrFetchIt(config) {
       if (!parsedDocumentCategoriesBody.enableForceUpdate &&
         new Date().getTime() - parsedDocumentCategoriesBody.updatedAt < DOCUMENT_CATEGORY_UPDATE_TIME_MIN * 60 *1000) {
         resolve(parsedDocumentCategoriesBody);
+      }
+      if (!parsedDocumentCategoriesBody.enableForceUpdate) {
+        // return a cached categories from document first
+        dispatch(fetchDocumentCategoriesSuccess(parsedDocumentCategoriesBody.data.getAllDocumentCategories));
       }
     }
     // event use cached result, still fetch in background for next time
@@ -367,14 +371,13 @@ export function fetchDocumentCategories() {
         'x-access-token': localStorage.token
       }
     };
-    return getCachedDocumentCategoriesOrFetchIt(config)
+    return getCachedDocumentCategoriesOrFetchIt(dispatch, config)
       .then((body) => {
         const getAllDocumentCategories = body.data.getAllDocumentCategories;
         dispatch(setLoadingState(false));
         dispatch(fetchDocumentCategoriesSuccess(getAllDocumentCategories));
       })
       .catch((error) => {
-        dispatch(setLoadingState(false));
         dispatch(apiFailure(error));
       });
   };
@@ -409,7 +412,6 @@ export function upsertDocumentCategory(data) {
         dispatch(fetchDocumentCategories());
       })
       .catch((error) => {
-        dispatch(setLoadingState(false));
         dispatch(apiFailure(error));
       });
   };
@@ -443,7 +445,6 @@ export function deleteDocumentCategory(id) {
         dispatch(fetchDocumentCategories());
       })
       .catch((error) => {
-        dispatch(setLoadingState(false));
         dispatch(apiFailure(error));
       });
   };
