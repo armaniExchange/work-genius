@@ -8,6 +8,7 @@ import UserType from './UserType.js';
 import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT, ADMIN_ID,TESTER_ID } from '../../constants/configurations.js';
+import { GUI_GROUP } from '../../constants/group-constant.js';
 
 let UserQuery = {
 	'currentUser': {
@@ -44,7 +45,11 @@ let UserQuery = {
 			    query = null;
 			try {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				query = r.db('work_genius').table('users').merge((user) => {
+				query = r.db('work_genius').table('users')
+				.filter(function(user){
+					return user('groups').default([]).contains(GUI_GROUP);
+				})
+				.merge((user) => {
 					return {
 						pto: r.db('work_genius').table('pto').getAll(user('id'), {
 							index: 'applicant_id'
@@ -68,7 +73,11 @@ let UserQuery = {
 			    query = null;
 			try {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				query = r.db('work_genius').table('users').merge((user) => {
+				query = r.db('work_genius').table('users')
+				.filter(function(user){
+					return user('groups').default([]).contains(GUI_GROUP);
+				})
+				.merge((user) => {
 					return {
 						overtime_hours: r.db('work_genius').table('overtime_summary').get(user('id')).getField('hours').default(0)
 					};
@@ -157,7 +166,12 @@ let UserQuery = {
 
 			try {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID))).coerceTo('array');
+				query = r.db('work_genius').table('users')
+				.filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID)))
+				.filter(function(user){
+					return user('groups').default([]).contains(GUI_GROUP);
+				})
+				.coerceTo('array');
 				users = await query.run(connection);
 				for (let user of users) {
 					if (!!user.email) {

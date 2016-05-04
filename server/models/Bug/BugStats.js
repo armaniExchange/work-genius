@@ -11,6 +11,7 @@ import BUG_STATS_TYPE from './BugStatsType.js';
 import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT , ADMIN_ID,TESTER_ID } from '../../constants/configurations.js';
+import { GUI_GROUP } from '../../constants/group-constant.js';
 
 let BugStats = {
 	'getRootCauseSummary': {
@@ -136,6 +137,9 @@ let BugStats = {
 				// ]
 				let ownerSummary = await query.run(connection);
 				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID)))
+				.filter(function(user){
+					return user('groups').default([]).contains(GUI_GROUP);
+				})
 				.pluck('name','email').coerceTo('array');
 
 				// construct the result
@@ -257,7 +261,11 @@ let BugStats = {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				let OwnerSummary = await query.run(connection);
 
-				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID))).pluck('email','name').coerceTo('array');
+				query = r.db('work_genius').table('users')
+				.filter(function(user){
+					return user('groups').default([]).contains(GUI_GROUP);
+				})
+				.filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID))).pluck('email','name').coerceTo('array');
 				let userList = await query.run(connection);
 
 
