@@ -72,7 +72,7 @@ let findUserPromise = function(ad, username) {
     return new Promise((resolve, reject) => {
         let query = {
             filter: '(sAMAccountName=' + username + ')',
-            attributes: ['displayName', 'mail', 'title', 'sAMAccountName', 'givenName']
+            attributes: ['displayName', 'mail', 'title', 'sAMAccountName', 'uSNCreated', 'givenName']
         };
 
         ad.findUser(query, username, function(err, results) {
@@ -136,7 +136,6 @@ export const loginHandler = async (req, res) => {
         }
 
         let user = {
-            id: loginInfo['mail'],
             name: loginInfo['displayName'],
             nickname: loginInfo['givenName'],
             email: loginInfo['mail'],
@@ -153,13 +152,15 @@ export const loginHandler = async (req, res) => {
             query = null;
 
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-        query = r.db('work_genius').table('users').get(user.id);
+        // query = r.db('work_genius').table('users').get(user.id);
+        query = r.db('work_genius').table('users').filter({'email': loginInfo['mail']});
         result = await query.run(connection);
 
         if (!result) {
+            user['id'] = loginInfo['uSNCreated'];
             query = r.db('work_genius').table('users').insert(user);
         } else {
-            query = r.db('work_genius').table('users').get(user.id).update(user);
+            query = r.db('work_genius').table('users').filter({'email': loginInfo['mail']}).update(user);
         }
 
         result = await query.run(connection);
