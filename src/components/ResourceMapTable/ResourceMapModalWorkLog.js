@@ -104,6 +104,8 @@ class ResourceMapModalWorkLog extends Component {
 		if (defaultModalInfos.id !== undefined) {
 			workValue = workLogField.getValue();
 			progressValue = progressField.getValue();
+			progressValue = parseInt(progressValue) > 100 ? 100 : parseInt(progressValue);
+			progressValue = parseInt(progressValue) < 0 ? 0 : parseInt(progressValue);
 		}
 		if (taskValue !== undefined && taskValue !== '') {
 			let startDate;
