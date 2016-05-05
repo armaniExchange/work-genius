@@ -124,6 +124,7 @@ var taskWorkItemActions = {
             let config = {
                 method: 'POST',
                 body: `mutation RootMutationType {
+                    updateJobAndWorkLog(data:"${JSON.stringify(data).replace(/\\/gi, '\\\\').replace(/\"/gi, '\\"')}",id:"` + item.id + `")
                 }`,
                 headers: {
                     'Content-Type': 'application/graphql',
