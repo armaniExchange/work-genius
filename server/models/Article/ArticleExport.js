@@ -20,10 +20,20 @@ export const articleExportHandler = async (req, res) => {
         };
       })
       .run(connection);
-
-    res.setHeader('Content-disposition', 'attachment; filename=' + result.title + '.pdf');
-    res.setHeader('Content-type', 'application/pdf');
     await connection.close();
+
+    const userAgent = (req.headers['user-agent']||'').toLowerCase();
+    const filename = `${result.title}.pdf`;
+    if (userAgent.indexOf('msie') >= 0 || userAgent.indexOf('chrome') >= 0) {
+        res.setHeader('Content-Disposition', 'attachment; filename=' + encodeURIComponent(filename));
+    } else if (userAgent.indexOf('firefox') >= 0) {
+        res.setHeader('Content-Disposition', 'attachment; filename*="utf8\'\'' + encodeURIComponent(filename)+'"');
+    } else {
+        /* safari and other browser */
+        res.setHeader('Content-Disposition', 'attachment; filename=' + new Buffer(filename).toString('binary'));
+    }
+
+    res.setHeader('Content-type', 'application/pdf');
 
     const {
       title,
