@@ -1,3 +1,4 @@
+
 import actionTypes from '../constants/action-types';
 import { SERVER_API_URL } from '../constants/config';
 import moment from 'moment';
@@ -123,7 +124,7 @@ var taskWorkItemActions = {
             let config = {
                 method: 'POST',
                 body: `mutation RootMutationType {
-                    updateJobAndWorkLog(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}",id:"` + item.id + `")
+                    updateJobAndWorkLog(data:"${JSON.stringify(data).replace(/\\/gi, '\\\\').replace(/\"/gi, '\\"')}",id:"` + item.id + `")
                 }`,
                 headers: {
                     'Content-Type': 'application/graphql',
