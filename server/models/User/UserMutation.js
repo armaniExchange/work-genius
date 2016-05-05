@@ -136,6 +136,7 @@ export const loginHandler = async (req, res) => {
         }
 
         let user = {
+            id: loginInfo['uSNCreated'],
             name: loginInfo['displayName'],
             nickname: loginInfo['givenName'],
             email: loginInfo['mail'],
@@ -157,9 +158,9 @@ export const loginHandler = async (req, res) => {
         result = await query.run(connection);
 
         if (!result) {
-            user['id'] = loginInfo['uSNCreated'];
             query = r.db('work_genius').table('users').insert(user);
         } else {
+            delete user['id'];
             query = r.db('work_genius').table('users').filter({'email': loginInfo['mail']}).update(user);
         }
 
