@@ -14,6 +14,7 @@ import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT, ADMIN_ID,TESTER_ID } from '../../constants/configurations.js';
 import moment from 'moment';
+import { GUI_GROUP } from '../../constants/group-constant.js';
 
 let JobQuery = {
 	'getJobList': {
@@ -40,6 +41,9 @@ let JobQuery = {
 				}
 				let endDate = startDate + (dateRange -1) * 1000 * 3600 * 24;
 				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID)))
+					.filter(function(user){
+						return user('groups').default([]).contains(GUI_GROUP);
+					})
 					.pluck('id','name','location','timezone').orderBy('location').coerceTo('array');
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				//get all users
