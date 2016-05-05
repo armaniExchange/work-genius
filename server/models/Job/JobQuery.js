@@ -39,21 +39,14 @@ let JobQuery = {
 				if(dateRange <= 0){
 					return result;
 				}
-				console.log('GUI_GROUP:');
-				console.log(GUI_GROUP);
-				console.log();
 				let endDate = startDate + (dateRange -1) * 1000 * 3600 * 24;
 				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID)))
-					.filter(function(user){
-						return user('groups').default([]).contains(GUI_GROUP);
-					})
+					.filter(r.row('groups').contains(GUI_GROUP))
 					.pluck('id','name','location','timezone').orderBy('location').coerceTo('array');
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				//get all users
 				let users = await query.run(connection);
-				console.log('users:');
-				console.log(users);
-				console.log();
+
 
 				//get all PTO data
 				query = r.db('work_genius').table('pto')
