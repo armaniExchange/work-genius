@@ -87,16 +87,21 @@ class ResourceMapTableBody extends Component {
                     if ( !id ) {
                         allItemIds.push(item.id);
                         panel += 'Work ' + index + '. ';
-                        panel += '[' + item.release + '] ' + item.title + '\n  ';
-                        panel += 'Progress: ' + item.progress + '%\n  ';
-                        panel += 'Work log: ' + item.content.replace(/\n/ig, '\n        ') + '\n';
+                        panel += '[' + item.release + '] ' + item.title + '\n';
+                        if (item.progress > 0) {
+                          panel += '   Progress: ' + item.progress + '%\n';
+                        }
+                        if (item.content !== undefined && item.content !== '') {
+                          panel += '   Work log: \n      ';
+                          panel += item.content.replace(/\n/ig, '\n      ') + '\n';
+                        }
                         index ++;
                     }
                 });
             }
         });
         // window.clipboardData.setData('Text', panel);
-        panel.replace(/\n/ig, '<br/>');
+        // panel.replace(/\n/ig, '<br/>');
         this.setState({open: true, panel: panel});
     }
 
@@ -207,7 +212,7 @@ class ResourceMapTableBody extends Component {
 		          open={this.state.open}
 		          onRequestClose={this._onCancelDialogHander}
 		    >
-            <pre>{this.state.panel}</pre>
+            <textarea className="mdl-textfield__input" style={{'fontSize': '12px', 'padding': '5px'}} cols="50" rows= "15" defaultValue={this.state.panel}></textarea>
         </Dialog></td></tr>
       </tbody>
 		);
