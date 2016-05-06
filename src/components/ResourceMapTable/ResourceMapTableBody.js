@@ -203,11 +203,11 @@ class ResourceMapTableBody extends Component {
         <Dialog
 		          title="The selected days work log:"
 		          actions={actions}
-		          modal={true}
+		          modal={false}
 		          open={this.state.open}
 		          onRequestClose={this._onCancelDialogHander}
 		    >
-            <pre className="panel">{this.state.panel}</pre>
+            <pre>{this.state.panel}</pre>
         </Dialog></td></tr>
       </tbody>
 		);
