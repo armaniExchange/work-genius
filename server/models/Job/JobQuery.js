@@ -304,12 +304,12 @@ let JobQuery = {
 				let startTime = Number.parseFloat(moment().subtract(30, 'days').format('x'));
 				let curTime = Number.parseFloat(moment().format('x'));
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				//get the job title created in latest 30 days.
+				//get the job title created in latest 30 days and the max number is 500.
 				query = r.db('work_genius').table('jobs')
 					.filter(function(job){
 						return job('create_time').default(curTime).ge(startTime);
 					})
-					.getField('title').distinct().coerceTo('array');
+					.getField('title').distinct().limit(500).coerceTo('array');
 				result = await query.run(connection);
 				
 				await connection.close();
