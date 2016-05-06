@@ -20,8 +20,8 @@ import {
 } from '../../constants/configurations.js';
 
 const HASH_LEVEL = 'sha512';
-const DB_NAME = 'test';
-// const DB_NAME = 'work_genius';
+// const DB_NAME = 'test';
+const DB_NAME = 'work_genius';
 
 let User = Record({
     'id': '',
