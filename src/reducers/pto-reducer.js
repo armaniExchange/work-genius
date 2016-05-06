@@ -27,6 +27,7 @@ const initialState = Map({
         Map({ title: 'Start Time', key: 'start_time'}),
         Map({ title: 'End Time', key: 'end_time'}),
         Map({ title: 'Total Hours', key: 'hours'}),
+        Map({ title: 'Workday Hours', key: 'work_day_hours'}),
         Map({ title: 'Apply Time', key: 'apply_time'}),
         Map({ title: 'Status', key: 'status'}),
         Map({ title: 'Memo', key: 'memo'}),

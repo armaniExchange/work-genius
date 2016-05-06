@@ -3,6 +3,7 @@ import {
 	GraphQLObjectType,
 	GraphQLString,
 	GraphQLID,
+	GraphQLInt
 } from 'graphql';
 
 let PTOType = new GraphQLObjectType({
@@ -48,6 +49,10 @@ let PTOType = new GraphQLObjectType({
 		'applicant_email': {
 			type: GraphQLString,
 			description: 'Applicant\'s email for this pto application'
+		},
+		'work_day_hours': {
+			type: GraphQLInt,
+			description: 'Hours need to be applied on workday for this pto application'
 		}
 	})
 });

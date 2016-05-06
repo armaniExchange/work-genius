@@ -75,14 +75,15 @@ export function login(user) {
     dispatch(setLoadingState(true));
     return fetch(SERVER_LOGIN_URL, config)
       .then((res) => {
-        if (res.status > 400) {
-          throw new Error(res.statusText);
-        }
         return res.json();
       })
       .then((body) => {
         dispatch(setLoadingState(false));
-        dispatch(loginSuccess(body.token, body.user, true));
+        if (body.success) {
+          dispatch(loginSuccess(body.token, body.user, true));
+        } else {
+          dispatch(loginFailure(body.message));
+        }
       })
       .catch((err) => {
         dispatch(setLoadingState(false));
