@@ -331,6 +331,7 @@ function getCachedDocumentCategoriesOrFetchIt(dispatch, config) {
       if (!parsedDocumentCategoriesBody.enableForceUpdate) {
         // return a cached categories from document first
         dispatch(fetchDocumentCategoriesSuccess(parsedDocumentCategoriesBody.data.getAllDocumentCategories));
+        dispatch(setLoadingState(false));
       }
     }
     // event use cached result, still fetch in background for next time

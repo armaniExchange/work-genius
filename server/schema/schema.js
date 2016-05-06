@@ -81,6 +81,7 @@ const schema = new GraphQLSchema({
       //job
       getJobList               : JobQuery.getJobList,
       getJobByEmployeeId       : JobQuery.getJobByEmployeeId,
+      getAllJobTitle           : JobQuery.getAllJobTitle,
       //group
       getAllGroups             : GroupQuery.getAllGroups
     }

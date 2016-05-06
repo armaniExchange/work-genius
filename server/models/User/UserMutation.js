@@ -249,14 +249,14 @@ export const loginHandler = async (req, res) => {
             token: token,
             user: user
         });
-        
+
     } catch (err) {
         console.log('**********error from loginHandler start**********');
         console.log(err);
         console.log('**********error from loginHandler end**********');
         res.status(401).send({
             success: false,
-            message: 'Not authorized: ' + JSON.stringify(err)
+            message: 'Unauthorized: ' + JSON.stringify(err)
         });
     }
 };

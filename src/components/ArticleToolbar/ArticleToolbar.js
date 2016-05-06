@@ -27,10 +27,23 @@ class ArticleToolbar extends Component {
       id,
       onDelete
     } = this.props;
+    const buttonTextStyle = {
+      top: 4,
+      position: 'relative',
+      right: -10,
+      fontWeight: 900
+    };
+    const wrapperStyle = {
+      position: 'absolute',
+      top: 10,
+      right: 10
+    };
     return (
-      <div style={{position: 'absolute', top: 10, right: 10}}>
+      <div style={wrapperStyle}>
         <IconMenu
-          iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
+          iconButtonElement={
+            <div><span style={buttonTextStyle}>Actions</span><IconButton><MoreVertIcon /></IconButton></div>
+          }
           anchorOrigin={{horizontal: 'right', vertical: 'top'}}
           targetOrigin={{horizontal: 'right', vertical: 'top'}}
         >
