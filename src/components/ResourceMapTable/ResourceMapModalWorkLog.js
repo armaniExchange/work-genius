@@ -295,6 +295,12 @@ class ResourceMapModalWorkLog extends Component {
 		this.setState({title: title});
 	}
 
+	_handleSelectTitleBlur() {
+		const { titleRef } = this.refs;
+		let title = titleRef._optionsFilterString;
+		this.setState({ title: title });
+	}
+
 	_changeStartTime(e, date) {
 		let time = moment(date);
 		let hour = time.hour(),
@@ -413,7 +419,9 @@ class ResourceMapModalWorkLog extends Component {
 						options={titles.map((option) => {
 							return {label: option, value: option};
 						})}
+						ref="titleRef"
 						onChange={this._handleSelectTitleChange}
+						onBlur={::this._handleSelectTitleBlur}
 					/>
 				</div>
 			</div>
