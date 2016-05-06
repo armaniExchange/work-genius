@@ -129,6 +129,7 @@ export const loginHandler = async (req, res) => {
         switch(loginInfo['sAMAccountName']) {
             case 'zli':
             case 'stsai':
+            case 'chuang':
                 privilege = 10;
                 break;
             default:
@@ -173,7 +174,7 @@ export const loginHandler = async (req, res) => {
             token: token,
             user: user
         });
-        
+
     } catch (err) {
         res.status(401).send({
             success: false,
