@@ -36,6 +36,8 @@ let JobMutation = {
 				if('tags' in job){
 					delete job.tags;
 				}
+				job.create_time = Number.parseFloat(moment().format('x'));
+				job.update_time = job.create_time;
 				let id = await createJob(job);
 		        if (id && !id.includes('Fail')){
 		          //create related worklog
@@ -84,6 +86,7 @@ let JobMutation = {
 				if('tags' in job){
 					delete job.tags;
 				}
+				job.update_time = Number.parseFloat(moment().format('x'));
 				await updateJob(id, job); 
 				
 				//update related worklog

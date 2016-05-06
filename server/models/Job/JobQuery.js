@@ -288,6 +288,37 @@ let JobQuery = {
 			}
 			return result;
 		}
+	},
+	'getAllJobTitle': {
+		type: new GraphQLList(GraphQLString),
+		description: 'Get all job title',
+        args: {
+
+		},
+		resolve: async (root, { }) => {
+			let connection = null,				
+				query = null,
+			    result = [];
+
+			try {
+				let startTime = Number.parseFloat(moment().subtract(30, 'days').format('x'));
+				let curTime = Number.parseFloat(moment().format('x'));
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				//get the job title created in latest 30 days.
+				query = r.db('work_genius').table('jobs')
+					.filter(function(job){
+						return job('create_time').default(curTime).ge(startTime);
+					})
+					.getField('title').distinct().coerceTo('array');
+				result = await query.run(connection);
+				
+				await connection.close();
+				return result;
+			} catch (err) {
+				console.log(err) ;
+			}
+			return result;
+		}
 	}
 };
 
