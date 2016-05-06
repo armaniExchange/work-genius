@@ -11,7 +11,8 @@ export async function createPTO(data){
 	try {
 		connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 		mutationQuery = r.db('work_genius').table('overtime_summary').get(finalData.applicant_id);
-		let { hours } = await mutationQuery.run(connection);
+		let overtimeSummary = await mutationQuery.run(connection);
+		let hours = !overtimeSummary ? 0 : overtimeSummary.hours;
 		mutationQuery = r.db('work_genius').table('pto').insert({
 			...finalData,
 			work_day_hours: hours - finalData.hours < 0 ? -(hours - finalData.hours) : 0
