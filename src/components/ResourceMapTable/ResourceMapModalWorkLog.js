@@ -297,7 +297,8 @@ class ResourceMapModalWorkLog extends Component {
 
 	_handleSelectTitleBlur() {
 		const { titleRef } = this.refs;
-		let title = titleRef._optionsFilterString;
+		let title = titleRef._optionsFilterString === ''
+			? titleRef.state.value : titleRef._optionsFilterString;
 		this.setState({ title: title });
 	}
 
