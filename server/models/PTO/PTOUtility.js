@@ -10,7 +10,12 @@ export async function createPTO(data){
 		finalData = JSON.parse(data);
 	try {
 		connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-		mutationQuery = r.db('work_genius').table('pto').insert({...finalData});
+		mutationQuery = r.db('work_genius').table('overtime_summary').get(finalData.applicant_id);
+		let { hours } = await mutationQuery.run(connection);
+		mutationQuery = r.db('work_genius').table('pto').insert({
+			...finalData,
+			work_day_hours: hours - finalData.hours < 0 ? -(hours - finalData.hours) : 0
+		});
 		await mutationQuery.run(connection);
 		await connection.close();
 	} catch (err) {
