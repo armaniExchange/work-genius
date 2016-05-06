@@ -122,7 +122,8 @@ export function fetchPTOApplications(userId, timeRange) {
                     apply_time,
                     status,
                     memo,
-                    applicant_email
+                    applicant_email,
+                    work_day_hours
                 }
             }`,
             headers: {
