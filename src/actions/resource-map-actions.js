@@ -74,6 +74,13 @@ export function fetchResourecMapNewRelease(release) {
     };
 }
 
+export function fetchResourceMapTaskTitle(titles) {
+  return {
+    type: actionTypes.FETCH_RESOURCE_MAP_TITLE,
+    titles
+  };
+}
+
 var taskWorkItemActions = {
     create: (item) => {
         return (dispatch, getState) => {
@@ -165,7 +172,6 @@ var taskWorkItemActions = {
     }
 };
 
-
 var tagActions = {
     get: function () {
         return (dispatch) => {
@@ -219,6 +225,31 @@ var tagActions = {
         };
     }
 };
+
+function taskTitleAction() {
+  return (dispatch) => {
+      let config = {
+          method: 'POST',
+          body: `{
+                  getAllJobTitle
+          }`,
+          headers: {
+              'Content-Type': 'application/graphql',
+              'x-access-token': localStorage.token
+          }
+      };
+      return fetch(SERVER_API_URL, config)
+          .then((res) => res.json())
+          .then((body) => {
+              let titles = body.data.getAllJobTitle;
+              titles = titles ? titles : [];
+              dispatch(fetchResourceMapTaskTitle(titles));
+          })
+          .catch((err) => {
+              throw new Error(err);
+          });
+  };
+}
 
 var releaseActions = {
     get: function () {
@@ -302,7 +333,6 @@ export function fetchAllUsersRequest(){
             });
     };
 }
-
 
 function queryResourceMapDataFromServer(startDate, days) {
     let date = parseInt(moment(startDate).format('X')) * 1000;
@@ -516,7 +546,6 @@ export function fetchResourceMapAddMulti(items) {
     };
 }
 
-
 export function fetchResourceMapDeleteItem(item) {
     return (dispatch) => {
         Promise.all([
@@ -586,7 +615,6 @@ export function addResourceMapTag(tag) {
     };
 }
 
-
 export function queryResourceMapRelease() {
     return (dispatch) => {
         Promise.all([
@@ -603,6 +631,10 @@ export function addResourceMapRelease(release) {
     };
 }
 
-
-
-
+export function queryTaskTitle() {
+  return (dispatch) => {
+      Promise.all([
+          dispatch(taskTitleAction())
+      ]);
+  };
+}

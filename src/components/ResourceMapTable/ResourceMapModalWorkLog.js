@@ -54,6 +54,8 @@ class ResourceMapModalWorkLog extends Component {
 		this._changeStartTime = ::this._changeStartTime;
 		// Change end date
 		this._changeEndDate = ::this._changeEndDate;
+        // Change task title
+		this._handleSelectTitleChange = ::this._handleSelectTitleChange;
 
 		this.state = {
 			color: '',
@@ -61,6 +63,7 @@ class ResourceMapModalWorkLog extends Component {
 			selectTime: '',
 			release: '',
 			tags: '',
+			title: ''
 		};
 	}
 
@@ -70,18 +73,21 @@ class ResourceMapModalWorkLog extends Component {
 		if (show) {
 			let tag = this.state.tags !== '' ? this.state.tags : defaultModalInfos.tags.join(',');
 			let release = this.state.release !== '' ? this.state.release : defaultModalInfos.release;
+			let title = this.state.title !== '' ? this.state.title : defaultModalInfos.title;
 			this.setState({
 				release: release,
 				progress: defaultModalInfos.progress,
 				color: defaultModalInfos.color,
-				tags: tag
+				tags: tag,
+				title: title
 			});
 		} else {
 			this.setState({
 				release: '',
 				progress: 0,
 				color: '',
-				tags: ''
+				tags: '',
+				title: ''
 			});
 		}
 	}
@@ -97,10 +103,10 @@ class ResourceMapModalWorkLog extends Component {
 	 */
 	_onSubmitFormData() {
 		const { defaultModalInfos, onModalSubmit } = this.props;
-		const { taskField, workLogField, progressField, durationField } = this.refs;
-		let taskValue = taskField.getValue();
+		const { workLogField, progressField, durationField } = this.refs;
 		let workValue = '';
 		let progressValue = 0;
+		let taskValue = this.state.title;
 		if (defaultModalInfos.id !== undefined) {
 			workValue = workLogField.getValue();
 			progressValue = progressField.getValue();
@@ -285,6 +291,10 @@ class ResourceMapModalWorkLog extends Component {
 		this.setState({selectDate: date});
 	}
 
+	_handleSelectTitleChange(title) {
+		this.setState({title: title});
+	}
+
 	_changeStartTime(e, date) {
 		let time = moment(date);
 		let hour = time.hour(),
@@ -303,10 +313,10 @@ class ResourceMapModalWorkLog extends Component {
 		const {
 			show,
 			tags,
+			titles,
 			releases,
 			defaultModalInfos
 		} = this.props;
-
 		defaultModalInfos.progress = defaultModalInfos.progress ? defaultModalInfos.progress : 0;
 		let showDoneClassName = 'material-icons icon-layout';
 		let hideDoneClassName = 'material-icons icon-layout icon-layou-display';
@@ -316,7 +326,6 @@ class ResourceMapModalWorkLog extends Component {
 		} else {
 			nowDate = moment(defaultModalInfos.date).format('YYYY-MM-DD hh:mm a');
 		}
-
 		// let releaseOptions = ['4.1.0', '4.1.1', '3.2.1'];
 		var isShowWorkLog = defaultModalInfos.id !== undefined;
 		var colorHtml = (
@@ -397,12 +406,29 @@ class ResourceMapModalWorkLog extends Component {
 			<div className="form-group">
 				<label className="col-xs-3 control-label">Task</label>
 				<div className="col-xs-9">
-					<TextField
-						type="text"
-						className="text-area-style"
-						defaultValue={defaultModalInfos.title}
-						ref="taskField"
+					<Select
+						allowCreate={true}
+						name="menu_tag"
+						value={this.state.title}
+						options={titles.map((option) => {
+							return {label: option, value: option};
+						})}
+						onChange={this._handleSelectTitleChange}
 					/>
+				</div>
+			</div>
+			<div className="form-group">
+				<label className="col-xs-3 control-label">Release</label>
+				<div className="col-xs-9">
+			        <Select
+						allowCreate={true}
+		                name="menu_tag"
+		                value={this.state.release}
+		                options={releases.map((option) => {
+		                	return {label: option.tag_name, value: option.tag_name};
+		                })}
+		                onChange={this._handleSelectReleaseChange}
+		            />
 				</div>
 			</div>
 			<div className="form-group">
@@ -442,20 +468,7 @@ class ResourceMapModalWorkLog extends Component {
 					<span>hours</span>
 				</div>
 			</div>
-			<div className="form-group">
-				<label className="col-xs-3 control-label">Release</label>
-				<div className="col-xs-9">
-			        <Select
-						allowCreate={true}
-		                name="menu_tag"
-		                value={this.state.release}
-		                options={releases.map((option) => {
-		                	return {label: option.tag_name, value: option.tag_name};
-		                })}
-		                onChange={this._handleSelectReleaseChange}
-		            />
-				</div>
-			</div>
+
 			{colorHtml}
 			</div>
 		);
@@ -538,6 +551,7 @@ class ResourceMapModalWorkLog extends Component {
 ResourceMapModalWorkLog.propTypes = {
 	show               : PropTypes.bool.isRequired,
 	tags               : PropTypes.array.isRequired,
+	titles             : PropTypes.array.isRequired,
 	releases           : PropTypes.array.isRequired,
 	defaultModalInfos  : PropTypes.object.isRequired,
 	onModalSubmit      : PropTypes.func.isRequired,

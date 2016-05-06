@@ -29,6 +29,7 @@ const initialState = Map({
     tags: List.of(),
     releases: List.of(),
     currentUserId: '',
+    titles: List.of(),
 	show: false,
     defaultModalInfos: Map({})
 });
@@ -322,6 +323,9 @@ export default function resourceMapReducer(state = initialState, action) {
         return nextState;
     case actionTypes.FETCH_RESOURCE_MAP_NEW_RELEASE:
         nextState = setRelease(nextState, action.release);
+        return nextState;
+    case actionTypes.FETCH_RESOURCE_MAP_TITLE:
+        nextState = nextState.set('titles', Immutable.fromJS(action.titles));
         return nextState;
 	default:
 		return nextState;

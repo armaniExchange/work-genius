@@ -27,19 +27,20 @@ class ResourceMapPage extends Component{
 
 	componentWillMount() {
 		let defaultStartDate = moment().isoWeekday(1).format('YYYY-MM-DD');
-        console.log(defaultStartDate);
 		const {
             totalDays,
             queryResourceMapRelease,
 			queryResourceMapData,
             fetchAllUsersRequest,
-            queryResourceMapTags
+            queryResourceMapTags,
+						queryTaskTitle
 		} = this.props;
         // User id default is 0, current user.
 		queryResourceMapData(defaultStartDate, totalDays, 0);
         fetchAllUsersRequest();
         queryResourceMapRelease();
         queryResourceMapTags();
+        queryTaskTitle();
 	}
 
 	_changeStartDate(date) {
@@ -141,11 +142,13 @@ ResourceMapPage.propTypes = {
     totalDays                      : PropTypes.number.isRequired,
     data                           : PropTypes.array.isRequired,
     allUsers                       : PropTypes.array.isRequired,
+    titles                         : PropTypes.array.isRequired,
     currentUserId                  : PropTypes.string.isRequired,
     tags                           : PropTypes.array.isRequired,
     releases                       : PropTypes.array.isRequired,
     queryResourceMapData           : PropTypes.func.isRequired,
     fetchAllUsersRequest           : PropTypes.func.isRequired,
+		queryTaskTitle                 : PropTypes.func.isRequired,
 
     fetchResourceMapDeleteItem     : PropTypes.func.isRequired,
     fetchResourceMapStatus         : PropTypes.func.isRequired,
