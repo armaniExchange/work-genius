@@ -27,34 +27,30 @@ function countArticles(dataArr, root) {
 }
 
 function generateTree(dataArr, root, path) {
-    let subTree, directChildren, subDataArr;
+    let subTree, directChildren, subDataArr, articlesCount;
     if (!root || Object.keys(root).length === 0) {
         return {};
     }
     if (dataArr.length === 0) {
-        return {
-            id: root.id,
-            name: root.name,
-            path: root.name === 'root' ? 'root' : `${path}/${root.name}`,
-            isCollapsed: root.name === 'root' ? false : true,
-            parentId: root.parentId,
-            children: [],
-            articlesCount: root.articlesCount
-        };
+        subTree = [];
+        articlesCount = root.articlesCount;
+    } else {
+      directChildren = dataArr.filter((node) => { return node.parentId === root.id; });
+      subDataArr = dataArr.filter((node) => { return node.parentId !== root.id; });
+      subTree = directChildren.map((node) => {
+          return generateTree(subDataArr, node, root.name === 'root' ? 'root' : `${path}/${root.name}`);
+      });
+      articlesCount = countArticles(dataArr, root);
     }
-    directChildren = dataArr.filter((node) => { return node.parentId === root.id; });
-    subDataArr = dataArr.filter((node) => { return node.parentId !== root.id; });
-    subTree = directChildren.map((node) => {
-        return generateTree(subDataArr, node, root.name === 'root' ? 'root' : `${path}/${root.name}`);
-    });
     return {
         id: root.id,
         name: root.name,
         path: root.name === 'root' ? 'root' : `${path}/${root.name}`,
         isCollapsed: root.name === 'root' ? false : true,
+        isFeature: root.isFeature === true,
         parentId: root.parentId,
         children: subTree,
-        articlesCount: countArticles(dataArr, root)
+        articlesCount,
     };
 };
 

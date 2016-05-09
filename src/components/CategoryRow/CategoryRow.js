@@ -232,7 +232,6 @@ class CategoryRow extends Component {
 CategoryRow.propTypes = {
   id             : PropTypes.string,
   parentId       : PropTypes.string,
-  lastId         : PropTypes.string,
   name           : PropTypes.string,
   isFeature      : PropTypes.bool,
   level          : PropTypes.number,
