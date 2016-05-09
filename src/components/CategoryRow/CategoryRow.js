@@ -8,11 +8,16 @@ class CategoryRow extends Component {
 
   constructor(props) {
     super(props);
+    const {
+      name,
+      isFeature
+    } = props;
     this.state = {
       isCreatingChild: false,
       isEditing: false,
-      editingName: props.name,
-      editingChildName: ''
+      editingName: name,
+      editingChildName: '',
+      isEditingFeature: isFeature
     };
   }
 
@@ -44,31 +49,36 @@ class CategoryRow extends Component {
     this.setState({editingChildName: event.currentTarget.value});
   }
 
-  toggleEdit() {
+  toggleEdit(event) {
+    if (event) {
+      event.preventDefault();
+    }
     const { isEditing } = this.state;
     this.setState({isEditing: !isEditing});
   }
 
   saveSubcategory(event) {
     const { id, onSave } = this.props;
-    const { editingChildName } = this.state;
+    const { editingChildName, isEditingChildFeature } = this.state;
     event.preventDefault();
     this.setState({isCreatingChild: false});
     onSave({
       parentId: id,
-      name: editingChildName
+      name: editingChildName,
+      isFeature: isEditingChildFeature
     });
   }
 
   save(event) {
     const { id, parentId, onSave } = this.props;
-    const { editingName } = this.state;
+    const { editingName, isEditingFeature } = this.state;
     event.preventDefault();
     this.setState({isEditing: false});
     onSave({
       id,
       parentId,
-      name: editingName
+      name: editingName,
+      isFeature: isEditingFeature
     });
   }
 
@@ -78,8 +88,16 @@ class CategoryRow extends Component {
     onRemove(id);
   }
 
+  onIsEditingFeatureClick(event) {
+    this.setState({ isEditingFeature: event.target.checked });
+  }
+
+  onIsEditingChildFeatureClick(event) {
+    this.setState({ isEditingChildFeature: event.target.checked });
+  }
+
   getPaddingLeft(level) {
-    return {paddingLeft: level * 20 + 10};
+    return { paddingLeft: level * 20 + 10 };
   }
 
   render() {
@@ -93,6 +111,8 @@ class CategoryRow extends Component {
     const {
       editingName,
       editingChildName,
+      isEditingFeature,
+      isEditingChildFeature,
       isEditing,
       isCreatingChild
     } = this.state;
@@ -102,13 +122,19 @@ class CategoryRow extends Component {
       <span className={`tree-view_arrow${collapsed ? ' tree-view_arrow-collapsed': ''}`} />
     );
     const EditRow = (
-      <div className="category-tree-edit-table-row">
+      <div className="category-row">
         <span className="category-name" style={this.getPaddingLeft(level)}>
           {Indicator}
           <input type="text"
             value={editingName}
             onChange={::this.onNameChange}
             autoFocus={true}
+          />
+        </span>
+        <span className="is-feature">
+          <input type="checkbox"
+            checked={isEditingFeature}
+            onClick={::this.onIsEditingFeatureClick}
           />
         </span>
         <span className="article-number">{articlesCount}</span>
@@ -126,9 +152,15 @@ class CategoryRow extends Component {
       </div>
     );
     const ViewRow = (
-      <div className="category-tree-edit-table-row">
+      <div className="category-row">
         <span className="category-name" onClick={::this.toggleChildren} style={this.getPaddingLeft(level)}>
           {Indicator} {name}
+        </span>
+        <span className="is-feature">
+          <input type="checkbox"
+            disabled={true}
+            checked={isEditingFeature}
+          />
         </span>
         <span className="article-number">{articlesCount}</span>
         <span className="action">
@@ -161,13 +193,19 @@ class CategoryRow extends Component {
     const CreatingSubCategory = (
       <div>
         { ViewRow }
-        <div className="category-tree-edit-table-row">
+        <div className="category-row">
           <span style={this.getPaddingLeft(level + 2)} className="category-name">
             <input
               type="text"
               value={editingChildName}
               onChange={::this.onChildNameChange}
               autoFocus={true}
+            />
+          </span>
+          <span className="is-feature">
+            <input type="checkbox"
+              checked={isEditingChildFeature}
+              onClick={::this.onIsEditingChildFeatureClick}
             />
           </span>
           <span className="article-number">{articlesCount}</span>
@@ -196,6 +234,7 @@ CategoryRow.propTypes = {
   parentId       : PropTypes.string,
   lastId         : PropTypes.string,
   name           : PropTypes.string,
+  isFeature      : PropTypes.bool,
   level          : PropTypes.number,
   collapsed      : PropTypes.bool,
   children       : PropTypes.array,
@@ -207,7 +246,8 @@ CategoryRow.propTypes = {
 
 CategoryRow.defaultProps = {
   level          : 0,
-  collapsed      : false
+  collapsed      : false,
+  isFeature      : false
 };
 
 export default CategoryRow;

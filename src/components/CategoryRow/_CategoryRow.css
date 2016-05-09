@@ -1,0 +1,48 @@
+.category-row {
+  width: 100%;
+  padding: 8px;
+  border-bottom: 1px solid lightgray;
+  transition-property: background-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 0.28s;
+  .category-name {
+    text-align: left;
+  }
+  &:hover {
+    background-color: #ddd;
+  }
+
+  .category-name,
+  .is-feature,
+  .article-number,
+  .action {
+    display: inline-block;
+    box-sizing: border-box;
+
+  }
+  .category-name {
+    width: 45%;
+    cursor: pointer;
+    input {
+      padding-left: 5px;
+    }
+  }
+  .is-feature {
+    width: 10%;
+    text-align: center;
+  }
+  .article-number {
+    width: 20%;
+    text-align: center;
+  }
+  .action {
+    width: 25%;
+  }
+
+  a {
+    color: #00bcd4;
+    &:hover,&:focus {
+      color: #23527c
+    }
+  }
+}

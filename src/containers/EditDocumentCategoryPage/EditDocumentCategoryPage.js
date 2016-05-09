@@ -83,8 +83,9 @@ class EditDocumentCategoryPage extends Component {
           <h3>Knowledge Tree</h3>
           <Paper className="category-tree-edit-table">
             <div className="category-tree-edit-table-header">
-              <div className="category-tree-edit-table-row">
+              <div className="category-row">
                 <span className="category-name">Category Name</span>
+                <span className="is-feature">Is Feature</span>
                 <span className="article-number">Article Number</span>
                 <span className="action">Action</span>
               </div>
