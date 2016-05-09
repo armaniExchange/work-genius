@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import Paper from 'material-ui/lib/paper';
 
 import * as DocumentActions from '../../actions/document-page-actions';
-
+import depthFirstFlat from '../../libraries/depthFirstFlat';
 import CategoryRow from '../../components/CategoryRow/CategoryRow';
 
 import Breadcrumb from '../../components/A10-UI/Breadcrumb';
@@ -48,34 +48,15 @@ class EditDocumentCategoryPage extends Component {
     this.setState({displayCategoriesId: result});
   }
 
-  depthFirstFlat(node) {
-    const { displayCategoriesId } = this.state;
-    if (typeof node.name === 'undefined'){
-      return [];
-    }
-    node.level = node.level || 0;
-    if (node.children && node.children.length > 0 && (node.name === 'root' || displayCategoriesId.includes(node.id))) {
-      node.collapsed = false;
-      const modifiedChildren = node.children
-        .map(child => Object.assign({children: []}, child, {level: node.level + 1}))
-        // .sort(child => child.name)
-        // .reverse()
-        // .sort(child => child.children.length === 0 )
-        .map(this.depthFirstFlat.bind(this))
-        .reduce((prev, item) => [...prev, ...item], []);
-      return [node, ...modifiedChildren];
-    } else {
-      node.collapsed = true;
-      return [node];
-    }
-  }
-
   render() {
     const {
-        documentCategories,
-        documentCategoriesLength
-     } = this.props;
-    const displayTree = this.depthFirstFlat(documentCategories);
+      documentCategories,
+      documentCategoriesLength
+    } = this.props;
+    const { displayCategoriesId } = this.state;
+    const displayTree = depthFirstFlat(documentCategories, (node) => {
+      return node.name ==='root' || displayCategoriesId.includes(node.id);
+    });
     return (
       <div>
         <Breadcrumb data={BREADCRUMB.editDocumentCategory} />
