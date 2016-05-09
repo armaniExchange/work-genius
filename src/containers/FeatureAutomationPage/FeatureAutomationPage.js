@@ -8,7 +8,7 @@ import Paper from 'material-ui/lib/paper';
 
 import * as DocumentActions from '../../actions/document-page-actions';
 
-import depthFirstFlat from '../../libraries/depthFirstFlat';
+import { depthFirstFlat } from '../../libraries/tree';
 import FeatureAutomationRow from '../../components/FeatureAutomationRow/FeatureAutomationRow';
 import EditFeatureAutomationAxapiDialog from '../../components/EditFeatureAutomationAxapiDialog/EditFeatureAutomationAxapiDialog';
 

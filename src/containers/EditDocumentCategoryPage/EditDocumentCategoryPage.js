@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import Paper from 'material-ui/lib/paper';
 
 import * as DocumentActions from '../../actions/document-page-actions';
-import depthFirstFlat from '../../libraries/depthFirstFlat';
+import { depthFirstFlat } from '../../libraries/tree';
 import CategoryRow from '../../components/CategoryRow/CategoryRow';
 
 import Breadcrumb from '../../components/A10-UI/Breadcrumb';

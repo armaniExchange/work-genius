@@ -3,61 +3,30 @@
  */
 // Libraries
 import { Map, List, fromJS } from 'immutable';
+import _ from 'lodash';
 // Constants
+//
 import actionTypes from '../constants/action-types';
 import { MENU } from '../constants/menu';
 import { TECH_MENU } from '../constants/tec-menu';
-import _ from 'lodash';
-
+import {
+  sumUpFromChildrenNode,
+  generateTree
+} from '../libraries/tree';
 
 _.merge(MENU, TECH_MENU);
-
-function countArticles(dataArr, root) {
-    let directChildren, subDataArr;
-    if (!root || dataArr.length === 0) {
-        return  0;
-    }
-    directChildren = dataArr.filter((node) => { return node.parentId === root.id; });
-    subDataArr = dataArr.filter((node) => { return node.parentId !== root.id; });
-
-    if (directChildren.length === 0) {
-        return root.articlesCount;
-    }
-    return directChildren.map((node) => {return countArticles(subDataArr, node);}).reduce((acc, x) => acc + x, 0);
-}
-
-function generateTree(dataArr, root, path) {
-    let subTree, directChildren, subDataArr, articlesCount;
-    if (!root || Object.keys(root).length === 0) {
-        return {};
-    }
-    if (dataArr.length === 0) {
-        subTree = [];
-        articlesCount = root.articlesCount;
-    } else {
-      directChildren = dataArr.filter((node) => { return node.parentId === root.id; });
-      subDataArr = dataArr.filter((node) => { return node.parentId !== root.id; });
-      subTree = directChildren.map((node) => {
-          return generateTree(subDataArr, node, root.name === 'root' ? 'root' : `${path}/${root.name}`);
-      });
-      articlesCount = countArticles(dataArr, root);
-    }
-    return {
-        id: root.id,
-        name: root.name,
-        path: root.name === 'root' ? 'root' : `${path}/${root.name}`,
-        isCollapsed: root.name === 'root' ? false : true,
-        isFeature: root.isFeature === true,
-        parentId: root.parentId,
-        children: subTree,
-        articlesCount,
-    };
-};
 
 function transformToTree(dataArr) {
     let root = dataArr.filter((node) => { return !node.parentId; })[0],
         rest = dataArr.filter((node) => { return node.parentId; });
-    return generateTree(rest, root, '');
+    let tree = generateTree(rest, root, { path: '' }, (node, parent) => {
+      return {
+        path: node.name === 'root' ? 'root' : `${parent.path}/${node.name}`,
+        isCollapsed: node.name === 'root' ? false : true
+      };
+    });
+    sumUpFromChildrenNode(tree, 'articlesCount', 'articlesCount');
+    return tree;
 }
 
 function updateCollpaseStatus(root, path) {

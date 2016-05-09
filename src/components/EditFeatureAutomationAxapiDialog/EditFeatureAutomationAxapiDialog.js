@@ -155,18 +155,19 @@ class EditFeatureAutomationAxapiDialog extends Component {
 
 
 EditFeatureAutomationAxapiDialog.propTypes = {
-  id: PropTypes.string,
-  open         : PropTypes.bool,
-  postAxapis   : PropTypes.array,
-  getAxapis    : PropTypes.array,
-  putAxapis    : PropTypes.array,
-  deleteAxapis : PropTypes.array,
-  onRequestClose: PropTypes.func,
-  onSubmit: PropTypes.func
+  id             : PropTypes.string,
+  open           : PropTypes.bool,
+  postAxapis     : PropTypes.array,
+  getAxapis      : PropTypes.array,
+  putAxapis      : PropTypes.array,
+  deleteAxapis   : PropTypes.array,
+  onRequestClose : PropTypes.func,
+  onSubmit       : PropTypes.func
 };
 
 
 EditFeatureAutomationAxapiDialog.defaultProps = {
+  open           : false,
   postAxapis     : [],
   getAxapis      : [],
   putAxapis      : [],
