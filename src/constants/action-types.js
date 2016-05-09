@@ -69,6 +69,7 @@ export default keyMirror({
     SET_OVERTIME_APPLY_MODAL_STATE: null,
     FILTER_PTO_TABLE: null,
     SORT_PTO_TABLE_BY_CATEGORY: null,
+    FETCH_PTO_PAGE_REQUEST: null,
     FETCH_PTO_APPLICATION_SUCCESS: null,
     FETCH_USERS_WITH_PTO_SUCCESS: null,
     RESET_PTO_TABLE: null,

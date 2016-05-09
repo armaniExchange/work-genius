@@ -25,11 +25,11 @@ import PTOMailCard from '../../components/PTO-Mail-Card/PTO-Mail-Card';
 class PTOApplication extends Component {
     componentWillMount() {
         const {
-            fetchPTOPageData,
             currentUser,
-            selectedYear
+            selectedYear,
+            fetchPTOPageSaga
         } = this.props;
-        fetchPTOPageData(currentUser.id, selectedYear);
+        fetchPTOPageSaga(currentUser.id, selectedYear);
     }
     componentWillUnmount() {
         const { resetPTOTable } = this.props;
@@ -126,10 +126,11 @@ class PTOApplication extends Component {
     _onUserFilterClickedHandler(id) {
         const {
             resetPTOTable,
-            fetchPTOPageData
+            fetchPTOPageSaga,
+            selectedYear
         } = this.props;
         resetPTOTable();
-        fetchPTOPageData(id);
+        fetchPTOPageSaga(id, selectedYear);
     }
     _onPTOStatusFilterChange(newStatus) {
         this.props.filterPTOTable({
@@ -223,11 +224,11 @@ PTOApplication.propTypes = {
     sortPTOTableByCategory  : PropTypes.func,
     setPTOApplicationStatus : PropTypes.func,
     removePTOApplication    : PropTypes.func,
-    fetchPTOPageData        : PropTypes.func,
     resetPTOTable           : PropTypes.func,
     goToPreviousYear        : PropTypes.func,
     goToNextYear            : PropTypes.func,
-    sendMail                : PropTypes.func
+    sendMail                : PropTypes.func,
+    fetchPTOPageSaga        : PropTypes.func,
 };
 
 function mapStateToProps(state) {

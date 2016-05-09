@@ -55,10 +55,11 @@ export function sortOvertimeTableByCategory(category) {
     };
 };
 
-export function fetchPTOApplicationsSuccess(data) {
+export function fetchPTOPageSaga(userId, selectedYear) {
     return {
-        type: actionTypes.FETCH_PTO_APPLICATION_SUCCESS,
-        data
+        type: actionTypes.FETCH_PTO_PAGE_REQUEST,
+        userId,
+        selectedYear
     };
 };
 
@@ -105,40 +106,6 @@ export function decreaseYearRange() {
 export function increaseYearRange() {
     return {
         type: actionTypes.INCREASE_YEAR
-    };
-};
-
-export function fetchPTOApplications(userId, timeRange) {
-    return (dispatch) => {
-        let config = {
-            method: 'POST',
-            body: `{
-                ptoApplications(applicantId: "${userId}", timeRange: ${timeRange}) {
-                    id,
-                    start_time,
-                    end_time,
-                    hours,
-                    applicant,
-                    apply_time,
-                    status,
-                    memo,
-                    applicant_email,
-                    work_day_hours
-                }
-            }`,
-            headers: {
-                'Content-Type': 'application/graphql',
-                'x-access-token': localStorage.token
-            }
-        };
-        return fetch(SERVER_API_URL, config)
-            .then((res) => res.json())
-            .then((body) => {
-                dispatch(fetchPTOApplicationsSuccess(body.data.ptoApplications));
-            })
-            .catch((err) => {
-                throw new Error(err);
-            });
     };
 };
 
@@ -203,6 +170,52 @@ export function fetchUsersWithPTO() {
     };
 };
 
+export function fetchPTOApplicationsPromise(userId, timeRange) {
+    let config = {
+        method: 'POST',
+        body: `{
+            ptoApplications(applicantId: "${userId}", timeRange: ${timeRange}) {
+                id,
+                start_time,
+                end_time,
+                hours,
+                applicant,
+                apply_time,
+                status,
+                memo,
+                applicant_email,
+                work_day_hours
+            }
+        }`,
+        headers: {
+            'Content-Type': 'application/graphql',
+            'x-access-token': localStorage.token
+        }
+    };
+
+    return fetch(SERVER_API_URL, config).then((res) => res.json()).then((body) => body.data.ptoApplications);
+};
+
+export function fetchUsersWithPTOPromise() {
+    let config = {
+        method: 'POST',
+        body: `{
+            allUserWithPto {
+                id,
+                name,
+                pto {
+                    end_time
+                }
+            }
+        }`,
+        headers: {
+            'Content-Type': 'application/graphql',
+            'x-access-token': localStorage.token
+        }
+    };
+    return fetch(SERVER_API_URL, config).then((res) => res.json()).then((body) => body.data.allUserWithPto);
+}
+
 export function fetchUsersWithOvertime() {
     return (dispatch) => {
         let config = {
@@ -229,26 +242,6 @@ export function fetchUsersWithOvertime() {
                 dispatch(setLoadingState(false));
                 throw new Error(err);
             });
-    };
-};
-
-export function fetchPTOPageData(userId) {
-    return (dispatch, getState) => {
-        let timeRange = getState().pto.toJS().selectedYear;
-        dispatch(setLoadingState(true));
-        Promise.all([
-            dispatch(fetchUsersWithPTO()),
-            dispatch(fetchPTOApplications(userId, timeRange))
-        ]).then(
-            () => {
-                dispatch(setCurrentSelectedUserId(userId));
-                dispatch(setLoadingState(false));
-            },
-            (err) => {
-                dispatch(setLoadingState(false));
-                dispatch(apiFailure(err));
-            }
-        );
     };
 };
 
@@ -280,7 +273,7 @@ export function goToPreviousYear(isOvertime) {
         if (isOvertime) {
             dispatch(fetchOvertimePageData(currentSelectedUserID, currentSelectedYear));
         } else {
-            dispatch(fetchPTOPageData(currentSelectedUserID));
+            dispatch(fetchPTOPageSaga(currentSelectedUserID, currentSelectedYear));
         }
     };
 };
@@ -293,7 +286,7 @@ export function goToNextYear(isOvertime) {
         if (isOvertime) {
             dispatch(fetchOvertimePageData(currentSelectedUserID, currentSelectedYear));
         } else {
-            dispatch(fetchPTOPageData(currentSelectedUserID));
+            dispatch(fetchPTOPageSaga(currentSelectedUserID, currentSelectedYear));
         }
     };
 };
@@ -318,7 +311,7 @@ export function createPTOApplication(data) {
             .then((res) => res.json())
             .then(() => {
                 dispatch(setLoadingState(false));
-                dispatch(fetchPTOPageData(currentSelectedUserID));
+                dispatch(fetchPTOPageSaga(currentSelectedUserID, getState().pto.toJS().selectedYear));
             })
             .catch((err) => {
                 dispatch(setLoadingState(false));
@@ -369,14 +362,15 @@ export function removePTOApplication(id) {
                     'x-access-token': localStorage.token
                 }
             },
-            currentSelectedUserID = getState().pto.toJS().currentSelectedUserID;
+            currentSelectedUserID = getState().pto.toJS().currentSelectedUserID,
+            currentSelectedYear = getState().pto.toJS().selectedYear;
 
         dispatch(setLoadingState(true));
         return fetch(SERVER_API_URL, config)
             .then((res) => res.json())
             .then(() => {
                 dispatch(setLoadingState(false));
-                dispatch(fetchPTOPageData(currentSelectedUserID));
+                dispatch(fetchPTOPageSaga(currentSelectedUserID, currentSelectedYear));
             })
             .catch((err) => {
                 dispatch(setLoadingState(false));
@@ -397,14 +391,15 @@ export function setPTOApplicationStatus(id, status, hours) {
                     'x-access-token': localStorage.token
                 }
             },
-            currentSelectedUserID = getState().pto.toJS().currentSelectedUserID;
+            currentSelectedUserID = getState().pto.toJS().currentSelectedUserID,
+            currentSelectedYear = getState().pto.toJS().selectedYear;
 
         dispatch(setLoadingState(true));
         return fetch(SERVER_API_URL, config)
             .then((res) => res.json())
             .then(() => {
                 dispatch(setLoadingState(false));
-                dispatch(fetchPTOPageData(currentSelectedUserID));
+                dispatch(fetchPTOPageSaga(currentSelectedUserID, currentSelectedYear));
             })
             .catch((err) => {
                 dispatch(setLoadingState(false));
