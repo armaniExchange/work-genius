@@ -35,6 +35,7 @@ import FeatureAnalysisTreePage from '../containers/FeatureAnalysisPage/FeatureAn
 import FeatureAnalysisTablePage from '../containers/FeatureAnalysisPage/FeatureAnalysisTable';
 import MarkdownCheatSheet from '../containers/MarkdownCheatSheet/MarkdownCheatSheet';
 import EditDocumentCategoryPage from '../containers/EditDocumentCategoryPage/EditDocumentCategoryPage';
+import FeatureAutomationPage from '../containers/FeatureAutomationPage/FeatureAutomationPage';
 import WorkLogPage from '../containers/WorkLogPage/WorkLogPage';
 
 // Utilities
@@ -94,6 +95,9 @@ const appRoutes = () => (
           <IndexRoute component={requireAuth(DataExplorerFolderView)}/>
           <Route path="data-explorer/:folderName" component={requireAuth(DataExplorerFileView)} />
         </Route>
+
+        {/* data-explorer base*/}
+        <Route path="feature-automation" component={requireAuth(FeatureAutomationPage)} />
 
       </Route>
       <Route path="*" component={NotFoundPage} />
