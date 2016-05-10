@@ -11,7 +11,8 @@ import {
   fileUploadHandler,
   fileDeleteHandler
 } from './models/File/FileMutation';
-import { fileDownloadHandler } from './models/File/FileQuery';// Constants
+import { fileDownloadHandler } from './models/File/FileQuery';
+import { addTestReportHandler } from './models/TestReport/TestReportMutation';
 import { searchArticleHandler, searchFileHandler, searchWorklogHandler, searchCommentHandler, searchBugtrackingHandler } from './models/Search/SearchQuery';
 import {
     SECURE_KEY,
@@ -104,8 +105,9 @@ app.route('/files')
 app.route('/files/:id')
  .get(fileDownloadHandler)
  .delete(fileDeleteHandler);
-
 app.get('/export/document/:articleId', articleExportHandler);
+app.route('/testReport/:type')
+  .post(addTestReportHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is listening at port: ${PORT}`);

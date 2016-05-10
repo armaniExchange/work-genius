@@ -1,7 +1,7 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import Select from 'react-select';
-
+import _ from 'lodash';
 
 // Styles
 import './_FeatureAutomationRow.css';
@@ -10,9 +10,21 @@ class FeatureAutomationRow extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      editingOwner: '',
-      editingUrl: ''
+    this.state = this.updateStateFromProps(props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState(this.updateStateFromProps(nextProps));
+  }
+
+  updateStateFromProps(props) {
+    const {
+      owner,
+      path,
+    } = props;
+    return {
+      editingOwner: owner,
+      editingPath: path
     };
   }
 
@@ -33,23 +45,37 @@ class FeatureAutomationRow extends Component {
     this.setState({ editingOwner: value});
   }
 
-  onUrlChange(value) {
-    this.setState({ editingUrl: value});
+  onPathChange(value) {
+    this.setState({ editingPath: value});
   }
 
   onEditAxapis() {
-    const {
-      postAxapis,
-      getAxapis,
-      putAxapis,
-      deleteAxapis,
-    } = this.props;
-    this.props.onEditAxapis({
-      postAxapis,
-      getAxapis,
-      putAxapis,
-      deleteAxapis,
-    });
+    const { id, axapis } = this.props;
+    console.log('axapis');
+    console.log(axapis);
+    this.props.onEditAxapis(id, axapis);
+  }
+
+  onPathSave() {
+    const { id } = this.props;
+    const { editingPath } = this.state;
+    this.props.onPathSave(id, editingPath);
+  }
+
+  renderAxapis() {
+    const { axapis } = this.props;
+    const result = _.chain(axapis)
+      .map(axapi => {
+        const [ method, url ] = axapi.split(' ');
+        return { method, url };
+      })
+      .groupBy(axapi => axapi.method)
+      .map((val, key) => `${key} ${val.map(item=>item.url).toString(' ')}`)
+      .value()
+      .map((item, index) => (<div key={index}>{item}</div>));
+    return (
+      <div> { result }</div>
+    );
   }
 
   render() {
@@ -57,22 +83,28 @@ class FeatureAutomationRow extends Component {
       name,
       level,
       collapsed,
-      children
+      children,
+      axapiTestFailCount,
+      axapiTestTotalCount,
+      unitTestTotalCount,
+      unitTestFailCount,
+      end2endTestTotalCount,
+      end2endTestFailCount
     } = this.props;
     const {
-      editingOwner,
-      editingUrl
+      // editingOwner,
+      editingPath
     } = this.state;
     const hasChildren = children && children.length > 0;
     const Indicator = !hasChildren ? <span style={{width: 20, height: 18, display: 'inline-block'}}/> : (
       <span className={`tree-view_arrow${collapsed ? ' tree-view_arrow-collapsed': ''}`} />
     );
-    const users = [
-      {value: 'zuoping', label: 'zuoping'},
-      {value: 'roll', label: 'roll'}
-    ];
+    // const users = [
+    //   {value: 'zuoping', label: 'zuoping'},
+    //   {value: 'roll', label: 'roll'}
+    // ];
 
-    const urls = [
+    const paths = [
       'system',
       'system/board'
     ].map(item => Object.assign({value: item, label: item}));
@@ -82,6 +114,7 @@ class FeatureAutomationRow extends Component {
         <span onClick={::this.toggleChildren} style={this.getPaddingLeft(level)}>
           {Indicator} {name}
         </span>
+        {/*
         <span>
           300
         </span>
@@ -96,24 +129,27 @@ class FeatureAutomationRow extends Component {
         <span>
           hard 3, easy 1
         </span>
+        */}
         <span>
           <Select
-            value={editingUrl}
-            options={urls}
-            onChange={::this.onUrlChange}
+            value={editingPath}
+            options={paths}
+            onChange={::this.onPathChange}
           />
+          <span onClick={::this.onPathSave}>Save</span>
         </span>
         <span onClick={::this.onEditAxapis}>
-          axapi
+          { this.renderAxapis() }
+          <span onClick={::this.onEditAxapis}>Edit</span>
         </span>
         <span>
-          101 Unit test documents
+          Fail:{unitTestFailCount} Total:{unitTestTotalCount}
         </span>
         <span>
-          12 Failed, Total 300
+          Fail:{end2endTestFailCount} Total:{end2endTestTotalCount}
         </span>
         <span>
-          3 Failed, Total 3000
+          Fail:{axapiTestFailCount} Total:{axapiTestTotalCount}
         </span>
 
       </div>
@@ -122,28 +158,38 @@ class FeatureAutomationRow extends Component {
 }
 
 FeatureAutomationRow.propTypes = {
-  id             : PropTypes.string,
-  parentId       : PropTypes.string,
-  name           : PropTypes.string,
-  level          : PropTypes.number,
-  collapsed      : PropTypes.bool,
-  children       : PropTypes.array,
-  toggleChildren : PropTypes.func,
-  onEditAxapis   : PropTypes.func,
-  articlesCount  : PropTypes.number,
-  postAxapis     : PropTypes.array,
-  getAxapis      : PropTypes.array,
-  putAxapis      : PropTypes.array,
-  deleteAxapis   : PropTypes.array,
+  id                    : PropTypes.string,
+  parentId              : PropTypes.string,
+  name                  : PropTypes.string,
+  level                 : PropTypes.number,
+  collapsed             : PropTypes.bool,
+  children              : PropTypes.array,
+  toggleChildren        : PropTypes.func,
+  onEditAxapis          : PropTypes.func,
+  onPathSave            : PropTypes.func,
+  articlesCount         : PropTypes.number,
+  path                  : PropTypes.string,
+  axapis                : PropTypes.array,
+  axapiTestTotalCount   : PropTypes.number,
+  axapiTestFailCount    : PropTypes.number,
+  unitTestTotalCount    : PropTypes.number,
+  unitTestFailCount     : PropTypes.number,
+  end2endTestTotalCount : PropTypes.number,
+  end2endTestFailCount  : PropTypes.number
 };
 
 FeatureAutomationRow.defaultProps = {
-  level          : 0,
-  collapsed      : false,
-  postAxapis     : [],
-  getAxapis      : [],
-  putAxapis      : [],
-  deleteAxapis   : [],
+  level                 : 0,
+  collapsed             : false,
+  axapis                : [],
+  owner                 : '',
+  path                  : '',
+  axapiTestTotalCount   : 0,
+  axapiTestFailCount    : 0,
+  unitTestTotalCount    : 0,
+  unitTestFailCount     : 0,
+  end2endTestTotalCount : 0,
+  end2endTestFailCount  : 0
 };
 
 export default FeatureAutomationRow;

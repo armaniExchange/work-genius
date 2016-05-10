@@ -15,6 +15,7 @@ import bugReport from './bug-report-reducer';
 import resourceMap from './resource-map-reducer';
 import workLog from './work-log-reducer';
 import documentTemplate from './document-template-reducer';
+import featureAutomation from './feature-automation-reducer';
 
 const rootReducer = combineReducers({
   app,
@@ -32,7 +33,8 @@ const rootReducer = combineReducers({
   workLog,
   bugReport,
   featureAnalysis,
-  documentTemplate
+  documentTemplate,
+  featureAutomation
 });
 
 export default rootReducer;

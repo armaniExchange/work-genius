@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Paper from 'material-ui/lib/paper';
 
-import * as DocumentActions from '../../actions/document-page-actions';
+import * as FeatureAutomationActions from '../../actions/feature-automation-page-action';
 
 import { depthFirstFlat } from '../../libraries/tree';
 import FeatureAutomationRow from '../../components/FeatureAutomationRow/FeatureAutomationRow';
@@ -15,24 +15,17 @@ import EditFeatureAutomationAxapiDialog from '../../components/EditFeatureAutoma
 import Breadcrumb from '../../components/A10-UI/Breadcrumb';
 import BREADCRUMB from '../../constants/breadcrumb';
 
-
 class FeatureAutomationPage extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { displayCategoriesId: [] };
+    this.state = {
+      displayCategoriesId: []
+    };
   }
 
   componentDidMount() {
-    this.props.documentActions.fetchDocumentCategories();
-  }
-
-  onCategorySave(newData) {
-    this.props.documentActions.upsertDocumentCategory(newData);
-  }
-
-  onCategoryRemove(id) {
-    this.props.documentActions.deleteDocumentCategory(id);
+    this.props.featureAutomationActions.fetchDocumentCategoriesWithReport();
   }
 
   toggleChildren({id, forceEnable}) {
@@ -50,20 +43,11 @@ class FeatureAutomationPage extends Component {
     this.setState({displayCategoriesId: result});
   }
 
-  openAxapisEditDialog({
-    id,
-    postAxapis,
-    getAxapis,
-    putAxapis,
-    deleteAxapis,
-  }) {
+  openAxapisEditDialog(id, axapis) {
     this.setState({
       isAxapiEditDialogDisplay: true,
       editingCategoryId: id,
-      postAxapis,
-      getAxapis,
-      putAxapis,
-      deleteAxapis,
+      editingAxapis: axapis
     });
   }
 
@@ -71,41 +55,37 @@ class FeatureAutomationPage extends Component {
     this.setState({ isAxapiEditDialogDisplay: false });
   }
 
-  onAxapisSave({
-    id,
-    postAxapis,
-    getAxapis,
-    putAxapis,
-    deleteAxapis
-  }){
+  onAxapisSave(id, axapis) {
     console.log('onAxapisSave');
     console.log('id');
     console.log(id);
-    console.log('postAxapis');
-    console.log(postAxapis);
-    console.log('getAxapis');
-    console.log(getAxapis);
-    console.log('putAxapis');
-    console.log(putAxapis);
-    console.log('deleteAxapis');
-    console.log(deleteAxapis);
-  };
+    console.log('axapis');
+    console.log(axapis);
+    this.props.featureAutomationActions.setupTestReportOfCategory({
+      categoryId: id,
+      axapis
+    });
+  }
+
+  onPathSave(id, path) {
+    this.props.featureAutomationActions.setupTestReportOfCategory({
+      categoryId: id,
+      path
+    });
+  }
 
   render() {
     const {
-      documentCategories
+      documentCategoriesWithReportTest
     } = this.props;
     const {
       displayCategoriesId,
       isAxapiEditDialogDisplay,
       editingCategoryId,
-      postAxapis,
-      getAxapis,
-      putAxapis,
-      deleteAxapis,
+      editingAxapis
     } = this.state;
 
-    const displayTree = depthFirstFlat(documentCategories, (node) => {
+    const displayTree = depthFirstFlat(documentCategoriesWithReportTest, (node) => {
       return node.name ==='root' || ( displayCategoriesId.includes(node.id));
     });
 
@@ -118,10 +98,12 @@ class FeatureAutomationPage extends Component {
             <div className="table-header">
               <div className="table-row">
                 <span>Category Name</span>
+                {/*
                 <span>Pages</span>
                 <span>Owners</span>
                 <span>Complicate</span>
-                <span>URL</span>
+                */}
+                <span>Path</span>
                 <span>AXAPIs</span>
                 <span>Unit Test Document</span>
                 <span>Unit Test Code</span>
@@ -135,6 +117,7 @@ class FeatureAutomationPage extends Component {
                     <FeatureAutomationRow
                       key={row.id}
                       onEditAxapis={::this.openAxapisEditDialog}
+                      onPathSave={::this.onPathSave}
                       toggleChildren={::this.toggleChildren}
                       {...row} />
                   );
@@ -148,10 +131,7 @@ class FeatureAutomationPage extends Component {
         <EditFeatureAutomationAxapiDialog
           open={isAxapiEditDialogDisplay}
           id={editingCategoryId}
-          postAxapis={postAxapis}
-          getAxapis={getAxapis}
-          putAxapis={putAxapis}
-          deleteAxapis={deleteAxapis}
+          axapis={editingAxapis}
           onRequestClose={::this.closeAxapisEditDialog}
           onSubmit={::this.onAxapisSave}
         />
@@ -161,8 +141,8 @@ class FeatureAutomationPage extends Component {
 }
 
 FeatureAutomationPage.propTypes = {
-  documentCategories       : PropTypes.object,
-  documentActions          : PropTypes.object.isRequired
+  documentCategoriesWithReportTest  : PropTypes.object,
+  featureAutomationActions          : PropTypes.object.isRequired
 };
 
 FeatureAutomationPage.defaultProps = {
@@ -170,15 +150,15 @@ FeatureAutomationPage.defaultProps = {
 
 function mapStateToProps(state) {
   const {
-    documentCategories
-  } = state.documentation.toJS();
+    documentCategoriesWithReportTest
+  } = state.featureAutomation.toJS();
 
-  return { documentCategories };
+  return { documentCategoriesWithReportTest };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    documentActions: bindActionCreators(DocumentActions, dispatch),
+    featureAutomationActions: bindActionCreators(FeatureAutomationActions, dispatch),
   };
 }
 

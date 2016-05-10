@@ -11,67 +11,93 @@ class EditFeatureAutomationAxapiDialog extends Component {
 
   constructor(props) {
     super(props);
-    const {
-      postAxapis,
-      getAxapis,
-      putAxapis,
-      deleteAxapis,
-    } = this.props;
-    this.state = {
-      editingPostAxapis: postAxapis,
-      editingGetAxapis: getAxapis,
-      editingPutAxapis: putAxapis,
-      editingDeleteAxapis: deleteAxapis
+    const { axapis } = this.props;
+    this.state = this.parseAxapiToState(axapis);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { axapis } = nextProps;
+    this.setState(this.parseAxapiToState(axapis));
+  }
+
+  parseAxapiToState(axapis) {
+    axapis = axapis || [];
+    let urlsMap = {
+      POST: [],
+      GET: [],
+      PUT: [],
+      DELETE: [],
+    };
+    axapis.map((axapi) => {
+        const [ method, url ] = axapi.split(' ');
+        return { method, url };
+      })
+      .forEach(({method, url}) => {
+        urlsMap[method].push(url);
+      });
+    const { POST, GET, PUT, DELETE  } = urlsMap;
+    return  {
+      editingPostUrls: POST.toString(),
+      editingGetUrls: GET.toString(),
+      editingPutUrls: PUT.toString(),
+      editingDeleteUrls: DELETE.toString()
     };
   }
 
   onSubmit() {
     const {
       id,
-      onSubmit
+      onSubmit,
+      onRequestClose
     } = this.props;
     const {
-      editingPostAxapis,
-      editingGetAxapis,
-      editingPutAxapis,
-      editingDeleteAxapis
+      editingPostUrls,
+      editingGetUrls,
+      editingPutUrls,
+      editingDeleteUrls
     } = this.state;
-    onSubmit({
-      id,
-      postAxapis: editingPostAxapis,
-      getAxapis: editingGetAxapis,
-      putAxapis: editingPutAxapis,
-      deleteAxapis: editingDeleteAxapis
-    });
+
+    const axapis = [
+        { method: 'POST', urls: editingPostUrls },
+        { method: 'GET', urls: editingGetUrls },
+        { method: 'PUT', urls: editingPutUrls },
+        { method: 'DELETE', urls: editingDeleteUrls }
+      ]
+      .filter(({urls}) => urls.trim() !== '')
+      .map(({method, urls}) => urls.trim().split(',').map(url => `${method} ${url}`))
+      .reduce((prev, current) => prev.concat(current), []);
+
+    onSubmit(id, axapis);
+    onRequestClose();
   }
 
   onCancel() {
     this.props.onRequestClose();
   }
 
-  onEditingPostAxapisChange(value) {
-    this.setState({ editingPostAxapis: value });
+  onEditingPostUrlsChange(value) {
+    this.setState({ editingPostUrls: value.trim() });
   }
 
-  onEditingGetAxapisChange(value) {
-    this.setState({ editingGetAxapis: value });
+  onEditingGetUrlsChange(value) {
+    this.setState({ editingGetUrls: value.trim() });
   }
 
-  onEditingPutAxapisChange(value) {
-    this.setState({ editingPutAxapis: value });
+  onEditingPutUrlsChange(value) {
+    this.setState({ editingPutUrls: value.trim() });
   }
 
-  onEditingDeleteAxapisChange(value) {
-    this.setState({ editingDeleteAxapis: value });
+  onEditingDeleteUrlsChange(value) {
+    this.setState({ editingDeleteUrls: value.trim() });
   }
 
   render() {
     const { open } = this.props;
     const {
-      editingPostAxapis,
-      editingGetAxapis,
-      editingPutAxapis,
-      editingDeleteAxapis
+      editingPostUrls,
+      editingGetUrls,
+      editingPutUrls,
+      editingDeleteUrls
     } = this.state;
     const actions = [
       <FlatButton
@@ -110,8 +136,8 @@ class EditFeatureAutomationAxapiDialog extends Component {
             <Select
               allowCreate={true}
               multi={true}
-              value={editingPostAxapis}
-              onChange={::this.onEditingPostAxapisChange}
+              value={editingPostUrls}
+              onChange={::this.onEditingPostUrlsChange}
             />
           </div>
         </div>
@@ -121,8 +147,8 @@ class EditFeatureAutomationAxapiDialog extends Component {
             <Select
               allowCreate={true}
               multi={true}
-              value={editingGetAxapis}
-              onChange={::this.onEditingGetAxapisChange}
+              value={editingGetUrls}
+              onChange={::this.onEditingGetUrlsChange}
             />
           </div>
         </div>
@@ -132,8 +158,8 @@ class EditFeatureAutomationAxapiDialog extends Component {
             <Select
               allowCreate={true}
               multi={true}
-              value={editingPutAxapis}
-              onChange={::this.onEditingPutAxapisChange}
+              value={editingPutUrls}
+              onChange={::this.onEditingPutUrlsChange}
             />
           </div>
         </div>
@@ -143,8 +169,8 @@ class EditFeatureAutomationAxapiDialog extends Component {
             <Select
               allowCreate={true}
               multi={true}
-              value={editingDeleteAxapis}
-              onChange={::this.onEditingDeleteAxapisChange}
+              value={editingDeleteUrls}
+              onChange={::this.onEditingDeleteUrlsChange}
             />
           </div>
         </div>
@@ -157,10 +183,7 @@ class EditFeatureAutomationAxapiDialog extends Component {
 EditFeatureAutomationAxapiDialog.propTypes = {
   id             : PropTypes.string,
   open           : PropTypes.bool,
-  postAxapis     : PropTypes.array,
-  getAxapis      : PropTypes.array,
-  putAxapis      : PropTypes.array,
-  deleteAxapis   : PropTypes.array,
+  axapis         : PropTypes.array,
   onRequestClose : PropTypes.func,
   onSubmit       : PropTypes.func
 };
@@ -168,10 +191,7 @@ EditFeatureAutomationAxapiDialog.propTypes = {
 
 EditFeatureAutomationAxapiDialog.defaultProps = {
   open           : false,
-  postAxapis     : [],
-  getAxapis      : [],
-  putAxapis      : [],
-  deleteAxapis   : [],
+  axapis         : []
 };
 
 export default EditFeatureAutomationAxapiDialog;

@@ -63,7 +63,6 @@ const initialState = Map({
   articleList: List.of(),
   articleTotalCount: 0,
   documentCategories: Map({}),
-  documentCategoriesLength: 0,
   currentSelectedCategory: Map({}),
   allTags: List.of(),
   allUsers: List.of(),
@@ -99,7 +98,7 @@ export default function documentReducer(state = initialState, action) {
     case actionTypes.FETCH_ALL_USERS_SUCCESS:
       return state.set('allUsers', fromJS(action.allUsers));
     case actionTypes.FETCH_DOCUMENT_CATEGORIES_SUCCESS:
-      return state.set('documentCategoriesLength', action.data.length).set('documentCategories', fromJS(transformToTree(action.data)));
+      return state.set('documentCategories', fromJS(transformToTree(action.data)));
     case actionTypes.FETCH_ALL_MILESTONES_SUCCESS:
       return state.set('allMilestones', action.allMilestones);
     case actionTypes.UPDATE_ARTICLES_QUERY:
