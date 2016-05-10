@@ -96,7 +96,7 @@ const appRoutes = () => (
           <Route path="data-explorer/:folderName" component={requireAuth(DataExplorerFileView)} />
         </Route>
 
-        {/* data-explorer base*/}
+        {/* feature automation*/}
         <Route path="feature-automation" component={requireAuth(FeatureAutomationPage)} />
 
       </Route>
