@@ -244,10 +244,15 @@ export const loginHandler = async (req, res) => {
             });
         });
 
+
+        connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+        query = r.db(DB_NAME).table('users').filter({'email': user['email']}).coerceTo('array');
+        result = await query.run(connection);
+
         res.json({
             success: true,
             token: token,
-            user: user
+            user: result[0]
         });
 
     } catch (err) {
