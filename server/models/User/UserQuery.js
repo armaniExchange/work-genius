@@ -21,14 +21,15 @@ let UserQuery = {
 			    query = null;
 			try {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				query = r.db('work_genius').table('users').get(user.id);
+				query = r.db('work_genius').table('users').filter({email: user.email}).coerceTo('array');
 				result = await query.run(connection);
+				result = result[0];
 				await connection.close();
 				if (root.req.decoded.nickname === 'Howard') {
 					root.req.decoded.privilege = 10;
 				}
 				if (result) {
-					return Object.assign({}, root.req.decoded, { token: root.req.token });
+					return Object.assign({}, result, { token: root.req.token });
 				}
 				throw new Error('Invalid user');
 			} catch (err) {
