@@ -52,16 +52,32 @@ export function depthFirstFlat(rootNode, predicate) {
   return _depthFirstFlat(rootNode);
 }
 
-export function sumUpFromChildrenNode(rootNode, propertyName, accumPropertyName) {
+export function sumUpFromChildrenNode(rootNode, {init, siblingMerge, childrenParentMerge}) {
+  // ex:
+  // sumUpFromChildrenNode(rootNode2, {
+  //   init: { accumCount: 0 },
+  //   siblingMerge(prev, current) {
+  //     return {
+  //       accumCount: prev.accumCount + (current.count || 0) + ( current.accumCount || 0 )
+  //     };
+  //   },
+  //   childrenParentMerge(childrenResult, current) {
+  //     return {
+  //       accumCount: childrenResult.accumCount + (current.count || 0)
+  //     };
+  //   }
+  // });
+
+
   // accumlate the number of propertyName from children and append the result to accumPropertyName
   function _sumUpFromChildrenNode(node) {
-    node[propertyName] = node[propertyName] || 0;
     if (!node.children || node.children.length === 0) {
-      return node[propertyName];
+      return node;
     } else {
-      return node[accumPropertyName] = node[propertyName] + node.children
+      const result = node.children
         .map(_sumUpFromChildrenNode)
-        .reduce((prev,current) => prev + current, 0);
+        .reduce(siblingMerge, Object.assign({}, init));
+      return Object.assign(node, childrenParentMerge(result, node));
     }
   }
   return _sumUpFromChildrenNode(rootNode);

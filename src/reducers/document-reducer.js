@@ -25,7 +25,19 @@ function transformToTree(dataArr) {
         isCollapsed: node.name === 'root' ? false : true
       };
     });
-    sumUpFromChildrenNode(tree, 'articlesCount', 'articlesCount');
+    sumUpFromChildrenNode(tree, {
+      init: { accumCount: 0 },
+      siblingMerge(prev, current) {
+        return {
+          accumCount: prev.accumCount + (current.articlesCount || 0)
+        };
+      },
+      childrenParentMerge(childrenResult, parent) {
+        return {
+          articlesCount: childrenResult.accumCount + (parent.articlesCount || 0)
+        };
+      }
+    });
     return tree;
 }
 
