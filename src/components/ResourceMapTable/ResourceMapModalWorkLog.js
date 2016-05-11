@@ -347,7 +347,7 @@ class ResourceMapModalWorkLog extends Component {
 	                    		<i className={this.state.color === 'bgm-red' ? showDoneClassName : hideDoneClassName}>done</i>
 	                    	</span>
                     	</Tooltip>
-                    	<Tooltip placement="top" overlay={'Level 2'}
+                    	{/*<Tooltip placement="top" overlay={'Level 2'}
 							arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
 						>
 	                        <span onClick={this._onSelectTagColor} data-tag="bgm-pink"   className="bgm-pink">
@@ -367,15 +367,15 @@ class ResourceMapModalWorkLog extends Component {
 	                        <span onClick={this._onSelectTagColor} data-tag="bgm-orange" className="bgm-orange">
 	                    		<i className={this.state.color === 'bgm-orange' ? showDoneClassName : hideDoneClassName}>done</i>
 	                    	</span>
-                    	</Tooltip>
-                    	<Tooltip placement="top" overlay={'Level 5'}
+                    	</Tooltip>*/}
+                    	<Tooltip placement="top" overlay={'Level 2'}
 							arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
 						>
 	                        <span onClick={this._onSelectTagColor} data-tag="bgm-lime"   className="bgm-lime">
 	                    		<i className={this.state.color === 'bgm-lime' ? showDoneClassName : hideDoneClassName}>done</i>
 	                    	</span>
                     	</Tooltip>
-                    	<Tooltip placement="top" overlay={'Level 6'}
+                    	{/*}<Tooltip placement="top" overlay={'Level 6'}
 							arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
 						>
 	                        <span onClick={this._onSelectTagColor} data-tag="bgm-blue"   className="bgm-blue">
@@ -395,8 +395,8 @@ class ResourceMapModalWorkLog extends Component {
 	                        <span onClick={this._onSelectTagColor} data-tag="bgm-green"  className="bgm-green">
 	                    		<i className={this.state.color === 'bgm-green' ? showDoneClassName : hideDoneClassName}>done</i>
 	                    	</span>
-                    	</Tooltip>
-                    	<Tooltip placement="top" overlay={'Level 9: Doing once free'}
+                    	</Tooltip>*/}
+                    	<Tooltip placement="top" overlay={'Level 3: Doing once free'}
 							arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
 						>
 	                    	<span onClick={this._onSelectTagColor} data-tag="bgm-teal"   className="bgm-teal">
