@@ -335,7 +335,7 @@ export function fetchAllUsersRequest(){
 }
 
 function queryResourceMapDataFromServer(startDate, days) {
-    let date = parseInt(moment(startDate).format('X')) * 1000;
+    let date = parseInt(moment.utc(startDate).format('x'));
     return (dispatch) => {
         let config = {
             method: 'POST',
@@ -383,7 +383,7 @@ function queryResourceMapDataFromServer(startDate, days) {
 }
 
 function queryResourceMapDataFromServerByUser(startDate, days, userId) {
-    let date = parseInt(moment(startDate).format('X')) * 1000;
+    let date = parseInt(moment.utc(startDate).format('x'));
     return (dispatch) => {
         let config = {
             method: 'POST',
