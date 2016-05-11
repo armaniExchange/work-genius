@@ -30,6 +30,7 @@ import KnowledgePage from '../containers/KnowledgePage/KnowledgePage';
 import DocumentPage from '../containers/KnowledgePage/DocumentPage';
 import EditArticlePage from '../containers/EditArticlePage/EditArticlePage';
 import ViewArticlePage from '../containers/ViewArticlePage/ViewArticlePage';
+import AxapiAutomationPage from '../containers/AxapiAutomationPage/AxapiAutomationPage';
 import FeatureAnalysisPage from '../containers/FeatureAnalysisPage/FeatureAnalysisPage';
 import FeatureAnalysisTreePage from '../containers/FeatureAnalysisPage/FeatureAnalysisTree';
 import FeatureAnalysisTablePage from '../containers/FeatureAnalysisPage/FeatureAnalysisTable';
@@ -100,6 +101,9 @@ const appRoutes = () => (
         <Route path="automation">
           <IndexRoute component={requireAuth(FeatureAutomationPage)} />
         </Route>
+
+        {/* axapi automation*/}
+        <Route path="axapi-automation" component={requireAuth(AxapiAutomationPage)} />
 
       </Route>
       <Route path="*" component={NotFoundPage} />
