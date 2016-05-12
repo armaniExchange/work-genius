@@ -13,16 +13,28 @@ export function fetchDocumentCategoriesWithReportSuccess(data) {
   };
 }
 
-export function fetchDocumentCategoriesWithReport() {
+export function fetchDocumentCategoriesWithReport(query) {
   return dispatch => {
+    const {
+      unitTestCreatedTime,
+      end2endTestCreatedTime,
+      axapiTestCreatedTime
+    } = query || {};
     dispatch(setLoadingState(true));
     dispatch({
       type: actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_REPORT_TEST
     });
+    let queryCreatedTime = '';
+    queryCreatedTime += typeof unitTestCreatedTime !== 'undefined' ? `unitTestCreatedTime:${unitTestCreatedTime} `: '';
+    queryCreatedTime += typeof end2endTestCreatedTime !== 'undefined' ? `end2endTestCreatedTime:${end2endTestCreatedTime} ` : '';
+    queryCreatedTime += typeof axapiTestCreatedTime !== 'undefined' ? `axapiTestCreatedTime:${axapiTestCreatedTime} ` : '';
+    queryCreatedTime = queryCreatedTime === '' ? queryCreatedTime : `(\n${queryCreatedTime}\n)`;
+    console.log(queryCreatedTime);
+
     const config = {
       method: 'POST',
       body: `{
-        getAllDocumentCategoriesWithTestReport {
+        getAllDocumentCategoriesWithTestReport ${queryCreatedTime} {
           id,
           parentId,
           name,

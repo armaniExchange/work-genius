@@ -52,11 +52,23 @@ let CategoryQuery = {
   'getAllDocumentCategoriesWithTestReport': {
     type: new GraphQLList(TestReportCategoryType),
     description: 'Get all documentation categories in tree form with test report',
-    resolve: async () => {
+    args: {
+      unitTestCreatedTime: { type: GraphQLFloat },
+      end2endTestCreatedTime: { type: GraphQLFloat },
+      axapiTestCreatedTime: { type: GraphQLFloat }
+    },
+    resolve: async (root, {
+      unitTestCreatedTime,
+      end2endTestCreatedTime,
+      axapiTestCreatedTime
+    }) => {
       try {
         const unitTestCreatedTimeList = await getTestReportCreatedTimeList('unit_test_reports');
         const end2endTestCreatedTimeList = await getTestReportCreatedTimeList('end2end_test_reports');
         const axapiTestCreatedTimeList = await getTestReportCreatedTimeList('axapi_test_reports');
+        unitTestCreatedTime = unitTestCreatedTime || unitTestCreatedTimeList[0] || 0;
+        end2endTestCreatedTime = end2endTestCreatedTime || end2endTestCreatedTimeList[0] || 0;
+        axapiTestCreatedTime = axapiTestCreatedTime || axapiTestCreatedTimeList[0] || 0;
 
         const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         const result = await r.db('work_genius')
@@ -71,28 +83,28 @@ let CategoryQuery = {
           .merge(function(item) {
             var unitTest = r.db('work_genius')
               .table('unit_test_reports')
-              .filter({createdAt: unitTestCreatedTimeList[0]})
+              .filter({createdAt: unitTestCreatedTime})
               .filter({ path: item('path').default('') })
               .coerceTo('array');
 
-            var end2EndTest = r.db('work_genius')
+            var end2endTest = r.db('work_genius')
               .table('end2end_test_reports')
-              .filter({createdAt: end2endTestCreatedTimeList[0]})
+              .filter({createdAt: end2endTestCreatedTime})
               .filter({ path: item('path').default('') })
               .coerceTo('array');
 
             var axapiTest = r.db('work_genius')
               .table('axapi_test_reports')
-              .filter({createdAt: axapiTestCreatedTimeList[0]})
+              .filter({createdAt: axapiTestCreatedTime})
               .filter(function(report){
                 return item('axapis').contains(report('api'));
               })
               .coerceTo('array');
 
             return {
-              unitTest: unitTest,
-              end2endTest: end2EndTest,
-              axapiTest: axapiTest
+              unitTest,
+              end2endTest,
+              axapiTest,
             };
           })
           .coerceTo('array')

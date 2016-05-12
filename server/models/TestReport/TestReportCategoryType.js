@@ -5,7 +5,8 @@ import {
   GraphQLList,
   GraphQLInt,
   GraphQLID,
-  GraphQLBoolean
+  GraphQLBoolean,
+  GraphQLFloat
 } from 'graphql';
 
 const TestReportCategoryType = new GraphQLObjectType({
@@ -43,7 +44,7 @@ const TestReportCategoryType = new GraphQLObjectType({
         name: 'axapiTestType',
         fields: () => ({
           // id: { type: GraphQLID },
-          // createdAt: { type: GraphQLFloat},
+          createdAt: { type: GraphQLFloat},
           api: { type: GraphQLString},
           isSuccess: {type: GraphQLBoolean},
           errorMessage: {type: GraphQLString}
@@ -55,7 +56,7 @@ const TestReportCategoryType = new GraphQLObjectType({
         name: 'unitTestType',
         fields: () => ({
           // id: { type: GraphQLID },
-          // createdAt: { type: GraphQLFloat},
+          createdAt: { type: GraphQLFloat},
           path: { type: GraphQLString},
           isSuccess: {type: GraphQLBoolean},
           errorMessage: {type: GraphQLString}
@@ -67,7 +68,7 @@ const TestReportCategoryType = new GraphQLObjectType({
         name: 'end2endTestType',
         fields: () => ({
           // id: { type: GraphQLID },
-          // createdAt: { type: GraphQLFloat},
+          createdAt: { type: GraphQLFloat},
           path: { type: GraphQLString},
           isSuccess: {type: GraphQLBoolean},
           errorMessage: {type: GraphQLString}

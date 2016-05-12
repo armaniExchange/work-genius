@@ -13,9 +13,7 @@ import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 import { depthFirstFlat } from '../../libraries/tree';
 import FeatureAutomationRow from '../../components/FeatureAutomationRow/FeatureAutomationRow';
 import EditFeatureAutomationAxapiDialog from '../../components/EditFeatureAutomationAxapiDialog/EditFeatureAutomationAxapiDialog';
-
-import Breadcrumb from '../../components/A10-UI/Breadcrumb';
-import BREADCRUMB from '../../constants/breadcrumb';
+import RaisedButton from 'material-ui/lib/raised-button';
 
 class FeatureAutomationPage extends Component {
 
@@ -88,6 +86,37 @@ class FeatureAutomationPage extends Component {
     this.setState({end2endTestCreatedTime: value});
   }
 
+  searchByCreatedTime() {
+    const {
+      unitTestCreatedTime,
+      axapiTestCreatedTime,
+      end2endTestCreatedTime
+    } = this.state;
+    const queryObject = Object.assign({},
+      unitTestCreatedTime ? { unitTestCreatedTime } : null,
+      axapiTestCreatedTime ? { axapiTestCreatedTime } : null,
+      end2endTestCreatedTime ? { end2endTestCreatedTime } : null
+    );
+    this.props.featureAutomationActions.fetchDocumentCategoriesWithReport(queryObject);
+  }
+
+  parseCreatedTimeToDropdownListItem(item, index) {
+    return {
+      title: `${index === 0 ? '(last)': ''} ${moment(item).format('lll')}`,
+      value: item
+    };
+  }
+
+  getCreatedTimeTitle(createdTime, createdTimeList) {
+    if (!createdTimeList || createdTimeList.length === 0) {
+      return 'No Log';
+    }
+    if (createdTime === createdTimeList[0] || (!createdTime && createdTimeList.length !== 0) ){
+      return `(last)${moment(createdTimeList[0]).format('lll')}`;
+    }
+    return moment(createdTime).format('lll');
+  }
+
   render() {
     const {
       documentCategoriesWithReportTest,
@@ -108,39 +137,38 @@ class FeatureAutomationPage extends Component {
     const displayTree = depthFirstFlat(documentCategoriesWithReportTest, (node) => {
       return node.name ==='root' || ( displayCategoriesId.includes(node.id));
     });
-    console.log('unitTestCreatedTimeList');
-    console.log(unitTestCreatedTimeList);
+
     return (
       <div>
-        <Breadcrumb data={BREADCRUMB.editDocumentCategory} />
         <div className="feature-automation-page">
           <h3>Feature Automation</h3>
           <div>
+            <label>End2end:&nbsp;</label>
+            <DropDownList
+              title={this.getCreatedTimeTitle(end2endTestCreatedTime, end2endTestCreatedTimeList)}
+              onOptionClick={::this.onEnd2endTestCreatedTimeChange}
+              aryOptionConfig={end2endTestCreatedTimeList.map(this.parseCreatedTimeToDropdownListItem)}
+            />
             <label>Unit Test:&nbsp;</label>
             <DropDownList
-              title={unitTestCreatedTime ? unitTestCreatedTime : 'last'}
+              title={this.getCreatedTimeTitle(unitTestCreatedTime, unitTestCreatedTimeList)}
               onOptionClick={::this.onUnitTestCreatedTimeChange}
-              aryOptionConfig={unitTestCreatedTimeList.map(item => {
-                return { title: moment(item).format('lll'), value: item};
-              })}
+              aryOptionConfig={unitTestCreatedTimeList.map(this.parseCreatedTimeToDropdownListItem)}
             />
             <label>AXAPI:&nbsp;</label>
             <DropDownList
-              title={axapiTestCreatedTime ? axapiTestCreatedTime : 'last'}
+              title={this.getCreatedTimeTitle(axapiTestCreatedTime, axapiTestCreatedTimeList)}
               onOptionClick={::this.onAxapiTestCreatedTimeChange}
-              aryOptionConfig={axapiTestCreatedTimeList.map(item => {
-                return { title: moment(item).format('lll'), value: item};
-              })}
+              aryOptionConfig={axapiTestCreatedTimeList.map(this.parseCreatedTimeToDropdownListItem)}
             />
-            <label>End2end:&nbsp;</label>
-            <DropDownList
-              title={end2endTestCreatedTime ? end2endTestCreatedTime : 'last'}
-              onOptionClick={::this.onEnd2endTestCreatedTimeChange}
-              aryOptionConfig={end2endTestCreatedTimeList.map(item => {
-                return { title: moment(item).format('lll'), value: item};
-              })}
+            <RaisedButton
+              secondary={true}
+              style={{float: 'right'}}
+              onClick={::this.searchByCreatedTime}
+              label="search"
             />
           </div>
+          <br />
           <Paper className="table">
             <div className="table-header">
               <div className="table-row">

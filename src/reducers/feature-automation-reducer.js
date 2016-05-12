@@ -36,15 +36,15 @@ function transformToTree(dataArr) {
     sumUpFromChildrenNode(tree, {
       init: {
         accumArticlesCount: 0,
+        accumAxapiTest: [],
         accumAxapiTestTotalCount: 0,
         accumAxapiTestFailCount: 0,
+        accumUnitTest: [],
         accumUnitTestTotalCount: 0,
         accumUnitTestFailCount: 0,
-        accumEnd2EndTestTotalCount: 0,
-        accumEnd2EndTestFailCount: 0,
-        accumAxapiTest: [],
-        accumUnitTest: [],
-        accumEnd2EndTest: []
+        accumEnd2endTest: [],
+        accumEnd2endTestTotalCount: 0,
+        accumEnd2endTestFailCount: 0,
       },
       siblingMerge(prev, current) {
         return {
@@ -55,9 +55,9 @@ function transformToTree(dataArr) {
           accumUnitTest: prev.accumUnitTest.concat(current.unitTest),
           accumUnitTestTotalCount: prev.accumUnitTestTotalCount + current.unitTestTotalCount,
           accumUnitTestFailCount: prev.accumUnitTestFailCount + current.unitTestFailCount,
-          accumEnd2EndTest: prev.accumEnd2EndTest + current.end2endTest,
-          accumEnd2EndTestTotalCount: prev.accumEnd2EndTestTotalCount + current.end2endTestTotalCount,
-          accumEnd2EndTestFailCount: prev.accumEnd2EndTestFailCount + current.end2endTestFailCount
+          accumEnd2endTest: prev.accumEnd2endTest.concat(current.end2endTest),
+          accumEnd2endTestTotalCount: prev.accumEnd2endTestTotalCount + current.end2endTestTotalCount,
+          accumEnd2endTestFailCount: prev.accumEnd2endTestFailCount + current.end2endTestFailCount,
         };
       },
       childrenParentMerge(childrenResult, parent) {
@@ -69,9 +69,9 @@ function transformToTree(dataArr) {
           unitTest: (parent.unitTest || []).concat(childrenResult.accumUnitTest),
           unitTestTotalCount: childrenResult.accumUnitTestTotalCount + parent.unitTestTotalCount,
           unitTestFailCount: childrenResult.accumUnitTestFailCount + parent.unitTestFailCount,
-          end2endTest: (parent.end2endTest || []).concat(childrenResult.accumEnd2EndTest),
-          end2endTestTotalCount: childrenResult.accumEnd2EndTestTotalCount + parent.end2endTestTotalCount,
-          end2endTestFailCount: childrenResult.accumEnd2EndTestFailCount + parent.end2endTestFailCount
+          end2endTest: (parent.end2endTest || []).concat(childrenResult.accumEnd2endTest),
+          end2endTestTotalCount: childrenResult.accumEnd2endTestTotalCount + parent.end2endTestTotalCount,
+          end2endTestFailCount: childrenResult.accumEnd2endTestFailCount + parent.end2endTestFailCount
         };
       }
     });

@@ -2,7 +2,8 @@
 import React, { Component, PropTypes } from 'react';
 import _ from 'lodash';
 import TextField from 'material-ui/lib/text-field';
-import Tooltip from 'rc-tooltip';
+
+import FeatureAutomationCount from '../FeatureAutomationCount/FeatureAutomationCount';
 // Styles
 import './_FeatureAutomationRow.css';
 
@@ -54,15 +55,31 @@ class FeatureAutomationRow extends Component {
     this.props.onEditAxapis(id, axapis);
   }
 
+  onPathKeyDown(event) {
+    const { keyCode } = event;
+    if (keyCode === 13) {
+      // enter
+      this.onPathSave();
+      return;
+    }
+
+    if (keyCode === 27) {
+      // esc
+      this.onPathCancel();
+      return;
+    }
+
+  }
+
   onPathSave(event) {
-    event.preventDefault();
+    event && event.preventDefault();
     const { id } = this.props;
     const { editingPath } = this.state;
     this.props.onPathSave(id, editingPath);
   }
 
   onPathCancel(event) {
-    event.preventDefault();
+    event && event.preventDefault();
     this.setState({ editingPath: this.props.path });
   }
 
@@ -181,37 +198,32 @@ class FeatureAutomationRow extends Component {
           <TextField
             value={editingPath}
             onChange={::this.onPathChange}
+            onKeyDown={::this.onPathKeyDown}
             style={{width: '95%'}}
           />
         </span>
         <span className="axapis" onClick={::this.onEditAxapis}>{this.renderAxapis()}</span>
-        <span className="end2end-test">
-          <Tooltip
-            placement="bottom"
-            trigger={['hover']}
-            overlay={this.renderTooltip(end2endTest, 'path')}>
-            <a href="#" style={{color: 'red'}}>{end2endTestFailCount}</a>
-          </Tooltip>
-          /{end2endTestTotalCount}
-        </span>
-        <span className="unit-test">
-          <Tooltip
-            placement="bottom"
-            trigger={['hover']}
-            overlay={this.renderTooltip(unitTest, 'path')}>
-            <a href="#" style={{color: 'red'}}>{unitTestFailCount}</a>
-          </Tooltip>
-          /{unitTestTotalCount}
-        </span>
-        <span className="axapi-test">
-          <Tooltip
-            placement="bottom"
-            trigger={['hover']}
-            overlay={this.renderTooltip(axapiTest, 'api')}>
-            <a href="#" style={{color: 'red'}}>{axapiTestFailCount}</a>
-          </Tooltip>
-          /{axapiTestTotalCount}
-        </span>
+        <FeatureAutomationCount
+          className="end2end-test"
+          totalCount={end2endTestTotalCount}
+          failCount={end2endTestFailCount}
+          testReport={end2endTest}
+          keyName="path"
+        />
+        <FeatureAutomationCount
+          className="unit-test"
+          totalCount={unitTestTotalCount}
+          failCount={unitTestFailCount}
+          testReport={unitTest}
+          keyName="path"
+        />
+        <FeatureAutomationCount
+          className="axapi-test"
+          totalCount={axapiTestTotalCount}
+          failCount={axapiTestFailCount}
+          testReport={axapiTest}
+          keyName="api"
+        />
       </div>
     );
   }
