@@ -102,7 +102,6 @@ class EditFeatureAutomationAxapiDialog extends Component {
     const actions = [
       <FlatButton
         label="Cancel"
-        primary={true}
         onTouchTap={::this.onCancel}
       />,
       <FlatButton
@@ -114,7 +113,8 @@ class EditFeatureAutomationAxapiDialog extends Component {
 
     const styles = {
       wrapper: {
-        display: 'flex'
+        display: 'flex',
+        marginBottom: 10
       },
       label: {
         width: 100

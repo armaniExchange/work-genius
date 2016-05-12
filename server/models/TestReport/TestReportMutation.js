@@ -92,14 +92,14 @@ const mutation = {
       axapis
     }) => {
       const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+      const data = Object.assign({
+        id: categoryId
+      }, typeof path !== 'undefined' ? { path } : null
+      , typeof axapis !== 'undefined' ? { axapis } : null);
       try {
         await r.db('work_genius')
           .table('test_report_categories')
-          .insert({
-            id: categoryId,
-            path: path || '',
-            axapis: axapis || []
-          }, { conflict: 'replace' })
+          .insert(data, { conflict: 'update' })
           .run(connection);
         await connection.close();
       } catch (err) {

@@ -1,7 +1,7 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
-import Select from 'react-select';
 import _ from 'lodash';
+import TextField from 'material-ui/lib/text-field';
 
 // Styles
 import './_FeatureAutomationRow.css';
@@ -45,34 +45,64 @@ class FeatureAutomationRow extends Component {
     this.setState({ editingOwner: value});
   }
 
-  onPathChange(value) {
-    this.setState({ editingPath: value});
+  onPathChange(event) {
+    this.setState({ editingPath: event.target.value});
   }
 
-  onEditAxapis() {
+  onEditAxapis(event) {
+    event.preventDefault();
     const { id, axapis } = this.props;
-    console.log('axapis');
-    console.log(axapis);
     this.props.onEditAxapis(id, axapis);
   }
 
-  onPathSave() {
+  onPathSave(event) {
+    event.preventDefault();
     const { id } = this.props;
     const { editingPath } = this.state;
     this.props.onPathSave(id, editingPath);
   }
 
+  onPathCancel(event) {
+    event.preventDefault();
+    this.setState({ editingPath: this.props.path });
+  }
+
   renderAxapis() {
+    const style = {
+      borderRadius: 3,
+      marginLeft:2,
+      padding: 2
+    };
+    const urlStyle = Object.assign({
+      backgroundColor: 'lightblue',
+      color: 'white'
+    }, style);
+    const emptyUrlStyle = Object.assign({
+      backgroundColor: 'pink',
+      color: 'white'
+    }, style);
+
     const { axapis } = this.props;
     const result = _.chain(axapis)
+      .union(['POST', 'GET', 'PUT', 'DELETE'])
       .map(axapi => {
         const [ method, url ] = axapi.split(' ');
         return { method, url };
       })
       .groupBy(axapi => axapi.method)
-      .map((val, key) => `${key} ${val.map(item=>item.url).toString(' ')}`)
-      .value()
-      .map((item, index) => (<div key={index}>{item}</div>));
+      .map((val, key) => {
+        return (
+          <div style={{ lineHeight: 1.8, fontSize: '.8em' }} key={key}>
+            <span style={{ width: 46, display: 'inline-block' }}>{key}&nbsp;</span>
+            {
+              val.length === 1 && val[0].url == null ? (<span style={emptyUrlStyle}>None</span>) : val.map((item, index) => {
+                return ( item.url && <span style={urlStyle} key={index}>{item.url}</span> );
+              })
+            }
+          </div>
+        );
+      })
+      .value();
     return (
       <div> { result }</div>
     );
@@ -84,6 +114,7 @@ class FeatureAutomationRow extends Component {
       level,
       collapsed,
       children,
+      path,
       axapiTestFailCount,
       axapiTestTotalCount,
       unitTestTotalCount,
@@ -104,14 +135,12 @@ class FeatureAutomationRow extends Component {
     //   {value: 'roll', label: 'roll'}
     // ];
 
-    const paths = [
-      'system',
-      'system/board'
-    ].map(item => Object.assign({value: item, label: item}));
-
     return (
       <div className="category-row table-row">
-        <span onClick={::this.toggleChildren} style={this.getPaddingLeft(level)}>
+        <span
+          className="category-name"
+          onClick={::this.toggleChildren}
+          style={this.getPaddingLeft(level)}>
           {Indicator} {name}
         </span>
         {/*
@@ -130,26 +159,39 @@ class FeatureAutomationRow extends Component {
           hard 3, easy 1
         </span>
         */}
-        <span>
-          <Select
+        <span className="path">
+        {
+          editingPath !== path ? (
+            <div  style={{position: 'absolute', right: 10, top: -10}}>
+              <a href="#"
+                className="button" onClick={::this.onPathSave}>
+                <i className="fa fa-save" />&nbsp;Save
+              </a>
+              <a href="#"
+                className="button" onClick={::this.onPathCancel}>
+                <i className="fa fa-times" />&nbsp;Cancel
+              </a>
+            </div>
+          ) : null
+        }
+          <TextField
             value={editingPath}
-            options={paths}
             onChange={::this.onPathChange}
+            style={{width: '95%'}}
           />
-          <span onClick={::this.onPathSave}>Save</span>
+
         </span>
-        <span onClick={::this.onEditAxapis}>
+        <span className="axapis" onClick={::this.onEditAxapis}>
           { this.renderAxapis() }
-          <span onClick={::this.onEditAxapis}>Edit</span>
         </span>
-        <span>
-          Fail:{unitTestFailCount} Total:{unitTestTotalCount}
+        <span className="end2end-test">
+          <span style={{color: 'red'}}>{end2endTestFailCount}</span>/{end2endTestTotalCount}
         </span>
-        <span>
-          Fail:{end2endTestFailCount} Total:{end2endTestTotalCount}
+        <span className="unit-test">
+          <span style={{color: 'red'}}>{unitTestFailCount}</span>/{unitTestTotalCount}
         </span>
-        <span>
-          Fail:{axapiTestFailCount} Total:{axapiTestTotalCount}
+        <span className="axapi-test">
+          <span style={{color: 'red'}}>{axapiTestFailCount}</span>/{axapiTestTotalCount}
         </span>
 
       </div>

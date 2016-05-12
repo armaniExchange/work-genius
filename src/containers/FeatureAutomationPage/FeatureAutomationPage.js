@@ -97,17 +97,17 @@ class FeatureAutomationPage extends Component {
           <Paper className="table">
             <div className="table-header">
               <div className="table-row">
-                <span>Category Name</span>
+                <span className="category-name">Category Name</span>
                 {/*
                 <span>Pages</span>
                 <span>Owners</span>
                 <span>Complicate</span>
                 */}
-                <span>Path</span>
-                <span>AXAPIs</span>
-                <span>Unit Test Document</span>
-                <span>Unit Test Code</span>
-                <span>AXAPI Test cases</span>
+                <span className="path">Path</span>
+                <span className="axapis">AXAPIs</span>
+                <span className="end2end-test">End2end test</span>
+                <span className="unit-test">Unit Test</span>
+                <span className="axapi-test">AXAPI Test</span>
               </div>
             </div>
             <div className="table-body">

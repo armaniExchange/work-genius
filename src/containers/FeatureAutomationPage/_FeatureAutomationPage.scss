@@ -9,7 +9,6 @@
       font-weight: bold;
       line-height: 24px;
       letter-spacing: 0;
-      height: 48px;
       font-size: 12px;
       color: rgba(0, 0, 0, 0.54);
       transition: none;
@@ -17,12 +16,37 @@
 
       .table-row {
         border: none;
+        > span {
+          text-align: center;
+        }
       }
     }
     .table-row {
-      >span {
+      > span {
         display: inline-block;
-        width: 200px;
+        vertical-align: middle;
+        width: 100px;
+        padding: 5px;
+        position: relative;
+      }
+      .category-name, .path,.axapis {
+        width: 250px;
+      }
+      .unit-test, .end2end-test, .axapi-test {
+        text-align: center;
+        min-width: 100px;
+      }
+      .button {
+        cursor: pointer;
+        padding: 3px;
+        margin: 3px;
+        border-radius: 3px;
+        text-decoration: none;
+        color: #00bcd4;
+        &.active, &:hover {
+          text-decoration: underline;
+          color: #23527c;
+        }
       }
     }
   }
