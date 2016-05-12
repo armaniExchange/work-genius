@@ -87,8 +87,8 @@ const schema = new GraphQLSchema({
       //group
       getAllGroups                           : GroupQuery.getAllGroups,
       // test report
-      getAllDocumentCategoriesWithReportTest : TestReportQuery.getAllDocumentCategoriesWithReportTest
-
+      getAllDocumentCategoriesWithTestReport : TestReportQuery.getAllDocumentCategoriesWithTestReport,
+      getTestReportCreatedTimeList           : TestReportQuery.getTestReportCreatedTimeList
     }
   }),
   mutation: new GraphQLObjectType({

@@ -2,7 +2,7 @@
 import React, { Component, PropTypes } from 'react';
 import _ from 'lodash';
 import TextField from 'material-ui/lib/text-field';
-
+import Tooltip from 'rc-tooltip';
 // Styles
 import './_FeatureAutomationRow.css';
 
@@ -41,7 +41,6 @@ class FeatureAutomationRow extends Component {
   }
 
   onOwnerChange(value) {
-    console.log(value);
     this.setState({ editingOwner: value});
   }
 
@@ -68,20 +67,6 @@ class FeatureAutomationRow extends Component {
   }
 
   renderAxapis() {
-    const style = {
-      borderRadius: 3,
-      marginLeft:2,
-      padding: 2
-    };
-    const urlStyle = Object.assign({
-      backgroundColor: 'lightblue',
-      color: 'white'
-    }, style);
-    const emptyUrlStyle = Object.assign({
-      backgroundColor: 'pink',
-      color: 'white'
-    }, style);
-
     const { axapis } = this.props;
     const result = _.chain(axapis)
       .union(['POST', 'GET', 'PUT', 'DELETE'])
@@ -92,19 +77,35 @@ class FeatureAutomationRow extends Component {
       .groupBy(axapi => axapi.method)
       .map((val, key) => {
         return (
-          <div style={{ lineHeight: 1.8, fontSize: '.8em' }} key={key}>
-            <span style={{ width: 46, display: 'inline-block' }}>{key}&nbsp;</span>
+          <div key={key}>
+            <span>{key}</span>
             {
-              val.length === 1 && val[0].url == null ? (<span style={emptyUrlStyle}>None</span>) : val.map((item, index) => {
-                return ( item.url && <span style={urlStyle} key={index}>{item.url}</span> );
-              })
+              val.length === 1 && val[0].url == null ? (
+                  <span className="feature-automation-tag alert">None</span>
+                ) : (
+                val.map((item, index) => {
+                  return ( item.url && <span className="feature-automation-tag" key={index}>{item.url}</span> );
+                })
+               )
             }
           </div>
         );
       })
       .value();
     return (
-      <div> { result }</div>
+      <div>{ result }</div>
+    );
+  }
+
+  renderTooltip(testReport, key) {
+    return (
+      testReport.filter(item => !item.isSuccess)
+        .map((item, index) => (
+          <div key={index}>
+            <span className="feature-automation-tag">{item[key]}</span>
+            <span>&nbsp;&nbsp;{item.errorMessage}</span>
+          </div>
+        ))
     );
   }
 
@@ -115,6 +116,9 @@ class FeatureAutomationRow extends Component {
       collapsed,
       children,
       path,
+      axapiTest,
+      unitTest,
+      end2endTest,
       axapiTestFailCount,
       axapiTestTotalCount,
       unitTestTotalCount,
@@ -179,21 +183,35 @@ class FeatureAutomationRow extends Component {
             onChange={::this.onPathChange}
             style={{width: '95%'}}
           />
-
         </span>
-        <span className="axapis" onClick={::this.onEditAxapis}>
-          { this.renderAxapis() }
-        </span>
+        <span className="axapis" onClick={::this.onEditAxapis}>{this.renderAxapis()}</span>
         <span className="end2end-test">
-          <span style={{color: 'red'}}>{end2endTestFailCount}</span>/{end2endTestTotalCount}
+          <Tooltip
+            placement="bottom"
+            trigger={['hover']}
+            overlay={this.renderTooltip(end2endTest, 'path')}>
+            <a href="#" style={{color: 'red'}}>{end2endTestFailCount}</a>
+          </Tooltip>
+          /{end2endTestTotalCount}
         </span>
         <span className="unit-test">
-          <span style={{color: 'red'}}>{unitTestFailCount}</span>/{unitTestTotalCount}
+          <Tooltip
+            placement="bottom"
+            trigger={['hover']}
+            overlay={this.renderTooltip(unitTest, 'path')}>
+            <a href="#" style={{color: 'red'}}>{unitTestFailCount}</a>
+          </Tooltip>
+          /{unitTestTotalCount}
         </span>
         <span className="axapi-test">
-          <span style={{color: 'red'}}>{axapiTestFailCount}</span>/{axapiTestTotalCount}
+          <Tooltip
+            placement="bottom"
+            trigger={['hover']}
+            overlay={this.renderTooltip(axapiTest, 'api')}>
+            <a href="#" style={{color: 'red'}}>{axapiTestFailCount}</a>
+          </Tooltip>
+          /{axapiTestTotalCount}
         </span>
-
       </div>
     );
   }
@@ -212,10 +230,13 @@ FeatureAutomationRow.propTypes = {
   articlesCount         : PropTypes.number,
   path                  : PropTypes.string,
   axapis                : PropTypes.array,
+  axapiTest             : PropTypes.array,
   axapiTestTotalCount   : PropTypes.number,
   axapiTestFailCount    : PropTypes.number,
+  unitTest              : PropTypes.array,
   unitTestTotalCount    : PropTypes.number,
   unitTestFailCount     : PropTypes.number,
+  end2endTest           : PropTypes.array,
   end2endTestTotalCount : PropTypes.number,
   end2endTestFailCount  : PropTypes.number
 };

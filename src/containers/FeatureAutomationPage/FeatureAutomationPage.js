@@ -5,8 +5,10 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Paper from 'material-ui/lib/paper';
+import moment from 'moment';
 
 import * as FeatureAutomationActions from '../../actions/feature-automation-page-action';
+import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 
 import { depthFirstFlat } from '../../libraries/tree';
 import FeatureAutomationRow from '../../components/FeatureAutomationRow/FeatureAutomationRow';
@@ -25,7 +27,12 @@ class FeatureAutomationPage extends Component {
   }
 
   componentDidMount() {
-    this.props.featureAutomationActions.fetchDocumentCategoriesWithReport();
+    const {
+      fetchDocumentCategoriesWithReport,
+      fetchTestReportCreatedTimeList
+    } = this.props.featureAutomationActions;
+    fetchTestReportCreatedTimeList();
+    fetchDocumentCategoriesWithReport();
   }
 
   toggleChildren({id, forceEnable}) {
@@ -56,11 +63,6 @@ class FeatureAutomationPage extends Component {
   }
 
   onAxapisSave(id, axapis) {
-    console.log('onAxapisSave');
-    console.log('id');
-    console.log(id);
-    console.log('axapis');
-    console.log(axapis);
     this.props.featureAutomationActions.setupTestReportOfCategory({
       categoryId: id,
       axapis
@@ -74,26 +76,71 @@ class FeatureAutomationPage extends Component {
     });
   }
 
+  onUnitTestCreatedTimeChange(value) {
+    this.setState({unitTestCreatedTime: value});
+  }
+
+  onAxapiTestCreatedTimeChange(value) {
+    this.setState({axapiTestCreatedTime: value});
+  }
+
+  onEnd2endTestCreatedTimeChange(value) {
+    this.setState({end2endTestCreatedTime: value});
+  }
+
   render() {
     const {
-      documentCategoriesWithReportTest
+      documentCategoriesWithReportTest,
+      unitTestCreatedTimeList,
+      end2endTestCreatedTimeList,
+      axapiTestCreatedTimeList,
     } = this.props;
     const {
       displayCategoriesId,
       isAxapiEditDialogDisplay,
       editingCategoryId,
-      editingAxapis
+      editingAxapis,
+      axapiTestCreatedTime,
+      end2endTestCreatedTime,
+      unitTestCreatedTime
     } = this.state;
 
     const displayTree = depthFirstFlat(documentCategoriesWithReportTest, (node) => {
       return node.name ==='root' || ( displayCategoriesId.includes(node.id));
     });
-
+    console.log('unitTestCreatedTimeList');
+    console.log(unitTestCreatedTimeList);
     return (
       <div>
         <Breadcrumb data={BREADCRUMB.editDocumentCategory} />
         <div className="feature-automation-page">
           <h3>Feature Automation</h3>
+          <div>
+            <label>Unit Test:&nbsp;</label>
+            <DropDownList
+              title={unitTestCreatedTime ? unitTestCreatedTime : 'last'}
+              onOptionClick={::this.onUnitTestCreatedTimeChange}
+              aryOptionConfig={unitTestCreatedTimeList.map(item => {
+                return { title: moment(item).format('lll'), value: item};
+              })}
+            />
+            <label>AXAPI:&nbsp;</label>
+            <DropDownList
+              title={axapiTestCreatedTime ? axapiTestCreatedTime : 'last'}
+              onOptionClick={::this.onAxapiTestCreatedTimeChange}
+              aryOptionConfig={axapiTestCreatedTimeList.map(item => {
+                return { title: moment(item).format('lll'), value: item};
+              })}
+            />
+            <label>End2end:&nbsp;</label>
+            <DropDownList
+              title={end2endTestCreatedTime ? end2endTestCreatedTime : 'last'}
+              onOptionClick={::this.onEnd2endTestCreatedTimeChange}
+              aryOptionConfig={end2endTestCreatedTimeList.map(item => {
+                return { title: moment(item).format('lll'), value: item};
+              })}
+            />
+          </div>
           <Paper className="table">
             <div className="table-header">
               <div className="table-row">
@@ -141,19 +188,33 @@ class FeatureAutomationPage extends Component {
 }
 
 FeatureAutomationPage.propTypes = {
-  documentCategoriesWithReportTest  : PropTypes.object,
-  featureAutomationActions          : PropTypes.object.isRequired
+  documentCategoriesWithReportTest : PropTypes.object,
+  featureAutomationActions         : PropTypes.object.isRequired,
+  unitTestCreatedTimeList          : PropTypes.array,
+  end2endTestCreatedTimeList       : PropTypes.array,
+  axapiTestCreatedTimeList         : PropTypes.array
 };
 
 FeatureAutomationPage.defaultProps = {
+  unitTestCreatedTimeList: [],
+  end2endTestCreatedTimeList: [],
+  axapiTestCreatedTimeList: []
 };
 
 function mapStateToProps(state) {
   const {
-    documentCategoriesWithReportTest
+    documentCategoriesWithReportTest,
+    unitTestCreatedTimeList,
+    end2endTestCreatedTimeList,
+    axapiTestCreatedTimeList
   } = state.featureAutomation.toJS();
 
-  return { documentCategoriesWithReportTest };
+  return {
+    documentCategoriesWithReportTest,
+    unitTestCreatedTimeList,
+    end2endTestCreatedTimeList,
+    axapiTestCreatedTimeList
+  };
 }
 
 function mapDispatchToProps(dispatch) {

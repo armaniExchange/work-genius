@@ -2,7 +2,7 @@
  * @author Steven Fong
  */
 // Libraries
-import { Map, fromJS } from 'immutable';
+import { Map, List, fromJS } from 'immutable';
 import _ from 'lodash';
 // Constants
 //
@@ -35,32 +35,41 @@ function transformToTree(dataArr) {
     });
     sumUpFromChildrenNode(tree, {
       init: {
-        accumCount: 0,
+        accumArticlesCount: 0,
         accumAxapiTestTotalCount: 0,
         accumAxapiTestFailCount: 0,
         accumUnitTestTotalCount: 0,
         accumUnitTestFailCount: 0,
         accumEnd2EndTestTotalCount: 0,
-        accumEnd2EndTestFailCount: 0
+        accumEnd2EndTestFailCount: 0,
+        accumAxapiTest: [],
+        accumUnitTest: [],
+        accumEnd2EndTest: []
       },
       siblingMerge(prev, current) {
         return {
-          accumCount: prev.accumCount + (current.articlesCount || 0),
+          accumArticlesCount: prev.accumArticlesCount + (current.articlesCount || 0),
+          accumAxapiTest: prev.accumAxapiTest.concat(current.axapiTest),
           accumAxapiTestTotalCount: prev.accumAxapiTestTotalCount + current.axapiTestTotalCount,
           accumAxapiTestFailCount: prev.accumAxapiTestFailCount + current.axapiTestFailCount,
+          accumUnitTest: prev.accumUnitTest.concat(current.unitTest),
           accumUnitTestTotalCount: prev.accumUnitTestTotalCount + current.unitTestTotalCount,
           accumUnitTestFailCount: prev.accumUnitTestFailCount + current.unitTestFailCount,
+          accumEnd2EndTest: prev.accumEnd2EndTest + current.end2endTest,
           accumEnd2EndTestTotalCount: prev.accumEnd2EndTestTotalCount + current.end2endTestTotalCount,
           accumEnd2EndTestFailCount: prev.accumEnd2EndTestFailCount + current.end2endTestFailCount
         };
       },
       childrenParentMerge(childrenResult, parent) {
         return {
-          articlesCount: childrenResult.accumCount + (parent.articlesCount || 0),
+          articlesCount: childrenResult.accumArticlesCount + (parent.articlesCount || 0),
+          axapiTest: (parent.axapiTest || []).concat(childrenResult.accumAxapiTest),
           axapiTestTotalCount: childrenResult.accumAxapiTestTotalCount + parent.axapiTestTotalCount,
           axapiTestFailCount: childrenResult.accumAxapiTestFailCount + parent.axapiTestFailCount,
+          unitTest: (parent.unitTest || []).concat(childrenResult.accumUnitTest),
           unitTestTotalCount: childrenResult.accumUnitTestTotalCount + parent.unitTestTotalCount,
           unitTestFailCount: childrenResult.accumUnitTestFailCount + parent.unitTestFailCount,
+          end2endTest: (parent.end2endTest || []).concat(childrenResult.accumEnd2EndTest),
           end2endTestTotalCount: childrenResult.accumEnd2EndTestTotalCount + parent.end2endTestTotalCount,
           end2endTestFailCount: childrenResult.accumEnd2EndTestFailCount + parent.end2endTestFailCount
         };
@@ -71,12 +80,19 @@ function transformToTree(dataArr) {
 
 const initialState = Map({
   documentCategoriesWithReportTest: Map({}),
+  unitTestCreatedTimeList: List.of(),
+  end2endTestCreatedTimeList: List.of(),
+  axapiTestCreatedTimeList: List.of()
 });
 
 export default function featureAutomationReducer(state = initialState, action) {
   switch (action.type) {
     case actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_REPORT_TEST_SUCCESS:
       return state.set('documentCategoriesWithReportTest', fromJS(transformToTree(action.data)));
+    case actionTypes.FETCH_TEST_REPORT_CREATED_TIME_LIST_SUCCESS:
+      return state.set('unitTestCreatedTimeList', List(action.unitTestCreatedTimeList))
+        .set('end2endTestCreatedTimeList', List(action.end2endTestCreatedTimeList))
+        .set('axapiTestCreatedTimeList', List(action.axapiTestCreatedTimeList));
     default:
       return state;
   }

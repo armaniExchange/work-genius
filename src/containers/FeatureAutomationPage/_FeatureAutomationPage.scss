@@ -36,6 +36,14 @@
         text-align: center;
         min-width: 100px;
       }
+      .axapis > div {
+        line-height: 1.8;
+        font-size: .8em;
+        span:first-child {
+          width: 46px;
+          display: inline-block;
+        }
+      }
       .button {
         cursor: pointer;
         padding: 3px;
@@ -50,5 +58,17 @@
       }
     }
   }
+}
 
+.feature-automation-tag {
+  border-radius: 3px;
+  margin-right: 2px;
+  padding: 2px;
+  color: #39739d;
+  background-color: #E1ECF4;
+
+  &.alert {
+    background-color: pink;
+    color: white;
+  }
 }

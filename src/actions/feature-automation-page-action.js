@@ -22,16 +22,16 @@ export function fetchDocumentCategoriesWithReport() {
     const config = {
       method: 'POST',
       body: `{
-        getAllDocumentCategoriesWithReportTest {
+        getAllDocumentCategoriesWithTestReport {
           id,
           parentId,
           name,
           articlesCount,
           path,
           axapis,
-          axapiTest { isSuccess, errorMessage },
-          unitTest { isSuccess, errorMessage },
-          end2endTest { isSuccess, errorMessage }
+          axapiTest { isSuccess, errorMessage, api },
+          unitTest { isSuccess, errorMessage, path },
+          end2endTest { isSuccess, errorMessage, path }
         }
       }`,
       headers: {
@@ -47,9 +47,9 @@ export function fetchDocumentCategoriesWithReport() {
         return res.json();
       })
       .then((body) => {
-        const { getAllDocumentCategoriesWithReportTest } = body.data;
+        const { getAllDocumentCategoriesWithTestReport } = body.data;
         dispatch(setLoadingState(false));
-        dispatch(fetchDocumentCategoriesWithReportSuccess(getAllDocumentCategoriesWithReportTest));
+        dispatch(fetchDocumentCategoriesWithReportSuccess(getAllDocumentCategoriesWithTestReport));
       })
       .catch((error) => {
         dispatch(apiFailure(error));
@@ -99,6 +99,59 @@ export function setupTestReportOfCategory({categoryId, path, axapis}) {
         dispatch(fetchDocumentCategoriesWithReport());
         // dispatch(setLoadingState(false));
         dispatch(setupTestReportOfCategorySuccess());
+      })
+      .catch((error) => {
+        dispatch(apiFailure(error));
+      });
+  };
+}
+
+
+export function fetchTestReportCreatedTimeListSuccess(data) {
+  const {
+    unitTestCreatedTimeList,
+    end2endTestCreatedTimeList,
+    axapiTestCreatedTimeList
+  } = data;
+  return {
+    type: actionTypes.FETCH_TEST_REPORT_CREATED_TIME_LIST_SUCCESS,
+    unitTestCreatedTimeList,
+    end2endTestCreatedTimeList,
+    axapiTestCreatedTimeList
+  };
+}
+
+export function fetchTestReportCreatedTimeList() {
+  return dispatch => {
+    dispatch(setLoadingState(true));
+    dispatch({
+      type: actionTypes.FETCH_TEST_REPORT_CREATED_TIME_LIST
+    });
+    const config = {
+      method: 'POST',
+      body: `{
+        getTestReportCreatedTimeList {
+          unitTestCreatedTimeList,
+          end2endTestCreatedTimeList,
+          axapiTestCreatedTimeList
+        }
+      }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((body) => {
+        const { getTestReportCreatedTimeList } = body.data;
+        dispatch(setLoadingState(false));
+        dispatch(fetchTestReportCreatedTimeListSuccess(getTestReportCreatedTimeList));
       })
       .catch((error) => {
         dispatch(apiFailure(error));
