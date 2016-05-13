@@ -28,12 +28,22 @@
         width: 100px;
         padding: 5px;
         position: relative;
+        .Select {
+          text-align: left;
+        }
       }
       .category-name, .path,.axapis {
-        width: 250px;
+        min-width: 230px;
+        width: 18%;
+      }
+      .owner, .difficulty {
+        min-width: 150px;
+        text-align: center;
+        width: 10%;
       }
       .articles-count, .unit-test, .end2end-test, .axapi-test {
         text-align: center;
+        width: 6%;
         min-width: 100px;
       }
       .axapis > div {

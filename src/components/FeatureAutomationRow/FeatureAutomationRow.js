@@ -2,8 +2,9 @@
 import React, { Component, PropTypes } from 'react';
 import _ from 'lodash';
 import TextField from 'material-ui/lib/text-field';
-
+import Select from 'react-select';
 import FeatureAutomationCount from '../FeatureAutomationCount/FeatureAutomationCount';
+import { FEATURE_ANALYSIS_DIFFICULTIES } from '../../constants/featureAnalysis';
 // Styles
 import './_FeatureAutomationRow.css';
 
@@ -126,6 +127,42 @@ class FeatureAutomationRow extends Component {
     );
   }
 
+  renderOwners() {
+    const {
+      owners,
+      children
+    } = this.props;
+    const hasChildren = children && children.length > 0;
+    return !hasChildren ? owners.map((owner, index) => <span key={index}>{owner}&nbsp;</span>) : null;
+  }
+
+  renderDiffcultyOrDiffculties() {
+    const {
+      children,
+      difficulty,
+      difficulties,
+    } = this.props;
+    const hasChildren = children && children.length > 0;
+    return !hasChildren ? (
+      <Select
+        value={difficulty}
+        options={FEATURE_ANALYSIS_DIFFICULTIES.map((difficultyName, index) => {
+          return { label: difficultyName, value: index };
+        })}
+      />
+    ) : (
+      difficulties.map((difficultyCount, index) => {
+        return {
+          difficultyName: FEATURE_ANALYSIS_DIFFICULTIES[index],
+          difficultyCount
+        };
+      })
+      .filter(eachDiffculty => eachDiffculty.difficultyCount !==0 )
+      .map(eachDiffculty => `${eachDiffculty.difficultyCount} ${eachDiffculty.difficultyName}`)
+      .join(', ')
+    );
+  }
+
   render() {
     const {
       name,
@@ -165,19 +202,12 @@ class FeatureAutomationRow extends Component {
           style={this.getPaddingLeft(level)}>
           {Indicator} {name}
         </span>
-        {/*
-        <span>
-          <Select
-            multi={true}
-            value={editingOwner}
-            options={users}
-            onChange={::this.onOwnerChange}
-          />
+        <span className="owner">
+          { this.renderOwners() }
         </span>
-        <span>
-          hard 3, easy 1
+        <span className="difficulty">
+          { this.renderDiffcultyOrDiffculties() }
         </span>
-        */}
         <span className="path">
         {
           !hasChildren && editingPath !== path ? (
@@ -262,7 +292,10 @@ FeatureAutomationRow.propTypes = {
   unitTestFailCount     : PropTypes.number,
   end2endTest           : PropTypes.array,
   end2endTestTotalCount : PropTypes.number,
-  end2endTestFailCount  : PropTypes.number
+  end2endTestFailCount  : PropTypes.number,
+  owners                : PropTypes.array,
+  difficulties          : PropTypes.array,
+  difficulty            : PropTypes.number
 };
 
 FeatureAutomationRow.defaultProps = {

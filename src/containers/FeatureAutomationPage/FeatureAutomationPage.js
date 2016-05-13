@@ -9,7 +9,6 @@ import moment from 'moment';
 
 import * as FeatureAutomationActions from '../../actions/feature-automation-page-action';
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
-
 import { depthFirstFlat } from '../../libraries/tree';
 import FeatureAutomationRow from '../../components/FeatureAutomationRow/FeatureAutomationRow';
 import EditFeatureAutomationAxapiDialog from '../../components/EditFeatureAutomationAxapiDialog/EditFeatureAutomationAxapiDialog';
@@ -139,71 +138,66 @@ class FeatureAutomationPage extends Component {
     });
 
     return (
-      <div>
-        <div className="feature-automation-page">
-          <h3>Feature Automation</h3>
-          <div>
-            <label>End2end:&nbsp;</label>
-            <DropDownList
-              title={this.getCreatedTimeTitle(end2endTestCreatedTime, end2endTestCreatedTimeList)}
-              onOptionClick={::this.onEnd2endTestCreatedTimeChange}
-              aryOptionConfig={end2endTestCreatedTimeList.map(this.parseCreatedTimeToDropdownListItem)}
-            />
-            <label>Unit Test:&nbsp;</label>
-            <DropDownList
-              title={this.getCreatedTimeTitle(unitTestCreatedTime, unitTestCreatedTimeList)}
-              onOptionClick={::this.onUnitTestCreatedTimeChange}
-              aryOptionConfig={unitTestCreatedTimeList.map(this.parseCreatedTimeToDropdownListItem)}
-            />
-            <label>AXAPI:&nbsp;</label>
-            <DropDownList
-              title={this.getCreatedTimeTitle(axapiTestCreatedTime, axapiTestCreatedTimeList)}
-              onOptionClick={::this.onAxapiTestCreatedTimeChange}
-              aryOptionConfig={axapiTestCreatedTimeList.map(this.parseCreatedTimeToDropdownListItem)}
-            />
-            <RaisedButton
-              secondary={true}
-              style={{float: 'right'}}
-              onClick={::this.searchByCreatedTime}
-              label="search"
-            />
-          </div>
-          <br />
-          <Paper className="table">
-            <div className="table-header">
-              <div className="table-row">
-                <span className="category-name">Category Name</span>
-                {/*
-                <span>Pages</span>
-                <span>Owners</span>
-                <span>Complicate</span>
-                */}
-                <span className="path">Path</span>
-                <span className="axapis">AXAPIs</span>
-                <span className="articles-count">Unit Test Documents</span>
-                <span className="end2end-test">End2end test</span>
-                <span className="unit-test">Unit Test</span>
-                <span className="axapi-test">AXAPI Test</span>
-              </div>
-            </div>
-            <div className="table-body">
-              {
-                displayTree.length > 0 ? displayTree.map(row => {
-                  return (
-                    <FeatureAutomationRow
-                      key={row.id}
-                      onEditAxapis={::this.openAxapisEditDialog}
-                      onPathSave={::this.onPathSave}
-                      toggleChildren={::this.toggleChildren}
-                      {...row} />
-                  );
-                }) : (
-                  <div style={{padding: 15, textAlign: 'center'}}>No data</div>
-                )
-              }
-            </div>
-          </Paper>
+      <div className="feature-automation-page">
+        <h3>Feature Automation</h3>
+        <div>
+          <label>End2end:&nbsp;</label>
+          <DropDownList
+            title={this.getCreatedTimeTitle(end2endTestCreatedTime, end2endTestCreatedTimeList)}
+            onOptionClick={::this.onEnd2endTestCreatedTimeChange}
+            aryOptionConfig={end2endTestCreatedTimeList.map(this.parseCreatedTimeToDropdownListItem)}
+          />
+          <label>Unit Test:&nbsp;</label>
+          <DropDownList
+            title={this.getCreatedTimeTitle(unitTestCreatedTime, unitTestCreatedTimeList)}
+            onOptionClick={::this.onUnitTestCreatedTimeChange}
+            aryOptionConfig={unitTestCreatedTimeList.map(this.parseCreatedTimeToDropdownListItem)}
+          />
+          <label>AXAPI:&nbsp;</label>
+          <DropDownList
+            title={this.getCreatedTimeTitle(axapiTestCreatedTime, axapiTestCreatedTimeList)}
+            onOptionClick={::this.onAxapiTestCreatedTimeChange}
+            aryOptionConfig={axapiTestCreatedTimeList.map(this.parseCreatedTimeToDropdownListItem)}
+          />
+          <RaisedButton
+            secondary={true}
+            style={{float: 'right'}}
+            onClick={::this.searchByCreatedTime}
+            label="search"
+          />
         </div>
+        <br />
+        <Paper className="table">
+          <div className="table-header">
+            <div className="table-row">
+              <span className="category-name">Category Name</span>
+              <span className="owner">Owner</span>
+              <span className="difficulty">Difficulty</span>
+              <span className="path">Path</span>
+              <span className="axapis">AXAPIs</span>
+              <span className="articles-count">Unit Test Documents</span>
+              <span className="end2end-test">End2end test</span>
+              <span className="unit-test">Unit Test</span>
+              <span className="axapi-test">AXAPI Test</span>
+            </div>
+          </div>
+          <div className="table-body">
+            {
+              displayTree.length > 0 ? displayTree.map(row => {
+                return (
+                  <FeatureAutomationRow
+                    key={row.id}
+                    onEditAxapis={::this.openAxapisEditDialog}
+                    onPathSave={::this.onPathSave}
+                    toggleChildren={::this.toggleChildren}
+                    {...row} />
+                );
+              }) : (
+                <div style={{padding: 15, textAlign: 'center'}}>No data</div>
+              )
+            }
+          </div>
+        </Paper>
         <EditFeatureAutomationAxapiDialog
           open={isAxapiEditDialogDisplay}
           id={editingCategoryId}

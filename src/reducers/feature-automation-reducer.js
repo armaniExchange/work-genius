@@ -9,6 +9,7 @@ import _ from 'lodash';
 import actionTypes from '../constants/action-types';
 import { MENU } from '../constants/menu';
 import { TECH_MENU } from '../constants/tec-menu';
+import { FEATURE_ANALYSIS_DIFFICULTIES } from '../constants/featureAnalysis';
 import {
   sumUpFromChildrenNode,
   generateTree
@@ -23,8 +24,10 @@ function transformToTree(dataArr) {
       const axapiTest = node.axapiTest || [];
       const unitTest = node.unitTest || [];
       const end2endTest = node.end2endTest || [];
-
+      const difficulty = (node.children && node.children.length > 0)  ? null : Math.round(Math.random()*5);
       return {
+        owners: [],
+        difficulty,
         axapiTestTotalCount: axapiTest.length,
         axapiTestFailCount: axapiTest.filter(item => !item.isSuccess).length,
         unitTestTotalCount: unitTest.length,
@@ -33,8 +36,10 @@ function transformToTree(dataArr) {
         end2endTestFailCount: end2endTest.filter(item => !item.isSuccess).length
       };
     });
+    const initDifficulties = Array.apply(null, { length: FEATURE_ANALYSIS_DIFFICULTIES.length }).map( ()=> 0);
     sumUpFromChildrenNode(tree, {
       init: {
+        difficulties: initDifficulties,
         accumArticlesCount: 0,
         accumAxapiTest: [],
         accumAxapiTestTotalCount: 0,
@@ -47,7 +52,20 @@ function transformToTree(dataArr) {
         accumEnd2endTestFailCount: 0,
       },
       siblingMerge(prev, current) {
+        let difficulties;
+        if (current.difficulty != null) {
+          difficulties = prev.difficulties.map((eachDiffculties, index)=> {
+            const isLeaf = !current.children || current.children.length === 0;
+            return eachDiffculties + (
+              current.difficulties ? current.difficulties[index] : 0
+            ) + (
+              current.difficulty === index && isLeaf ? 1 : 0
+            );
+          });
+        }
+
         return {
+          difficulties: difficulties,
           accumArticlesCount: prev.accumArticlesCount + (current.articlesCount || 0),
           accumAxapiTest: prev.accumAxapiTest.concat(current.axapiTest),
           accumAxapiTestTotalCount: prev.accumAxapiTestTotalCount + current.axapiTestTotalCount,
@@ -62,6 +80,7 @@ function transformToTree(dataArr) {
       },
       childrenParentMerge(childrenResult, parent) {
         return {
+          difficulties: childrenResult.difficulties,
           articlesCount: childrenResult.accumArticlesCount + (parent.articlesCount || 0),
           axapiTest: (parent.axapiTest || []).concat(childrenResult.accumAxapiTest),
           axapiTestTotalCount: childrenResult.accumAxapiTestTotalCount + parent.axapiTestTotalCount,
