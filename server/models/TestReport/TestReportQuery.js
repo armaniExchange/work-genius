@@ -74,12 +74,25 @@ let CategoryQuery = {
         const result = await r.db('work_genius')
           .table('document_categories')
           .filter({ isFeature: true })
-          .merge(function(documentCategory) {
+          .merge(function(category) {
             return r.db('work_genius')
               .table('test_report_categories')
-              .get(documentCategory('id'))
+              .get(category('id'))
               .default({});
           })
+          .merge(function(category) {
+            return {
+              articlesCount: r.db('work_genius')
+                .table('articles')
+                .getAll(category('id'), {index: 'categoryId'})
+                .count()
+            };
+          })
+          // .merge(function(category) {
+          //   return r.db('work_genius')
+          //     .table('assignment_categories')
+          //     .get(category('id'));
+          // })
           .merge(function(item) {
             var unitTest = r.db('work_genius')
               .table('unit_test_reports')

@@ -133,6 +133,7 @@ class FeatureAutomationRow extends Component {
       collapsed,
       children,
       path,
+      articlesCount,
       axapiTest,
       unitTest,
       end2endTest,
@@ -166,9 +167,6 @@ class FeatureAutomationRow extends Component {
         </span>
         {/*
         <span>
-          300
-        </span>
-        <span>
           <Select
             multi={true}
             value={editingOwner}
@@ -182,7 +180,7 @@ class FeatureAutomationRow extends Component {
         */}
         <span className="path">
         {
-          editingPath !== path ? (
+          !hasChildren && editingPath !== path ? (
             <div  style={{position: 'absolute', right: 10, top: -10}}>
               <a href="#"
                 className="button" onClick={::this.onPathSave}>
@@ -195,14 +193,28 @@ class FeatureAutomationRow extends Component {
             </div>
           ) : null
         }
-          <TextField
-            value={editingPath}
-            onChange={::this.onPathChange}
-            onKeyDown={::this.onPathKeyDown}
-            style={{width: '95%'}}
-          />
+        {
+          !hasChildren ? (
+            <TextField
+              value={editingPath}
+              onChange={::this.onPathChange}
+              onKeyDown={::this.onPathKeyDown}
+              style={{width: '95%'}}
+            />
+          ) : null
+        }
         </span>
-        <span className="axapis" onClick={::this.onEditAxapis}>{this.renderAxapis()}</span>
+        <span className="axapis">
+          {!hasChildren ? (
+            <a style={{float: 'right'}} href="#" onClick={!hasChildren ? ::this.onEditAxapis : (e)=> e.preventDefault()}>
+              <i className="fa fa-pencil" />&nbsp;Edit
+            </a>
+          ): null}
+          {!hasChildren ? this.renderAxapis() : null}
+        </span>
+        <span className="articles-count">
+          {articlesCount}
+        </span>
         <FeatureAutomationCount
           className="end2end-test"
           totalCount={end2endTestTotalCount}
@@ -264,7 +276,8 @@ FeatureAutomationRow.defaultProps = {
   unitTestTotalCount    : 0,
   unitTestFailCount     : 0,
   end2endTestTotalCount : 0,
-  end2endTestFailCount  : 0
+  end2endTestFailCount  : 0,
+  articlesCount         : 0
 };
 
 export default FeatureAutomationRow;

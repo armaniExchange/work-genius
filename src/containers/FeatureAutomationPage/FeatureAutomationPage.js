@@ -180,6 +180,7 @@ class FeatureAutomationPage extends Component {
                 */}
                 <span className="path">Path</span>
                 <span className="axapis">AXAPIs</span>
+                <span className="articles-count">Unit Test Documents</span>
                 <span className="end2end-test">End2end test</span>
                 <span className="unit-test">Unit Test</span>
                 <span className="axapi-test">AXAPI Test</span>
