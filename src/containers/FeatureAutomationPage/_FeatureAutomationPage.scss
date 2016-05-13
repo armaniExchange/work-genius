@@ -1,6 +1,8 @@
 .feature-automation-page {
+  min-width: 1400px;
   .table {
     .table-header {
+      padding: 8px;
       width: 100%;
       position: relative;
       vertical-align: bottom;
@@ -23,32 +25,36 @@
     }
     .table-row {
       > span {
-        display: inline-block;
+        display: table-cell;
         vertical-align: middle;
         width: 100px;
         padding: 5px;
         position: relative;
         .Select {
+          margin: 15px 0;
           text-align: left;
         }
       }
-      .category-name, .path,.axapis {
-        min-width: 230px;
-        width: 18%;
+      .category-name, .path {
+        min-width: 200px;
+        width: 20%;
       }
-      .owner, .difficulty {
-        min-width: 150px;
+      .axapis,  .owners {
+        min-width: 300px;
+        max-width: 300px;
+      }
+      .difficulty {
+        min-width: 180px;
         text-align: center;
-        width: 10%;
       }
       .articles-count, .unit-test, .end2end-test, .axapi-test {
         text-align: center;
-        width: 6%;
         min-width: 100px;
       }
       .axapis > div {
         line-height: 1.8;
         font-size: .8em;
+        white-space: nowrap;
         span:first-child {
           width: 46px;
           display: inline-block;

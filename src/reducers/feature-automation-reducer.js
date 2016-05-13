@@ -24,7 +24,7 @@ function transformToTree(dataArr) {
       const axapiTest = node.axapiTest || [];
       const unitTest = node.unitTest || [];
       const end2endTest = node.end2endTest || [];
-      const difficulty = (node.children && node.children.length > 0)  ? null : Math.round(Math.random()*5);
+      const difficulty = (node.children && node.children.length > 0)  ? null : Math.round(Math.random()*FEATURE_ANALYSIS_DIFFICULTIES.length);
       return {
         owners: [],
         difficulty,

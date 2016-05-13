@@ -4,6 +4,7 @@ import _ from 'lodash';
 import TextField from 'material-ui/lib/text-field';
 import Select from 'react-select';
 import FeatureAutomationCount from '../FeatureAutomationCount/FeatureAutomationCount';
+import FeatureAutomationRowInlineToolbar from '../FeatureAutomationRowInlineToolbar/FeatureAutomationRowInlineToolbar';
 import { FEATURE_ANALYSIS_DIFFICULTIES } from '../../constants/featureAnalysis';
 // Styles
 import './_FeatureAutomationRow.css';
@@ -21,11 +22,11 @@ class FeatureAutomationRow extends Component {
 
   updateStateFromProps(props) {
     const {
-      owner,
+      owners,
       path,
     } = props;
     return {
-      editingOwner: owner,
+      editingOwners: owners.toString(),
       editingPath: path
     };
   }
@@ -39,11 +40,8 @@ class FeatureAutomationRow extends Component {
   }
 
   getPaddingLeft(level) {
-    return { paddingLeft: level * 20 + 10 };
-  }
-
-  onOwnerChange(value) {
-    this.setState({ editingOwner: value});
+    // -1 because remove root
+    return { paddingLeft: ( level - 1 )* 20 + 10 };
   }
 
   onPathChange(event) {
@@ -72,15 +70,13 @@ class FeatureAutomationRow extends Component {
 
   }
 
-  onPathSave(event) {
-    event && event.preventDefault();
+  onPathSave() {
     const { id } = this.props;
     const { editingPath } = this.state;
     this.props.onPathSave(id, editingPath);
   }
 
-  onPathCancel(event) {
-    event && event.preventDefault();
+  onPathCancel() {
     this.setState({ editingPath: this.props.path });
   }
 
@@ -95,7 +91,7 @@ class FeatureAutomationRow extends Component {
       .groupBy(axapi => axapi.method)
       .map((val, key) => {
         return (
-          <div key={key}>
+          <div key={key} style={{overflow: 'hidden', textOverflow: 'ellipsis'}}>
             <span>{key}</span>
             {
               val.length === 1 && val[0].url == null ? (
@@ -127,13 +123,47 @@ class FeatureAutomationRow extends Component {
     );
   }
 
+  onOwnersChange(value) {
+    this.setState({ editingOwners: value });
+  }
+
+  onOwnersSave() {
+    console.log('onOwnersSave');
+    console.log(this.state.editingOwners);
+  }
+
+  onOwnerCancel() {
+    this.setState({ editingOwners: this.props.owners.toString()});
+  }
+
   renderOwners() {
     const {
       owners,
+      allUsers,
       children
     } = this.props;
+    const { editingOwners } = this.state;
     const hasChildren = children && children.length > 0;
-    return !hasChildren ? owners.map((owner, index) => <span key={index}>{owner}&nbsp;</span>) : null;
+    // owners.map((owner, index) => <span key={index}>{owner}&nbsp;</span>)
+    return !hasChildren ?  (
+      <div>
+        <FeatureAutomationRowInlineToolbar
+          onSave={::this.onOwnersSave}
+          onCancel={::this.onOwnerCancel}
+          show={editingOwners !== owners.toString()}
+          disabledSave={editingOwners.split(',').length > 2}
+        />
+        <Select
+          multi={true}
+          value={editingOwners}
+          onChange={::this.onOwnersChange}
+          options={allUsers.map(item => {
+            return { label: item.name, value: item.id};
+          })}
+        />
+      </div>
+
+    ) : null;
   }
 
   renderDiffcultyOrDiffculties() {
@@ -182,7 +212,6 @@ class FeatureAutomationRow extends Component {
       end2endTestFailCount
     } = this.props;
     const {
-      // editingOwner,
       editingPath
     } = this.state;
     const hasChildren = children && children.length > 0;
@@ -202,49 +231,40 @@ class FeatureAutomationRow extends Component {
           style={this.getPaddingLeft(level)}>
           {Indicator} {name}
         </span>
-        <span className="owner">
+        <span className="owners">
           { this.renderOwners() }
         </span>
         <span className="difficulty">
           { this.renderDiffcultyOrDiffculties() }
         </span>
         <span className="path">
-        {
-          !hasChildren && editingPath !== path ? (
-            <div  style={{position: 'absolute', right: 10, top: -10}}>
-              <a href="#"
-                className="button" onClick={::this.onPathSave}>
-                <i className="fa fa-save" />&nbsp;Save
-              </a>
-              <a href="#"
-                className="button" onClick={::this.onPathCancel}>
-                <i className="fa fa-times" />&nbsp;Cancel
-              </a>
-            </div>
-          ) : null
-        }
-        {
-          !hasChildren ? (
-            <TextField
-              value={editingPath}
-              onChange={::this.onPathChange}
-              onKeyDown={::this.onPathKeyDown}
-              style={{width: '95%'}}
-            />
-          ) : null
-        }
+          <FeatureAutomationRowInlineToolbar
+            onSave={::this.onPathSave}
+            onCancel={::this.onPathCancel}
+            show={!hasChildren && editingPath !== path}
+          />
+          {
+            !hasChildren ? (
+              <TextField
+                value={editingPath}
+                onChange={::this.onPathChange}
+                onKeyDown={::this.onPathKeyDown}
+                style={{width: '95%'}}
+              />
+            ) : null
+          }
         </span>
         <span className="axapis">
-          {!hasChildren ? (
-            <a style={{float: 'right'}} href="#" onClick={!hasChildren ? ::this.onEditAxapis : (e)=> e.preventDefault()}>
-              <i className="fa fa-pencil" />&nbsp;Edit
-            </a>
-          ): null}
+          {
+            !hasChildren ? (
+              <a style={{float: 'right'}} href="#" onClick={!hasChildren ? ::this.onEditAxapis : (e)=> e.preventDefault()}>
+                <i className="fa fa-pencil" />&nbsp;Edit
+              </a>
+            ): null
+          }
           {!hasChildren ? this.renderAxapis() : null}
         </span>
-        <span className="articles-count">
-          {articlesCount}
-        </span>
+        <span className="articles-count">{articlesCount}</span>
         <FeatureAutomationCount
           className="end2end-test"
           totalCount={end2endTestTotalCount}
@@ -295,14 +315,14 @@ FeatureAutomationRow.propTypes = {
   end2endTestFailCount  : PropTypes.number,
   owners                : PropTypes.array,
   difficulties          : PropTypes.array,
-  difficulty            : PropTypes.number
+  difficulty            : PropTypes.number,
+  allUsers              : PropTypes.array
 };
 
 FeatureAutomationRow.defaultProps = {
   level                 : 0,
   collapsed             : false,
   axapis                : [],
-  owner                 : '',
   path                  : '',
   axapiTestTotalCount   : 0,
   axapiTestFailCount    : 0,
@@ -310,7 +330,8 @@ FeatureAutomationRow.defaultProps = {
   unitTestFailCount     : 0,
   end2endTestTotalCount : 0,
   end2endTestFailCount  : 0,
-  articlesCount         : 0
+  articlesCount         : 0,
+  allUsers              : []
 };
 
 export default FeatureAutomationRow;

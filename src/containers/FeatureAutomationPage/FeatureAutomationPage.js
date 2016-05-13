@@ -8,6 +8,8 @@ import Paper from 'material-ui/lib/paper';
 import moment from 'moment';
 
 import * as FeatureAutomationActions from '../../actions/feature-automation-page-action';
+import * as DocumentActions from '../../actions/document-page-actions';
+
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 import { depthFirstFlat } from '../../libraries/tree';
 import FeatureAutomationRow from '../../components/FeatureAutomationRow/FeatureAutomationRow';
@@ -28,8 +30,12 @@ class FeatureAutomationPage extends Component {
       fetchDocumentCategoriesWithReport,
       fetchTestReportCreatedTimeList
     } = this.props.featureAutomationActions;
+    const {
+      fetchAllUsers,
+    } = this.props.documentActions;
     fetchTestReportCreatedTimeList();
     fetchDocumentCategoriesWithReport();
+    fetchAllUsers();
   }
 
   toggleChildren({id, forceEnable}) {
@@ -101,7 +107,7 @@ class FeatureAutomationPage extends Component {
 
   parseCreatedTimeToDropdownListItem(item, index) {
     return {
-      title: `${index === 0 ? '(last)': ''} ${moment(item).format('lll')}`,
+      title: `${index === 0 ? '(last) ': ''} ${moment(item).format('lll')}`,
       value: item
     };
   }
@@ -111,7 +117,7 @@ class FeatureAutomationPage extends Component {
       return 'No Log';
     }
     if (createdTime === createdTimeList[0] || (!createdTime && createdTimeList.length !== 0) ){
-      return `(last)${moment(createdTimeList[0]).format('lll')}`;
+      return `(last) ${moment(createdTimeList[0]).format('lll')}`;
     }
     return moment(createdTime).format('lll');
   }
@@ -122,6 +128,7 @@ class FeatureAutomationPage extends Component {
       unitTestCreatedTimeList,
       end2endTestCreatedTimeList,
       axapiTestCreatedTimeList,
+      allUsers,
     } = this.props;
     const {
       displayCategoriesId,
@@ -135,7 +142,7 @@ class FeatureAutomationPage extends Component {
 
     const displayTree = depthFirstFlat(documentCategoriesWithReportTest, (node) => {
       return node.name ==='root' || ( displayCategoriesId.includes(node.id));
-    });
+    }).splice(1); //remove root
 
     return (
       <div className="feature-automation-page">
@@ -171,7 +178,7 @@ class FeatureAutomationPage extends Component {
           <div className="table-header">
             <div className="table-row">
               <span className="category-name">Category Name</span>
-              <span className="owner">Owner</span>
+              <span className="owners">Owners</span>
               <span className="difficulty">Difficulty</span>
               <span className="path">Path</span>
               <span className="axapis">AXAPIs</span>
@@ -187,6 +194,7 @@ class FeatureAutomationPage extends Component {
                 return (
                   <FeatureAutomationRow
                     key={row.id}
+                    allUsers={allUsers}
                     onEditAxapis={::this.openAxapisEditDialog}
                     onPathSave={::this.onPathSave}
                     toggleChildren={::this.toggleChildren}
@@ -213,15 +221,18 @@ class FeatureAutomationPage extends Component {
 FeatureAutomationPage.propTypes = {
   documentCategoriesWithReportTest : PropTypes.object,
   featureAutomationActions         : PropTypes.object.isRequired,
+  documentActions                  : PropTypes.object.isRequired,
   unitTestCreatedTimeList          : PropTypes.array,
   end2endTestCreatedTimeList       : PropTypes.array,
-  axapiTestCreatedTimeList         : PropTypes.array
+  axapiTestCreatedTimeList         : PropTypes.array,
+  allUsers                         : PropTypes.array,
 };
 
 FeatureAutomationPage.defaultProps = {
-  unitTestCreatedTimeList: [],
-  end2endTestCreatedTimeList: [],
-  axapiTestCreatedTimeList: []
+  unitTestCreatedTimeList          : [],
+  end2endTestCreatedTimeList       : [],
+  axapiTestCreatedTimeList         : [],
+  allUsers                         : []
 };
 
 function mapStateToProps(state) {
@@ -231,17 +242,19 @@ function mapStateToProps(state) {
     end2endTestCreatedTimeList,
     axapiTestCreatedTimeList
   } = state.featureAutomation.toJS();
-
+  const { allUsers } = state.documentation.toJS();
   return {
     documentCategoriesWithReportTest,
     unitTestCreatedTimeList,
     end2endTestCreatedTimeList,
-    axapiTestCreatedTimeList
+    axapiTestCreatedTimeList,
+    allUsers
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
+    documentActions     : bindActionCreators(DocumentActions, dispatch),
     featureAutomationActions: bindActionCreators(FeatureAutomationActions, dispatch),
   };
 }
