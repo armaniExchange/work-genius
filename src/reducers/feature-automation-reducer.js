@@ -100,7 +100,8 @@ const initialState = Map({
   documentCategoriesWithReportTest: Map({}),
   unitTestCreatedTimeList: List.of(),
   end2endTestCreatedTimeList: List.of(),
-  axapiTestCreatedTimeList: List.of()
+  axapiTestCreatedTimeList: List.of(),
+  filterOwner: ''
 });
 
 export default function featureAutomationReducer(state = initialState, action) {
@@ -111,6 +112,8 @@ export default function featureAutomationReducer(state = initialState, action) {
       return state.set('unitTestCreatedTimeList', List(action.unitTestCreatedTimeList))
         .set('end2endTestCreatedTimeList', List(action.end2endTestCreatedTimeList))
         .set('axapiTestCreatedTimeList', List(action.axapiTestCreatedTimeList));
+    case actionTypes.FILTER_TEST_REPORT:
+      return state.set('filterOwner', action.filterOwner);
     default:
       return state;
   }

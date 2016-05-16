@@ -174,3 +174,12 @@ export function fetchTestReportCreatedTimeList() {
       });
   };
 }
+
+export function filterTestReport({filterOwner}) {
+  return dispatch => {
+    dispatch({
+      type: actionTypes.FILTER_TEST_REPORT,
+      filterOwner
+    });
+  };
+}

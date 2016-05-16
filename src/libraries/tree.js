@@ -82,3 +82,25 @@ export function sumUpFromChildrenNode(rootNode, {init, siblingMerge, childrenPar
   }
   return _sumUpFromChildrenNode(rootNode);
 }
+
+export function filterChildren(rootNode, predicate) {
+  // filtered out which doesn't meet predicate
+  // if some node meet predicate
+  // it shows nodes all the way to the root
+
+  // copy root node,
+  // not to mutate original data
+  const copiedRootNode = Object.assign({}, rootNode);
+
+  function _filterChildren(node) {
+    const hasChildren = node.children && node.children.length > 0;
+    const filteredChildren = !hasChildren ? [] : node.children
+      // copy each child node
+      .map(childNode => Object.assign({}, childNode ))
+      .map(_filterChildren)
+      .filter(childNode => predicate(childNode) || ( childNode.children && childNode.children.length > 0) );
+
+    return Object.assign(node, {children: filteredChildren});
+  }
+  return _filterChildren(copiedRootNode);
+}

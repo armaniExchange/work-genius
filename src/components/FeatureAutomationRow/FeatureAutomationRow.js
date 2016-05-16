@@ -125,7 +125,9 @@ class FeatureAutomationRow extends Component {
       id,
       onOwnersSave
     } = this.props;
-    onOwnersSave(id, this.state.editingOwners.split(','));
+    const { editingOwners } = this.state;
+
+    onOwnersSave(id, editingOwners === '' ? [] : editingOwners.split(','));
   }
 
   onOwnerCancel() {

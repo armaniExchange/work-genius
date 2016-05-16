@@ -11,7 +11,7 @@ import * as FeatureAutomationActions from '../../actions/feature-automation-page
 import * as DocumentActions from '../../actions/document-page-actions';
 
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
-import { depthFirstFlat } from '../../libraries/tree';
+import { depthFirstFlat, filterChildren } from '../../libraries/tree';
 import FeatureAutomationRow from '../../components/FeatureAutomationRow/FeatureAutomationRow';
 import EditFeatureAutomationAxapiDialog from '../../components/EditFeatureAutomationAxapiDialog/EditFeatureAutomationAxapiDialog';
 import RaisedButton from 'material-ui/lib/raised-button';
@@ -135,17 +135,39 @@ class FeatureAutomationPage extends Component {
     return moment(createdTime).format('lll');
   }
 
-  render() {
+  onFilterOwnerChange(value) {
+    this.props.featureAutomationActions.filterTestReport({ filterOwner: value });
+  }
+
+  getDisplayTree() {
     const {
       documentCategoriesWithReportTest,
+      filterOwner
+    } = this.props;
+
+    const { displayCategoriesId } = this.state;
+
+    const filteredTree = filterChildren(documentCategoriesWithReportTest, (node) => {
+      return filterOwner ? (node.owners || [] ).includes(filterOwner) : true;
+    });
+
+    const displayTree = depthFirstFlat(filteredTree, (node) => {
+      return node.name ==='root' || ( displayCategoriesId.includes(node.id));
+    }).splice(1); //remove root
+
+    return displayTree;
+  }
+
+  render() {
+    const {
       unitTestCreatedTimeList,
       end2endTestCreatedTimeList,
       axapiTestCreatedTimeList,
       allUsers,
-      isLoading
+      isLoading,
+      filterOwner
     } = this.props;
     const {
-      displayCategoriesId,
       isAxapiEditDialogDisplay,
       editingCategoryId,
       editingAxapis,
@@ -154,13 +176,21 @@ class FeatureAutomationPage extends Component {
       unitTestCreatedTime
     } = this.state;
 
-    const displayTree = depthFirstFlat(documentCategoriesWithReportTest, (node) => {
-      return node.name ==='root' || ( displayCategoriesId.includes(node.id));
-    }).splice(1); //remove root
-
+    const displayTree = this.getDisplayTree();
     return (
       <div className="feature-automation-page">
         <h3>Feature Automation</h3>
+        <div>
+          <label>Owner:&nbsp;</label>
+          <DropDownList
+            isNeedAll={true}
+            title={filterOwner ? allUsers.filter(user=> user.id === filterOwner)[0].name : 'All'}
+            onOptionClick={::this.onFilterOwnerChange}
+            aryOptionConfig={allUsers.map(item => {
+              return { title: item.name, value: item.id};
+            })}
+          />
+        </div>
         <div>
           <label>End2end:&nbsp;</label>
           <DropDownList
@@ -243,7 +273,8 @@ FeatureAutomationPage.propTypes = {
   end2endTestCreatedTimeList       : PropTypes.array,
   axapiTestCreatedTimeList         : PropTypes.array,
   allUsers                         : PropTypes.array,
-  isLoading                        : PropTypes.bool
+  isLoading                        : PropTypes.bool,
+  filterOwner                      : PropTypes.number
 };
 
 FeatureAutomationPage.defaultProps = {
@@ -255,6 +286,7 @@ FeatureAutomationPage.defaultProps = {
 
 function mapStateToProps(state) {
   const {
+    filterOwner,
     documentCategoriesWithReportTest,
     unitTestCreatedTimeList,
     end2endTestCreatedTimeList,
@@ -263,6 +295,7 @@ function mapStateToProps(state) {
   const { allUsers } = state.documentation.toJS();
   const { isLoading } = state.app.toJS();
   return {
+    filterOwner,
     isLoading,
     documentCategoriesWithReportTest,
     unitTestCreatedTimeList,
