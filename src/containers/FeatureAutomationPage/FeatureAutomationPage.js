@@ -30,9 +30,8 @@ class FeatureAutomationPage extends Component {
       fetchDocumentCategoriesWithReport,
       fetchTestReportCreatedTimeList
     } = this.props.featureAutomationActions;
-    const {
-      fetchAllUsers,
-    } = this.props.documentActions;
+    const { fetchAllUsers } = this.props.documentActions;
+
     fetchTestReportCreatedTimeList();
     fetchDocumentCategoriesWithReport();
     fetchAllUsers();
@@ -76,6 +75,20 @@ class FeatureAutomationPage extends Component {
     this.props.featureAutomationActions.setupTestReportOfCategory({
       categoryId: id,
       path
+    });
+  }
+
+  onDifficultySave(id, difficulty) {
+    this.props.featureAutomationActions.setupTestReportOfCategory({
+      categoryId: id,
+      difficulty
+    });
+  }
+
+  onOwnersSave(id, owners) {
+    this.props.featureAutomationActions.setupTestReportOfCategory({
+      categoryId: id,
+      owners
     });
   }
 
@@ -129,6 +142,7 @@ class FeatureAutomationPage extends Component {
       end2endTestCreatedTimeList,
       axapiTestCreatedTimeList,
       allUsers,
+      isLoading
     } = this.props;
     const {
       displayCategoriesId,
@@ -197,7 +211,10 @@ class FeatureAutomationPage extends Component {
                     allUsers={allUsers}
                     onEditAxapis={::this.openAxapisEditDialog}
                     onPathSave={::this.onPathSave}
+                    onOwnersSave={::this.onOwnersSave}
+                    onDifficultySave={::this.onDifficultySave}
                     toggleChildren={::this.toggleChildren}
+                    isLoading={isLoading}
                     {...row} />
                 );
               }) : (
@@ -226,6 +243,7 @@ FeatureAutomationPage.propTypes = {
   end2endTestCreatedTimeList       : PropTypes.array,
   axapiTestCreatedTimeList         : PropTypes.array,
   allUsers                         : PropTypes.array,
+  isLoading                        : PropTypes.bool
 };
 
 FeatureAutomationPage.defaultProps = {
@@ -243,7 +261,9 @@ function mapStateToProps(state) {
     axapiTestCreatedTimeList
   } = state.featureAutomation.toJS();
   const { allUsers } = state.documentation.toJS();
+  const { isLoading } = state.app.toJS();
   return {
+    isLoading,
     documentCategoriesWithReportTest,
     unitTestCreatedTimeList,
     end2endTestCreatedTimeList,

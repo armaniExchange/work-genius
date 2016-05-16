@@ -47,8 +47,8 @@ class FeatureAutomationRowInlineToolbar extends Component {
 }
 
 FeatureAutomationRowInlineToolbar.propTypes = {
-  onSave                    : PropTypes.function,
-  onCancel                  : PropTypes.function,
+  onSave                    : PropTypes.func,
+  onCancel                  : PropTypes.func,
   disabledSave              : PropTypes.bool,
   show                      : PropTypes.bool,
 };

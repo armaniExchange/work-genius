@@ -24,10 +24,9 @@ function transformToTree(dataArr) {
       const axapiTest = node.axapiTest || [];
       const unitTest = node.unitTest || [];
       const end2endTest = node.end2endTest || [];
-      const difficulty = (node.children && node.children.length > 0)  ? null : Math.round(Math.random()*FEATURE_ANALYSIS_DIFFICULTIES.length);
       return {
-        owners: [],
-        difficulty,
+        owners: node.owners || [],
+        difficulty: node.difficulty || 0,
         axapiTestTotalCount: axapiTest.length,
         axapiTestFailCount: axapiTest.filter(item => !item.isSuccess).length,
         unitTestTotalCount: unitTest.length,

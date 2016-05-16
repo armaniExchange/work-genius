@@ -39,6 +39,12 @@ const TestReportCategoryType = new GraphQLObjectType({
     'axapis': {
       type: new GraphQLList(GraphQLString)
     },
+    'owners': {
+      type: new GraphQLList(GraphQLID)
+    },
+    'difficulty': {
+      type: GraphQLInt
+    },
     'axapiTest': {
       type: new GraphQLList(new GraphQLObjectType({
         name: 'axapiTestType',

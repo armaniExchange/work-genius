@@ -41,6 +41,8 @@ export function fetchDocumentCategoriesWithReport(query) {
           articlesCount,
           path,
           axapis,
+          owners,
+          difficulty,
           axapiTest { isSuccess, errorMessage, api },
           unitTest { isSuccess, errorMessage, path },
           end2endTest { isSuccess, errorMessage, path }
@@ -76,23 +78,25 @@ export function setupTestReportOfCategorySuccess() {
 }
 
 
-export function setupTestReportOfCategory({categoryId, path, axapis}) {
+export function setupTestReportOfCategory({categoryId, path, axapis, owners, difficulty}) {
   return dispatch => {
     dispatch(setLoadingState(true));
     dispatch({
       type: actionTypes.SETUP_TEST_REPORT_OF_CATEGORY
     });
 
-    let pathOrAxapis = '';
-    pathOrAxapis += typeof path !== 'undefined' ? `path: "${path.replace(/\\/g, '\\\\')}",` : '';
-    pathOrAxapis += typeof axapis !== 'undefined' && axapis.length > 0 ? `axapis: ${stringifyObject(axapis)},` : '';
+    let queryString = '';
+    queryString += typeof path !== 'undefined' ? `path: "${path.replace(/\\/g, '\\\\')}",` : '';
+    queryString += typeof axapis !== 'undefined' ? `axapis: ${stringifyObject(axapis)},` : '';
+    queryString += typeof owners !== 'undefined' ? `owners: ${stringifyObject(owners)}` : '';
+    queryString += typeof difficulty !== 'undefined' ? `difficulty: ${difficulty}` : '';
 
     const config = {
       method: 'POST',
       body: `mutation RootMutationType {
         setupTestReportOfCategory (
           categoryId: "${categoryId}",
-          ${pathOrAxapis}
+          ${queryString}
         )
       }`,
       headers: {
