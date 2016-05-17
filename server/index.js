@@ -48,8 +48,10 @@ app.use((req, res, next) => {
 app.post('/login', loginHandler);
 
 app.use((req, res, next) => {
-  if ( req.method === 'GET' && req.url.includes('/files/')){
+  if ( (req.method === 'GET' && req.url.includes('/files/') )||
+    (req.method === 'POST' && req.url.includes('/testReport/'))){
     // when downloading file skip token checking
+    // when testReport skip token checking
     next();
     return;
   }

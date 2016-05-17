@@ -20,11 +20,12 @@ import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 
 export const addTestReportHandler = async (req, res) => {
   let connection = null;
-  const type = req.params.type;
   try {
     connection = await r.connect({ host: DB_HOST, port: DB_PORT });
     const createdAt = new Date().getTime();
-    const data = req.body.reports.map((report)=> {
+    const { type } = req.params;
+    const { reports } = req.body;
+    const data = reports.map((report)=> {
       const {
         path, // for e2e and unit test
         api, // for axapi
@@ -101,12 +102,13 @@ const mutation = {
       difficulty,
     }) => {
       const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-      const data = Object.assign({
-        id: categoryId
-      }, typeof path !== 'undefined' ? { path } : null,
-       typeof axapis !== 'undefined' ? { axapis } : null,
-       typeof owners !== 'undefined' ? { owners } : null,
-       typeof difficulty !== 'undefined' ? { difficulty } : null);
+      const data = Object.assign(
+        { id: categoryId },
+        typeof path !== 'undefined' ? { path } : null,
+        typeof axapis !== 'undefined' ? { axapis } : null,
+        typeof owners !== 'undefined' ? { owners } : null,
+        typeof difficulty !== 'undefined' ? { difficulty } : null
+      );
       try {
         await r.db('work_genius')
           .table('test_report_categories')

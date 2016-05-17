@@ -13,6 +13,13 @@ export function fetchDocumentCategoriesWithReportSuccess(data) {
   };
 }
 
+export function fetchDocumentCategoriesWithReportFail(error) {
+  return {
+    type: actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_REPORT_TEST_FAIL,
+    error
+  };
+}
+
 export function fetchDocumentCategoriesWithReport(query) {
   return dispatch => {
     const {
@@ -29,7 +36,6 @@ export function fetchDocumentCategoriesWithReport(query) {
     queryCreatedTime += typeof end2endTestCreatedTime !== 'undefined' ? `end2endTestCreatedTime:${end2endTestCreatedTime} ` : '';
     queryCreatedTime += typeof axapiTestCreatedTime !== 'undefined' ? `axapiTestCreatedTime:${axapiTestCreatedTime} ` : '';
     queryCreatedTime = queryCreatedTime === '' ? queryCreatedTime : `(\n${queryCreatedTime}\n)`;
-    console.log(queryCreatedTime);
 
     const config = {
       method: 'POST',
