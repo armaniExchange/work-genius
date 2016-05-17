@@ -139,16 +139,39 @@ class FeatureAutomationPage extends Component {
     this.props.featureAutomationActions.filterTestReport({ filterOwner: value });
   }
 
+  onFilterReleaseChange(value) {
+    this.props.featureAutomationActions.filterTestReport({ filterRelease: value });
+  }
+
+  onFilterCaseChange(value) {
+    this.props.featureAutomationActions.filterTestReport({ filterCase: value });
+  }
+
   getDisplayTree() {
     const {
       documentCategoriesWithReportTest,
-      filterOwner
+      filterOwner,
+      filterRelease,
+      filterCase
     } = this.props;
 
     const { displayCategoriesId } = this.state;
 
-    const filteredTree = filterChildren(documentCategoriesWithReportTest, (node) => {
-      return filterOwner ? (node.owners || [] ).includes(filterOwner) : true;
+    const filteredReleaseChildrenResult = (documentCategoriesWithReportTest.children || []).filter(node => {
+      return !filterRelease || node.id === filterRelease;
+    });
+    const filteredReleaseResult = Object.assign({}, documentCategoriesWithReportTest, {
+      children: filteredReleaseChildrenResult
+    });
+    const filteredTree = filterChildren(filteredReleaseResult, (node) => {
+      const owners = node.owners || [];
+      const {
+        axapiTestFailCount,
+        unitTestFailCount,
+        end2endTestFailCount
+      } = node;
+      return (!filterOwner || owners.includes(filterOwner))&&
+        (!filterCase || axapiTestFailCount || unitTestFailCount || end2endTestFailCount);
     });
 
     const displayTree = depthFirstFlat(filteredTree, (node) => {
@@ -160,12 +183,15 @@ class FeatureAutomationPage extends Component {
 
   render() {
     const {
+      documentCategoriesWithReportTest,
       unitTestCreatedTimeList,
       end2endTestCreatedTimeList,
       axapiTestCreatedTimeList,
       allUsers,
       isLoading,
-      filterOwner
+      filterOwner,
+      filterRelease,
+      filterCase
     } = this.props;
     const {
       isAxapiEditDialogDisplay,
@@ -177,19 +203,40 @@ class FeatureAutomationPage extends Component {
     } = this.state;
 
     const displayTree = this.getDisplayTree();
+    const filterReleaseOptions = documentCategoriesWithReportTest.children || [];
+    const filterCaseOptions = ['Failed'];
     return (
       <div className="feature-automation-page">
         <h3>Feature Automation</h3>
         <div>
+          <label>Release:&nbsp;</label>
+          <DropDownList
+            isNeedAll={true}
+            title={filterRelease ? filterReleaseOptions.filter(release=> release.id === filterRelease)[0].name : 'All'}
+            onOptionClick={::this.onFilterReleaseChange}
+            aryOptionConfig={filterReleaseOptions.map(item => {
+              return { title: item.name, value: item.id};
+            })}
+          />
           <label>Owner:&nbsp;</label>
           <DropDownList
             isNeedAll={true}
-            title={filterOwner ? allUsers.filter(user=> user.id === filterOwner)[0].name : 'All'}
+            title={filterOwner ? allUsers.filter(user => user.id === filterOwner)[0].name : 'All'}
             onOptionClick={::this.onFilterOwnerChange}
             aryOptionConfig={allUsers.map(item => {
               return { title: item.name, value: item.id};
             })}
           />
+          <label>Case:&nbsp;</label>
+          <DropDownList
+            isNeedAll={true}
+            title={filterCase ? filterCaseOptions.filter(eachCase => eachCase)[0] : 'All'}
+            onOptionClick={::this.onFilterCaseChange}
+            aryOptionConfig={filterCaseOptions.map(item => {
+              return { title: item, value: item};
+            })}
+          />
+
         </div>
         <div>
           <label>End2end:&nbsp;</label>
@@ -274,7 +321,9 @@ FeatureAutomationPage.propTypes = {
   axapiTestCreatedTimeList         : PropTypes.array,
   allUsers                         : PropTypes.array,
   isLoading                        : PropTypes.bool,
-  filterOwner                      : PropTypes.number
+  filterOwner                      : PropTypes.string,
+  filterRelease                    : PropTypes.string,
+  filterCase                       : PropTypes.string,
 };
 
 FeatureAutomationPage.defaultProps = {
@@ -287,6 +336,8 @@ FeatureAutomationPage.defaultProps = {
 function mapStateToProps(state) {
   const {
     filterOwner,
+    filterRelease,
+    filterCase,
     documentCategoriesWithReportTest,
     unitTestCreatedTimeList,
     end2endTestCreatedTimeList,
@@ -295,8 +346,10 @@ function mapStateToProps(state) {
   const { allUsers } = state.documentation.toJS();
   const { isLoading } = state.app.toJS();
   return {
-    filterOwner,
     isLoading,
+    filterOwner,
+    filterRelease,
+    filterCase,
     documentCategoriesWithReportTest,
     unitTestCreatedTimeList,
     end2endTestCreatedTimeList,

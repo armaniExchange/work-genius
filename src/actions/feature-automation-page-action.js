@@ -175,11 +175,15 @@ export function fetchTestReportCreatedTimeList() {
   };
 }
 
-export function filterTestReport({filterOwner}) {
+export function filterTestReport(filters) {
+
   return dispatch => {
-    dispatch({
-      type: actionTypes.FILTER_TEST_REPORT,
-      filterOwner
-    });
+    const { filterOwner, filterRelease, filterCase } = filters;
+    dispatch(Object.assign(
+      { type: actionTypes.FILTER_TEST_REPORT },
+      filters.hasOwnProperty('filterOwner') ? { filterOwner } : null,
+      filters.hasOwnProperty('filterRelease') ? { filterRelease } : null,
+      filters.hasOwnProperty('filterCase') ? { filterCase } : null,
+    ));
   };
 }

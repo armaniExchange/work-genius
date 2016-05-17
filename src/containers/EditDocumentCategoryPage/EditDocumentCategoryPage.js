@@ -49,9 +49,7 @@ class EditDocumentCategoryPage extends Component {
   }
 
   render() {
-    const {
-      documentCategories
-    } = this.props;
+    const { documentCategories } = this.props;
     const { displayCategoriesId } = this.state;
     const displayTree = depthFirstFlat(documentCategories, (node) => {
       return node.name ==='root' || displayCategoriesId.includes(node.id);
