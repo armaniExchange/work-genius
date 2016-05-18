@@ -43,7 +43,7 @@ export async function updateJob(id,job){
 		if(job.id){
 			delete job.id;
 		}
-		if(job.duration){
+		if(job.duration || job.start_date){
 			job.end_date = await getJobEndDate(job);
 		}
 

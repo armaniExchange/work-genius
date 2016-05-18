@@ -122,9 +122,9 @@ class ResourceMapModalWorkLog extends Component {
 			}
 			let times;
 			if (this.state.selectTime) {
-				times = moment(moment(startDate).format('YYYY-MM-DD')).format('X') * 1000 + this.state.selectTime;
+				times = moment.utc(moment(startDate).format('YYYY-MM-DD')).format('x') + this.state.selectTime;
 			} else {
-				times = moment(startDate).format('X') * 1000;;
+				times = moment.utc(moment(startDate).format('YYYY-MM-DD')).format('x');
 			}
 			let status = defaultModalInfos.status ? defaultModalInfos.status : 0;
 			// If progress is 100%, the status is 1;
@@ -331,7 +331,7 @@ class ResourceMapModalWorkLog extends Component {
 		if (defaultModalInfos.id) {
 			nowDate = moment(defaultModalInfos.start_date).format('YYYY-MM-DD hh:mm a');
 		} else {
-			nowDate = moment(defaultModalInfos.date).format('YYYY-MM-DD hh:mm a');
+			nowDate = moment(defaultModalInfos.date).hours(9).format('YYYY-MM-DD hh:mm a');
 		}
 		// let releaseOptions = ['4.1.0', '4.1.1', '3.2.1'];
 		var isShowWorkLog = defaultModalInfos.id !== undefined;
