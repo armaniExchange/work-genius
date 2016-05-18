@@ -48,13 +48,6 @@ let JobQuery = {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				//get all users
 				let users = await query.run(connection);
-				console.log('GUI_GROUP:');
-				console.log(GUI_GROUP);
-				console.log();
-				console.log('users:');
-				console.log(users);
-				console.log();
-
 
 				//get all PTO data
 				query = r.db('work_genius').table('pto')
@@ -107,8 +100,8 @@ let JobQuery = {
 							}else{
 								return pto.applicant_id == user.id
 									&& (moment(dateItem.date).isBetween(startTime,endtTime)
-										|| moment(dateItem.date).isSame(startTime)
-										|| moment(dateItem.date).isSame(endtTime));
+										|| moment(dateItem.date).isSame(startTime,'day')
+										|| moment(dateItem.date).isSame(endtTime,'day'));
 							}
 						});
 						if(!!findPTO){
@@ -135,7 +128,7 @@ let JobQuery = {
 					//assign the job to the proper date
 					if(myJobList && myJobList.length > 0){
 						myJobList.forEach(job => {
-							let tmpStartDate = startDate > job.start_date ? startDate: job.start_date;
+							let tmpStartDate = job.start_date;
 							let tmpEndDate = endDate > job.end_date ? job.end_date : endDate;
 							for(let date = tmpStartDate ; date <= tmpEndDate; date += 1000 * 60 * 60 * 24){
 								let dateItem = userItem.jobs.find(dateItem => {
@@ -237,13 +230,11 @@ let JobQuery = {
 						let startTime = Number.parseFloat(pto.start_time);
 						let endtTime = Number.parseFloat(pto.end_time);
 						if(moment(startTime).isSame(endtTime,'day')){
-							return pto.applicant_id == user.id
-								&& moment(dateItem.date).isSame(startTime,'day');
+							return moment(dateItem.date).isSame(startTime,'day');
 						}else{
-							return pto.applicant_id == user.id
-								&& (moment(dateItem.date).isBetween(startTime,endtTime)
-									|| moment(dateItem.date).isSame(startTime)
-									|| moment(dateItem.date).isSame(endtTime));
+							return (moment(dateItem.date).isBetween(startTime,endtTime)
+									|| moment(dateItem.date).isSame(startTime,'day')
+									|| moment(dateItem.date).isSame(endtTime,'day'));
 						}
 					});
 					if(!!findPTO){
@@ -265,8 +256,9 @@ let JobQuery = {
 				//assign the job to the proper date
 				if(jobList && jobList.length > 0){
 					jobList.forEach(job => {
-						let tmpStartDate = startDate > job.start_date ? startDate: job.start_date;
+						let tmpStartDate = job.start_date;
 						let tmpEndDate = endDate > job.end_date ? job.end_date : endDate;
+	
 						for(let date = tmpStartDate ; date <= tmpEndDate; date += 1000 * 60 * 60 * 24){
 							let dateItem = userItem.jobs.find(dateItem => {
 								return moment(dateItem.date).isSame(date,'day');
@@ -278,7 +270,6 @@ let JobQuery = {
 						}
 					});
 				}
-				
 				result.push(userItem);
 				
 				await connection.close();
