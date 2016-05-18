@@ -3,6 +3,7 @@ import app from './app-reducer';
 import main from './main-reducer';
 import demo from './demo-reducer';
 import task from './task-reducer';
+import axapiAutomation from './axapi-automation-reducer';
 import search from './search-reducer';
 import pto from './pto-reducer';
 import admin from './admin-reducer';
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   main,
   demo,
   task,
+  axapiAutomation,
   search,
   dataExplorer,
   pto,

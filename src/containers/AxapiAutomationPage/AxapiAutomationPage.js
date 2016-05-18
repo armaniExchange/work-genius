@@ -7,7 +7,8 @@ import TextField from 'material-ui/lib/text-field';
 import RaisedButton from 'material-ui/lib/raised-button';
 import { bindActionCreators } from 'redux';
 // Actions
-import * as AxapiAutomationPageActions from '../../actions/search-actions';
+import * as AxapiAutomationPageActions from '../../actions/axapi-automation-actions';
+import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 
 let DiffLabelTag = (props) => {
   let _style = {padding:'3px 16px', textAlign:'center', color:'#333', background:'#ccc', 'margin': '0 6px 0 0'};
@@ -23,7 +24,39 @@ DiffLabelTag.propTypes = {
 
 
 class AxapiAutomationPage extends Component {
+  componentDidMount() {
+    //fetch aryProduct
+    //fetch aryBuildNumber
+    let {
+      fetchProduct
+    } = this.props;
+    fetchProduct();
+  };
+  componentWillReceiveProps(nextProps) {
+    if (this.props.curProduct!==nextProps.curProduct) {
+      this.props.fetchBuildNumber(nextProps.curProduct);
+    }
+  };
+
   render() {
+    let {
+      currentTabPage,
+      curProduct,
+      aryProduct,
+      curBuildNumber,
+      aryBuildNumber,
+      //actions
+      changeTabPage,
+      changeBuildNumber,
+      changeProduct,
+    } = this.props;
+
+
+    let tabCLIProps = currentTabPage==='TAB___CLI' ? {secondary: true} : {};
+    let tabJSONProps = currentTabPage==='TAB___JSON' ? {secondary: true} : {};
+    let tabAPIProps = currentTabPage==='TAB___API' ? {secondary: true} : {};
+
+
     return (<section className="automation-page">
       <div className="automation-page-left">
         {/*axapi endpoint prefix tree, not page_assignment tree.*/}
@@ -58,9 +91,35 @@ class AxapiAutomationPage extends Component {
               label="Connnect"
               labelStyle={{'textTransform': 'none'}} />
           </div>
-          <RaisedButton label="CLI Schema Changes" labelStyle={{'textTransform': 'none'}} />
-          <RaisedButton label="JSON Schema Changes" labelStyle={{'textTransform': 'none'}} />
-          <RaisedButton label="API Request" labelStyle={{'textTransform': 'none'}} />
+          <RaisedButton {...tabCLIProps} label="CLI Schema Changes" labelStyle={{'textTransform': 'none'}} onClick={()=>{
+            changeTabPage('TAB___CLI');
+          }} />
+          <RaisedButton {...tabJSONProps} label="JSON Schema Changes" labelStyle={{'textTransform': 'none'}} onClick={()=>{
+            changeTabPage('TAB___JSON');
+          }} />
+          <RaisedButton {...tabAPIProps} label="API Request" labelStyle={{'textTransform': 'none'}} onClick={()=>{
+            changeTabPage('TAB___API');
+          }} />
+          <div>
+            <label>Product:&nbsp;</label>
+            <DropDownList
+                isNeedAll={false}
+                title={curProduct}
+                onOptionClick={(item)=>{
+                  changeProduct(item);
+                }}
+                aryOptionConfig={aryProduct}
+            />
+            <label>Build number:&nbsp;</label>
+            <DropDownList
+                isNeedAll={false}
+                title={curBuildNumber}
+                onOptionClick={(item)=>{
+                  changeBuildNumber(item);
+                }}
+                aryOptionConfig={aryBuildNumber}
+            />
+          </div>
         </div>
         <div className="automation-page-right__body">
           {[1,2,3].map(()=>{
@@ -135,15 +194,29 @@ class AxapiAutomationPage extends Component {
 }
 
 AxapiAutomationPage.propTypes = {
+  currentTabPage: PropTypes.string,
+  curProduct: PropTypes.string,
+  aryProduct: PropTypes.array,
+  curBuildNumber: PropTypes.string,
+  aryBuildNumber: PropTypes.array,
+
+  fetchProduct: PropTypes.func,
+  fetchBuildNumber: PropTypes.func,
+  
+  changeTabPage: PropTypes.func,
+  changeProduct: PropTypes.func,
+  changeBuildNumber: PropTypes.func
 };
 AxapiAutomationPage.defaultProps = {
+  curProduct: '',
+  curBuildNumber: ''
 };
 
 
 function mapStateToProps(state) {
     return Object.assign(
         {},
-        state.search.toJS(),
+        state.axapiAutomation.toJS(),
         state.app.toJS()
     );
 }
