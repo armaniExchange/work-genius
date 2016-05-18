@@ -58,24 +58,30 @@ class AxapiAutomationPage extends Component {
               label="Connnect"
               labelStyle={{'textTransform': 'none'}} />
           </div>
+          <RaisedButton label="CLI Schema Changes" labelStyle={{'textTransform': 'none'}} />
+          <RaisedButton label="JSON Schema Changes" labelStyle={{'textTransform': 'none'}} />
           <RaisedButton label="API Request" labelStyle={{'textTransform': 'none'}} />
-          <RaisedButton label="Schema Changes" labelStyle={{'textTransform': 'none'}} />
         </div>
         <div className="automation-page-right__body">
           {[1,2,3].map(()=>{
             return (<div className="automation-page-right__body-row--schema">
-            <div className="automation-page-right__body-row--schema__left" style={{float:'left','margin':'0 0 10px', width:'35%'}}>
+            <div className="automation-page-right__body-row--schema__left" style={{'margin':'0 0 10px', width:'35%'}}>
               <div>
                 <DiffLabelTag>CLI</DiffLabelTag>
               </div>
-              <div style={{height:'260px', background:'#ddd'}}></div>
+              <div style={{height:'500px', background:'#ddd'}}></div>
             </div>
-            <div className="automation-page-right__body-row--schema__right" style={{float:'right','margin':'0 0 10px', width:'64%'}}>
+          </div>);
+          })}
+
+          {[1,2,3].map(()=>{
+            return (<div className="automation-page-right__body-row--schema">
+            <div className="automation-page-right__body-row--schema__right" style={{'margin':'0 0 10px', width:'64%'}}>
               <div>
                 <DiffLabelTag>Server</DiffLabelTag>
                 <DiffLabelTag>ServerGroup</DiffLabelTag>
               </div>
-              <div style={{height:'260px', background:'#ddd'}}></div>
+              <div style={{height:'500px', background:'#ddd'}}></div>
             </div>
           </div>);
           })}
