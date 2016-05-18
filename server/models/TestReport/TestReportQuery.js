@@ -1,3 +1,9 @@
+// Use tables:
+// test_report_categories
+// unit_test_reports
+// end2end_test_reports
+// axapi_test_reports
+
 // GraphQL
 import {
   GraphQLList,
@@ -84,40 +90,25 @@ let CategoryQuery = {
             return {
               articlesCount: r.db('work_genius')
                 .table('articles')
-                .getAll(category('id'), {index: 'categoryId'})
-                .count()
-            };
-          })
-          // .merge(function(category) {
-          //   return r.db('work_genius')
-          //     .table('assignment_categories')
-          //     .get(category('id'));
-          // })
-          .merge(function(item) {
-            var unitTest = r.db('work_genius')
-              .table('unit_test_reports')
-              .filter({createdAt: unitTestCreatedTime})
-              .filter({ path: item('path').default('') })
-              .coerceTo('array');
-
-            var end2endTest = r.db('work_genius')
-              .table('end2end_test_reports')
-              .filter({createdAt: end2endTestCreatedTime})
-              .filter({ path: item('path').default('') })
-              .coerceTo('array');
-
-            var axapiTest = r.db('work_genius')
-              .table('axapi_test_reports')
-              .filter({createdAt: axapiTestCreatedTime})
-              .filter(function(report){
-                return item('axapis').contains(report('api'));
-              })
-              .coerceTo('array');
-
-            return {
-              unitTest,
-              end2endTest,
-              axapiTest,
+                .getAll(category('id'), { index: 'categoryId' })
+                .count(),
+              unitTest: r.db('work_genius')
+                .table('unit_test_reports')
+                .filter({ createdAt: unitTestCreatedTime })
+                .filter({ path: category('path').default('') })
+                .coerceTo('array'),
+              end2endTest: r.db('work_genius')
+                .table('end2end_test_reports')
+                .filter({ createdAt: end2endTestCreatedTime })
+                .filter({ path: category('path').default('') })
+                .coerceTo('array'),
+              axapiTest: r.db('work_genius')
+                .table('axapi_test_reports')
+                .filter({ createdAt: axapiTestCreatedTime })
+                .filter(function(report){
+                  return category('axapis').contains(report('api'));
+                })
+                .coerceTo('array')
             };
           })
           .coerceTo('array')

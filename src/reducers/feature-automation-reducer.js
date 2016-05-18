@@ -39,6 +39,7 @@ function transformToTree(dataArr) {
     sumUpFromChildrenNode(tree, {
       init: {
         difficulties: initDifficulties,
+        accumOwners: [],
         accumArticlesCount: 0,
         accumAxapiTest: [],
         accumAxapiTestTotalCount: 0,
@@ -65,6 +66,7 @@ function transformToTree(dataArr) {
 
         return {
           difficulties: difficulties,
+          accumOwners: prev.accumOwners.concat(current.owners, current.accumOwners || []),
           accumArticlesCount: prev.accumArticlesCount + (current.articlesCount || 0),
           accumAxapiTest: prev.accumAxapiTest.concat(current.axapiTest),
           accumAxapiTestTotalCount: prev.accumAxapiTestTotalCount + current.axapiTestTotalCount,
@@ -80,6 +82,7 @@ function transformToTree(dataArr) {
       childrenParentMerge(childrenResult, parent) {
         return {
           difficulties: childrenResult.difficulties,
+          accumOwners: Array.from(new Set(childrenResult.accumOwners)),
           articlesCount: childrenResult.accumArticlesCount + (parent.articlesCount || 0),
           axapiTest: (parent.axapiTest || []).concat(childrenResult.accumAxapiTest),
           axapiTestTotalCount: childrenResult.accumAxapiTestTotalCount + parent.axapiTestTotalCount,

@@ -6,6 +6,8 @@ import Select from 'react-select';
 import FeatureAutomationCount from '../FeatureAutomationCount/FeatureAutomationCount';
 import FeatureAutomationRowInlineToolbar from '../FeatureAutomationRowInlineToolbar/FeatureAutomationRowInlineToolbar';
 import { FEATURE_ANALYSIS_DIFFICULTIES } from '../../constants/featureAnalysis';
+import Tooltip from 'rc-tooltip';
+
 // Styles
 import './_FeatureAutomationRow.css';
 
@@ -138,10 +140,15 @@ class FeatureAutomationRow extends Component {
     const {
       owners,
       allUsers,
-      children
+      children,
+      accumOwners
     } = this.props;
     const { editingOwners } = this.state;
     const hasChildren = children && children.length > 0;
+    const ownerNames = (accumOwners || []).map( ownerId => {
+      return allUsers.filter(user => user.id === ownerId)[0].name;
+    });
+    const MAX_DISPLAY_OWNERS_NUM = 3;
     // owners.map((owner, index) => <span key={index}>{owner}&nbsp;</span>)
     return !hasChildren ?  (
       <div>
@@ -161,7 +168,14 @@ class FeatureAutomationRow extends Component {
         />
       </div>
 
-    ) : null;
+    ) : (
+      <Tooltip
+        placement="bottom"
+        trigger={['hover']}
+        overlay={<div>{ownerNames.join(', ')}</div>}>
+        <div>{ownerNames.splice(0, MAX_DISPLAY_OWNERS_NUM).join(', ') + ( ownerNames.length >=  MAX_DISPLAY_OWNERS_NUM ? '...' : '')}</div>
+      </Tooltip>
+    );
   }
 
   onDifficultySave() {
@@ -215,18 +229,6 @@ class FeatureAutomationRow extends Component {
       .filter(eachDiffculty => eachDiffculty.difficultyCount !==0 )
       .map(eachDiffculty => `${eachDiffculty.difficultyCount} ${eachDiffculty.difficultyName}`)
       .join(', ')
-    );
-  }
-
-  renderTooltip(testReport, key) {
-    return (
-      testReport.filter(item => !item.isSuccess)
-        .map((item, index) => (
-          <div key={index}>
-            <span className="feature-automation-tag">{item[key]}</span>
-            <span>&nbsp;&nbsp;{item.errorMessage}</span>
-          </div>
-        ))
     );
   }
 
@@ -355,6 +357,7 @@ FeatureAutomationRow.propTypes = {
   end2endTestTotalCount : PropTypes.number,
   end2endTestFailCount  : PropTypes.number,
   owners                : PropTypes.array,
+  accumOwners           : PropTypes.array,
   difficulties          : PropTypes.array,
   difficulty            : PropTypes.number,
   allUsers              : PropTypes.array,
