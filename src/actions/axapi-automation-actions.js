@@ -8,14 +8,14 @@ import fetch from 'isomorphic-fetch';
 import actionTypes from '../constants/action-types';
 import { SERVER_AXAPI_AUTOMATION_API_URL } from '../constants/config';
 
-let _convertModDiffFilePath = (filePath) => { //filePath should be '4_1_1/cli_schema_diff_result/rule-set.sch'
+const _convertModDiffFilePath = (filePath) => { //filePath should be '4_1_1/cli_schema_diff_result/rule-set.sch'
   if (filePath.substr(0,1)==='/') { //just defensive
     filePath = filePath.substr(1);
   }
   return 'mod_diff--' + filePath.replace(/\//g, 'ZZZZ'); //should be mod_diff--4_1_1ZZZZcli_schema_diff_resultZZZZrule-set.sch
 };
 
-let jsonBuildDetail = (build, dels, mods, news, curMod, curModFile, tab) => {
+const jsonBuildDetail = (build, dels, mods, news, curMod, curModFile, tab) => {
   return {
     build,
     dels, // s means filenames
@@ -27,22 +27,22 @@ let jsonBuildDetail = (build, dels, mods, news, curMod, curModFile, tab) => {
   };
 };
 
-let jsonBuilds = (builds) => {
+const jsonBuilds = (builds) => {
   return {
     builds
   };
 };
 
-let jsonProducts = (products) => {
+const jsonProducts = (products) => {
   return {
     products
   };
 };
 console.log(jsonBuildDetail, jsonBuilds, jsonProducts);
 
-let axapiAutomationApi = (handle, conf={}) => {
+const axapiAutomationApi = (handle, conf={}) => {
   return (dispatch) => {
-    let config = {
+    const config = {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json', //<----
@@ -60,7 +60,7 @@ let axapiAutomationApi = (handle, conf={}) => {
       .then((body) => {
         console.log(dispatch);
         console.log('body-------', body);
-        let data = body && body.data;
+        const data = body && body.data;
         switch (handle) {
           case 'FETCH_PRODUCT':
             dispatch({

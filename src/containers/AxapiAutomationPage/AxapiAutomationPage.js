@@ -16,7 +16,7 @@ import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkd
 //   tab = mapping[tab];
 //   return tab;
 // };
-let _convertDiffContent = (content) => {
+const _convertDiffContent = (content) => {
   return '```diff\n' + content + '\n```';
 };
 
@@ -28,8 +28,8 @@ let colorfulDiff = (plainTextDiff) => {
   return ret;
 };*/
 
-let DiffLabelTag = (props) => {
-  let _style = {padding:'3px 16px', textAlign:'center', color:'#333', background:'#ccc', 'margin': '0 6px 0 0'};
+const DiffLabelTag = (props) => {
+  const _style = {padding:'3px 16px', textAlign:'center', color:'#333', background:'#ccc', 'margin': '0 6px 0 0'};
   if (props.emphasize) {
     _style.color = '#fff';
     _style.background = '#b00';
@@ -40,9 +40,9 @@ DiffLabelTag.propTypes = {
   emphasize: PropTypes.bool
 };
 
-let DisplayFileList = (props) => {
-  let ary = props.ary || [];
-  let isModified = props.isModified;
+const DisplayFileList = (props) => {
+  const ary = props.ary || [];
+  const isModified = props.isModified;
   return (<dl style={{display:ary.length===0 ? 'none' : ''}}>
     <dt>{props.title}:</dt>
     <dd>
@@ -69,7 +69,7 @@ class AxapiAutomationPage extends Component {
   componentDidMount() {
     //fetch aryProduct
     //fetch aryBuildNumber
-    let {
+    const {
       fetchProduct
     } = this.props;
     fetchProduct();
@@ -88,7 +88,7 @@ class AxapiAutomationPage extends Component {
   };
 
   render() {
-    let {
+    const {
       currentTabPage,
       curProduct,
       aryProduct,
@@ -107,11 +107,11 @@ class AxapiAutomationPage extends Component {
     } = this.props;
 
 
-    let tabCLIProps = currentTabPage==='TAB___CLI' ? {secondary: true} : {};
-    let tabJSONProps = currentTabPage==='TAB___JSON' ? {secondary: true} : {};
-    let tabAPIProps = currentTabPage==='TAB___API' ? {secondary: true} : {};
+    const tabCLIProps = currentTabPage==='TAB___CLI' ? {secondary: true} : {};
+    const tabJSONProps = currentTabPage==='TAB___JSON' ? {secondary: true} : {};
+    const tabAPIProps = currentTabPage==='TAB___API' ? {secondary: true} : {};
 
-    let hasModifiedFiles = aryModFiles && aryModFiles.length;
+    const hasModifiedFiles = aryModFiles && aryModFiles.length;
 
     return (<section className="automation-page">
       <div className="automation-page-left">
@@ -122,21 +122,21 @@ class AxapiAutomationPage extends Component {
           <div style={{float:'right'}}>
             <TextField
                 onChange={(evt)=>{
-                  let val = evt.target.value;
+                  const val = evt.target.value;
                   console.log('val', val);
                 }}
                 style={{width:'130px'}}
                 hintText="192.168.105.72" />
             <TextField
                 onChange={(evt)=>{
-                  let val = evt.target.value;
+                  const val = evt.target.value;
                   console.log('val', val);
                 }}
                 style={{width:'100px'}}
                 hintText="username" />
             <TextField
                 onChange={(evt)=>{
-                  let val = evt.target.value;
+                  const val = evt.target.value;
                   console.log('val', val);
                 }}
                 style={{width:'100px'}}
@@ -239,7 +239,7 @@ class AxapiAutomationPage extends Component {
                 labelStyle={{'textTransform': 'none'}} />
               <TextField
                 onChange={(evt)=>{
-                  let val = evt.target.value;
+                  const val = evt.target.value;
                   console.log('val', val);
                 }}
                 value="/axapi/v3/object-group/network/"

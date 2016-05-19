@@ -7,40 +7,40 @@ const CODE_SUCC = 0;
 const VALID_TAB = ['TAB___CLI', 'TAB___JSON', 'TAB___API'];
 const TAB_MAPPING_FOLDER = {'TAB___CLI':'cli', 'TAB___JSON':'json', 'TAB___API':'api'};
 
-let _getAllProduct = () => {
+const _getAllProduct = () => {
   return fs.readdirSync(DATA_ABS_PATH).map((val)=>{
     return {title: val, value: val};
   });
 };
-let _getAllBuildNumber = (productValue) => {
+const _getAllBuildNumber = (productValue) => {
   return fs.readdirSync(DATA_ABS_PATH + productValue).map((val)=>{
     return {title: val, value: val};
   });
 };
 
-let _getFileNameOnly = (filePath) => {
+const _getFileNameOnly = (filePath) => {
   return filePath.split('/').slice(-1)[0];
 };
 
-let _getModifiedDiffFileName = (schemaFilePath) => { // schemaFilePath is from the content of mod.txt 
+const _getModifiedDiffFileName = (schemaFilePath) => { // schemaFilePath is from the content of mod.txt 
   return 'mod_diff--' + schemaFilePath.replace(/\//g, 'ZZZZ');
 };
-let _readDiffStatusFileContent = (diffFilename, productValue, build, tab) => {
+const _readDiffStatusFileContent = (diffFilename, productValue, build, tab) => {
   // diffFilename should be 'new.txt' 'del.txt' 'mod.txt' or 'mod_diff--*.txt' (see _getModifiedDiffFileName)
   // console.log('start _readDiffStatusFileContent');
-  let _path = DATA_ABS_PATH + productValue + '/' + build + '/' + tab + '/';
+  const _path = DATA_ABS_PATH + productValue + '/' + build + '/' + tab + '/';
   console.log('_readDiffStatusFileContent _path', _path);
   console.log('diffFilename', diffFilename);
-  let content = fs.readFileSync(_path + diffFilename, 'utf8');
+  const content = fs.readFileSync(_path + diffFilename, 'utf8');
   // console.log('content-----', content, content.length);
   return content;
 };
 
-let _getDiffStatusFileList = (diffFilename, productValue, build, tab) => {
+const _getDiffStatusFileList = (diffFilename, productValue, build, tab) => {
   // diffFilename should be 'new.txt' 'del.txt' 'mod.txt'
   // console.log('_getDiffStatusFileList start _readDiffStatusFileContent');
-  let content = _readDiffStatusFileContent(diffFilename, productValue, build, tab);
-  let ary = content.split("\n");
+  const content = _readDiffStatusFileContent(diffFilename, productValue, build, tab);
+  const ary = content.split("\n");
   // console.log('content---', content);
   let ret = [];
   for (let i=0, len=ary.length; i<len; i++) {
@@ -59,7 +59,7 @@ let _getDiffStatusFileList = (diffFilename, productValue, build, tab) => {
   return ret;
 };
 
-let _getDataWithModifiedContent = (product, build, tab) => {
+const _getDataWithModifiedContent = (product, build, tab) => {
   let dels = [];
   let mods = [];
   let news = [];
@@ -80,7 +80,7 @@ let _getDataWithModifiedContent = (product, build, tab) => {
     }
   }
 
-  let data = {
+  const data = {
     build: build,
     dels: dels,
     mods: mods,
@@ -92,7 +92,7 @@ let _getDataWithModifiedContent = (product, build, tab) => {
 };
 
 export const fetchProductHandler = async (req, res) => {
-  let allProduct = _getAllProduct();
+  const allProduct = _getAllProduct();
   // let allBuilds = allProduct && allProduct.length ? _getAllBuildNumber(allProduct[0].value) : [];
   // let build = allBuilds.length ? allBuilds[0].value : '';
   // let dels = [];
@@ -118,12 +118,12 @@ export const fetchProductHandler = async (req, res) => {
   }});
 };
 export const fetchBuildNumberHandler = async (req, res) => {
-  let product = req.query && req.query.product;
+  const { product } = req.query || {};
   if (!product) {
     res.json({'code':CODE_SUCC, 'data':[], 'msg':'product is required!'});
   }
   // console.log('product', product, DATA_ABS_PATH+product);
-  let allBuildNumber = _getAllBuildNumber(product);
+  const allBuildNumber = _getAllBuildNumber(product);
   // console.log('allBuildNumber', allBuildNumber);
   res.json({'code':CODE_SUCC, 'data':{builds: allBuildNumber, product: product}});
 };
@@ -132,46 +132,52 @@ export const changeProductHandler = async (req, res) => {
 
 };
 export const changeBuildNumberHandler = async (req, res) => {
-  let tab = req.query && req.query.tab;
-  let product = req.query && req.query.product;
-  let build = req.query && req.query.build;
+  const {
+    tab,
+    product,
+    build
+  } = req.query || {}
   if (!tab || !product || !build) {
     res.json({'code':CODE_SUCC, 'data':[], 'msg':'tab, product AND build are required!'});
   };
   console.log('product, build, tab', product, build, tab);
-  tab = TAB_MAPPING_FOLDER[tab];
-  let data = _getDataWithModifiedContent(product, build, tab);
+  const tabFolder = TAB_MAPPING_FOLDER[tab];
+  const data = _getDataWithModifiedContent(product, build, tabFolder);
   // console.log('data-----------', data);
   res.json({'code':CODE_SUCC, 'data':data});
 };
 export const changeModifiedFilenameHandler = async (req, res) => {
-  let filename = req.query && req.query.filename;
-  let product = req.query && req.query.product;
-  let build = req.query && req.query.build;
-  let tab = req.query && req.query.tab;
+  const {
+    filename,
+    product,
+    build,
+    tab
+  } = req.query || {};
   if (!filename || !tab || VALID_TAB.indexOf(req.query.tab)===-1 || !product || !build) {
     res.json({'code':CODE_SUCC, 'data':[], 'msg':'filename, tab, product AND build are required!'});
   };
 
-  tab = TAB_MAPPING_FOLDER[tab];
+  const tabFolder = TAB_MAPPING_FOLDER[tab];
 
   // console.log('--------------', filename, tab, product, build);
-  let modifiedContent = _readDiffStatusFileContent(filename, product, build, tab);
-  let filenameRecover = filename.replace('mod_diff--', '').replace(/ZZZZ/g, '/');
-  let modifiedFilename = _getFileNameOnly(filenameRecover);
+  const modifiedContent = _readDiffStatusFileContent(filename, product, build, tabFolder);
+  const filenameRecover = filename.replace('mod_diff--', '').replace(/ZZZZ/g, '/');
+  const modifiedFilename = _getFileNameOnly(filenameRecover);
   res.json({'code':CODE_SUCC, 'data':{modifiedContent: modifiedContent, modifiedFilename: modifiedFilename}});
 };
 
 export const changeTabHandler = async (req, res) => {
-  let product = req.query && req.query.product;
-  let build = req.query && req.query.build;
-  let tab = req.query && req.query.tab;
+  const {
+    product,
+    build,
+    tab
+  } = req.query || {};
   if (!tab || VALID_TAB.indexOf(req.query.tab)===-1 || !product || !build) {
     res.json({'code':CODE_SUCC, 'data':[], 'msg':'tab, product AND build are required!'});
   };
-  tab = TAB_MAPPING_FOLDER[tab];
-  console.log('--------------', tab, product, build);
+  const tabFolder = TAB_MAPPING_FOLDER[tab];
+  console.log('--------------', tab, tabFolder, product, build);
   
-  let data = _getDataWithModifiedContent(product, build, tab);
+  const data = _getDataWithModifiedContent(product, build, tabFolder);
   res.json({'code':CODE_SUCC, 'data':data});
 };
