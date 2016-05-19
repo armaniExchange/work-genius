@@ -239,16 +239,14 @@ class FeatureAutomationRow extends Component {
       'total': '#5bc0de'
     };
 
-    const difficultyStyle = (difficultyName) => {
-
-      return {
-        backgroundColor: DIFFICULTY_COLORS[difficultyName],
-        color: 'white',
-        padding: '0 4px',
-        borderRadius: 5,
-        margin: 1
-      };
-    };
+    const difficultyStyle = (difficultyName) => ({
+      backgroundColor: DIFFICULTY_COLORS[difficultyName],
+      color: 'white',
+      padding: '0 4px',
+      borderRadius: 5,
+      margin: 1,
+      cursor: 'help'
+    });
 
     return !hasChildren ? (
       <div>
@@ -275,9 +273,13 @@ class FeatureAutomationRow extends Component {
       })
       .reverse()
       .map(eachDiffculty => {
+        const {
+          difficultyName,
+          difficultyCount
+        } = eachDiffculty;
         return (
-          <span style={difficultyStyle(eachDiffculty.difficultyName)}>
-            {eachDiffculty.difficultyCount}
+          <span style={difficultyStyle(difficultyName)} title ={difficultyName}>
+            {difficultyCount}
           </span>
         );
       })
