@@ -122,9 +122,9 @@ class ResourceMapModalWorkLog extends Component {
 			}
 			let times;
 			if (this.state.selectTime) {
-				times = moment.utc(moment(startDate).format('YYYY-MM-DD')).format('x') + this.state.selectTime;
+				times = Number.parseFloat(moment.utc(moment(startDate).format('YYYY-MM-DD')).format('x')) + Number.parseFloat(this.state.selectTime);
 			} else {
-				times = moment.utc(moment(startDate).format('YYYY-MM-DD')).format('x');
+				times = Number.parseFloat(moment.utc(moment(startDate).format('YYYY-MM-DD')).format('x'));
 			}
 			let status = defaultModalInfos.status ? defaultModalInfos.status : 0;
 			// If progress is 100%, the status is 1;
