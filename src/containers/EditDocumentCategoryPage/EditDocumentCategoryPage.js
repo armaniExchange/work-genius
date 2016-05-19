@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import Paper from 'material-ui/lib/paper';
 
 import * as DocumentActions from '../../actions/document-page-actions';
-
+import { depthFirstFlat } from '../../libraries/tree';
 import CategoryRow from '../../components/CategoryRow/CategoryRow';
 
 import Breadcrumb from '../../components/A10-UI/Breadcrumb';
@@ -48,29 +48,12 @@ class EditDocumentCategoryPage extends Component {
     this.setState({displayCategoriesId: result});
   }
 
-  depthFirstFlat(node) {
-    const { displayCategoriesId } = this.state;
-    node.level = node.level || 0;
-    if (node.children && node.children.length > 0 && (node.name === 'root' || displayCategoriesId.includes(node.id))) {
-      node.collapsed = false;
-      const modifiedChildren = node.children.map(child => {
-          return Object.assign({}, child, {level: node.level + 1});
-        })
-        .map(this.depthFirstFlat.bind(this))
-        .reduce((prev, item) => [...prev, ...item], []);
-      return [node, ...modifiedChildren];
-    } else {
-      node.collapsed = true;
-      return [node];
-    }
-  }
-
   render() {
-    const {
-        documentCategories,
-        documentCategoriesLength
-     } = this.props;
-    const displayTree = this.depthFirstFlat(documentCategories);
+    const { documentCategories } = this.props;
+    const { displayCategoriesId } = this.state;
+    const displayTree = depthFirstFlat(documentCategories, (node) => {
+      return node.name ==='root' || displayCategoriesId.includes(node.id);
+    });
     return (
       <div>
         <Breadcrumb data={BREADCRUMB.editDocumentCategory} />
@@ -78,25 +61,27 @@ class EditDocumentCategoryPage extends Component {
           <h3>Knowledge Tree</h3>
           <Paper className="category-tree-edit-table">
             <div className="category-tree-edit-table-header">
-              <div className="category-tree-edit-table-row">
+              <div className="category-row">
                 <span className="category-name">Category Name</span>
+                <span className="is-feature">Is Feature</span>
                 <span className="article-number">Article Number</span>
                 <span className="action">Action</span>
               </div>
             </div>
             <div className="category-tree-edit-table-body">
               {
-                displayTree.map(row => {
+                displayTree.length > 0 ? displayTree.map(row => {
                   return (
                     <CategoryRow
-                      lastId={documentCategoriesLength + ''}
                       key={row.id}
                       toggleChildren={::this.toggleChildren}
                       onSave={::this.onCategorySave}
                       onRemove={::this.onCategoryRemove}
                       {...row} />
                   );
-                })
+                }) : (
+                  <div style={{padding: 15, textAlign: 'center'}}>No data</div>
+                )
               }
             </div>
           </Paper>
@@ -108,24 +93,18 @@ class EditDocumentCategoryPage extends Component {
 
 EditDocumentCategoryPage.propTypes = {
   documentCategories       : PropTypes.object,
-  documentCategoriesLength : PropTypes.number,
   documentActions          : PropTypes.object.isRequired
 };
 
 EditDocumentCategoryPage.defaultProps = {
-  documentCategories     : PropTypes.object
 };
 
 function mapStateToProps(state) {
   const {
-    documentCategories,
-    documentCategoriesLength
+    documentCategories
   } = state.documentation.toJS();
 
-  return Object.assign({}, {
-    documentCategories,
-    documentCategoriesLength
-  });
+  return { documentCategories };
 }
 
 function mapDispatchToProps(dispatch) {

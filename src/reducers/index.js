@@ -3,6 +3,7 @@ import app from './app-reducer';
 import main from './main-reducer';
 import demo from './demo-reducer';
 import task from './task-reducer';
+import axapiAutomation from './axapi-automation-reducer';
 import search from './search-reducer';
 import pto from './pto-reducer';
 import admin from './admin-reducer';
@@ -15,12 +16,14 @@ import bugReport from './bug-report-reducer';
 import resourceMap from './resource-map-reducer';
 import workLog from './work-log-reducer';
 import documentTemplate from './document-template-reducer';
+import featureAutomation from './feature-automation-reducer';
 
 const rootReducer = combineReducers({
   app,
   main,
   demo,
   task,
+  axapiAutomation,
   search,
   dataExplorer,
   pto,
@@ -32,7 +35,8 @@ const rootReducer = combineReducers({
   workLog,
   bugReport,
   featureAnalysis,
-  documentTemplate
+  documentTemplate,
+  featureAutomation
 });
 
 export default rootReducer;

@@ -26,6 +26,10 @@ const initialState = Map({
       displayText: 'PTO',
       link: '/main/pto'
     }),
+    Map({
+      displayText: 'Automation',
+      link: '/main/automation'
+    }),
 	),
 	subMenu: Map({
     'Knowledge': List.of(

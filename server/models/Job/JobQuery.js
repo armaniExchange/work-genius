@@ -14,6 +14,7 @@ import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT, ADMIN_ID,TESTER_ID } from '../../constants/configurations.js';
 import moment from 'moment';
+import { GUI_GROUP } from '../../constants/group-constant.js';
 
 let JobQuery = {
 	'getJobList': {
@@ -40,6 +41,9 @@ let JobQuery = {
 				}
 				let endDate = startDate + (dateRange -1) * 1000 * 3600 * 24;
 				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID)))
+					.filter(function(user){
+						return user('groups').default([]).contains(GUI_GROUP);
+					})
 					.pluck('id','name','location','timezone').orderBy('location').coerceTo('array');
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				//get all users
@@ -96,8 +100,8 @@ let JobQuery = {
 							}else{
 								return pto.applicant_id == user.id
 									&& (moment(dateItem.date).isBetween(startTime,endtTime)
-										|| moment(dateItem.date).isSame(startTime)
-										|| moment(dateItem.date).isSame(endtTime));
+										|| moment(dateItem.date).isSame(startTime,'day')
+										|| moment(dateItem.date).isSame(endtTime,'day'));
 							}
 						});
 						if(!!findPTO){
@@ -124,7 +128,7 @@ let JobQuery = {
 					//assign the job to the proper date
 					if(myJobList && myJobList.length > 0){
 						myJobList.forEach(job => {
-							let tmpStartDate = startDate > job.start_date ? startDate: job.start_date;
+							let tmpStartDate = job.start_date;
 							let tmpEndDate = endDate > job.end_date ? job.end_date : endDate;
 							for(let date = tmpStartDate ; date <= tmpEndDate; date += 1000 * 60 * 60 * 24){
 								let dateItem = userItem.jobs.find(dateItem => {
@@ -226,13 +230,11 @@ let JobQuery = {
 						let startTime = Number.parseFloat(pto.start_time);
 						let endtTime = Number.parseFloat(pto.end_time);
 						if(moment(startTime).isSame(endtTime,'day')){
-							return pto.applicant_id == user.id
-								&& moment(dateItem.date).isSame(startTime,'day');
+							return moment(dateItem.date).isSame(startTime,'day');
 						}else{
-							return pto.applicant_id == user.id
-								&& (moment(dateItem.date).isBetween(startTime,endtTime)
-									|| moment(dateItem.date).isSame(startTime)
-									|| moment(dateItem.date).isSame(endtTime));
+							return (moment(dateItem.date).isBetween(startTime,endtTime)
+									|| moment(dateItem.date).isSame(startTime,'day')
+									|| moment(dateItem.date).isSame(endtTime,'day'));
 						}
 					});
 					if(!!findPTO){
@@ -254,8 +256,9 @@ let JobQuery = {
 				//assign the job to the proper date
 				if(jobList && jobList.length > 0){
 					jobList.forEach(job => {
-						let tmpStartDate = startDate > job.start_date ? startDate: job.start_date;
+						let tmpStartDate = job.start_date;
 						let tmpEndDate = endDate > job.end_date ? job.end_date : endDate;
+	
 						for(let date = tmpStartDate ; date <= tmpEndDate; date += 1000 * 60 * 60 * 24){
 							let dateItem = userItem.jobs.find(dateItem => {
 								return moment(dateItem.date).isSame(date,'day');
@@ -267,13 +270,43 @@ let JobQuery = {
 						}
 					});
 				}
-				
 				result.push(userItem);
 				
 				await connection.close();
 				return result;
 			} catch (err) {
 				return err;
+			}
+			return result;
+		}
+	},
+	'getAllJobTitle': {
+		type: new GraphQLList(GraphQLString),
+		description: 'Get all job title',
+        args: {
+
+		},
+		resolve: async (root, { }) => {
+			let connection = null,				
+				query = null,
+			    result = [];
+
+			try {
+				let startTime = Number.parseFloat(moment().subtract(30, 'days').format('x'));
+				let curTime = Number.parseFloat(moment().format('x'));
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				//get the job title created in latest 30 days and the max number is 500.
+				query = r.db('work_genius').table('jobs')
+					.filter(function(job){
+						return job('create_time').default(curTime).ge(startTime);
+					})
+					.getField('title').distinct().limit(500).coerceTo('array');
+				result = await query.run(connection);
+				
+				await connection.close();
+				return result;
+			} catch (err) {
+				console.log(err) ;
 			}
 			return result;
 		}

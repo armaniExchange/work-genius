@@ -11,12 +11,17 @@ import {
   fileUploadHandler,
   fileDeleteHandler
 } from './models/File/FileMutation';
-import { fileDownloadHandler } from './models/File/FileQuery';// Constants
+import { fileDownloadHandler } from './models/File/FileQuery';
+import { addTestReportHandler } from './models/TestReport/TestReportMutation';
+import { fetchProductHandler, fetchBuildNumberHandler, changeProductHandler, changeBuildNumberHandler,
+  changeModifiedFilenameHandler, changeTabHandler
+} from './models/AxapiAutomation/AxapiAutomationQuery';
 import { searchArticleHandler, searchFileHandler, searchWorklogHandler, searchCommentHandler, searchBugtrackingHandler } from './models/Search/SearchQuery';
 import {
     SECURE_KEY,
     MAIL_TRANSPORTER_CONFIG
 } from './constants/configurations.js';
+import { articleExportHandler } from './models/Article/ArticleExport.js';
 
 const PORT = 3000;
 let app = express();
@@ -46,8 +51,10 @@ app.use((req, res, next) => {
 app.post('/login', loginHandler);
 
 app.use((req, res, next) => {
-  if ( req.method === 'GET' && req.url.includes('/files/')){
+  if ( (req.method === 'GET' && req.url.includes('/files/') )||
+    (req.method === 'POST' && req.url.includes('/testReport/'))){
     // when downloading file skip token checking
+    // when testReport skip token checking
     next();
     return;
   }
@@ -80,6 +87,13 @@ app.use('/graphql', graphqlHTTP(request => ({
     graphiql: true
 })));
 
+app.route('/axapi_automation_api/fetch_product/').get(fetchProductHandler);
+app.route('/axapi_automation_api/fetch_build_number/').get(fetchBuildNumberHandler);
+app.route('/axapi_automation_api/change_product/').get(changeProductHandler);
+app.route('/axapi_automation_api/change_build_number/').get(changeBuildNumberHandler);
+app.route('/axapi_automation_api/change_modified_filename/').get(changeModifiedFilenameHandler);
+app.route('/axapi_automation_api/change_tab/').get(changeTabHandler);
+
 app.route('/search')
   .get((req, res)=>{
     var searchfor = req.query && req.query.searchfor;
@@ -103,6 +117,9 @@ app.route('/files')
 app.route('/files/:id')
  .get(fileDownloadHandler)
  .delete(fileDeleteHandler);
+app.get('/export/document/:articleId', articleExportHandler);
+app.route('/testReport/:type')
+  .post(addTestReportHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is listening at port: ${PORT}`);

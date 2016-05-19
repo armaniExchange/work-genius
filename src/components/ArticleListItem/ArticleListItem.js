@@ -3,11 +3,11 @@ import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 
 import Paper from 'material-ui/lib/paper';
-import RaisedButton from 'material-ui/lib/raised-button';
 
 import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
 import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
 import ArticleMetadata from '../../components/ArticleMetadata/ArticleMetadata';
+import ArticleToolbar from '../../components/ArticleToolbar/ArticleToolbar';
 
 // Styles
 import './_ArticleListItem.css';
@@ -48,16 +48,11 @@ class ArticleListItem extends Component {
         <Link to={`/main/knowledge/document/${id}`}>
           <h3 className="title">{title}</h3>
         </Link>
-        <div className="button-group">
-          <Link to={`/main/knowledge/document/edit/${id}`}>
-            <RaisedButton
-              label="Edit"
-              primary={true} />
-          </Link>
-          <RaisedButton
-            label="Delete"
-            onClick={onDelete.bind(this, id, index)} />
-        </div>
+        <ArticleToolbar
+          id={id}
+          index={index}
+          onDelete={onDelete}
+        />
         <HighlightMarkdown source={abstractContent}/>
         {
           readmore ? (
@@ -76,7 +71,6 @@ class ArticleListItem extends Component {
           comments={comments}
           files={files}
         />
-        <br />
         <ArticleTagList
           tags={tags}
           value={activeTag}

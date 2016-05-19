@@ -10,8 +10,7 @@ import RaisedButton from 'material-ui/lib/raised-button';
 import TextField from 'material-ui/lib/text-field';
 import DatePicker from '../../components/A10-UI/Input/Date-Picker.js';
 import TimePicker from 'material-ui/lib/time-picker/time-picker';
-import SelectField from 'material-ui/lib/select-field';
-import MenuItem from 'material-ui/lib/menus/menu-item';
+import Tooltip from 'rc-tooltip';
 
 import Select from 'react-select';
 
@@ -55,13 +54,16 @@ class ResourceMapModalWorkLog extends Component {
 		this._changeStartTime = ::this._changeStartTime;
 		// Change end date
 		this._changeEndDate = ::this._changeEndDate;
+        // Change task title
+		this._handleSelectTitleChange = ::this._handleSelectTitleChange;
 
 		this.state = {
 			color: '',
 			selectDate: '',
 			selectTime: '',
 			release: '',
-			tags: ''
+			tags: '',
+			title: ''
 		};
 	}
 
@@ -70,18 +72,22 @@ class ResourceMapModalWorkLog extends Component {
 		defaultModalInfos.tags = defaultModalInfos.tags ? defaultModalInfos.tags : [];
 		if (show) {
 			let tag = this.state.tags !== '' ? this.state.tags : defaultModalInfos.tags.join(',');
+			let release = this.state.release !== '' ? this.state.release : defaultModalInfos.release;
+			let title = this.state.title !== '' ? this.state.title : defaultModalInfos.title;
 			this.setState({
-				release: defaultModalInfos.release,
+				release: release,
 				progress: defaultModalInfos.progress,
 				color: defaultModalInfos.color,
-				tags: tag
+				tags: tag,
+				title: title
 			});
 		} else {
 			this.setState({
 				release: '',
 				progress: 0,
 				color: '',
-				tags: ''
+				tags: '',
+				title: ''
 			});
 		}
 	}
@@ -97,13 +103,15 @@ class ResourceMapModalWorkLog extends Component {
 	 */
 	_onSubmitFormData() {
 		const { defaultModalInfos, onModalSubmit } = this.props;
-		const { taskField, workLogField, progressField, durationField } = this.refs;
-		let taskValue = taskField.getValue();
+		const { workLogField, progressField, durationField } = this.refs;
 		let workValue = '';
 		let progressValue = 0;
+		let taskValue = this.state.title;
 		if (defaultModalInfos.id !== undefined) {
 			workValue = workLogField.getValue();
 			progressValue = progressField.getValue();
+			progressValue = parseInt(progressValue) > 100 ? 100 : parseInt(progressValue);
+			progressValue = parseInt(progressValue) < 0 ? 0 : parseInt(progressValue);
 		}
 		if (taskValue !== undefined && taskValue !== '') {
 			let startDate;
@@ -114,9 +122,9 @@ class ResourceMapModalWorkLog extends Component {
 			}
 			let times;
 			if (this.state.selectTime) {
-				times = moment(moment(startDate).format('YYYY-MM-DD')).format('X') * 1000 + this.state.selectTime;
+				times = moment.utc(moment(startDate).format('YYYY-MM-DD')).format('x') + this.state.selectTime;
 			} else {
-				times = moment(startDate).format('X') * 1000;;
+				times = moment.utc(moment(startDate).format('YYYY-MM-DD')).format('x');
 			}
 			let status = defaultModalInfos.status ? defaultModalInfos.status : 0;
 			// If progress is 100%, the status is 1;
@@ -244,8 +252,17 @@ class ResourceMapModalWorkLog extends Component {
 		return dateList;
 	}
 
-	_handleSelectReleaseChange(event, index, value) {
+	_handleSelectReleaseChange(value) {
+		const { releases, onAddReleaseHandler } = this.props;
 		this.setState({release: value});
+
+		let release = releases.find((option) => {
+			return option.tag_name === value;
+		});
+
+		if (!release) {
+			onAddReleaseHandler(value);
+		}
 	}
 
 	// When select a new tag color, change the state tag value.
@@ -274,6 +291,17 @@ class ResourceMapModalWorkLog extends Component {
 		this.setState({selectDate: date});
 	}
 
+	_handleSelectTitleChange(title) {
+		this.setState({title: title});
+	}
+
+	_handleSelectTitleBlur() {
+		const { titleRef } = this.refs;
+		let title = titleRef._optionsFilterString === ''
+			? titleRef.state.value : titleRef._optionsFilterString;
+		this.setState({ title: title });
+	}
+
 	_changeStartTime(e, date) {
 		let time = moment(date);
 		let hour = time.hour(),
@@ -292,9 +320,10 @@ class ResourceMapModalWorkLog extends Component {
 		const {
 			show,
 			tags,
+			titles,
+			releases,
 			defaultModalInfos
 		} = this.props;
-
 		defaultModalInfos.progress = defaultModalInfos.progress ? defaultModalInfos.progress : 0;
 		let showDoneClassName = 'material-icons icon-layout';
 		let hideDoneClassName = 'material-icons icon-layout icon-layou-display';
@@ -302,62 +331,113 @@ class ResourceMapModalWorkLog extends Component {
 		if (defaultModalInfos.id) {
 			nowDate = moment(defaultModalInfos.start_date).format('YYYY-MM-DD hh:mm a');
 		} else {
-			nowDate = moment(defaultModalInfos.date).format('YYYY-MM-DD hh:mm a');
+			nowDate = moment(defaultModalInfos.date).hours(9).format('YYYY-MM-DD hh:mm a');
 		}
-
-		let releaseOptions = ['4.1.0', '4.1.1', '3.2.1'];
+		// let releaseOptions = ['4.1.0', '4.1.1', '3.2.1'];
 		var isShowWorkLog = defaultModalInfos.id !== undefined;
 		var colorHtml = (
 			<div className="form-group">
 				<label className="col-xs-3 control-label">Color</label>
 				<div className="col-xs-9">
 					<div className="event-tag">
-                    	<span onClick={this._onSelectTagColor} data-tag="bgm-teal"   className="bgm-teal">
-                    		<i className={this.state.color === 'bgm-teal' ? showDoneClassName : hideDoneClassName}>done</i>
-                    	</span>
-                        <span onClick={this._onSelectTagColor} data-tag="bgm-red"    className="bgm-red">
-                    		<i className={this.state.color === 'bgm-red' ? showDoneClassName : hideDoneClassName}>done</i>
-                    	</span>
-                        <span onClick={this._onSelectTagColor} data-tag="bgm-pink"   className="bgm-pink">
-                    		<i className={this.state.color === 'bgm-pink' ? showDoneClassName : hideDoneClassName}>done</i>
-                    	</span>
-                        <span onClick={this._onSelectTagColor} data-tag="bgm-blue"   className="bgm-blue">
-                    		<i className={this.state.color === 'bgm-blue' ? showDoneClassName : hideDoneClassName}>done</i>
-                    	</span>
-                        <span onClick={this._onSelectTagColor} data-tag="bgm-lime"   className="bgm-lime">
-                    		<i className={this.state.color === 'bgm-lime' ? showDoneClassName : hideDoneClassName}>done</i>
-                    	</span>
-                        <span onClick={this._onSelectTagColor} data-tag="bgm-green"  className="bgm-green">
-                    		<i className={this.state.color === 'bgm-green' ? showDoneClassName : hideDoneClassName}>done</i>
-                    	</span>
-                        <span onClick={this._onSelectTagColor} data-tag="bgm-cyan"   className="bgm-cyan">
-                    		<i className={this.state.color === 'bgm-cyan' ? showDoneClassName : hideDoneClassName}>done</i>
-                    	</span>
-                        <span onClick={this._onSelectTagColor} data-tag="bgm-orange" className="bgm-orange">
-                    		<i className={this.state.color === 'bgm-orange' ? showDoneClassName : hideDoneClassName}>done</i>
-                    	</span>
-                        <span onClick={this._onSelectTagColor} data-tag="bgm-purple" className="bgm-purple">
-                    		<i className={this.state.color === 'bgm-purple' ? showDoneClassName : hideDoneClassName}>done</i>
-                    	</span>
+						<Tooltip placement="top" overlay={'Level 1: Doing Now'}
+							arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+						>
+	                        <span onClick={this._onSelectTagColor} data-tag="bgm-red"    className="bgm-red">
+	                    		<i className={this.state.color === 'bgm-red' ? showDoneClassName : hideDoneClassName}>done</i>
+	                    	</span>
+                    	</Tooltip>
+                    	{/*<Tooltip placement="top" overlay={'Level 2'}
+							arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+						>
+	                        <span onClick={this._onSelectTagColor} data-tag="bgm-pink"   className="bgm-pink">
+	                    		<i className={this.state.color === 'bgm-pink' ? showDoneClassName : hideDoneClassName}>done</i>
+	                    	</span>
+                    	</Tooltip>
+                    	<Tooltip placement="top" overlay={'Level 3'}
+							arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+						>
+	                        <span onClick={this._onSelectTagColor} data-tag="bgm-purple" className="bgm-purple">
+	                    		<i className={this.state.color === 'bgm-purple' ? showDoneClassName : hideDoneClassName}>done</i>
+	                    	</span>
+                    	</Tooltip>
+                    	<Tooltip placement="top" overlay={'Level 4'}
+							arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+						>
+	                        <span onClick={this._onSelectTagColor} data-tag="bgm-orange" className="bgm-orange">
+	                    		<i className={this.state.color === 'bgm-orange' ? showDoneClassName : hideDoneClassName}>done</i>
+	                    	</span>
+                    	</Tooltip>*/}
+                    	<Tooltip placement="top" overlay={'Level 2'}
+							arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+						>
+	                        <span onClick={this._onSelectTagColor} data-tag="bgm-lime"   className="bgm-lime">
+	                    		<i className={this.state.color === 'bgm-lime' ? showDoneClassName : hideDoneClassName}>done</i>
+	                    	</span>
+                    	</Tooltip>
+                    	{/*}<Tooltip placement="top" overlay={'Level 6'}
+							arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+						>
+	                        <span onClick={this._onSelectTagColor} data-tag="bgm-blue"   className="bgm-blue">
+	                    		<i className={this.state.color === 'bgm-blue' ? showDoneClassName : hideDoneClassName}>done</i>
+	                    	</span>
+                    	</Tooltip>
+                    	<Tooltip placement="top" overlay={'Level 7'}
+							arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+						>
+	                        <span onClick={this._onSelectTagColor} data-tag="bgm-cyan"   className="bgm-cyan">
+	                    		<i className={this.state.color === 'bgm-cyan' ? showDoneClassName : hideDoneClassName}>done</i>
+	                    	</span>
+                    	</Tooltip>
+                    	<Tooltip placement="top" overlay={'Level 8'}
+							arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+						>
+	                        <span onClick={this._onSelectTagColor} data-tag="bgm-green"  className="bgm-green">
+	                    		<i className={this.state.color === 'bgm-green' ? showDoneClassName : hideDoneClassName}>done</i>
+	                    	</span>
+                    	</Tooltip>*/}
+                    	<Tooltip placement="top" overlay={'Level 3: Doing once free'}
+							arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
+						>
+	                    	<span onClick={this._onSelectTagColor} data-tag="bgm-teal"   className="bgm-teal">
+	                    		<i className={this.state.color === 'bgm-teal' ? showDoneClassName : hideDoneClassName}>done</i>
+	                    	</span>
+                    	</Tooltip>
                     </div>
 				</div>
             </div>
         );
-		var fullReleaseOptions = releaseOptions.map((option, index) => {
-			return (<MenuItem value={option} key={index} primaryText={option} />);
-		});
 		var className = isShowWorkLog ? 'mdl-cell mdl-cell--6-col' : 'mdl-cell mdl-cell--12-col';
 		var taskHtml = (
 			<div className={className}>
 			<div className="form-group">
 				<label className="col-xs-3 control-label">Task</label>
 				<div className="col-xs-9">
-					<TextField
-						type="text"
-						className="text-area-style"
-						defaultValue={defaultModalInfos.title}
-						ref="taskField"
+					<Select
+						allowCreate={true}
+						name="menu_tag"
+						value={this.state.title}
+						options={titles.map((option) => {
+							return {label: option, value: option};
+						})}
+						ref="titleRef"
+						onChange={this._handleSelectTitleChange}
+						onBlur={::this._handleSelectTitleBlur}
 					/>
+				</div>
+			</div>
+			<div className="form-group">
+				<label className="col-xs-3 control-label">Release</label>
+				<div className="col-xs-9">
+			        <Select
+						allowCreate={true}
+		                name="menu_tag"
+		                value={this.state.release}
+		                options={releases.map((option) => {
+		                	return {label: option.tag_name, value: option.tag_name};
+		                })}
+		                onChange={this._handleSelectReleaseChange}
+		            />
 				</div>
 			</div>
 			<div className="form-group">
@@ -397,14 +477,7 @@ class ResourceMapModalWorkLog extends Component {
 					<span>hours</span>
 				</div>
 			</div>
-			<div className="form-group">
-				<label className="col-xs-3 control-label">Release</label>
-				<div className="col-xs-9">
-					<SelectField fullWidth={true} value={this.state.release} onChange={this._handleSelectReleaseChange}>
-			          {fullReleaseOptions}
-			        </SelectField>
-				</div>
-			</div>
+
 			{colorHtml}
 			</div>
 		);
@@ -430,13 +503,13 @@ class ResourceMapModalWorkLog extends Component {
 						<Select
 							multi={true}
 							allowCreate={true}
-              name="menu_tag"
-              value={this.state.tags}
-              options={tags.map((tag) => {
-              	return {label: tag.tag_name, value: tag.tag_name};
-              })}
-              onChange={this._onSelectTag}
-            />
+			                name="menu_tag"
+			                value={this.state.tags}
+			                options={tags.map((tag) => {
+			                	return {label: tag.tag_name, value: tag.tag_name};
+			                })}
+			                onChange={this._onSelectTag}
+			            />
 		      </div>
 		    </div>
 				<div className="form-group">
@@ -487,11 +560,14 @@ class ResourceMapModalWorkLog extends Component {
 ResourceMapModalWorkLog.propTypes = {
 	show               : PropTypes.bool.isRequired,
 	tags               : PropTypes.array.isRequired,
+	titles             : PropTypes.array.isRequired,
+	releases           : PropTypes.array.isRequired,
 	defaultModalInfos  : PropTypes.object.isRequired,
 	onModalSubmit      : PropTypes.func.isRequired,
 	onModalHander      : PropTypes.func.isRequired,
 	onModalSubmitMulti : PropTypes.func.isRequired,
-	onAddTagHandler    : PropTypes.func.isRequired
+	onAddTagHandler    : PropTypes.func.isRequired,
+	onAddReleaseHandler: PropTypes.func.isRequired
 };
 
 ResourceMapModalWorkLog.defaultProps = {

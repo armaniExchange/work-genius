@@ -1,5 +1,5 @@
 
-import { Map, List, OrderedMap } from 'immutable';
+import Immutable, { Map, List, OrderedMap } from 'immutable';
 // Constants
 import actionTypes from '../constants/action-types';
 import moment from 'moment';
@@ -27,7 +27,9 @@ const initialState = Map({
 	data: List.of(),
     allUsers: List.of(),
     tags: List.of(),
+    releases: List.of(),
     currentUserId: '',
+    titles: List.of(),
 	show: false,
     defaultModalInfos: Map({})
 });
@@ -133,9 +135,6 @@ function checkWorkLogsData(worklogs, item) {
 
 var taskStateActions = {
     handle: function (state, item) {
-        console.log('item:');
-        console.log(item);
-        console.log();
         var employeeId = item.employee_id;
         if (employeeId === undefined || employeeId === -1) {
             return state;
@@ -283,6 +282,14 @@ function setTag(state, tag) {
         .set(`tags`, formatedData);
 }
 
+function setRelease(state, tag) {
+    let tags = state.get(`releases`).toJS();
+    tags.push(tag);
+    let formatedData = formatResponse(tags);
+    return state
+        .set(`releases`, formatedData);
+}
+
 export default function resourceMapReducer(state = initialState, action) {
 	var nextState = state;
 	switch (action.type){
@@ -310,6 +317,15 @@ export default function resourceMapReducer(state = initialState, action) {
         return nextState;
     case actionTypes.FETCH_RESOURCE_MAP_NEW_TAG:
         nextState = setTag(nextState, action.tag);
+        return nextState;
+    case actionTypes.FETCH_RESOURCE_MAP_ALL_RELEASE:
+        nextState = nextState.set('releases', Immutable.fromJS(action.releases));
+        return nextState;
+    case actionTypes.FETCH_RESOURCE_MAP_NEW_RELEASE:
+        nextState = setRelease(nextState, action.release);
+        return nextState;
+    case actionTypes.FETCH_RESOURCE_MAP_TITLE:
+        nextState = nextState.set('titles', Immutable.fromJS(action.titles));
         return nextState;
 	default:
 		return nextState;

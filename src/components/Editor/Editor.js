@@ -34,6 +34,15 @@ class Editor extends Component {
     /*eslint-enable  */
   }
 
+  componentWillReceiveProps(nextProps) {
+    const cm = this.refs.codeMirror.getCodeMirror();
+    const { top, left } = cm.getScrollInfo();
+    const { line, ch } = cm.getCursor();
+    cm.setValue(nextProps.value);
+    cm.scrollTo(left, top);
+    cm.setCursor(line, ch);
+  }
+
   onEditPanelButtonClick() {
     this.setState({ enablePreview: false });
   }

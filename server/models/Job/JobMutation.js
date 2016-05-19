@@ -36,6 +36,8 @@ let JobMutation = {
 				if('tags' in job){
 					delete job.tags;
 				}
+				job.create_time = Number.parseFloat(moment.utc().format('x'));
+				job.update_time = job.create_time;
 				let id = await createJob(job);
 		        if (id && !id.includes('Fail')){
 		          //create related worklog
@@ -43,7 +45,7 @@ let JobMutation = {
 		          	let worklog = {
 		          		content : obj.content || '',
 		          		author_id : obj.employee_id,
-		          		create_date : moment().utc().format('X') * 1000,
+		          		create_date : moment.utc().format('x'),
 		          		job_id : id,
 		          		tags : obj.tags || []
 		          	}
@@ -84,6 +86,7 @@ let JobMutation = {
 				if('tags' in job){
 					delete job.tags;
 				}
+				job.update_time = Number.parseFloat(moment.utc().format('x'));
 				await updateJob(id, job); 
 				
 				//update related worklog
@@ -96,7 +99,7 @@ let JobMutation = {
 						let worklog = {
 			          		content : obj.content || worklogList[0].content,
 			          		author_id : worklogList[0].author_id,
-			          		update_date : moment().utc().format('X') * 1000,
+			          		update_date : moment.utc().format('x'),
 			          		tags : obj.tags || worklogList[0].tags
 			          	}
 			          	await updateWorkLog(worklogList[0].id,worklog);
@@ -105,7 +108,7 @@ let JobMutation = {
 						let worklog = {
 			          		content : obj.content || '',
 			          		author_id : obj.employee_id,
-			          		create_date : moment().utc().format('X') * 1000,
+			          		create_date : moment.utc().format('x'),
 			          		job_id : id,
 			          		tags : obj.tags || []
 			          	}

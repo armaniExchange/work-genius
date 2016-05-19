@@ -1,3 +1,4 @@
+
 import actionTypes from '../constants/action-types';
 import { SERVER_API_URL } from '../constants/config';
 import moment from 'moment';
@@ -59,6 +60,27 @@ export function fetchResourecMapNewTag(tag){
     };
 }
 
+export function fetchResourecMapRelease(releases) {
+    return {
+        type: actionTypes.FETCH_RESOURCE_MAP_ALL_RELEASE,
+        releases
+    };
+}
+
+export function fetchResourecMapNewRelease(release) {
+    return {
+        type: actionTypes.FETCH_RESOURCE_MAP_NEW_RELEASE,
+        release
+    };
+}
+
+export function fetchResourceMapTaskTitle(titles) {
+  return {
+    type: actionTypes.FETCH_RESOURCE_MAP_TITLE,
+    titles
+  };
+}
+
 var taskWorkItemActions = {
     create: (item) => {
         return (dispatch, getState) => {
@@ -109,7 +131,7 @@ var taskWorkItemActions = {
             let config = {
                 method: 'POST',
                 body: `mutation RootMutationType {
-                    updateJobAndWorkLog(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}",id:"` + item.id + `")
+                    updateJobAndWorkLog(data:"${JSON.stringify(data).replace(/\\/gi, '\\\\').replace(/\"/gi, '\\"')}",id:"` + item.id + `")
                 }`,
                 headers: {
                     'Content-Type': 'application/graphql',
@@ -149,7 +171,6 @@ var taskWorkItemActions = {
         };
     }
 };
-
 
 var tagActions = {
     get: function () {
@@ -205,6 +226,85 @@ var tagActions = {
     }
 };
 
+function taskTitleAction() {
+  return (dispatch) => {
+      let config = {
+          method: 'POST',
+          body: `{
+                  getAllJobTitle
+          }`,
+          headers: {
+              'Content-Type': 'application/graphql',
+              'x-access-token': localStorage.token
+          }
+      };
+      return fetch(SERVER_API_URL, config)
+          .then((res) => res.json())
+          .then((body) => {
+              let titles = body.data.getAllJobTitle;
+              titles = titles ? titles : [];
+              dispatch(fetchResourceMapTaskTitle(titles));
+          })
+          .catch((err) => {
+              throw new Error(err);
+          });
+  };
+}
+
+var releaseActions = {
+    get: function () {
+        return (dispatch) => {
+            let config = {
+                method: 'POST',
+                body: `{
+                        getAllRelease(name:""){
+                            id,
+                            tag_name,
+                            type
+                        }
+                }`,
+                headers: {
+                    'Content-Type': 'application/graphql',
+                    'x-access-token': localStorage.token
+                }
+            };
+            return fetch(SERVER_API_URL, config)
+                .then((res) => res.json())
+                .then((body) => {
+                    let release = body.data.getAllRelease;
+                    dispatch(fetchResourecMapRelease(release));
+                })
+                .catch((err) => {
+                    throw new Error(err);
+                });
+        };
+    },
+    add: function (tag) {
+        return (dispatch) => {
+            var data = {tag_name: tag};
+            let config = {
+                method: 'POST',
+                body: `mutation RootMutationType {
+                    createRelease(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+                }`,
+                headers: {
+                    'Content-Type': 'application/graphql',
+                    'x-access-token': localStorage.token
+                }
+            };
+
+            return fetch(SERVER_API_URL, config)
+                .then((res) => res.json())
+                .then(() => {
+                    dispatch(fetchResourecMapNewRelease(data));
+                })
+                .catch((err) => {
+                    throw new Error(err);
+                });
+        };
+    }
+};
+
 export function fetchAllUsersRequest(){
   return (dispatch) => {
         let config = {
@@ -234,9 +334,8 @@ export function fetchAllUsersRequest(){
     };
 }
 
-
 function queryResourceMapDataFromServer(startDate, days) {
-    let date = parseInt(moment(startDate).format('X')) * 1000;
+    let date = parseInt(moment.utc(startDate).format('x'));
     return (dispatch) => {
         let config = {
             method: 'POST',
@@ -284,7 +383,7 @@ function queryResourceMapDataFromServer(startDate, days) {
 }
 
 function queryResourceMapDataFromServerByUser(startDate, days, userId) {
-    let date = parseInt(moment(startDate).format('X')) * 1000;
+    let date = parseInt(moment.utc(startDate).format('x'));
     return (dispatch) => {
         let config = {
             method: 'POST',
@@ -447,7 +546,6 @@ export function fetchResourceMapAddMulti(items) {
     };
 }
 
-
 export function fetchResourceMapDeleteItem(item) {
     return (dispatch) => {
         Promise.all([
@@ -517,5 +615,26 @@ export function addResourceMapTag(tag) {
     };
 }
 
+export function queryResourceMapRelease() {
+    return (dispatch) => {
+        Promise.all([
+            dispatch(releaseActions.get())
+        ]);
+    };
+}
 
+export function addResourceMapRelease(release) {
+    return (dispatch) => {
+        Promise.all([
+            dispatch(releaseActions.add(release))
+        ]);
+    };
+}
 
+export function queryTaskTitle() {
+  return (dispatch) => {
+      Promise.all([
+          dispatch(taskTitleAction())
+      ]);
+  };
+}
