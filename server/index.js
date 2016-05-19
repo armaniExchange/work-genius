@@ -13,6 +13,9 @@ import {
 } from './models/File/FileMutation';
 import { fileDownloadHandler } from './models/File/FileQuery';
 import { addTestReportHandler } from './models/TestReport/TestReportMutation';
+import { fetchProductHandler, fetchBuildNumberHandler, changeProductHandler, changeBuildNumberHandler,
+  changeModifiedFilenameHandler, changeTabHandler
+} from './models/AxapiAutomation/AxapiAutomationQuery';
 import { searchArticleHandler, searchFileHandler, searchWorklogHandler, searchCommentHandler, searchBugtrackingHandler } from './models/Search/SearchQuery';
 import {
     SECURE_KEY,
@@ -83,6 +86,13 @@ app.use('/graphql', graphqlHTTP(request => ({
     pretty: true,
     graphiql: true
 })));
+
+app.route('/axapi_automation_api/fetch_product/').get(fetchProductHandler);
+app.route('/axapi_automation_api/fetch_build_number/').get(fetchBuildNumberHandler);
+app.route('/axapi_automation_api/change_product/').get(changeProductHandler);
+app.route('/axapi_automation_api/change_build_number/').get(changeBuildNumberHandler);
+app.route('/axapi_automation_api/change_modified_filename/').get(changeModifiedFilenameHandler);
+app.route('/axapi_automation_api/change_tab/').get(changeTabHandler);
 
 app.route('/search')
   .get((req, res)=>{
