@@ -8,7 +8,12 @@ import fetch from 'isomorphic-fetch';
 import actionTypes from '../constants/action-types';
 import { SERVER_AXAPI_AUTOMATION_API_URL } from '../constants/config';
 
-
+let _convertModDiffFilePath = (filePath) => { //filePath should be '4_1_1/cli_schema_diff_result/rule-set.sch'
+  if (filePath.substr(0,1)==='/') { //just defensive
+    filePath = filePath.substr(1);
+  }
+  return 'mod_diff--' + filePath.replace(/\//g, 'ZZZZ'); //should be mod_diff--4_1_1ZZZZcli_schema_diff_resultZZZZrule-set.sch
+};
 
 let jsonBuildDetail = (build, dels, mods, news, curMod) => {
   return {
@@ -84,6 +89,13 @@ let axapiAutomationApi = (handle, conf={}) => {
               ...jsonBuildDetail(data.build, data.dels, data.mods, data.news, data.curMod)
             });
           break;
+          case 'CHANGE_MODIFIED_FILENAME':
+            dispatch({
+              type: actionTypes.AXAPIAUTO_CHANGE_MODIFIED_FILENAME_SUCCESS,
+              modifiedContent: data.modifiedContent,
+              modifiedFilename: data.modifiedFilename
+            });
+          break;
         }
       });
   };
@@ -111,5 +123,10 @@ export function changeTabPage(tab) { // (deprecated comment) return all builds A
     tab
   };
 };
+
+export function changeModifiedFileName(filename, product, tab, build) {
+  filename = _convertModDiffFilePath(filename);
+  return axapiAutomationApi('CHANGE_MODIFIED_FILENAME', {filename, product, tab, build});
+}
 
 //how to changeProduct and buildNumber at once.

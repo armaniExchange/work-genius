@@ -48,12 +48,9 @@ let DisplayFileList = (props) => {
     <dd>
       <ul style={{overflow:'auto', width:'99%', 'max-height': '400px'}}>
         {ary.map((val, k)=>{
-          val = val.indexOf('/')>=0 // defensive here
-              ? val.split('/').slice(-1)[0] : val;
+          val = val.split('/').slice(-1)[0];
           if (isModified) {
-            return (<li style={{cursor:'pointer'}} onClick={()=>{
-
-            }} key={k}><a>{val}</a></li>);
+            return (<li style={{cursor:'pointer'}} onClick={props.isModifiedOnClick[k]} key={k}><a style={{display:'block'}}>{val}</a></li>);
           }
           return (<li key={k}>{val}</li>);
         })}
@@ -64,6 +61,7 @@ let DisplayFileList = (props) => {
 DisplayFileList.propTypes = {
   title: PropTypes.string,
   isModified: PropTypes.bool,
+  isModifiedOnClick: PropTypes.array, // [func, func, func....]
   ary: PropTypes.array
 };
 
@@ -97,6 +95,8 @@ class AxapiAutomationPage extends Component {
       changeTabPage,
       changeBuildNumber,
       changeProduct,
+      curModifiedFilename,
+      changeModifiedFileName,
     } = this.props;
 
 
@@ -173,13 +173,21 @@ class AxapiAutomationPage extends Component {
         <div className="automation-page-right__body">
           <div className="automation-page-right__body-row--schema">
             <div style={{float:'left', width:'300px'}}>
-              <DisplayFileList title="Modified" isModified={true} ary={aryModFiles} />
+              <DisplayFileList title="Modified" 
+              isModified={true} 
+              isModifiedOnClick={aryModFiles.map((val)=>{
+                return ()=>{
+                  console.log('val',val);
+                  changeModifiedFileName(val, curProduct, currentTabPage, curBuildNumber);
+                };
+              })}
+              ary={aryModFiles} />
               <DisplayFileList title="Created" ary={aryNewFiles} />
               <DisplayFileList title="Deleted" ary={aryDelFiles} />
             </div>
             <div style={{margin:'0 0 0 320px'}}>
               <div>
-                <DiffLabelTag><strong>Modified content:</strong></DiffLabelTag>
+                <DiffLabelTag><strong>{curModifiedFilename}</strong></DiffLabelTag>
               </div>
               <div style={{height:'',overflow:'auto'}}>
                 <HighlightMarkdown source={_convertDiffContent(curModifiedDiff)}/>
@@ -262,6 +270,7 @@ AxapiAutomationPage.propTypes = {
   aryDelFiles: PropTypes.array,
   aryModFiles: PropTypes.array,
   aryNewFiles: PropTypes.array,
+  curModifiedFilename: PropTypes.string,
   curModifiedDiff: PropTypes.string,
 
   fetchProduct: PropTypes.func,
@@ -269,7 +278,8 @@ AxapiAutomationPage.propTypes = {
   
   changeTabPage: PropTypes.func,
   changeProduct: PropTypes.func,
-  changeBuildNumber: PropTypes.func
+  changeBuildNumber: PropTypes.func,
+  changeModifiedFileName: PropTypes.func,
 };
 AxapiAutomationPage.defaultProps = {
   curProduct: '',

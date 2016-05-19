@@ -130,3 +130,20 @@ export const changeBuildNumberHandler = async (req, res) => {
   console.log('data-----------', data);
   res.json({'code':CODE_SUCC, 'data':data});
 };
+export const changeModifiedFilenameHandler = async (req, res) => {
+  let filename = req.query && req.query.filename;
+  let product = req.query && req.query.product;
+  let build = req.query && req.query.build;
+  let tab = req.query && req.query.tab;
+  if (!filename || !tab || ['TAB___CLI', 'TAB___JSON', 'TAB___API'].indexOf(req.query.tab)===-1 || !product || !build) {
+    res.json({'code':CODE_SUCC, 'data':[], 'msg':'filename, tab, product AND build are required!'});
+  };
+
+  tab = ({'TAB___CLI':'cli', 'TAB___JSON':'json', 'TAB___API':'api'})[tab];
+
+  console.log('--------------', filename, tab, product, build);
+  let modifiedContent = _readDiffStatusFileContent(filename, product, build, tab);
+  let filenameRecover = filename.replace('mod_diff--', '').replace(/ZZZZ/g, '/');
+  let modifiedFilename = filenameRecover.split('/').slice(-1)[0];
+  res.json({'code':CODE_SUCC, 'data':{modifiedContent: modifiedContent, modifiedFilename: modifiedFilename}});
+};

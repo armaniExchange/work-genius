@@ -14,6 +14,7 @@ const initialState = Map({
   aryDelFiles: [],
   aryModFiles: [],
   aryNewFiles: [],
+  curModifiedFilename: '',
   curModifiedDiff: ''
 });
 
@@ -41,6 +42,9 @@ export default function searchReducer(state = initialState, action) {
                 .set('aryModFiles', action.mods)
                 .set('aryNewFiles', action.news)
                 .set('curModifiedDiff', action.curMod);
+    case actionTypes.AXAPIAUTO_CHANGE_MODIFIED_FILENAME_SUCCESS:
+      return state.set('curModifiedDiff', action.modifiedContent)
+                  .set('curModifiedFilename', action.modifiedFilename);
   }
   return state;
 }
