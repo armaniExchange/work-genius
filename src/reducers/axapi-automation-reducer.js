@@ -37,7 +37,9 @@ export default function searchReducer(state = initialState, action) {
       return state.set('curProduct', action.product)
                   .set('aryBuildNumber', action.builds);
     case actionTypes.AXAPIAUTO_CHANGE_BUILD_NUMBER_SUCCESS:
+    case actionTypes.AXAPIAUTO_CHANGE_TAB_SUCCESS:
       return state.set('curBuildNumber', action.build)
+                .set('currentTabPage', action.tab)
                 .set('aryDelFiles', action.dels)
                 .set('aryModFiles', action.mods)
                 .set('aryNewFiles', action.news)

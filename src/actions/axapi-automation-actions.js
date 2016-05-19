@@ -96,32 +96,35 @@ let axapiAutomationApi = (handle, conf={}) => {
               modifiedFilename: data.modifiedFilename
             });
           break;
+          case 'CHANGE_TAB':
+            dispatch({
+              type: actionTypes.AXAPIAUTO_CHANGE_TAB_SUCCESS,
+              tab: conf.tab, //should be 'TAB___*'
+              ...jsonBuildDetail(data.build, data.dels, data.mods, data.news, data.curMod)
+            });
+          break;
         }
       });
   };
 };
 
-export function fetchBuildNumber(product) { //async // (deprecated comment) auto-select first build AND return build detail
+export function fetchBuildNumber(product) { //async
   return axapiAutomationApi('FETCH_BUILD_NUMBER', {product});
 };
-export function changeBuildNumber(product, build, tab) { // (deprecated comment) return build detail
+export function changeBuildNumber(product, build, tab) {
   return axapiAutomationApi('CHANGE_BUILD_NUMBER', {product, build, tab});
 };
 
-export function fetchProduct() { // (deprecated comment) return all products AND return all builds AND auto-select first build AND return build detail
+export function fetchProduct() {
   return axapiAutomationApi('FETCH_PRODUCT');
 };
-export function changeProduct(product) { // (deprecated comment) return all builds AND auto-select first build AND return build detail
+export function changeProduct(product) {
   // TODO
   return axapiAutomationApi('CHANGE_PRODUCT', {product});
 };
 
-export function changeTabPage(tab) { // (deprecated comment) return all builds AND auto-select first build AND return build detail
-  // return axapiAutomationApi('CHANGE_PRODUCT', {product});
-  return {
-    type: actionTypes.AXAPIAUTO_CHNAGE_TAB,
-    tab
-  };
+export function changeTabPage(tab, product, build) {
+  return axapiAutomationApi('CHANGE_TAB', {tab, product, build});
 };
 
 export function changeModifiedFileName(filename, product, tab, build) {

@@ -140,13 +140,13 @@ class AxapiAutomationPage extends Component {
               labelStyle={{'textTransform': 'none'}} />
           </div>
           <RaisedButton {...tabCLIProps} label="CLI Schema Changes" labelStyle={{'textTransform': 'none'}} onClick={()=>{
-            changeTabPage('TAB___CLI');
+            changeTabPage('TAB___CLI', curProduct, curBuildNumber);
           }} />
           <RaisedButton {...tabJSONProps} label="JSON Schema Changes" labelStyle={{'textTransform': 'none'}} onClick={()=>{
-            changeTabPage('TAB___JSON');
+            changeTabPage('TAB___JSON', curProduct, curBuildNumber);
           }} />
           <RaisedButton {...tabAPIProps} label="API Request" labelStyle={{'textTransform': 'none'}} onClick={()=>{
-            changeTabPage('TAB___API');
+            changeTabPage('TAB___API', curProduct, curBuildNumber);
           }} />
           <div>
             <label>Product:&nbsp;</label>

@@ -13,7 +13,9 @@ import {
 } from './models/File/FileMutation';
 import { fileDownloadHandler } from './models/File/FileQuery';
 import { addTestReportHandler } from './models/TestReport/TestReportMutation';
-import { fetchProductHandler, fetchBuildNumberHandler, changeProductHandler, changeBuildNumberHandler } from './models/AxapiAutomation/AxapiAutomationQuery';
+import { fetchProductHandler, fetchBuildNumberHandler, changeProductHandler, changeBuildNumberHandler,
+  changeModifiedFilenameHandler, changeTabHandler
+} from './models/AxapiAutomation/AxapiAutomationQuery';
 import { searchArticleHandler, searchFileHandler, searchWorklogHandler, searchCommentHandler, searchBugtrackingHandler } from './models/Search/SearchQuery';
 import {
     SECURE_KEY,
@@ -97,6 +99,13 @@ app.route('/axapi_automation_api')
         return changeProductHandler(req, res);
       case 'CHANGE_BUILD_NUMBER':
         return changeBuildNumberHandler(req, res);
+<<<<<<< HEAD
+=======
+      case 'CHANGE_MODIFIED_FILENAME':
+        return changeModifiedFilenameHandler(req, res);
+      case 'CHANGE_TAB':
+        return changeTabHandler(req, res);
+>>>>>>> [axapi_auto] implement changeTabPage
     }
   });
 

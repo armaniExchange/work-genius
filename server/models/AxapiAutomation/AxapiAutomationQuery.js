@@ -4,6 +4,8 @@ import path from 'path';
 const DATA_FOLDER = 'axapi_automation_data';
 const DATA_ABS_PATH = path.resolve(__dirname, '..', '..', '..', DATA_FOLDER) + '/'; 
 const CODE_SUCC = 0;
+const VALID_TAB = ['TAB___CLI', 'TAB___JSON', 'TAB___API'];
+const TAB_MAPPING_FOLDER = {'TAB___CLI':'cli', 'TAB___JSON':'json', 'TAB___API':'api'};
 
 let _getAllProduct = () => {
   return fs.readdirSync(DATA_ABS_PATH).map((val)=>{
@@ -51,6 +53,35 @@ let _getDiffStatusFileList = (diffFilename, productValue, build, tab) => {
     ret.push(filename);
   }
   return ret;
+};
+
+let _getDataWithModifiedContent = (product, build, tab) => {
+  let dels = [];
+  let mods = [];
+  let news = [];
+  let curMod = '';
+  if (build) {
+    dels = _getDiffStatusFileList('del.txt', product, build, tab);
+    mods = _getDiffStatusFileList('mod.txt', product, build, tab);
+    news = _getDiffStatusFileList('new.txt', product, build, tab);
+    if (mods && mods.length) {
+      curMod = _readDiffStatusFileContent(
+        _getModifiedDiffFileName(mods[0]),
+        product,
+        build,
+        tab
+        );
+    }
+  }
+
+  let data = {
+    build: build,
+    dels: dels,
+    mods: mods,
+    news: news,
+    curMod: curMod
+  };
+  return data;
 };
 
 export const fetchProductHandler = async (req, res) => {
@@ -102,32 +133,8 @@ export const changeBuildNumberHandler = async (req, res) => {
   };
   console.log('product, build, tab', product, build, tab);
 
-  let dels = [];
-  let mods = [];
-  let news = [];
-  let curMod = '';
-  if (build) {
-    dels = _getDiffStatusFileList('del.txt', product, build, tab);
-    mods = _getDiffStatusFileList('mod.txt', product, build, tab);
-    news = _getDiffStatusFileList('new.txt', product, build, tab);
-    if (mods && mods.length) {
-      curMod = _readDiffStatusFileContent(
-        _getModifiedDiffFileName(mods[0]),
-        product,
-        build,
-        tab
-        );
-    }
-  }
-
-  let data = {
-    build: build,
-    dels: dels,
-    mods: mods,
-    news: news,
-    curMod: curMod
-  };
-  console.log('data-----------', data);
+  let data = _getDataWithModifiedContent(product, build, tab);
+  // console.log('data-----------', data);
   res.json({'code':CODE_SUCC, 'data':data});
 };
 export const changeModifiedFilenameHandler = async (req, res) => {
@@ -135,15 +142,29 @@ export const changeModifiedFilenameHandler = async (req, res) => {
   let product = req.query && req.query.product;
   let build = req.query && req.query.build;
   let tab = req.query && req.query.tab;
-  if (!filename || !tab || ['TAB___CLI', 'TAB___JSON', 'TAB___API'].indexOf(req.query.tab)===-1 || !product || !build) {
+  if (!filename || !tab || VALID_TAB.indexOf(req.query.tab)===-1 || !product || !build) {
     res.json({'code':CODE_SUCC, 'data':[], 'msg':'filename, tab, product AND build are required!'});
   };
 
-  tab = ({'TAB___CLI':'cli', 'TAB___JSON':'json', 'TAB___API':'api'})[tab];
+  tab = TAB_MAPPING_FOLDER[tab];
 
-  console.log('--------------', filename, tab, product, build);
+  // console.log('--------------', filename, tab, product, build);
   let modifiedContent = _readDiffStatusFileContent(filename, product, build, tab);
   let filenameRecover = filename.replace('mod_diff--', '').replace(/ZZZZ/g, '/');
   let modifiedFilename = filenameRecover.split('/').slice(-1)[0];
   res.json({'code':CODE_SUCC, 'data':{modifiedContent: modifiedContent, modifiedFilename: modifiedFilename}});
+};
+
+export const changeTabHandler = async (req, res) => {
+  let product = req.query && req.query.product;
+  let build = req.query && req.query.build;
+  let tab = req.query && req.query.tab;
+  if (!tab || VALID_TAB.indexOf(req.query.tab)===-1 || !product || !build) {
+    res.json({'code':CODE_SUCC, 'data':[], 'msg':'tab, product AND build are required!'});
+  };
+  tab = TAB_MAPPING_FOLDER[tab];
+  console.log('--------------', tab, product, build);
+  
+  let data = _getDataWithModifiedContent(product, build, tab);
+  res.json({'code':CODE_SUCC, 'data':data});
 };
