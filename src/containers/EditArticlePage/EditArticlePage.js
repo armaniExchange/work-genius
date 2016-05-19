@@ -53,15 +53,19 @@ class EditArticlePage extends Component {
       return;
     }
 
+    // replace file url in content
     const thisFiles = this.props.files;
     const nextFiles = nextProps.files;
     const justUpdateFile = this.getJustUpdatedFile(thisFiles, nextFiles);
-    if ( justUpdateFile ) {
+    const { editingContent } = this.state;
+    if ( justUpdateFile && editingContent) {
       const { name, url } = justUpdateFile;
       this.setState({
-        editingContent: this.state.editingContent.replace(this.getUploadingFileMarkdown(justUpdateFile), `[${name}](${url})`)
+        editingContent: editingContent.replace(this.getUploadingFileMarkdown(justUpdateFile), `[${name}](${url})`)
       });
     }
+
+    // load template to content
     if (this.state.isContentFromTemplate || (this.props.documentTemplate.id !== nextProps.documentTemplate.id) ){
       this.setState({
         isContentFromTemplate: true,
