@@ -2,7 +2,7 @@ export const SERVER_HOST = '192.168.95.29';
 
 export const SERVER_API_URL = `http://${SERVER_HOST}:3000/graphql`;
 export const SERVER_LOGIN_URL = `http://${SERVER_HOST}:3000/login`;
-const SERVER_AXAPI_AUTOMATION_API_URL = `http://${SERVER_HOST}:3000/axapi_automation_api`;
+const SERVER_AXAPI_AUTOMATION_API_URL = `http://${SERVER_HOST}:3000/axapi_automation_api/`;
 export const SERVER_SEARCH_API_URL = `http://${SERVER_HOST}:3000/search`;
 export const SERVER_FILES_URL = `http://${SERVER_HOST}:3000/files`;
 export const SERVER_EXPORT_URL = `http://${SERVER_HOST}:3000/export`;

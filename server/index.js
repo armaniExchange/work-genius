@@ -87,24 +87,12 @@ app.use('/graphql', graphqlHTTP(request => ({
     graphiql: true
 })));
 
-app.route('/axapi_automation_api')
-  .get((req, res)=>{
-    let handle = req.query && req.query.handle;
-    switch (handle) {
-      case 'FETCH_PRODUCT':
-        return fetchProductHandler(req, res);
-      case 'FETCH_BUILD_NUMBER':
-        return fetchBuildNumberHandler(req, res);
-      case 'CHANGE_PRODUCT':
-        return changeProductHandler(req, res);
-      case 'CHANGE_BUILD_NUMBER':
-        return changeBuildNumberHandler(req, res);
-      case 'CHANGE_MODIFIED_FILENAME':
-        return changeModifiedFilenameHandler(req, res);
-      case 'CHANGE_TAB':
-        return changeTabHandler(req, res);
-    }
-  });
+app.route('/axapi_automation_api/fetch_product/').get(fetchProductHandler);
+app.route('/axapi_automation_api/fetch_build_number/').get(fetchBuildNumberHandler);
+app.route('/axapi_automation_api/change_product/').get(changeProductHandler);
+app.route('/axapi_automation_api/change_build_number/').get(changeBuildNumberHandler);
+app.route('/axapi_automation_api/change_modified_filename/').get(changeModifiedFilenameHandler);
+app.route('/axapi_automation_api/change_tab/').get(changeTabHandler);
 
 app.route('/search')
   .get((req, res)=>{

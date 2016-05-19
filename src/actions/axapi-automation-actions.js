@@ -50,10 +50,11 @@ const axapiAutomationApi = (handle, conf={}) => {
       }
     };
     let url = SERVER_AXAPI_AUTOMATION_API_URL;
-    url += `?handle=${handle}`;
+    url += handle + '/';
     console.log('conf', conf);
     for (let [k, v] of Object.entries(conf)) {
-      url += `&${k}=${v}`;
+      url += url.indexOf('?')===-1 ? '?' : '&';
+      url += `${k}=${v}`;
     }
     return fetch(url, config)
       .then((res) => res.json())
@@ -62,7 +63,7 @@ const axapiAutomationApi = (handle, conf={}) => {
         console.log('body-------', body);
         const data = body && body.data;
         switch (handle) {
-          case 'FETCH_PRODUCT':
+          case 'fetch_product':
             dispatch({
               type: actionTypes.AXAPIAUTO_FETCH_PRODUCT_SUCCESS,
               products: data.products
@@ -71,24 +72,24 @@ const axapiAutomationApi = (handle, conf={}) => {
               // ...jsonBuildDetail(data.build, data.dels, data.mods, data.news, data.curMod)
             });
           break;
-          case 'FETCH_BUILD_NUMBER':
+          case 'fetch_build_number':
             dispatch({
               type: actionTypes.AXAPIAUTO_FETCH_BUILD_NUMBER_SUCCESS,
               builds: data.builds
               // ...jsonBuildDetail(data.build, data.dels, data.mods, data.news, data.curMod)
             });
           break;
-          case 'CHANGE_PRODUCT': /** TODO */
+          case 'change_product': /** TODO */
             dispatch({
               type: actionTypes.CHANGE_PRODUCT_NUMBER_SUCCESS,
               // ...jsonBuilds(data.builds),
               // ...jsonBuildDetail(data.build, data.dels, data.mods, data.news, data.curMod)
             });
           break;
-          case 'CHANGE_BUILD_NUMBER':
-          case 'CHANGE_TAB':
+          case 'change_build_number':
+          case 'change_tab':
             let _type = actionTypes.AXAPIAUTO_CHANGE_BUILD_NUMBER_SUCCESS;
-            if (handle==='CHANGE_TAB') {
+            if (handle==='change_tab') {
               _type = actionTypes.AXAPIAUTO_CHANGE_TAB_SUCCESS;
             }
             dispatch({
@@ -99,7 +100,7 @@ const axapiAutomationApi = (handle, conf={}) => {
                 )
             });
           break;
-          case 'CHANGE_MODIFIED_FILENAME':
+          case 'change_modified_filename':
             dispatch({
               type: actionTypes.AXAPIAUTO_CHANGE_MODIFIED_FILENAME_SUCCESS,
               modifiedContent: data.modifiedContent,
@@ -112,27 +113,27 @@ const axapiAutomationApi = (handle, conf={}) => {
 };
 
 export function fetchBuildNumber(product) { //async
-  return axapiAutomationApi('FETCH_BUILD_NUMBER', {product});
+  return axapiAutomationApi('fetch_build_number', {product});
 };
 export function changeBuildNumber(product, build, tab) {
-  return axapiAutomationApi('CHANGE_BUILD_NUMBER', {product, build, tab});
+  return axapiAutomationApi('change_build_number', {product, build, tab});
 };
 
 export function fetchProduct() {
-  return axapiAutomationApi('FETCH_PRODUCT');
+  return axapiAutomationApi('fetch_product');
 };
 export function changeProduct(product) {
   // TODO
-  return axapiAutomationApi('CHANGE_PRODUCT', {product});
+  return axapiAutomationApi('change_product', {product});
 };
 
 export function changeTabPage(tab, product, build) {
-  return axapiAutomationApi('CHANGE_TAB', {tab, product, build});
+  return axapiAutomationApi('change_tab', {tab, product, build});
 };
 
 export function changeModifiedFileName(filename, product, tab, build) {
   filename = _convertModDiffFilePath(filename);
-  return axapiAutomationApi('CHANGE_MODIFIED_FILENAME', {filename, product, tab, build});
+  return axapiAutomationApi('change_modified_filename', {filename, product, tab, build});
 }
 
 //how to changeProduct and buildNumber at once.
