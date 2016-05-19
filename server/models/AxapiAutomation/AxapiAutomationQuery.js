@@ -18,6 +18,10 @@ let _getAllBuildNumber = (productValue) => {
   });
 };
 
+let _getFileNameOnly = (filePath) => {
+  return filePath.split('/').slice(-1)[0];
+};
+
 let _getModifiedDiffFileName = (schemaFilePath) => { // schemaFilePath is from the content of mod.txt 
   return 'mod_diff--' + schemaFilePath.replace(/\//g, 'ZZZZ');
 };
@@ -65,8 +69,9 @@ let _getDataWithModifiedContent = (product, build, tab) => {
     mods = _getDiffStatusFileList('mod.txt', product, build, tab);
     news = _getDiffStatusFileList('new.txt', product, build, tab);
     if (mods && mods.length) {
+      let filePath = mods[0];
       curMod = _readDiffStatusFileContent(
-        _getModifiedDiffFileName(mods[0]),
+        _getModifiedDiffFileName(filePath),
         product,
         build,
         tab
@@ -79,7 +84,8 @@ let _getDataWithModifiedContent = (product, build, tab) => {
     dels: dels,
     mods: mods,
     news: news,
-    curMod: curMod
+    curMod: curMod,
+    curModFile: _getFileNameOnly(filePath)
   };
   return data;
 };
@@ -132,7 +138,7 @@ export const changeBuildNumberHandler = async (req, res) => {
     res.json({'code':CODE_SUCC, 'data':[], 'msg':'tab, product AND build are required!'});
   };
   console.log('product, build, tab', product, build, tab);
-
+  tab = TAB_MAPPING_FOLDER[tab];
   let data = _getDataWithModifiedContent(product, build, tab);
   // console.log('data-----------', data);
   res.json({'code':CODE_SUCC, 'data':data});
@@ -151,7 +157,7 @@ export const changeModifiedFilenameHandler = async (req, res) => {
   // console.log('--------------', filename, tab, product, build);
   let modifiedContent = _readDiffStatusFileContent(filename, product, build, tab);
   let filenameRecover = filename.replace('mod_diff--', '').replace(/ZZZZ/g, '/');
-  let modifiedFilename = filenameRecover.split('/').slice(-1)[0];
+  let modifiedFilename = _getFileNameOnly(filenameRecover);
   res.json({'code':CODE_SUCC, 'data':{modifiedContent: modifiedContent, modifiedFilename: modifiedFilename}});
 };
 

@@ -15,13 +15,15 @@ let _convertModDiffFilePath = (filePath) => { //filePath should be '4_1_1/cli_sc
   return 'mod_diff--' + filePath.replace(/\//g, 'ZZZZ'); //should be mod_diff--4_1_1ZZZZcli_schema_diff_resultZZZZrule-set.sch
 };
 
-let jsonBuildDetail = (build, dels, mods, news, curMod) => {
+let jsonBuildDetail = (build, dels, mods, news, curMod, curModFile, tab) => {
   return {
     build,
     dels, // s means filenames
     mods,
     news,
     curMod,
+    curModFile,
+    tab
   };
 };
 
@@ -84,9 +86,17 @@ let axapiAutomationApi = (handle, conf={}) => {
             });
           break;
           case 'CHANGE_BUILD_NUMBER':
+          case 'CHANGE_TAB':
+            let _type = actionTypes.AXAPIAUTO_CHANGE_BUILD_NUMBER_SUCCESS;
+            if (handle==='CHANGE_TAB') {
+              _type = actionTypes.AXAPIAUTO_CHANGE_TAB_SUCCESS;
+            }
             dispatch({
-              type: actionTypes.AXAPIAUTO_CHANGE_BUILD_NUMBER_SUCCESS,
-              ...jsonBuildDetail(data.build, data.dels, data.mods, data.news, data.curMod)
+              type: _type,
+              ...jsonBuildDetail(data.build, data.dels, data.mods, data.news, data.curMod,
+                data.curModFile,
+                conf.tab, //should be 'TAB___*'
+                )
             });
           break;
           case 'CHANGE_MODIFIED_FILENAME':
@@ -94,13 +104,6 @@ let axapiAutomationApi = (handle, conf={}) => {
               type: actionTypes.AXAPIAUTO_CHANGE_MODIFIED_FILENAME_SUCCESS,
               modifiedContent: data.modifiedContent,
               modifiedFilename: data.modifiedFilename
-            });
-          break;
-          case 'CHANGE_TAB':
-            dispatch({
-              type: actionTypes.AXAPIAUTO_CHANGE_TAB_SUCCESS,
-              tab: conf.tab, //should be 'TAB___*'
-              ...jsonBuildDetail(data.build, data.dels, data.mods, data.news, data.curMod)
             });
           break;
         }

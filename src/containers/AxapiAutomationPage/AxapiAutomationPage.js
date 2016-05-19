@@ -11,11 +11,11 @@ import * as AxapiAutomationPageActions from '../../actions/axapi-automation-acti
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
 
-let _convertTab = (tab) => {
-  let mapping = {'TAB___CLI':'cli', 'TAB___JSON':'json', 'TAB___API':'api'};
-  tab = mapping[tab];
-  return tab;
-};
+// let _convertTab = (tab) => {
+//   let mapping = {'TAB___CLI':'cli', 'TAB___JSON':'json', 'TAB___API':'api'};
+//   tab = mapping[tab];
+//   return tab;
+// };
 let _convertDiffContent = (content) => {
   return '```diff\n' + content + '\n```';
 };
@@ -78,6 +78,13 @@ class AxapiAutomationPage extends Component {
     if (this.props.curProduct!==nextProps.curProduct) {
       this.props.fetchBuildNumber(nextProps.curProduct);
     }
+    if (this.props.aryBuildNumber!==nextProps.aryBuildNumber 
+    && nextProps.aryBuildNumber 
+    && nextProps.aryBuildNumber.length) { // EX: changed product dropdownlist
+      this.props.changeBuildNumber(nextProps.curProduct, 
+        nextProps.aryBuildNumber[0].value, 
+        nextProps.currentTabPage);
+    }
   };
 
   render() {
@@ -104,6 +111,7 @@ class AxapiAutomationPage extends Component {
     let tabJSONProps = currentTabPage==='TAB___JSON' ? {secondary: true} : {};
     let tabAPIProps = currentTabPage==='TAB___API' ? {secondary: true} : {};
 
+    let hasModifiedFiles = aryModFiles && aryModFiles.length;
 
     return (<section className="automation-page">
       <div className="automation-page-left">
@@ -163,7 +171,7 @@ class AxapiAutomationPage extends Component {
                 isNeedAll={false}
                 title={curBuildNumber}
                 onOptionClick={(val)=>{
-                  changeBuildNumber(curProduct, val, _convertTab(currentTabPage)); //val is build
+                  changeBuildNumber(curProduct, val, currentTabPage); //val is build
                 }}
                 aryOptionConfig={aryBuildNumber}
             />
@@ -171,8 +179,9 @@ class AxapiAutomationPage extends Component {
           </div>
         </div>
         <div className="automation-page-right__body">
-          <div className="automation-page-right__body-row--schema">
-            <div style={{float:'left', width:'300px'}}>
+          <div className="automation-page-right__body-row--schema" style={{minHeight:'800px'}}>
+            <div style={{float: hasModifiedFiles ? 'left' : 'none', 
+                          width: hasModifiedFiles ? '300px' : 'auto'}}>
               <DisplayFileList title="Modified" 
               isModified={true} 
               isModifiedOnClick={aryModFiles.map((val)=>{
@@ -185,7 +194,8 @@ class AxapiAutomationPage extends Component {
               <DisplayFileList title="Created" ary={aryNewFiles} />
               <DisplayFileList title="Deleted" ary={aryDelFiles} />
             </div>
-            <div style={{margin:'0 0 0 320px'}}>
+            <div style={{margin:'0 0 0 320px', 
+                        'display': hasModifiedFiles ? '' : 'none'}}>
               <div>
                 <DiffLabelTag><strong>{curModifiedFilename}</strong></DiffLabelTag>
               </div>

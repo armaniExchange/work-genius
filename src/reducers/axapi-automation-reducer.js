@@ -38,11 +38,13 @@ export default function searchReducer(state = initialState, action) {
                   .set('aryBuildNumber', action.builds);
     case actionTypes.AXAPIAUTO_CHANGE_BUILD_NUMBER_SUCCESS:
     case actionTypes.AXAPIAUTO_CHANGE_TAB_SUCCESS:
+      console.warn(action);
       return state.set('curBuildNumber', action.build)
                 .set('currentTabPage', action.tab)
                 .set('aryDelFiles', action.dels)
                 .set('aryModFiles', action.mods)
                 .set('aryNewFiles', action.news)
+                .set('curModifiedFilename', action.curModFile)
                 .set('curModifiedDiff', action.curMod);
     case actionTypes.AXAPIAUTO_CHANGE_MODIFIED_FILENAME_SUCCESS:
       return state.set('curModifiedDiff', action.modifiedContent)
