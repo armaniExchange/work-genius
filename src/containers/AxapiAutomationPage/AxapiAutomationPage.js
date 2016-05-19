@@ -78,11 +78,11 @@ class AxapiAutomationPage extends Component {
     if (this.props.curProduct!==nextProps.curProduct) {
       this.props.fetchBuildNumber(nextProps.curProduct);
     }
-    if (this.props.aryBuildNumber!==nextProps.aryBuildNumber 
-    && nextProps.aryBuildNumber 
+   if (this.props.aryBuildNumber!==nextProps.aryBuildNumber
+    && nextProps.aryBuildNumber
     && nextProps.aryBuildNumber.length) { // EX: changed product dropdownlist
-      this.props.changeBuildNumber(nextProps.curProduct, 
-        nextProps.aryBuildNumber[0].value, 
+      this.props.changeBuildNumber(nextProps.curProduct,
+        nextProps.aryBuildNumber[0].value,
         nextProps.currentTabPage);
     }
   };
@@ -180,8 +180,8 @@ class AxapiAutomationPage extends Component {
         </div>
         <div className="automation-page-right__body">
           <div className="automation-page-right__body-row--schema" style={{minHeight:'800px'}}>
-            <div style={{float: hasModifiedFiles ? 'left' : 'none', 
-                          width: hasModifiedFiles ? '300px' : 'auto'}}>
+              <div style={{float: hasModifiedFiles ? 'left' : 'none',
+                width: hasModifiedFiles ? '300px' : 'auto'}}>
               <DisplayFileList title="Modified" 
               isModified={true} 
               isModifiedOnClick={aryModFiles.map((val)=>{
@@ -194,8 +194,8 @@ class AxapiAutomationPage extends Component {
               <DisplayFileList title="Created" ary={aryNewFiles} />
               <DisplayFileList title="Deleted" ary={aryDelFiles} />
             </div>
-            <div style={{margin:'0 0 0 320px', 
-                        'display': hasModifiedFiles ? '' : 'none'}}>
+            <div style={{margin:'0 0 0 320px',
+            'display': hasModifiedFiles ? '' : 'none'}}>
               <div>
                 <DiffLabelTag><strong>{curModifiedFilename}</strong></DiffLabelTag>
               </div>
