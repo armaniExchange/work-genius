@@ -148,7 +148,19 @@ class FeatureAutomationRow extends Component {
     const ownerNames = (accumOwners || []).map( ownerId => {
       return allUsers.filter(user => user.id === ownerId)[0].name;
     });
-    const MAX_DISPLAY_OWNERS_NUM = 3;
+    const MAX_DISPLAY_OWNERS_NUM = 2;
+    const ownerStyle = {
+      backgroundColor: '#f2f9fc',
+      borderRadius: 2,
+      border: '1px solid #c9e6f2',
+      color: '#08c',
+      display: 'inline-block',
+      fontSize: '0.9em',
+      marginLeft: 5,
+      marginTop: 5,
+      verticalAlign: 'top',
+      padding: '0 3px'
+    };
     // owners.map((owner, index) => <span key={index}>{owner}&nbsp;</span>)
     return !hasChildren ?  (
       <div>
@@ -173,7 +185,21 @@ class FeatureAutomationRow extends Component {
         placement="bottom"
         trigger={['hover']}
         overlay={<div>{ownerNames.join(', ')}</div>}>
-        <div>{ownerNames.splice(0, MAX_DISPLAY_OWNERS_NUM).join(', ') + ( ownerNames.length >=  MAX_DISPLAY_OWNERS_NUM ? '...' : '')}</div>
+        <div>
+          {
+
+            ownerNames.splice(0, MAX_DISPLAY_OWNERS_NUM)
+            .map((ownerName, index) => {
+              return (
+                <span key={index} style={ownerStyle}>
+                  {ownerName}
+                </span>
+              );
+            })
+          }
+
+          {ownerNames.length >=  MAX_DISPLAY_OWNERS_NUM ? <span style={ownerStyle}>...</span> : null}
+        </div>
       </Tooltip>
     );
   }
@@ -204,6 +230,26 @@ class FeatureAutomationRow extends Component {
     const { editingDifficulty } = this.state;
     const hasChildren = children && children.length > 0;
 
+    const DIFFICULTY_COLORS = {
+      'Nothing': '#777',
+      'Easy': '#5cb85c',
+      'Medium': '#f0ad4e',
+      'Hard': '#d9534f',
+      'Very Hard': 'purple',
+      'total': '#5bc0de'
+    };
+
+    const difficultyStyle = (difficultyName) => {
+
+      return {
+        backgroundColor: DIFFICULTY_COLORS[difficultyName],
+        color: 'white',
+        padding: '0 4px',
+        borderRadius: 5,
+        margin: 1
+      };
+    };
+
     return !hasChildren ? (
       <div>
         <FeatureAutomationRowInlineToolbar
@@ -220,15 +266,21 @@ class FeatureAutomationRow extends Component {
         />
       </div>
     ) : (
-      difficulties.map((difficultyCount, index) => {
+      difficulties
+      .map((difficultyCount, index) => {
         return {
           difficultyName: FEATURE_ANALYSIS_DIFFICULTIES[index],
           difficultyCount
         };
       })
-      .filter(eachDiffculty => eachDiffculty.difficultyCount !==0 )
-      .map(eachDiffculty => `${eachDiffculty.difficultyCount} ${eachDiffculty.difficultyName}`)
-      .join(', ')
+      .reverse()
+      .map(eachDiffculty => {
+        return (
+          <span style={difficultyStyle(eachDiffculty.difficultyName)}>
+            {eachDiffculty.difficultyCount}
+          </span>
+        );
+      })
     );
   }
 
