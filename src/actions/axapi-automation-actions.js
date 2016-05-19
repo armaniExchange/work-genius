@@ -71,7 +71,7 @@ let axapiAutomationApi = (handle, conf={}) => {
               // ...jsonBuildDetail(data.build, data.dels, data.mods, data.news, data.curMod)
             });
           break;
-          case 'CHANGE_PRODUCT':
+          case 'CHANGE_PRODUCT': /** TODO */
             dispatch({
               type: actionTypes.CHANGE_PRODUCT_NUMBER_SUCCESS,
               // ...jsonBuilds(data.builds),
@@ -81,7 +81,7 @@ let axapiAutomationApi = (handle, conf={}) => {
           case 'CHANGE_BUILD_NUMBER':
             dispatch({
               type: actionTypes.AXAPIAUTO_CHANGE_BUILD_NUMBER_SUCCESS,
-              // ...jsonBuildDetail(data.build, data.dels, data.mods, data.news, data.curMod)
+              ...jsonBuildDetail(data.build, data.dels, data.mods, data.news, data.curMod)
             });
           break;
         }
@@ -92,14 +92,15 @@ let axapiAutomationApi = (handle, conf={}) => {
 export function fetchBuildNumber(product) { //async // (deprecated comment) auto-select first build AND return build detail
   return axapiAutomationApi('FETCH_BUILD_NUMBER', {product});
 };
-export function changeBuildNumber(product, build) { // (deprecated comment) return build detail
-  return axapiAutomationApi('CHANGE_BUILD_NUMBER', {product, build});
+export function changeBuildNumber(product, build, tab) { // (deprecated comment) return build detail
+  return axapiAutomationApi('CHANGE_BUILD_NUMBER', {product, build, tab});
 };
 
 export function fetchProduct() { // (deprecated comment) return all products AND return all builds AND auto-select first build AND return build detail
   return axapiAutomationApi('FETCH_PRODUCT');
 };
 export function changeProduct(product) { // (deprecated comment) return all builds AND auto-select first build AND return build detail
+  // TODO
   return axapiAutomationApi('CHANGE_PRODUCT', {product});
 };
 

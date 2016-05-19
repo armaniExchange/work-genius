@@ -9,6 +9,24 @@ import { bindActionCreators } from 'redux';
 // Actions
 import * as AxapiAutomationPageActions from '../../actions/axapi-automation-actions';
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
+import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
+
+let _convertTab = (tab) => {
+  let mapping = {'TAB___CLI':'cli', 'TAB___JSON':'json', 'TAB___API':'api'};
+  tab = mapping[tab];
+  return tab;
+};
+let _convertDiffContent = (content) => {
+  return '```diff\n' + content + '\n```';
+};
+
+/*
+let colorfulDiff = (plainTextDiff) => {
+  let ret = plainTextDiff.replace(/\n/g, '<br />')
+              .replace(/^(-.*)/g, '<strong style="color:red">$1</strong>')
+              .replace(/^(\+.*)/g, '<strong style="color:green">$1</strong>');
+  return ret;
+};*/
 
 let DiffLabelTag = (props) => {
   let _style = {padding:'3px 16px', textAlign:'center', color:'#333', background:'#ccc', 'margin': '0 6px 0 0'};
@@ -22,6 +40,32 @@ DiffLabelTag.propTypes = {
   emphasize: PropTypes.bool
 };
 
+let DisplayFileList = (props) => {
+  let ary = props.ary || [];
+  let isModified = props.isModified;
+  return (<dl style={{display:ary.length===0 ? 'none' : ''}}>
+    <dt>{props.title}:</dt>
+    <dd>
+      <ul style={{overflow:'auto', width:'99%', 'max-height': '400px'}}>
+        {ary.map((val, k)=>{
+          val = val.indexOf('/')>=0 // defensive here
+              ? val.split('/').slice(-1)[0] : val;
+          if (isModified) {
+            return (<li style={{cursor:'pointer'}} onClick={()=>{
+
+            }} key={k}><a>{val}</a></li>);
+          }
+          return (<li key={k}>{val}</li>);
+        })}
+      </ul>
+    </dd>
+  </dl>);
+};
+DisplayFileList.propTypes = {
+  title: PropTypes.string,
+  isModified: PropTypes.bool,
+  ary: PropTypes.array
+};
 
 class AxapiAutomationPage extends Component {
   componentDidMount() {
@@ -45,6 +89,10 @@ class AxapiAutomationPage extends Component {
       aryProduct,
       curBuildNumber,
       aryBuildNumber,
+      aryDelFiles,
+      aryModFiles,
+      aryNewFiles,
+      curModifiedDiff,
       //actions
       changeTabPage,
       changeBuildNumber,
@@ -105,8 +153,8 @@ class AxapiAutomationPage extends Component {
             <DropDownList
                 isNeedAll={false}
                 title={curProduct}
-                onOptionClick={(item)=>{
-                  changeProduct(item);
+                onOptionClick={(val)=>{
+                  changeProduct(val); //val is product
                 }}
                 aryOptionConfig={aryProduct}
             />
@@ -114,26 +162,37 @@ class AxapiAutomationPage extends Component {
             <DropDownList
                 isNeedAll={false}
                 title={curBuildNumber}
-                onOptionClick={(item)=>{
-                  changeBuildNumber(item);
+                onOptionClick={(val)=>{
+                  changeBuildNumber(curProduct, val, _convertTab(currentTabPage)); //val is build
                 }}
                 aryOptionConfig={aryBuildNumber}
             />
+            <hr />
           </div>
         </div>
         <div className="automation-page-right__body">
-          {[1,2,3].map(()=>{
-            return (<div className="automation-page-right__body-row--schema">
-            <div className="automation-page-right__body-row--schema__left" style={{'margin':'0 0 10px', width:'35%'}}>
-              <div>
-                <DiffLabelTag>CLI</DiffLabelTag>
-              </div>
-              <div style={{height:'500px', background:'#ddd'}}></div>
+          <div className="automation-page-right__body-row--schema">
+            <div style={{float:'left', width:'300px'}}>
+              <DisplayFileList title="Modified" isModified={true} ary={aryModFiles} />
+              <DisplayFileList title="Created" ary={aryNewFiles} />
+              <DisplayFileList title="Deleted" ary={aryDelFiles} />
             </div>
-          </div>);
-          })}
+            <div style={{margin:'0 0 0 320px'}}>
+              <div>
+                <DiffLabelTag><strong>Modified content:</strong></DiffLabelTag>
+              </div>
+              <div style={{height:'',overflow:'auto'}}>
+                <HighlightMarkdown source={_convertDiffContent(curModifiedDiff)}/>
+              </div>
+              {/*<div style={{display:'', height:'500px', background:'#eee', overflow:'auto', padding:'10px 20px'}}
+                dangerouslySetInnerHTML={{__html:colorfulDiff(curModifiedDiff)}}
+              >
+              </div>*/}
+            </div>
+            <div style={{clear:'both'}}></div>
+          </div>
 
-          {[1,2,3].map(()=>{
+          {[1].map(()=>{
             return (<div className="automation-page-right__body-row--schema">
             <div className="automation-page-right__body-row--schema__right" style={{'margin':'0 0 10px', width:'64%'}}>
               <div>
@@ -199,6 +258,11 @@ AxapiAutomationPage.propTypes = {
   aryProduct: PropTypes.array,
   curBuildNumber: PropTypes.string,
   aryBuildNumber: PropTypes.array,
+
+  aryDelFiles: PropTypes.array,
+  aryModFiles: PropTypes.array,
+  aryNewFiles: PropTypes.array,
+  curModifiedDiff: PropTypes.string,
 
   fetchProduct: PropTypes.func,
   fetchBuildNumber: PropTypes.func,

@@ -19,17 +19,23 @@ let _getAllBuildNumber = (productValue) => {
 let _getModifiedDiffFileName = (schemaFilePath) => { // schemaFilePath is from the content of mod.txt 
   return 'mod_diff--' + schemaFilePath.replace(/\//g, 'ZZZZ');
 };
-let _readDiffStatusFileContent = (diffFilename, productValue, build) => {
+let _readDiffStatusFileContent = (diffFilename, productValue, build, tab) => {
   // diffFilename should be 'new.txt' 'del.txt' 'mod.txt' or 'mod_diff--*.txt' (see _getModifiedDiffFileName)
-  let _path = DATA_ABS_PATH + productValue + '/' + build + '/';
-  let content = fs.readFileSync(_path + diffFilename);
+  // console.log('start _readDiffStatusFileContent');
+  let _path = DATA_ABS_PATH + productValue + '/' + build + '/' + tab + '/';
+  console.log('_readDiffStatusFileContent _path', _path);
+  console.log('diffFilename', diffFilename);
+  let content = fs.readFileSync(_path + diffFilename, 'utf8');
+  // console.log('content-----', content, content.length);
   return content;
 };
 
-let _getDiffStatusFileList = (diffFilename, productValue, build) => {
+let _getDiffStatusFileList = (diffFilename, productValue, build, tab) => {
   // diffFilename should be 'new.txt' 'del.txt' 'mod.txt'
-  let content = _readDiffStatusFileContent(diffFilename, productValue, build);
+  // console.log('_getDiffStatusFileList start _readDiffStatusFileContent');
+  let content = _readDiffStatusFileContent(diffFilename, productValue, build, tab);
   let ary = content.split("\n");
+  // console.log('content---', content);
   let ret = [];
   for (let i=0, len=ary.length; i<len; i++) {
     let ln = ary[i];
@@ -40,6 +46,7 @@ let _getDiffStatusFileList = (diffFilename, productValue, build) => {
         break;
       }
     }
+    if (mark==='') {continue;}
     let filename = ln.replace(mark,'').trim();
     ret.push(filename);
   }
@@ -56,9 +63,9 @@ export const fetchProductHandler = async (req, res) => {
   // let curMod = '';
   // if (build) {
   //   let productValue = allProduct[0].value;
-  //   dels = _getDiffStatusFileList('del.txt', productValue, build);
-  //   mods = _getDiffStatusFileList('mod.txt', productValue, build);
-  //   news = _getDiffStatusFileList('new.txt', productValue, build);
+  //   dels = _getDiffStatusFileList('del.txt', productValue, build, tab);
+  //   mods = _getDiffStatusFileList('mod.txt', productValue, build, tab);
+  //   news = _getDiffStatusFileList('new.txt', productValue, build, tab);
   // }
 
   res.json({'code':CODE_SUCC, 'data':{
@@ -87,5 +94,39 @@ export const changeProductHandler = async (req, res) => {
 
 };
 export const changeBuildNumberHandler = async (req, res) => {
+  let tab = req.query && req.query.tab;
+  let product = req.query && req.query.product;
+  let build = req.query && req.query.build;
+  if (!tab || !product || !build) {
+    res.json({'code':CODE_SUCC, 'data':[], 'msg':'tab, product AND build are required!'});
+  };
+  console.log('product, build, tab', product, build, tab);
 
+  let dels = [];
+  let mods = [];
+  let news = [];
+  let curMod = '';
+  if (build) {
+    dels = _getDiffStatusFileList('del.txt', product, build, tab);
+    mods = _getDiffStatusFileList('mod.txt', product, build, tab);
+    news = _getDiffStatusFileList('new.txt', product, build, tab);
+    if (mods && mods.length) {
+      curMod = _readDiffStatusFileContent(
+        _getModifiedDiffFileName(mods[0]),
+        product,
+        build,
+        tab
+        );
+    }
+  }
+
+  let data = {
+    build: build,
+    dels: dels,
+    mods: mods,
+    news: news,
+    curMod: curMod
+  };
+  console.log('data-----------', data);
+  res.json({'code':CODE_SUCC, 'data':data});
 };
