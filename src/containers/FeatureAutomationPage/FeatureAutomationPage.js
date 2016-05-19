@@ -2,19 +2,20 @@
 import './_FeatureAutomationPage.scss';
 // React & Redux
 import React, { Component, PropTypes } from 'react';
+import Paper from 'material-ui/lib/paper';
+import RaisedButton from 'material-ui/lib/raised-button';
+import AutoComplete from 'material-ui/lib/auto-complete';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Paper from 'material-ui/lib/paper';
 import moment from 'moment';
 
+import { depthFirstFlat, filterChildren, flatTree } from '../../libraries/tree';
 import * as FeatureAutomationActions from '../../actions/feature-automation-page-action';
 import * as DocumentActions from '../../actions/document-page-actions';
 
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
-import { depthFirstFlat, filterChildren } from '../../libraries/tree';
 import FeatureAutomationRow from '../../components/FeatureAutomationRow/FeatureAutomationRow';
 import EditFeatureAutomationAxapiDialog from '../../components/EditFeatureAutomationAxapiDialog/EditFeatureAutomationAxapiDialog';
-import RaisedButton from 'material-ui/lib/raised-button';
 
 class FeatureAutomationPage extends Component {
 
@@ -153,6 +154,11 @@ class FeatureAutomationPage extends Component {
     this.props.featureAutomationActions.filterTestReport({ filterCase: value });
   }
 
+  onFilterCategoryUdpateInput(value) {
+    console.log('onFilterCategoryUdpateInput');
+    console.log(value);
+  }
+
   getDisplayTree() {
     const {
       documentCategoriesWithReportTest,
@@ -185,6 +191,13 @@ class FeatureAutomationPage extends Component {
     }).splice(1); //remove root
 
     return displayTree;
+  }
+
+  _transformToOptions(categories) {
+    return flatTree(categories).filter((item) => item.fullpath !== 'root')
+      .map((item) => {
+        return item.fullpath ? item.fullpath.replace('root/', '').replace(/\//gi, ' > ') : '';
+      });
   }
 
   render() {
@@ -242,7 +255,13 @@ class FeatureAutomationPage extends Component {
               return { title: item, value: item};
             })}
           />
-
+          <AutoComplete
+            hintText="Filter Category"
+            dataSource={::this._transformToOptions(documentCategoriesWithReportTest)}
+            onUpdateInput={::this.onFilterCategoryUdpateInput}
+            animated={false}
+            floatingLabelText="Filter Category"
+          />
         </div>
         <div>
           <label>End2end:&nbsp;</label>

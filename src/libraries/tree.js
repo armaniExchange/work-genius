@@ -104,3 +104,16 @@ export function filterChildren(rootNode, predicate) {
   }
   return _filterChildren(copiedRootNode);
 }
+
+export function flatTree(rootNode) {
+  function _flatTree(node) {
+    if (!node || typeof node !== 'object' || Array.isArray(node)) {
+      return [];
+    }
+    if (!node.children || node.children.length === 0) {
+      return [node];
+    }
+    return node.children.reduce((result, next) => result.concat(_flatTree(next)), []);
+  }
+  return _flatTree(rootNode);
+}

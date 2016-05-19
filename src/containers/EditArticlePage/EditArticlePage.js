@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import RaisedButton from 'material-ui/lib/raised-button';
+import { flatTree } from '../../libraries/tree';
 
 import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
 import ArticleEditor from '../../components/ArticleEditor/ArticleEditor';
@@ -219,22 +220,11 @@ class EditArticlePage extends Component {
     return `[Uploading ${file.name} ...]()`;
   }
   _transformToOptions(categories) {
-    return this._transformFromTree(categories).filter((item) => {
-      return item.path !== 'root';
-    }).map((item) => ({
-      label: item.path ? item.path.replace('root/', '').replace(/\//gi, ' > ') : '',
-      value: item.id
-    }));
-  }
-
-  _transformFromTree(categories) {
-    if (!categories || typeof categories !== 'object' || Array.isArray(categories)) {
-      return [];
-    }
-    if (!categories.children || categories.children.length === 0) {
-      return [categories];
-    }
-    return categories.children.reduce((result, next) => result.concat(this._transformFromTree(next)), []);
+    return flatTree(categories).filter((item) => item.path !== 'root')
+      .map((item) => ({
+        label: item.path ? item.path.replace('root/', '').replace(/\//gi, ' > ') : '',
+        value: item.id
+      }));
   }
 
   onDocumentTemplateUpdate(documentTemplate) {

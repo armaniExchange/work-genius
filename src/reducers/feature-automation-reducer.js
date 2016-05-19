@@ -20,13 +20,14 @@ _.merge(MENU, TECH_MENU);
 function transformToTree(dataArr) {
     let root = dataArr.filter((node) => { return !node.parentId; })[0],
         rest = dataArr.filter((node) => { return node.parentId; });
-    let tree = generateTree(rest, root, {}, (node) => {
+    let tree = generateTree(rest, root, { fullpath: '' }, (node, parent) => {
       const axapiTest = node.axapiTest || [];
       const unitTest = node.unitTest || [];
       const end2endTest = node.end2endTest || [];
       return {
         owners: node.owners || [],
         difficulty: node.difficulty || 0,
+        fullpath: node.name === 'root' ? 'root' : `${parent.fullpath}/${node.name}`,
         axapiTestTotalCount: axapiTest.length,
         axapiTestFailCount: axapiTest.filter(item => !item.isSuccess).length,
         unitTestTotalCount: unitTest.length,
