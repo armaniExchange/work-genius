@@ -28,10 +28,16 @@ class FeatureAutomationPage extends Component {
   componentDidMount() {
     const {
       fetchDocumentCategoriesWithReport,
-      fetchTestReportCreatedTimeList
+      fetchTestReportCreatedTimeList,
+      filterTestReport
     } = this.props.featureAutomationActions;
     const { fetchAllUsers } = this.props.documentActions;
 
+    const { currentUser } = this.props;
+    const { privilege, id } = currentUser;
+    if (privilege <= 5) {
+      filterTestReport({ filterOwner: id });
+    }
     fetchTestReportCreatedTimeList();
     fetchDocumentCategoriesWithReport();
     fetchAllUsers();
@@ -221,7 +227,7 @@ class FeatureAutomationPage extends Component {
           <label>Owner:&nbsp;</label>
           <DropDownList
             isNeedAll={true}
-            title={filterOwner ? allUsers.filter(user => user.id === filterOwner)[0].name : 'All'}
+            title={filterOwner && allUsers && allUsers.length ? allUsers.filter(user => user.id === filterOwner)[0].name : 'All'}
             onOptionClick={::this.onFilterOwnerChange}
             aryOptionConfig={allUsers.map(item => {
               return { title: item.name, value: item.id};
@@ -324,6 +330,7 @@ FeatureAutomationPage.propTypes = {
   filterOwner                      : PropTypes.string,
   filterRelease                    : PropTypes.string,
   filterCase                       : PropTypes.string,
+  currentUser                      : PropTypes.object
 };
 
 FeatureAutomationPage.defaultProps = {
@@ -343,10 +350,14 @@ function mapStateToProps(state) {
     end2endTestCreatedTimeList,
     axapiTestCreatedTimeList
   } = state.featureAutomation.toJS();
+  const {
+    isLoading,
+    currentUser
+  } = state.app.toJS();
   const { allUsers } = state.documentation.toJS();
-  const { isLoading } = state.app.toJS();
   return {
     isLoading,
+    currentUser,
     filterOwner,
     filterRelease,
     filterCase,

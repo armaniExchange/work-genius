@@ -272,13 +272,16 @@ class FeatureAutomationRow extends Component {
         };
       })
       .reverse()
-      .map(eachDiffculty => {
+      .map((eachDiffculty, index) => {
         const {
           difficultyName,
           difficultyCount
         } = eachDiffculty;
         return (
-          <span style={difficultyStyle(difficultyName)} title ={difficultyName}>
+          <span
+            key={index}
+            style={difficultyStyle(difficultyName)}
+            title ={difficultyName}>
             {difficultyCount}
           </span>
         );
