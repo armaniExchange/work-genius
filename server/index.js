@@ -99,13 +99,10 @@ app.route('/axapi_automation_api')
         return changeProductHandler(req, res);
       case 'CHANGE_BUILD_NUMBER':
         return changeBuildNumberHandler(req, res);
-<<<<<<< HEAD
-=======
       case 'CHANGE_MODIFIED_FILENAME':
         return changeModifiedFilenameHandler(req, res);
       case 'CHANGE_TAB':
         return changeTabHandler(req, res);
->>>>>>> [axapi_auto] implement changeTabPage
     }
   });
 
