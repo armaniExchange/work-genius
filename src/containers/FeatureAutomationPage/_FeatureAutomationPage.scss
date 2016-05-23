@@ -1,6 +1,11 @@
 .feature-automation-page {
-  min-width: 1400px;
   .table {
+    overflow-x: auto;
+
+    .table-header, .table-row {
+      min-width: 1600px;
+    }
+
     .table-header {
       padding: 8px;
       width: 100%;
@@ -24,6 +29,7 @@
       }
     }
     .table-row {
+
       > span {
         display: table-cell;
         vertical-align: middle;
