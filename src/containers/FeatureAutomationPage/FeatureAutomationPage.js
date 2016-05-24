@@ -8,6 +8,7 @@ import AutoComplete from 'material-ui/lib/auto-complete';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import moment from 'moment';
+import _ from 'lodash';
 
 import { depthFirstFlat, filterChildren, flatTree } from '../../libraries/tree';
 import * as FeatureAutomationActions from '../../actions/feature-automation-page-action';
@@ -23,7 +24,8 @@ class FeatureAutomationPage extends Component {
     super(props);
     this.state = {
       displayCategoriesId: [],
-      filterCategoryText: ''
+      searchCategoryName: '',
+      flatCategories: []
     };
   }
 
@@ -50,10 +52,16 @@ class FeatureAutomationPage extends Component {
       documentCategoriesWithReportTest,
       filterOwner
     } = nextProps;
+
     const thisDocumentCategoriesWithReportTest = this.props.documentCategoriesWithReportTest;
     const isFirstLoaded = !thisDocumentCategoriesWithReportTest.children && thisDocumentCategoriesWithReportTest.children !== documentCategoriesWithReportTest.children;
+
+    if (thisDocumentCategoriesWithReportTest !== documentCategoriesWithReportTest ) {
+      this.setState({ flatCategories: flatTree(documentCategoriesWithReportTest) });
+    }
+
     // display at least two layers
-    const defaultDisplayCategories = documentCategoriesWithReportTest && documentCategoriesWithReportTest.children ? [
+    const defaultDisplayCategoriesId = documentCategoriesWithReportTest && documentCategoriesWithReportTest.children ? [
         ...documentCategoriesWithReportTest.children.map(item=>item.id),
         ...documentCategoriesWithReportTest.children.reduce((prev, current) => [...prev, ...current.children], []).map(item=>item.id)
       ].sort()
@@ -62,9 +70,9 @@ class FeatureAutomationPage extends Component {
     if ((isFirstLoaded && filterOwner) || (this.props.filterOwner !== filterOwner) ){
       const toBeDisplayedCategoriesId = depthFirstFlat(documentCategoriesWithReportTest, (node) => node.accumOwners.includes(filterOwner) || node.owners.includes(filterOwner))
         .splice(1).map(item => item.id);
-      this.setState({ displayCategoriesId: [...toBeDisplayedCategoriesId, ...defaultDisplayCategories] });
+      this.setState({ displayCategoriesId: [...toBeDisplayedCategoriesId, ...defaultDisplayCategoriesId] });
     } else if (isFirstLoaded) {
-      this.setState({ displayCategoriesId: defaultDisplayCategories });
+      this.setState({ displayCategoriesId: defaultDisplayCategoriesId });
     }
   }
 
@@ -178,8 +186,8 @@ class FeatureAutomationPage extends Component {
     this.props.featureAutomationActions.filterTestReport({ filterCase: value });
   }
 
-  onFilterCategoryUpdateInput(value) {
-    this.setState({ filterCategoryText: value });
+  onSearchCategoryNameUpdateInput(value) {
+    this.setState({ searchCategoryName: value });
   }
 
   getDisplayTree() {
@@ -190,7 +198,12 @@ class FeatureAutomationPage extends Component {
       filterCase
     } = this.props;
 
-    const { displayCategoriesId } = this.state;
+    const {
+      displayCategoriesId,
+      flatCategories,
+      searchCategoryName
+    } = this.state;
+
 
     const filteredReleaseChildrenResult = (documentCategoriesWithReportTest.children || []).filter(node => {
       return !filterRelease || node.id === filterRelease;
@@ -205,32 +218,37 @@ class FeatureAutomationPage extends Component {
         unitTestFailCount,
         end2endTestFailCount
       } = node;
-      return (!filterOwner || owners.includes(filterOwner))&&
+      return (!filterOwner || owners.includes(filterOwner)) &&
         (!filterCase || axapiTestFailCount || unitTestFailCount || end2endTestFailCount);
     });
 
-    const displayTree = depthFirstFlat(filteredTree, (node) => {
-      return node.name ==='root' || ( displayCategoriesId.includes(node.id));
-    }).splice(1); //remove root
+    const matchedCategories = flatCategories.filter(item=> item && item.fullpath && item.fullpath.toLowerCase().includes(searchCategoryName.toLowerCase()))
+      .reduce((prev, current)=> [...prev, ...current.parentIds ], [])
+      .reduce((prev, current)=> prev.includes(current) ? prev : [...prev, current], []) || [];
+
+    const displayTree = depthFirstFlat(filteredTree, (node) => node.name ==='root' || ( displayCategoriesId.includes(node.id)) || (matchedCategories.length < 10 && matchedCategories.includes(node.id)))
+      .splice(1) // remove root
+      .filter(item=> matchedCategories.includes(item.id));
 
     return displayTree;
   }
 
-  _transformToOptions(categories) {
-    return flatTree(categories).filter((item) => item.fullpath !== 'root')
-      .map((item) => {
-        return item.fullpath ? item.fullpath.replace('root/', '').replace(/\//gi, ' > ') : '';
-      });
+  filterSearchCategoryName(searchText, key) {
+    return searchText && key.toLowerCase().indexOf(searchText.toLowerCase()) !== -1;
   }
 
-  filterCategory(searchText, key) {
-    return searchText !== '' && key.toLowerCase().indexOf(searchText.toLowerCase()) !== -1;
-  }
+  getSearchCategoryNameDataSource() {
+    const {
+      searchCategoryName,
+      flatCategories
+    } = this.state;
+    const { filterOwner } = this.props;
 
-  getFilterCategoryDataSource() {
-    const { documentCategoriesWithReportTest } = this.props;
-    const { filterCategoryText } = this.state;
-    return this._transformToOptions(documentCategoriesWithReportTest).filter((categoryName)=> this.filterCategory(filterCategoryText, categoryName)).splice(0, 10);
+    return flatCategories.filter((item) => item.fullpath !== 'root')
+      .filter(item => !filterOwner || (item.owners && item.owners.includes(filterOwner)) )
+      .map((item) =>  item.fullpath ? item.fullpath.replace('root > ', '') : '' )
+      .filter((categoryName)=> this.filterSearchCategoryName(searchCategoryName, categoryName))
+      .splice(0, 10);
   }
 
   render() {
@@ -289,13 +307,15 @@ class FeatureAutomationPage extends Component {
               })}
             />
           </div>
+          <div style={{width: 20}}/>
           <div style={{flex: 1, top: -32, position: 'relative'}}>
             <AutoComplete
-              hintText="Filter Category"
-              dataSource={::this.getFilterCategoryDataSource()}
-              filter={::this.filterCategory}
-              onUpdateInput={::this.onFilterCategoryUpdateInput}
-              floatingLabelText="Filter Category"
+              hintText="Search Category"
+              dataSource={::this.getSearchCategoryNameDataSource()}
+              onUpdateInput={_.debounce(::this.onSearchCategoryNameUpdateInput, 100)}
+              onNewRequest={::this.onSearchCategoryNameUpdateInput}
+              filter={::this.filterSearchCategoryName}
+              floatingLabelText="Search Category"
               fullWidth={true}
             />
           </div>

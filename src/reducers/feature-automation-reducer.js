@@ -27,7 +27,8 @@ function transformToTree(dataArr) {
       return {
         owners: node.owners || [],
         difficulty: node.difficulty || 0,
-        fullpath: node.name === 'root' ? 'root' : `${parent.fullpath}/${node.name}`,
+        fullpath: node.name === 'root' ? 'root' : `${parent.fullpath} > ${node.name}`,
+        parentIds: [ ...(parent.parentIds || []), node.id ],
         axapiTestTotalCount: axapiTest.length,
         axapiTestFailCount: axapiTest.filter(item => !item.isSuccess).length,
         unitTestTotalCount: unitTest.length,
@@ -107,7 +108,8 @@ const initialState = Map({
   axapiTestCreatedTimeList: List.of(),
   filterOwner: null,
   filterRelease: null,
-  filterCase: null
+  filterCase: null,
+  filterCategoryName: ''
 });
 
 export default function featureAutomationReducer(state = initialState, action) {

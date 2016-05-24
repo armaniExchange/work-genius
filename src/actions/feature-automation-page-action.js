@@ -189,7 +189,7 @@ export function filterTestReport(filters) {
       { type: actionTypes.FILTER_TEST_REPORT },
       filters.hasOwnProperty('filterOwner') ? { filterOwner } : null,
       filters.hasOwnProperty('filterRelease') ? { filterRelease } : null,
-      filters.hasOwnProperty('filterCase') ? { filterCase } : null,
+      filters.hasOwnProperty('filterCase') ? { filterCase } : null
     ));
   };
 }

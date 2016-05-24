@@ -314,10 +314,6 @@ class FeatureAutomationRow extends Component {
     const Indicator = !hasChildren ? <span style={{width: 20, height: 18, display: 'inline-block'}}/> : (
       <span className={`tree-view_arrow${collapsed ? ' tree-view_arrow-collapsed': ''}`} />
     );
-    // const users = [
-    //   {value: 'zuoping', label: 'zuoping'},
-    //   {value: 'roll', label: 'roll'}
-    // ];
 
     return (
       <div className="category-row table-row">
