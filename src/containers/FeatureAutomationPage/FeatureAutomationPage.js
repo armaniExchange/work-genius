@@ -22,7 +22,8 @@ class FeatureAutomationPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      displayCategoriesId: []
+      displayCategoriesId: [],
+      filterCategoryText: ''
     };
   }
 
@@ -42,6 +43,29 @@ class FeatureAutomationPage extends Component {
     fetchTestReportCreatedTimeList();
     fetchDocumentCategoriesWithReport();
     fetchAllUsers();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      documentCategoriesWithReportTest,
+      filterOwner
+    } = nextProps;
+    const thisDocumentCategoriesWithReportTest = this.props.documentCategoriesWithReportTest;
+    const isFirstLoaded = !thisDocumentCategoriesWithReportTest.children && thisDocumentCategoriesWithReportTest.children !== documentCategoriesWithReportTest.children;
+    // display at least two layers
+    const defaultDisplayCategories = documentCategoriesWithReportTest && documentCategoriesWithReportTest.children ? [
+        ...documentCategoriesWithReportTest.children.map(item=>item.id),
+        ...documentCategoriesWithReportTest.children.reduce((prev, current) => [...prev, ...current.children], []).map(item=>item.id)
+      ].sort()
+      .reduce((prev, current) => prev.includes(current) ? prev : [...prev, current], []) : [];
+
+    if ((isFirstLoaded && filterOwner) || (this.props.filterOwner !== filterOwner) ){
+      const toBeDisplayedCategoriesId = depthFirstFlat(documentCategoriesWithReportTest, (node) => node.accumOwners.includes(filterOwner) || node.owners.includes(filterOwner))
+        .splice(1).map(item => item.id);
+      this.setState({ displayCategoriesId: [...toBeDisplayedCategoriesId, ...defaultDisplayCategories] });
+    } else if (isFirstLoaded) {
+      this.setState({ displayCategoriesId: defaultDisplayCategories });
+    }
   }
 
   toggleChildren({id, forceEnable}) {
@@ -154,9 +178,8 @@ class FeatureAutomationPage extends Component {
     this.props.featureAutomationActions.filterTestReport({ filterCase: value });
   }
 
-  onFilterCategoryUdpateInput(value) {
-    console.log('onFilterCategoryUdpateInput');
-    console.log(value);
+  onFilterCategoryUpdateInput(value) {
+    this.setState({ filterCategoryText: value });
   }
 
   getDisplayTree() {
@@ -200,6 +223,16 @@ class FeatureAutomationPage extends Component {
       });
   }
 
+  filterCategory(searchText, key) {
+    return searchText !== '' && key.toLowerCase().indexOf(searchText.toLowerCase()) !== -1;
+  }
+
+  getFilterCategoryDataSource() {
+    const { documentCategoriesWithReportTest } = this.props;
+    const { filterCategoryText } = this.state;
+    return this._transformToOptions(documentCategoriesWithReportTest).filter((categoryName)=> this.filterCategory(filterCategoryText, categoryName)).splice(0, 10);
+  }
+
   render() {
     const {
       documentCategoriesWithReportTest,
@@ -218,7 +251,7 @@ class FeatureAutomationPage extends Component {
       editingAxapis,
       axapiTestCreatedTime,
       end2endTestCreatedTime,
-      unitTestCreatedTime
+      unitTestCreatedTime,
     } = this.state;
 
     const displayTree = this.getDisplayTree();
@@ -226,42 +259,46 @@ class FeatureAutomationPage extends Component {
     const filterCaseOptions = ['Failed'];
     return (
       <div className="feature-automation-page">
-        <h3>Feature Automation</h3>
-        <div>
-          <label>Release:&nbsp;</label>
-          <DropDownList
-            isNeedAll={true}
-            title={filterRelease ? filterReleaseOptions.filter(release=> release.id === filterRelease)[0].name : 'All'}
-            onOptionClick={::this.onFilterReleaseChange}
-            aryOptionConfig={filterReleaseOptions.map(item => {
-              return { title: item.name, value: item.id};
-            })}
-          />
-          <label>Owner:&nbsp;</label>
-          <DropDownList
-            isNeedAll={true}
-            title={filterOwner && allUsers && allUsers.length ? allUsers.filter(user => user.id === filterOwner)[0].name : 'All'}
-            onOptionClick={::this.onFilterOwnerChange}
-            aryOptionConfig={allUsers.map(item => {
-              return { title: item.name, value: item.id};
-            })}
-          />
-          <label>Case:&nbsp;</label>
-          <DropDownList
-            isNeedAll={true}
-            title={filterCase ? filterCaseOptions.filter(eachCase => eachCase)[0] : 'All'}
-            onOptionClick={::this.onFilterCaseChange}
-            aryOptionConfig={filterCaseOptions.map(item => {
-              return { title: item, value: item};
-            })}
-          />
-          <AutoComplete
-            hintText="Filter Category"
-            dataSource={::this._transformToOptions(documentCategoriesWithReportTest)}
-            onUpdateInput={::this.onFilterCategoryUdpateInput}
-            animated={false}
-            floatingLabelText="Filter Category"
-          />
+        <div style={{display: 'flex', position: 'relative'}}>
+          <div>
+            <label>Release:&nbsp;</label>
+            <DropDownList
+              isNeedAll={true}
+              title={filterRelease ? filterReleaseOptions.filter(release=> release.id === filterRelease)[0].name : 'All'}
+              onOptionClick={::this.onFilterReleaseChange}
+              aryOptionConfig={filterReleaseOptions.map(item => {
+                return { title: item.name, value: item.id};
+              })}
+            />
+            <label>Owner:&nbsp;</label>
+            <DropDownList
+              isNeedAll={true}
+              title={filterOwner && allUsers && allUsers.length ? allUsers.filter(user => user.id === filterOwner)[0].name : 'All'}
+              onOptionClick={::this.onFilterOwnerChange}
+              aryOptionConfig={allUsers.map(item => {
+                return { title: item.name, value: item.id};
+              })}
+            />
+            <label>Case:&nbsp;</label>
+            <DropDownList
+              isNeedAll={true}
+              title={filterCase ? filterCaseOptions.filter(eachCase => eachCase)[0] : 'All'}
+              onOptionClick={::this.onFilterCaseChange}
+              aryOptionConfig={filterCaseOptions.map(item => {
+                return { title: item, value: item};
+              })}
+            />
+          </div>
+          <div style={{flex: 1, top: -32, position: 'relative'}}>
+            <AutoComplete
+              hintText="Filter Category"
+              dataSource={::this.getFilterCategoryDataSource()}
+              filter={::this.filterCategory}
+              onUpdateInput={::this.onFilterCategoryUpdateInput}
+              floatingLabelText="Filter Category"
+              fullWidth={true}
+            />
+          </div>
         </div>
         <div>
           <label>End2end:&nbsp;</label>
