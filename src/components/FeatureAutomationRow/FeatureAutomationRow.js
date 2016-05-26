@@ -168,7 +168,6 @@ class FeatureAutomationRow extends Component {
           onSave={::this.onOwnersSave}
           onCancel={::this.onOwnerCancel}
           show={editingOwners !== owners.toString()}
-          disabledSave={editingOwners.split(',').length > 2}
         />
         <Select
           multi={true}
