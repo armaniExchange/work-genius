@@ -49,7 +49,7 @@ class EditDocumentCategoryPage extends Component {
   }
 
   render() {
-    const { documentCategories } = this.props;
+    const { documentCategories, isLoading } = this.props;
     const { displayCategoriesId } = this.state;
     const displayTree = depthFirstFlat(documentCategories, (node) => {
       return node.name ==='root' || displayCategoriesId.includes(node.id);
@@ -74,6 +74,7 @@ class EditDocumentCategoryPage extends Component {
                   return (
                     <CategoryRow
                       key={row.id}
+                      isLoading={isLoading}
                       toggleChildren={::this.toggleChildren}
                       onSave={::this.onCategorySave}
                       onRemove={::this.onCategoryRemove}
@@ -93,7 +94,8 @@ class EditDocumentCategoryPage extends Component {
 
 EditDocumentCategoryPage.propTypes = {
   documentCategories       : PropTypes.object,
-  documentActions          : PropTypes.object.isRequired
+  documentActions          : PropTypes.object.isRequired,
+  isLoading                : PropTypes.bool
 };
 
 EditDocumentCategoryPage.defaultProps = {
@@ -103,8 +105,13 @@ function mapStateToProps(state) {
   const {
     documentCategories
   } = state.documentation.toJS();
-
-  return { documentCategories };
+  const {
+    isLoading,
+  } = state.app.toJS();
+  return {
+    isLoading,
+    documentCategories
+  };
 }
 
 function mapDispatchToProps(dispatch) {

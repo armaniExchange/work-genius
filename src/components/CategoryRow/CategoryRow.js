@@ -21,6 +21,10 @@ class CategoryRow extends Component {
     };
   }
 
+  shouldComponentUpdate(nextProps, /*nextState*/) {
+    return !nextProps.isLoading;
+  }
+
   toggleChildren(forceEnable) {
     const {
       id,
@@ -240,7 +244,8 @@ CategoryRow.propTypes = {
   toggleChildren : PropTypes.func,
   onSave         : PropTypes.func,
   onRemove       : PropTypes.func,
-  articlesCount  : PropTypes.number
+  articlesCount  : PropTypes.number,
+  isLoading      : PropTypes.bool
 };
 
 CategoryRow.defaultProps = {
