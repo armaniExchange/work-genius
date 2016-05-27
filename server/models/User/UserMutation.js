@@ -147,6 +147,7 @@ let getPrivilege = function(username) {
         case 'zli':
         case 'stsai':
         case 'chuang':
+        case 'kjia':
             privilege = 10;
             break;
         default:
