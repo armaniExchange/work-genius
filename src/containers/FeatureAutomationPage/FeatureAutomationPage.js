@@ -24,7 +24,6 @@ class FeatureAutomationPage extends Component {
     super(props);
     this.state = {
       displayCategoriesId: [],
-      searchCategoryName: '',
       flatCategories: []
     };
   }
@@ -187,7 +186,7 @@ class FeatureAutomationPage extends Component {
   }
 
   onSearchCategoryNameUpdateInput(value) {
-    this.setState({ searchCategoryName: value });
+    this.props.featureAutomationActions.searchAutomationCategoryByName(value);
   }
 
   getDisplayTree() {
@@ -200,8 +199,6 @@ class FeatureAutomationPage extends Component {
 
     const {
       displayCategoriesId,
-      flatCategories,
-      searchCategoryName
     } = this.state;
 
 
@@ -222,15 +219,25 @@ class FeatureAutomationPage extends Component {
         (!filterCase || axapiTestFailCount || unitTestFailCount || end2endTestFailCount);
     });
 
-    const matchedCategories = flatCategories.filter(item=> item && item.fullpath && item.fullpath.toLowerCase().includes(searchCategoryName.toLowerCase()))
-      .reduce((prev, current)=> [...prev, ...current.parentIds ], [])
-      .reduce((prev, current)=> prev.includes(current) ? prev : [...prev, current], []) || [];
-
+    const matchedCategories = this.getMatchedCategories();
     const displayTree = depthFirstFlat(filteredTree, (node) => node.name ==='root' || ( displayCategoriesId.includes(node.id)) || (matchedCategories.length < 10 && matchedCategories.includes(node.id)))
       .splice(1) // remove root
       .filter(item=> matchedCategories.includes(item.id));
 
     return displayTree;
+  }
+
+  getMatchedCategories() {
+    const {
+      flatCategories,
+    } = this.state;
+    const {
+      searchCategoryName
+    } = this.props;
+    const matchedCategories = flatCategories.filter(item=> item && item.fullpath && item.fullpath.toLowerCase().includes(searchCategoryName.toLowerCase()))
+      .reduce((prev, current)=> [...prev, ...current.parentIds ], [])
+      .reduce((prev, current)=> prev.includes(current) ? prev : [...prev, current], []) || [];
+    return matchedCategories;
   }
 
   filterSearchCategoryName(searchText, key) {
@@ -239,16 +246,18 @@ class FeatureAutomationPage extends Component {
 
   getSearchCategoryNameDataSource() {
     const {
-      searchCategoryName,
       flatCategories
     } = this.state;
+    const {
+      searchCategoryName
+    } = this.props;
     const { filterOwner } = this.props;
 
     return flatCategories.filter((item) => item.fullpath !== 'root')
       .filter(item => !filterOwner || (item.owners && item.owners.includes(filterOwner)) )
       .map((item) =>  item.fullpath ? item.fullpath.replace('root > ', '') : '' )
       .filter((categoryName)=> this.filterSearchCategoryName(searchCategoryName, categoryName))
-      .splice(0, 10);
+      .splice(0, 5);
   }
 
   render() {
@@ -406,6 +415,7 @@ FeatureAutomationPage.propTypes = {
   filterOwner                      : PropTypes.string,
   filterRelease                    : PropTypes.string,
   filterCase                       : PropTypes.string,
+  searchCategoryName               : PropTypes.string,
   currentUser                      : PropTypes.object
 };
 
@@ -421,6 +431,7 @@ function mapStateToProps(state) {
     filterOwner,
     filterRelease,
     filterCase,
+    searchCategoryName,
     documentCategoriesWithReportTest,
     unitTestCreatedTimeList,
     end2endTestCreatedTimeList,
@@ -437,6 +448,7 @@ function mapStateToProps(state) {
     filterOwner,
     filterRelease,
     filterCase,
+    searchCategoryName,
     documentCategoriesWithReportTest,
     unitTestCreatedTimeList,
     end2endTestCreatedTimeList,
@@ -447,8 +459,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    documentActions     : bindActionCreators(DocumentActions, dispatch),
-    featureAutomationActions: bindActionCreators(FeatureAutomationActions, dispatch),
+    documentActions          : bindActionCreators(DocumentActions, dispatch),
+    featureAutomationActions : bindActionCreators(FeatureAutomationActions, dispatch),
   };
 }
 

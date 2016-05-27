@@ -193,3 +193,13 @@ export function filterTestReport(filters) {
     ));
   };
 }
+
+export function searchAutomationCategoryByName(searchCategoryName) {
+  return dispatch => {
+    dispatch({
+      type: actionTypes.SEARCH_AUTOMATION_CATEGORY_BY_NAME,
+      searchCategoryName
+    });
+  };
+}
+

@@ -109,7 +109,7 @@ const initialState = Map({
   filterOwner: null,
   filterRelease: null,
   filterCase: null,
-  filterCategoryName: ''
+  searchCategoryName: ''
 });
 
 export default function featureAutomationReducer(state = initialState, action) {
@@ -132,6 +132,8 @@ export default function featureAutomationReducer(state = initialState, action) {
         resultState = resultState.set('filterCase', action.filterCase);
       }
       return resultState;
+    case actionTypes.SEARCH_AUTOMATION_CATEGORY_BY_NAME:
+      return state.set('searchCategoryName', action.searchCategoryName);
     default:
       return state;
   }
