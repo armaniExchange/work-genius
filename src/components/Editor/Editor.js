@@ -23,7 +23,8 @@ class Editor extends Component {
     super(props);
     this.state = {
       editorId: _.uniqueId('editor-'),
-      enablePreview: false
+      enablePreview: false,
+      valueFromCodeMirror: null
     };
   }
 
@@ -35,12 +36,14 @@ class Editor extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const cm = this.refs.codeMirror.getCodeMirror();
-    const { top, left } = cm.getScrollInfo();
-    const { line, ch } = cm.getCursor();
-    cm.setValue(nextProps.value);
-    cm.scrollTo(left, top);
-    cm.setCursor(line, ch);
+    if (nextProps.value !== this.state.valueFromCodeMirror && this.props.value !== nextProps.value) {
+      const cm = this.refs.codeMirror.getCodeMirror();
+      const { top, left } = cm.getScrollInfo();
+      const { line, ch } = cm.getCursor();
+      cm.setValue(nextProps.value);
+      cm.scrollTo(left, top);
+      cm.setCursor(line, ch);
+    }
   }
 
   onEditPanelButtonClick() {
@@ -63,7 +66,8 @@ class Editor extends Component {
     return `${value.slice(0, cursorPosition)}${str}${value.slice(cursorPosition)}`;
   }
 
-  onChange() {
+  onChange(value) {
+    this.setState({ valueFromCodeMirror: value });
     this.props.onChange.apply(this, arguments);
   }
 
