@@ -18,7 +18,10 @@ class ArticleListItem extends Component {
 
   getContentAbstract() {
     const { content } = this.props;
-    const splittedContent = content.split('\n') || [];
+    const firstHtmlTagPosition = content.search(/<[^>]+>/i);
+    const splittedContent = firstHtmlTagPosition !== -1 ?
+      content.slice(0, firstHtmlTagPosition).split('\n')
+      : content.split('\n') || [];
     return {
       abstractContent: splittedContent.slice(0, ABSTRACT_LINES).join('\n'),
       readmore: splittedContent.length > ABSTRACT_LINES
