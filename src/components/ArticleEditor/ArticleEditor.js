@@ -65,7 +65,8 @@ class ArticleEditor extends Component {
     });
   }
 
-  onOverwriteDocumentTemplate() {
+  onOverwriteDocumentTemplate(event) {
+    event.preventDefault();
     this.setState({
       isConfirmOverwriteDocumentTemplateDialogVisible: true,
     });
