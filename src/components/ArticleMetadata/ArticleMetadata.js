@@ -7,6 +7,19 @@ import ArticleFileList from '../../components/ArticleFileList/ArticleFileList';
 import './_ArticleMetadata.css';
 
 class ArticleMetadata extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isFileListVisible: false
+    };
+  }
+
+  toggleFileList(e) {
+    e.preventDefault();
+    this.setState({
+      isFileListVisible: !this.state.isFileListVisible
+    });
+  }
 
   render() {
     const {
@@ -15,6 +28,7 @@ class ArticleMetadata extends Component {
       comments,
       files
     } = this.props;
+    const { isFileListVisible } = this.state;
 
     return (
       <div className="article-metadata">
@@ -35,8 +49,14 @@ class ArticleMetadata extends Component {
           files.length !== 0 ? (
             <span>
               <i className="fa fa-paperclip"/>&nbsp;
-              <span>{`attachments(${files.length}):`}&nbsp;</span>
-              <ArticleFileList files={files} />
+              <a href="#"
+                style={{ marginBottom: 10, display: 'inline-block' }}
+                onClick={::this.toggleFileList}
+              >
+                {`attachments(${files.length}):`}
+              </a>
+              &nbsp;&nbsp;
+              { isFileListVisible ? <ArticleFileList files={files} /> : null }
             </span>
           ) : null
         }
