@@ -42,7 +42,7 @@ class Editor extends Component {
       const { line, ch } = cm.getCursor();
       cm.setValue(nextProps.value);
       cm.scrollTo(left, top);
-      cm.setCursor(line, ch);
+      cm.setCursor(line + 1, ch);
     }
   }
 
