@@ -111,21 +111,36 @@ class DocumentPage extends Component {
     });
   }
 
-  onConfirmDeleteArticle(deletingArticle) {
-    this.props.articleActions.deleteArticle(deletingArticle.id);
+  onConfirmDeleteArticle() {
+    this.props.articleActions.deleteArticle(this.state.editingArticle.id);
   }
 
-  onArticleDelete(id, index) {
+  onArticleDelete(id) {
     this.setState({
       isConfirmDeleteArticleDialogVisible: true,
-      editingArticle: {
-        id,
-        index
-      }
+      editingArticle: { id }
     });
   }
 
   onCancelDeleteArticle() {}
+
+  _onNodeClick(item) {
+    this.props.documentActions.setSelectedCategory({...item, isLeaf: false});
+  }
+
+  _setAndFetchCategory(item) {
+    const { documentActions } = this.props;
+    documentActions.setSelectedCategory({...item, isLeaf: true});
+    this.props.documentActions.updateArticlesQuery({
+      categoryId: item.id || '',
+      currentPage: 1
+    });
+    setTimeout(() => this.queryArticles(), 0);
+  }
+
+  _clearCategory() {
+    this._setAndFetchCategory({});
+  }
 
   renderArticleList() {
     const {
@@ -153,24 +168,6 @@ class DocumentPage extends Component {
         );
       })
     );
-  }
-
-  _onNodeClick(item) {
-    this.props.documentActions.setSelectedCategory({...item, isLeaf: false});
-  }
-
-  _setAndFetchCategory(item) {
-    const { documentActions } = this.props;
-    documentActions.setSelectedCategory({...item, isLeaf: true});
-    this.props.documentActions.updateArticlesQuery({
-      categoryId: item.id || '',
-      currentPage: 1
-    });
-    setTimeout(() => this.queryArticles(), 0);
-  }
-
-  _clearCategory() {
-    this._setAndFetchCategory({});
   }
 
   render() {

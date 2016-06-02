@@ -38,7 +38,6 @@ class ArticleListItem extends Component {
       comments,
       updatedAt,
       onDelete,
-      index,
       activeTag,
       onActiveTagChange
     } = this.props;
@@ -53,7 +52,6 @@ class ArticleListItem extends Component {
         </Link>
         <ArticleToolbar
           id={id}
-          index={index}
           onDelete={onDelete}
         />
         <HighlightMarkdown source={abstractContent}/>
