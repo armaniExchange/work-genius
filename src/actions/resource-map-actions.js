@@ -81,6 +81,59 @@ export function fetchResourceMapTaskTitle(titles) {
   };
 }
 
+function reloadResourceMapDataByUser(userId , getState) {
+    let startDate = getState().resourceMap.toJS().startDate;
+    let days = getState().resourceMap.toJS().totalDays;
+    let date = parseInt(moment(startDate).format('x'));
+    let timezone = Number.parseInt(moment().utcOffset());
+    return (dispatch) => {
+        let config = {
+            method: 'POST',
+            body: `{
+                getJobByEmployeeId(startDate:` + date + `,dateRange:` + days +`,employeeId:\"` + userId + `\",timezone:`+timezone+`){
+                    id,
+                    name,
+                    jobs{
+                        date,
+                        day_type,
+                        job_items{
+                            id,
+                            start_date,
+                            content,
+                            progress,
+                            color,
+                            status,
+                            title,
+                            duration,
+                            release,
+                            creator,
+                            tags,
+                            end_date,
+                            daily_percentage
+                        }
+                    }
+                }
+            }`,
+            headers: {
+                'Content-Type': 'application/graphql',
+                'x-access-token': localStorage.token
+            }
+        };
+        return fetch(SERVER_API_URL, config)
+            .then((res) => res.json())
+            .then((body) => {
+                dispatch(setLoadingState(false));
+                let data = body.data.getJobByEmployeeId;
+                data = data === undefined ? [] : data;
+                dispatch(fetchWorklogItem(data));
+            })
+            .catch((err) => {
+                dispatch(setLoadingState(false));
+                throw new Error(err);
+            });
+    };
+}
+
 var taskWorkItemActions = {
     create: (item) => {
         return (dispatch, getState) => {
@@ -88,6 +141,7 @@ var taskWorkItemActions = {
             var data = item.data;
             data.employee_id = item.employee_id;
             data.creator = user.id;
+            data.timezone = moment().utcOffset();
             let config = {
                 method: 'POST',
                 body: `mutation RootMutationType {
@@ -105,7 +159,8 @@ var taskWorkItemActions = {
                     let id = body.data.createJobAndWorkLog;
                     if (id !== undefined && id !== '' && id !== 0) {
                         item.data.id = id;
-                        dispatch(fetchWorklogItem(item));
+                        //dispatch(fetchWorklogItem(item));
+                        dispatch(reloadResourceMapDataByUser(item.employee_id,getState));
                     }
                 })
                 .catch((err) => {
@@ -118,7 +173,8 @@ var taskWorkItemActions = {
         if (item.isStatus) {
             data = {status: data.status};
         }
-        return (dispatch) => {
+        data.timezone = moment().utcOffset();
+        return (dispatch,getState) => {
             // let date = parseInt(moment(item.date).format('X')) * 1000;
             // var updateData = {
             //     employee_id: item.employee_id,
@@ -142,7 +198,8 @@ var taskWorkItemActions = {
             return fetch(SERVER_API_URL, config)
                 .then((res) => res.json())
                 .then(() => {
-                    dispatch(fetchWorklogItem(item));
+                    //dispatch(fetchWorklogItem(item));
+                    dispatch(reloadResourceMapDataByUser(item.employee_id,getState));
                 })
                 .catch((err) => {
                     throw new Error(err);
@@ -335,12 +392,13 @@ export function fetchAllUsersRequest(){
 }
 
 function queryResourceMapDataFromServer(startDate, days) {
-    let date = parseInt(moment.utc(startDate).format('x'));
+    let date = parseInt(moment(startDate).format('x'));
+    let timezone = Number.parseInt(moment().utcOffset());
     return (dispatch) => {
         let config = {
             method: 'POST',
             body: `{
-                getJobList(startDate:` + date + `,dateRange:` + days +`){
+                getJobList(startDate:` + date + `,dateRange:` + days +`,timezone:`+timezone+`){
 			        id,
 			        name,
 			        jobs{
@@ -357,7 +415,9 @@ function queryResourceMapDataFromServer(startDate, days) {
                             duration,
                             release,
                             creator,
-                            tags
+                            tags,
+                            end_date,
+                            daily_percentage
 			            }
 			        }
 			    }
@@ -383,12 +443,13 @@ function queryResourceMapDataFromServer(startDate, days) {
 }
 
 function queryResourceMapDataFromServerByUser(startDate, days, userId) {
-    let date = parseInt(moment.utc(startDate).format('x'));
+    let date = parseInt(moment(startDate).format('x'));
+    let timezone = Number.parseInt(moment().utcOffset());
     return (dispatch) => {
         let config = {
             method: 'POST',
             body: `{
-                getJobByEmployeeId(startDate:` + date + `,dateRange:` + days +`,employeeId:\"` + userId + `\"){
+                getJobByEmployeeId(startDate:` + date + `,dateRange:` + days +`,employeeId:\"` + userId + `\",timezone:`+timezone+`){
                     id,
                     name,
                     jobs{
@@ -405,7 +466,9 @@ function queryResourceMapDataFromServerByUser(startDate, days, userId) {
                             duration,
                             release,
                             creator,
-                            tags
+                            tags,
+                            end_date,
+                            daily_percentage
                         }
                     }
                 }
@@ -477,7 +540,7 @@ function workLogItemCreateMulti(items) {
 }
 
 function workLogItemDelete(item) {
-    return (dispatch) => {
+    return (dispatch,getState) => {
         let config = {
             method: 'POST',
             body: `mutation RootMutationType {deleteJob(id:\"` + item.id + `\")}`,
@@ -490,7 +553,8 @@ function workLogItemDelete(item) {
         return fetch(SERVER_API_URL, config)
             .then((res) => res.json())
             .then(() => {
-                dispatch(fetchWorklogItem(item));
+                //dispatch(fetchWorklogItem(item));
+                dispatch(reloadResourceMapDataByUser(item.employee_id,getState));
             })
             .catch((err) => {
                 throw new Error(err);

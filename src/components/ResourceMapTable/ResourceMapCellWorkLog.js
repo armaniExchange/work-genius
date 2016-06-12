@@ -16,26 +16,34 @@ const TAG = 'bgm-teal';
 var TooltipContent = ({item}) => {
 	return (
 		<div className="mdl-grid" style={{ width: '300px'}}>
-			<div className="mdl-cell mdl-cell--4-col"><label>Progress</label></div>
-			<div className="mdl-cell mdl-cell--8-col"><em>{item.progress}%</em></div>
+			<div className="mdl-cell mdl-cell--6-col"><label>Today Percentage</label></div>
+			<div className="mdl-cell mdl-cell--6-col"><span>{item.daily_percentage}%</span></div>
 
-			<div className="mdl-cell mdl-cell--4-col"><label>Task</label></div>
-			<div className="mdl-cell mdl-cell--8-col"><span>{item.title}</span></div>
+			<div className="mdl-cell mdl-cell--6-col"><label>Task</label></div>
+			<div className="mdl-cell mdl-cell--6-col"><span>{item.title}</span></div>
 
-			<div className="mdl-cell mdl-cell--4-col"><label>Start Date</label></div>
-			<div className="mdl-cell mdl-cell--8-col">
-				<span><em>{moment(item.start_date).format('YYYY-MM-DD')}</em></span>
+			<div className="mdl-cell mdl-cell--6-col"><label>Start Date</label></div>
+			<div className="mdl-cell mdl-cell--6-col">
+				<span><em>{moment(item.start_date).format('YYYY-MM-DD HH:MM')}</em></span>
 			</div>
 
-			<div className="mdl-cell mdl-cell--4-col"><label>Duration</label></div>
-			<div className="mdl-cell mdl-cell--8-col">
+			<div className="mdl-cell mdl-cell--6-col"><label>End Date</label></div>
+			<div className="mdl-cell mdl-cell--6-col">
+				<span><em>{moment(item.end_date).format('YYYY-MM-DD HH:MM')}</em></span>
+			</div>
+
+			<div className="mdl-cell mdl-cell--6-col"><label>Duration</label></div>
+			<div className="mdl-cell mdl-cell--6-col">
 				<span><em>{item.duration ? item.duration : 0}</em> Hours</span>
 			</div>
 
-			<div className="mdl-cell mdl-cell--4-col"><label>Work Log</label></div>
-			<div className="mdl-cell mdl-cell--8-col">
+			<div className="mdl-cell mdl-cell--6-col"><label>Work Log</label></div>
+			<div className="mdl-cell mdl-cell--6-col">
 				<span>{item.content}</span>
 			</div>
+
+			<div className="mdl-cell mdl-cell--6-col"><label>Progress</label></div>
+			<div className="mdl-cell mdl-cell--6-col"><em>{item.progress}%</em></div>
 		</div>
 	);
 };
@@ -138,7 +146,7 @@ class ResourceMapCellWorkLog extends Component {
 				var defaultColor = (item.color && item.color !== '') ? item.color : TAG;
 				className += defaultColor;
 				classNameProgress += defaultColor + '-light';
-				item.progress = item.progress ? item.progress : 0;
+				item.daily_percentage = item.daily_percentage ? item.daily_percentage : 0;
 
 				return (
 					<div
@@ -154,7 +162,7 @@ class ResourceMapCellWorkLog extends Component {
 						</div>
 						<div className={'worklog-layout--text'} onClick={__onClickWorkLogItem} onDoubleClick={__onDblclickWorkLogItem}>
 						    <div className={classNameProgress}>
-								  <b className={className} style={{ width: item.progress + '%' }}>
+								  <b className={className} style={{ width: item.daily_percentage + '%' }}>
 								  	<Tooltip
 										placement="top"
 										overlay={
@@ -164,7 +172,7 @@ class ResourceMapCellWorkLog extends Component {
 										arrowContent={<div className="rc-tooltip-arrow-inner"></div>}
 									>
 									    <span className="label-default-style c-white">
-									      <strong>{item.progress}%</strong> {item.title}
+									      <strong>{item.daily_percentage}%</strong> {item.title}
 									    </span>
 								    </Tooltip>
 								  </b>

@@ -8,7 +8,7 @@ import moment from 'moment';
 //     'status': ''
 // });
 const initialState = Map({
-	startDate: moment().isoWeekday(1).format('YYYY-MM-DD'),
+	startDate: moment().weekday(0).format('YYYY-MM-DD'),
 	totalDays: 7,
 	// data: List.of(
 	// 	Map({'name': 'Ruiz', 'items': List.of(
@@ -134,22 +134,34 @@ function checkWorkLogsData(worklogs, item) {
 }
 
 var taskStateActions = {
-    handle: function (state, item) {
-        var employeeId = item.employee_id;
-        if (employeeId === undefined || employeeId === -1) {
+    handle: function (state, itemList) {
+        // var employeeId = item.employee_id;
+        // if (employeeId === undefined || employeeId === -1) {
+        //     return state;
+        // }
+        if (itemList && itemList.length > 0 && itemList[0].id){
+            return this.byUserHandle(state, itemList);
+        }else {
             return state;
         }
-        return this.byUserHandle(state, item);
+        
     },
-    byUserHandle: function (state, item) {
-        var self = this;
+    byUserHandle: function (state, itemList) {
+        //var self = this;
         var newData = List.of(),
             oldData = state.get('data');
+        // oldData.map((data) => {
+        //     if (data.get('id') === item.employee_id) {
+        //         let worklogs = data.get('jobs');
+        //         worklogs = self.byDaysHandle(worklogs, item.data);
+        //         // -----
+        //         data = data.set('jobs', worklogs);
+        //     }
+        //     newData = newData.push(data);
+        // });
         oldData.map((data) => {
-            if (data.get('id') === item.employee_id) {
-                let worklogs = data.get('jobs');
-                worklogs = self.byDaysHandle(worklogs, item.data);
-                data = data.set('jobs', worklogs);
+            if (data.get('id') === itemList[0].id) {
+                data = data.set('jobs', itemList[0].jobs);
             }
             newData = newData.push(data);
         });
@@ -163,41 +175,41 @@ var taskStateActions = {
         // let millisecondEndDate = startDate + item.duration * 60 * 60 * 1000;
 
         var newWorklog = [];
-        let duration = item.duration ? item.duration : 0;
+        let end_date = item.end_date;
         dayWorkLog.map((worklog) => {
             // let currentMilliseconds = millisecondStartDate + index * millisecondOneDay;
             let worklogDate = worklog.date instanceof moment ? worklog.date.format('X') * 1000 : worklog.date;
             // self.isSelectDate(worklogDate, millisecondStartDate, startDate, item.duration);
-            if (worklog.day_type !== 'workday') {
-                if (self.isSelectDate(worklogDate, millisecondStartDate, duration)) {
-                    duration += 8;
-                }
-            } else {
-                var worklogItems = worklog.job_items;
-                if (self.isSelectDate(worklogDate, millisecondStartDate, duration)) {
-                    // Delete items by id
-                    if (item.isDelete) {
-                        worklogItems = self.deleteWorkItem(worklogItems, item);
-                    } else if (worklogItems === undefined || worklogItems === null) {
-                        worklogItems = [];
+            // if (worklog.day_type !== 'workday') {
+            //     if (self.isSelectDate(worklogDate, millisecondStartDate, duration)) {
+            //         duration += 8;
+            //     }
+            // } else {
+            var worklogItems = worklog.job_items;
+            if (self.isSelectDate(worklogDate, millisecondStartDate, end_date)) {
+                // Delete items by id
+                if (item.isDelete) {
+                    worklogItems = self.deleteWorkItem(worklogItems, item);
+                } else if (worklogItems === undefined || worklogItems === null) {
+                    worklogItems = [];
+                    worklogItems.push(item);
+                } else {
+                    let logItem = worklogItems.find((log) => {
+                        return log.id === item.id;
+                    });
+                    if (logItem === undefined) {
                         worklogItems.push(item);
                     } else {
-                        let logItem = worklogItems.find((log) => {
-                            return log.id === item.id;
-                        });
-                        if (logItem === undefined) {
-                            worklogItems.push(item);
-                        } else {
-                            logItem.content = item.content;
-                            logItem.progress = item.progress;
-                            self.copyValue(logItem, item);
-                        }
+                        logItem.content = item.content;
+                        logItem.progress = item.progress;
+                        self.copyValue(logItem, item);
                     }
-                } else {
-                    worklogItems = self.deleteWorkItem(worklogItems, item);
                 }
-                worklog.job_items = worklogItems;
+            } else {
+                worklogItems = self.deleteWorkItem(worklogItems, item);
             }
+            worklog.job_items = worklogItems;
+            //}
             newWorklog.push(worklog);
         });
 
@@ -208,25 +220,26 @@ var taskStateActions = {
      * startDate     Item start Date
      * duration      Duration day
      */
-    isSelectDate: function(selectDate, startDate, duration) {
-        // If duration is less than 8, will be compare the start date.
-        if (duration === undefined || duration < 8) {
-            return (selectDate === startDate);
-        }
-
-        // If the select date is weekday, will return false.
-        // let day = moment(selectDate).isoWeekday();
-        // if (day === 6 || day === 7) {
-        //     return false;
+    isSelectDate: function(selectDate, startDate, endDate) {
+        // // If duration is less than 8, will be compare the start date.
+        // if (duration === undefined || duration < 8) {
+        //     return (selectDate === startDate);
         // }
-        let index = duration / 8;
-        let millisecondOneDay = 24 * 60 * 60 * 1000;
-        for (let i = 0; i < index; i ++) {
-            if (selectDate === startDate + i * millisecondOneDay) {
-                return true;
-            }
-        }
-        return false;
+
+        // // If the select date is weekday, will return false.
+        // // let day = moment(selectDate).isoWeekday();
+        // // if (day === 6 || day === 7) {
+        // //     return false;
+        // // }
+        // let index = duration / 8;
+        // let millisecondOneDay = 24 * 60 * 60 * 1000;
+        // for (let i = 0; i < index; i ++) {
+        //     if (selectDate === startDate + i * millisecondOneDay) {
+        //         return true;
+        //     }
+        // }
+        // return false;
+        return selectDate >= startDate && selectDate <= endDate;
     },
     copyValue: function (targat, copy) {
         for (var key in targat) {
