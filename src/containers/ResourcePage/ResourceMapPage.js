@@ -26,7 +26,7 @@ class ResourceMapPage extends Component{
 	}
 
 	componentWillMount() {
-		let defaultStartDate = moment().isoWeekday(1).format('YYYY-MM-DD');
+		let defaultStartDate = moment().weekday(0).format('YYYY-MM-DD');
 		const {
             totalDays,
             queryResourceMapRelease,

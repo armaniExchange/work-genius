@@ -36,16 +36,18 @@ const RESOURCE_MAP_CELLS = {
         );
     },
     holiday: (config) => {
-        // return (
-        //     <ResourceMapCellWorkLog
-        //         config={config}
-        //         className={'holiday-style'}
-        //         onModalHander={onModalHander}
-        //         onSubmitStatus={onSubmitStatus}
-        //         onDeleteItemHander={onDeleteItemHander}
-        //     />
-        // );
         return (<ResourceMapCellHoliday config={config} />);
+    },
+    weekend: (config, onModalHander, onSubmitStatus, onDeleteItemHander) => {
+        return (
+            <ResourceMapCellWorkLog
+                config={config}
+                className={'holiday-style'}
+                onModalHander={onModalHander}
+                onSubmitStatus={onSubmitStatus}
+                onDeleteItemHander={onDeleteItemHander}
+            />
+        );
     }
 };
 
@@ -173,7 +175,7 @@ class ResourceMapTableBody extends Component {
                     // } else
                     if (type === 'pto') {
                         className += '__pto';
-                    } else if (type === 'holiday') {
+                    } else if (type === 'holiday' || type === 'weekend') {
                         className += '__holiday';
                     }
 

@@ -31,6 +31,21 @@ let ModalFooter = ({isEdit, onSubmit, onCancelHandler}) => {
 	);
 };
 
+let initialState = {
+	color: '',
+	selectDate: '',
+	selectTime: '',
+	release: '',
+	tags: '',
+	title: '',
+	endDate: '',
+	endTime: '',
+	//the properties for valiation
+	isTitleEmpty: false,
+	isDurationEmpty: false,
+	isEndLessThanStart: false
+};
+
 class ResourceMapModalWorkLog extends Component {
 	constructor() {
 		super();
@@ -54,17 +69,12 @@ class ResourceMapModalWorkLog extends Component {
 		this._changeStartTime = ::this._changeStartTime;
 		// Change end date
 		this._changeEndDate = ::this._changeEndDate;
+		// Change end time
+		this._changeEndTime = ::this._changeEndTime;
         // Change task title
 		this._handleSelectTitleChange = ::this._handleSelectTitleChange;
 
-		this.state = {
-			color: '',
-			selectDate: '',
-			selectTime: '',
-			release: '',
-			tags: '',
-			title: ''
-		};
+		this.state = initialState;
 	}
 
 	componentWillReceiveProps (nextProps) {
@@ -87,12 +97,47 @@ class ResourceMapModalWorkLog extends Component {
 				progress: 0,
 				color: '',
 				tags: '',
-				title: ''
+				title: '',
+				isTitleEmpty: false,
+				isDurationEmpty: false,
+				isEndLessThanStart: false,
+				endDate: '',
+				endTime: ''
 			});
 		}
 	}
 
+	//validate the input
+	//when create/edit task, title,duration,start date and end date can't be empty.
+	_validateInput(data) {
+		const {
+			start_date,
+			end_date,
+			title,
+			duration
+		} = data;
+		let newErrorState = {
+				isTitleEmpty: false,
+				isDurationEmpty: false,
+				isEndLessThanStart: false
+			},
+			isInputValid = true;
 
+		if (!title) {
+			newErrorState.isTitleEmpty = true;
+			isInputValid = false;
+		}
+		if (end_date <= start_date) {
+			newErrorState.isEndLessThanStart = true;
+			isInputValid = false;
+		}
+		if (!duration) {
+			newErrorState.isDurationEmpty = true;
+			isInputValid = false;
+		}
+		this.setState(newErrorState);
+		return isInputValid;
+	}
 	_onCloseModelHandler() {
 		const { onModalHander } = this.props;
 		onModalHander(false, {});
@@ -113,45 +158,56 @@ class ResourceMapModalWorkLog extends Component {
 			progressValue = parseInt(progressValue) > 100 ? 100 : parseInt(progressValue);
 			progressValue = parseInt(progressValue) < 0 ? 0 : parseInt(progressValue);
 		}
-		if (taskValue !== undefined && taskValue !== '') {
-			let startDate;
-			if (defaultModalInfos.id !== undefined) {
-				startDate = this.state.selectDate ? this.state.selectDate : defaultModalInfos.start_date;
-			} else {
-				startDate = this.state.selectDate ? this.state.selectDate : defaultModalInfos.date;
-			}
-			let times;
-			if (this.state.selectTime) {
-				times = moment(moment(startDate).format('YYYY-MM-DD')).format('X') * 1000 + this.state.selectTime;
-			} else {
-				times = moment(startDate).format('X') * 1000;;
-			}
-			let status = defaultModalInfos.status ? defaultModalInfos.status : 0;
-			// If progress is 100%, the status is 1;
-			status = parseInt(progressValue) >= 100 ? 1 : 0;
-			let color = (this.state.color === undefined || this.state.color === '')
-				? this._$defaultColor() : this.state.color;
-			let data = {
-				'employee_id': defaultModalInfos.userId,
-				'id': defaultModalInfos.id,
-				'title': taskValue,
-				'content': workValue,
-				'progress': parseInt(progressValue),
-				'color': color,
-				'start_date': parseInt(times),
-				'duration': parseInt(durationField.getValue()),
-				'release': this.state.release,
-				'status': status,
-				'tags': this.state.tags.split(',')
-			};
-			let item = {
-				id: defaultModalInfos.id,
-				employee_id: defaultModalInfos.userId,
-				data: data
-			};
+		let startDate, endDate;
+		if (defaultModalInfos.id !== undefined) {
+			startDate = this.state.selectDate ? this.state.selectDate : defaultModalInfos.start_date;
+			endDate = this.state.endDate ? this.state.endDate : defaultModalInfos.end_date;
+		} else {
+			startDate = this.state.selectDate ? this.state.selectDate : defaultModalInfos.date;
+			endDate = this.state.endDate ? this.state.endDate : defaultModalInfos.date;
+		}
+		let times;
+		if (this.state.selectTime) {
+			times = Number.parseFloat(moment(startDate).format('x')) + this.state.selectTime;
+		} else {
+			times = Number.parseFloat(moment(startDate).format('x')) + 9 * 60 * 60 * 1000 ;
+		}
+		let endTimeStamp;
+		if (this.state.endTime){
+			endTimeStamp = Number.parseFloat(moment(endDate).format('x')) + this.state.endTime;
+		} else {
+			endTimeStamp = Number.parseFloat(moment(endDate).format('x')) + 18 * 60 * 60 * 1000 ;
+		}
+		let status = defaultModalInfos.status ? defaultModalInfos.status : 0;
+		// If progress is 100%, the status is 1;
+		status = parseInt(progressValue) >= 100 ? 1 : 0;
+		let color = (this.state.color === undefined || this.state.color === '')
+			? this._$defaultColor() : this.state.color;
+		let data = {
+			'employee_id': defaultModalInfos.userId,
+			'id': defaultModalInfos.id,
+			'title': taskValue,
+			'content': workValue,
+			'progress': parseInt(progressValue),
+			'color': color,
+			'start_date': parseInt(times),
+			'duration': parseInt(durationField.getValue()),
+			'release': this.state.release,
+			'status': status,
+			'tags': this.state.tags.split(','),
+			'end_date': endTimeStamp
+		};
+		let item = {
+			id: defaultModalInfos.id,
+			employee_id: defaultModalInfos.userId,
+			data: data
+		};
+		let isValidInput = this._validateInput(data);
+		if (isValidInput){
 			onModalSubmit(item);
 			this._onCloseModelHandler();
 		}
+		
 		// this._$PrintFormData(this);
 	}
 
@@ -311,6 +367,17 @@ class ResourceMapModalWorkLog extends Component {
 		this.setState({selectTime: times});
 	}
 
+	_changeEndTime(e, date) {
+		console.log('end time');
+		console.log(date);
+		let time = moment(date);
+		let hour = time.hour(),
+		    minute = time.minute(),
+		    second = time.second();
+		let times = ((( hour * 60  + minute ) * 60 ) + second ) * 1000;
+		this.setState({endTime: times});
+	}
+
 	_changeEndDate(date) {
 		const { endDate } = this.refs;
 		endDate.value = date;
@@ -324,14 +391,21 @@ class ResourceMapModalWorkLog extends Component {
 			releases,
 			defaultModalInfos
 		} = this.props;
+		const {
+			isTitleEmpty,
+			isDurationEmpty,
+			isEndLessThanStart
+		} = this.state;
 		defaultModalInfos.progress = defaultModalInfos.progress ? defaultModalInfos.progress : 0;
 		let showDoneClassName = 'material-icons icon-layout';
 		let hideDoneClassName = 'material-icons icon-layout icon-layou-display';
-		let nowDate;
+		let nowDate,defaultEndDate;
 		if (defaultModalInfos.id) {
 			nowDate = moment(defaultModalInfos.start_date).format('YYYY-MM-DD hh:mm a');
+			defaultEndDate = moment(defaultModalInfos.end_date).format('YYYY-MM-DD hh:mm a');
 		} else {
-			nowDate = moment(defaultModalInfos.date).format('YYYY-MM-DD hh:mm a');
+			nowDate = moment(defaultModalInfos.date).hour(9).format('YYYY-MM-DD hh:mm a');
+			defaultEndDate = moment(defaultModalInfos.date).hour(18).format('YYYY-MM-DD hh:mm a');
 		}
 		// let releaseOptions = ['4.1.0', '4.1.1', '3.2.1'];
 		var isShowWorkLog = defaultModalInfos.id !== undefined;
@@ -426,6 +500,11 @@ class ResourceMapModalWorkLog extends Component {
 					/>
 				</div>
 			</div>
+			<div className={isTitleEmpty ? 'col-xs-3 error' : 'col-xs-3 hide'}>
+			</div>
+			<div className={isTitleEmpty ? 'col-xs-9 error left-align' : 'col-xs-9 hide'}>
+			    Task  must not be empty!
+			</div>
 			<div className="form-group">
 				<label className="col-xs-3 control-label">Release</label>
 				<div className="col-xs-9">
@@ -464,6 +543,38 @@ class ResourceMapModalWorkLog extends Component {
 				</div>
 			</div>
 			<div className="form-group">
+				<label className="col-xs-3 control-label">End Time</label>
+				<div className="col-xs-9">
+					<input
+				        className="hidden"
+				        defaultValue={defaultEndDate}
+				        ref="endDate" />
+				    <div className="col-xs-6 layout-design-padding-left-0 layout-design-over">
+					<DatePicker
+						className="option-layout"
+						onChange={(newDate) => {
+							this.setState({
+								endDate: newDate
+							});
+						}}
+						defaultDate={defaultEndDate}
+						placeholder="End Date"
+					/>
+					</div>
+					<div className="col-xs-6 layout-design-over">
+					<TimePicker
+						defaultTime={new Date(defaultEndDate)}
+						onChange={this._changeEndTime}
+					/>
+					</div>
+				</div>
+			</div>
+			<div className={isEndLessThanStart ? 'col-xs-3 error' : 'col-xs-3 hide'}>
+			</div>
+			<div className={isEndLessThanStart ? 'col-xs-9 error left-align' : 'col-xs-9 hide'}>
+		    	End time must not be earlier than Start time!
+			</div>
+			<div className="form-group">
 				<label className="col-xs-3 control-label">Duration</label>
 				<div className="col-xs-9">
 					<TextField
@@ -477,9 +588,15 @@ class ResourceMapModalWorkLog extends Component {
 					<span>hours</span>
 				</div>
 			</div>
+			<div className={isDurationEmpty ? 'col-xs-3 error' : 'col-xs-3 hide'}>
+			</div>
+			<div className={isDurationEmpty ? 'col-xs-9 error left-align' : 'col-xs-9 hide'}>
+			    Duration must not be empty!
+			</div>
 
 			{colorHtml}
 			</div>
+
 		);
 
 		var workHtml = isShowWorkLog ? (

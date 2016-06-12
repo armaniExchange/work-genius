@@ -36,7 +36,7 @@ let JobMutation = {
 				if('tags' in job){
 					delete job.tags;
 				}
-				job.create_time = Number.parseFloat(moment.utc().format('x'));
+				job.create_time = Number.parseFloat(moment().format('x'));
 				job.update_time = job.create_time;
 				let id = await createJob(job);
 		        if (id && !id.includes('Fail')){
@@ -45,7 +45,7 @@ let JobMutation = {
 		          	let worklog = {
 		          		content : obj.content || '',
 		          		author_id : obj.employee_id,
-		          		create_date : moment.utc().format('x'),
+		          		create_date : moment().format('x'),
 		          		job_id : id,
 		          		tags : obj.tags || []
 		          	}
@@ -86,7 +86,7 @@ let JobMutation = {
 				if('tags' in job){
 					delete job.tags;
 				}
-				job.update_time = Number.parseFloat(moment.utc().format('x'));
+				job.update_time = Number.parseFloat(moment().format('x'));
 				await updateJob(id, job); 
 				
 				//update related worklog
@@ -99,7 +99,7 @@ let JobMutation = {
 						let worklog = {
 			          		content : obj.content || worklogList[0].content,
 			          		author_id : worklogList[0].author_id,
-			          		update_date : moment.utc().format('x'),
+			          		update_date : moment().format('x'),
 			          		tags : obj.tags || worklogList[0].tags
 			          	}
 			          	await updateWorkLog(worklogList[0].id,worklog);
@@ -108,7 +108,7 @@ let JobMutation = {
 						let worklog = {
 			          		content : obj.content || '',
 			          		author_id : obj.employee_id,
-			          		create_date : moment.utc().format('x'),
+			          		create_date : moment().format('x'),
 			          		job_id : id,
 			          		tags : obj.tags || []
 			          	}
@@ -140,6 +140,11 @@ let JobMutation = {
 				query = r.db('work_genius').table('jobs').get(id).delete();
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				await query.run(connection);
+
+				//delete the related worklog
+				query = r.db('work_genius').table('worklog').filter({job_id:id}).delete();
+				await query.run(connection);
+
 				await connection.close();
 			} catch (err) {
 				return 'Fail to delete a job!';

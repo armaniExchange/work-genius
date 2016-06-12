@@ -17,7 +17,7 @@ export async function createJob(job){
 
 	try {
 		
-		job.end_date = await getJobEndDate(job);
+		//job.end_date = await getJobEndDate(job);
 
 		query = r.db('work_genius').table('jobs').insert(job);
 		connection = await r.connect({ host: DB_HOST, port: DB_PORT });
@@ -43,9 +43,9 @@ export async function updateJob(id,job){
 		if(job.id){
 			delete job.id;
 		}
-		if(job.duration){
-			job.end_date = await getJobEndDate(job);
-		}
+		// if(job.duration){
+		// 	job.end_date = await getJobEndDate(job);
+		// }
 
 		query = r.db('work_genius').table('jobs').get(id).update(job);
 		connection = await r.connect({ host: DB_HOST, port: DB_PORT });

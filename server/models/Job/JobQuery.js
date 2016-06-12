@@ -28,9 +28,13 @@ let JobQuery = {
 			dateRange: {
 				type: GraphQLInt,
 				description: 'the date range of the query'
+			},
+			timezone: {
+				type: GraphQLInt,
+				description: 'the timezone of user'
 			}
 		},
-		resolve: async (root, { startDate , dateRange}) => {
+		resolve: async (root, { startDate , dateRange,timezone}) => {
 			let connection = null,
 			    result = [],
 				query = null;
@@ -48,13 +52,6 @@ let JobQuery = {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				//get all users
 				let users = await query.run(connection);
-				console.log('GUI_GROUP:');
-				console.log(GUI_GROUP);
-				console.log();
-				console.log('users:');
-				console.log(users);
-				console.log();
-
 
 				//get all PTO data
 				query = r.db('work_genius').table('pto')
@@ -78,13 +75,13 @@ let JobQuery = {
 				for(let i=0; i < dateRange; i++){
 					let tmpDate  = startDate + i * 1000 * 3600 * 24;
 					dateList.push({
-						date: tmpDate
+						date: tmpDate,
+						day_type: [0,6].includes(moment(tmpDate).utcOffset(timezone).day())? 'weekend':'workday'
 					});
 				} 
 
 				//get all public holiday
-				query = r.db('work_genius').table('holiday')
-					.filter(r.row('date').ge(startDate)).coerceTo('array');  
+				query = r.db('work_genius').table('holiday').coerceTo('array');  
 				let holidayList = await query.run(connection);
 
 				//construct the result array
@@ -95,20 +92,18 @@ let JobQuery = {
 					}
 
 					userItem.jobs.forEach(dateItem => {
-						//find the weekend according to user timezone
-						dateItem.day_type = [0,6].includes(moment(dateItem.date).day())? 'holiday':'workday';
 						//set pto info
 						let findPTO = ptoList.find( pto => {
 							let startTime = Number.parseFloat(pto.start_time);
 							let endtTime = Number.parseFloat(pto.end_time);
-							if(moment(startTime).isSame(endtTime,'day')){
+							if(moment(startTime).utcOffset(timezone).isSame(endtTime,'day')){
 								return pto.applicant_id == user.id
-									&& moment(dateItem.date).isSame(startTime,'day');
+									&& moment(dateItem.date).utcOffset(timezone).isSame(startTime,'day');
 							}else{
 								return pto.applicant_id == user.id
-									&& (moment(dateItem.date).isBetween(startTime,endtTime)
-										|| moment(dateItem.date).isSame(startTime)
-										|| moment(dateItem.date).isSame(endtTime));
+									&& (moment(dateItem.date).utcOffset(timezone).isBetween(startTime,endtTime)
+										|| moment(dateItem.date).utcOffset(timezone).isSame(startTime)
+										|| moment(dateItem.date).utcOffset(timezone).isSame(endtTime));
 							}
 						});
 						if(!!findPTO){
@@ -120,7 +115,7 @@ let JobQuery = {
 
 						//set public holiday info
 						let findHoliday = holidayList.find( holiday => {
-							return moment(holiday.date).isSame(dateItem.date,'day') && holiday.location == userItem.location;
+							return moment(holiday.date).utcOffset(timezone).isSame(dateItem.date,'day') && holiday.location == userItem.location;
 						});
 						if(!!findHoliday){
 							dateItem.day_type = findHoliday.type;
@@ -135,18 +130,95 @@ let JobQuery = {
 					//assign the job to the proper date
 					if(myJobList && myJobList.length > 0){
 						myJobList.forEach(job => {
-							let tmpStartDate = startDate > job.start_date ? startDate: job.start_date;
+							let tmpStartDate = job.start_date;
 							let tmpEndDate = endDate > job.end_date ? job.end_date : endDate;
 							for(let date = tmpStartDate ; date <= tmpEndDate; date += 1000 * 60 * 60 * 24){
 								let dateItem = userItem.jobs.find(dateItem => {
-									return moment(dateItem.date).isSame(date,'day');
+									return moment(dateItem.date).utcOffset(timezone).isSame(date,'day');
 								})
-								if(dateItem && dateItem.day_type == 'workday'){
-									dateItem.job_items = dateItem.job_items || [];
-									dateItem.job_items.push(job);
+								if(dateItem){
+									let createdTimezone = job.timezone ? job.timezone : user.timezone;
+									if(createdTimezone != timezone){
+										let day = moment(date).utcOffset(createdTimezone).day();
+										if((dateItem.day_type == 'workday' || dateItem.day_type == 'weekend')
+											&& [1,2,3,4,5].includes(day)){
+											dateItem.job_items = dateItem.job_items || [];
+											dateItem.job_items.push(Object.assign({},job));
+										}
+									}else{
+										if(dateItem.day_type == 'workday'){
+											dateItem.job_items = dateItem.job_items || [];
+											dateItem.job_items.push(Object.assign({},job));
+										}
+									}
 								}
 							}
 						});
+					}
+
+					//get the total workday number of the job
+					let getTotalDays = (jobStartDate,jobEndDate,createdTimezone,timezone) =>{
+						let totalDays = 0;
+
+						while(moment(jobStartDate).utcOffset(timezone).isBefore(jobEndDate,'day') 
+							|| moment(jobStartDate).utcOffset(timezone).isSame(jobEndDate,'day')){
+							let findPTO = ptoList.find( pto => {
+								let startTime = Number.parseFloat(pto.start_time);
+								let endtTime = Number.parseFloat(pto.end_time);
+								if(moment(startTime).utcOffset(timezone).isSame(endtTime,'day')){
+									return moment(jobStartDate).utcOffset(timezone).isSame(startTime,'day');
+								}else{
+									return moment(jobStartDate).utcOffset(timezone).isBetween(startTime,endtTime)
+											|| moment(jobStartDate).utcOffset(timezone).isSame(startTime)
+											|| moment(jobStartDate).utcOffset(timezone).isSame(endtTime);
+								}
+							});
+							if(!!findPTO){
+								if(findPTO.hours >= 8){
+									jobStartDate = jobStartDate + 1000 * 60 * 60 * 24;
+									continue;
+								}
+							}
+
+							//set public holiday info
+							let findHoliday = holidayList.find( holiday => {
+								return moment(holiday.date).utcOffset(timezone).isSame(jobStartDate,'day');
+							});
+							if(!!findHoliday){
+								if(findHoliday.type == 'holiday'){
+									jobStartDate = jobStartDate + 1000 * 60 * 60 * 24;
+									continue;
+								}
+								
+							}else{
+								let day = moment(jobStartDate).utcOffset(createdTimezone).day();
+								if([0,6].includes(moment(jobStartDate).utcOffset(timezone).day()) 
+									&& [0,6].includes(day)){
+									jobStartDate = jobStartDate + 1000 * 60 * 60 * 24;
+									continue;
+								}
+							}
+							totalDays++ ;
+							jobStartDate = jobStartDate + 1000 * 60 * 60 * 24;
+						}
+						return totalDays;
+					};
+
+					//set the daily percentage
+					for(let job of userItem.jobs){
+						let secs = 1000 * 60 * 60 * 24,
+							totalDuration = 0;
+						if(job.job_items && job.job_items.length >0){
+							job.job_items.forEach(job_item => {
+								let createdTimezone = job_item.timezone ? job_item.timezone : user.timezone;
+								job_item.daily_duration = job_item.duration / getTotalDays(job_item.start_date,job_item.end_date,createdTimezone,timezone);
+								totalDuration += job_item.daily_duration;
+							});
+							
+							job.job_items.forEach(job_item => {
+								job_item.daily_percentage = Math.round(job_item.daily_duration / totalDuration * 100);
+							});
+						}
 					}
 					
 					result.push(userItem);
@@ -174,9 +246,13 @@ let JobQuery = {
 			employeeId: {
 				type: GraphQLString,
 				description: 'the employee id'
+			},
+			timezone: {
+				type: GraphQLInt,
+				description: 'the timezone of user'
 			}
 		},
-		resolve: async (root, { startDate , dateRange , employeeId}) => {
+		resolve: async (root, { startDate , dateRange , employeeId , timezone}) => {
 			let connection = null,				
 				query = null,
 			    result = [];
@@ -185,7 +261,8 @@ let JobQuery = {
 				if(dateRange <= 0 || employeeId == null){
 					return result;
 				}
-				let endDate = startDate + (dateRange -1) * 1000 * 3600 * 24;
+				//we'll get the job list one more day
+				let endDate = startDate + dateRange * 1000 * 3600 * 24;
 				query = r.db('work_genius').table('users').get(employeeId)
 					.pluck('id','name','location','timezone');
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
@@ -216,13 +293,12 @@ let JobQuery = {
 					let tmpDate  = startDate + i * 1000 * 3600 * 24;
 					dateList.push({
 						date: tmpDate,
-						day_type: [0,6].includes(moment(tmpDate).day())? 'holiday':'workday'
+						day_type: [0,6].includes(moment(tmpDate).utcOffset(timezone).day())? 'weekend':'workday'
 					});
 				} 
 
 				//get all public holiday
-				query = r.db('work_genius').table('holiday').filter({location: user.location})
-					.filter(r.row('date').ge(startDate)).coerceTo('array');  
+				query = r.db('work_genius').table('holiday').filter({location: user.location}).coerceTo('array');  
 				let holidayList = await query.run(connection);
 
 				//construct the result array
@@ -236,14 +312,12 @@ let JobQuery = {
 					let findPTO = ptoList.find( pto => {
 						let startTime = Number.parseFloat(pto.start_time);
 						let endtTime = Number.parseFloat(pto.end_time);
-						if(moment(startTime).isSame(endtTime,'day')){
-							return pto.applicant_id == user.id
-								&& moment(dateItem.date).isSame(startTime,'day');
+						if(moment(startTime).utcOffset(timezone).isSame(endtTime,'day')){
+							return moment(dateItem.date).utcOffset(timezone).isSame(startTime,'day');
 						}else{
-							return pto.applicant_id == user.id
-								&& (moment(dateItem.date).isBetween(startTime,endtTime)
-									|| moment(dateItem.date).isSame(startTime)
-									|| moment(dateItem.date).isSame(endtTime));
+							return moment(dateItem.date).utcOffset(timezone).isBetween(startTime,endtTime)
+									|| moment(dateItem.date).utcOffset(timezone).isSame(startTime)
+									|| moment(dateItem.date).utcOffset(timezone).isSame(endtTime);
 						}
 					});
 					if(!!findPTO){
@@ -254,8 +328,8 @@ let JobQuery = {
 					}
 
 					//set public holiday info
-					let findHoliday = holidayList.find( holiday => {
-						return moment(holiday.date).isSame(dateItem.date,'day') && holiday.location == userItem.location;
+					let findHoliday = holidayList.find(holiday => {
+						return moment(holiday.date).utcOffset(timezone).isSame(dateItem.date,'day');
 					});
 					if(!!findHoliday){
 						dateItem.day_type = findHoliday.type;
@@ -265,18 +339,97 @@ let JobQuery = {
 				//assign the job to the proper date
 				if(jobList && jobList.length > 0){
 					jobList.forEach(job => {
-						let tmpStartDate = startDate > job.start_date ? startDate: job.start_date;
+						let tmpStartDate = job.start_date;
 						let tmpEndDate = endDate > job.end_date ? job.end_date : endDate;
 						for(let date = tmpStartDate ; date <= tmpEndDate; date += 1000 * 60 * 60 * 24){
 							let dateItem = userItem.jobs.find(dateItem => {
-								return moment(dateItem.date).isSame(date,'day');
+								return moment(dateItem.date).utcOffset(timezone).isSame(date,'day');
 							})
-							if(dateItem && dateItem.day_type == 'workday'){
-								dateItem.job_items = dateItem.job_items || [];
-								dateItem.job_items.push(job);
+							if(dateItem){
+								let createdTimezone = job.timezone ? job.timezone : user.timezone;
+								if(createdTimezone != timezone){
+									let day = moment(date).utcOffset(createdTimezone).day();
+									if((dateItem.day_type == 'workday' || dateItem.day_type == 'weekend')
+										&& [1,2,3,4,5].includes(day)){
+										dateItem.job_items = dateItem.job_items || [];
+										dateItem.job_items.push(Object.assign({},job));
+									}
+								}else{
+									if(dateItem.day_type == 'workday'){
+										dateItem.job_items = dateItem.job_items || [];
+										dateItem.job_items.push(Object.assign({},job));
+									}
+								}
 							}
 						}
-					});
+					}); 
+				}
+
+				//get the total workday number of the job
+				let getTotalDays = (jobStartDate,jobEndDate,createdTimezone,timezone) =>{
+					let totalDays = 0;
+
+					while(moment(jobStartDate).utcOffset(timezone).isBefore(jobEndDate,'day') 
+						|| moment(jobStartDate).utcOffset(timezone).isSame(jobEndDate,'day')){
+						let findPTO = ptoList.find( pto => {
+							let startTime = Number.parseFloat(pto.start_time);
+							let endtTime = Number.parseFloat(pto.end_time);
+							if(moment(startTime).utcOffset(timezone).isSame(endtTime,'day')){
+								return moment(jobStartDate).utcOffset(timezone).isSame(startTime,'day');
+							}else{
+								return moment(jobStartDate).utcOffset(timezone).isBetween(startTime,endtTime)
+										|| moment(jobStartDate).utcOffset(timezone).isSame(startTime)
+										|| moment(jobStartDate).utcOffset(timezone).isSame(endtTime);
+							}
+						});
+						if(!!findPTO){
+							if(findPTO.hours >= 8){
+								jobStartDate = jobStartDate + 1000 * 60 * 60 * 24;
+								continue;
+							}
+						}
+
+						//set public holiday info
+						let findHoliday = holidayList.find( holiday => {
+							return moment(holiday.date).utcOffset(timezone).isSame(jobStartDate,'day');
+						});
+						if(!!findHoliday){
+							if(findHoliday.type == 'holiday'){
+								jobStartDate = jobStartDate + 1000 * 60 * 60 * 24;
+								continue;
+							}
+							
+						}else{
+							let day = moment(jobStartDate).utcOffset(createdTimezone).day();
+							if([0,6].includes(moment(jobStartDate).utcOffset(timezone).day()) 
+								&& [0,6].includes(day)){
+								jobStartDate = jobStartDate + 1000 * 60 * 60 * 24;
+								continue;
+							}
+						}
+						totalDays++ ;
+						jobStartDate = jobStartDate + 1000 * 60 * 60 * 24;
+					}
+					return totalDays;
+				};
+
+				// //set the daily percentage
+				for(let job of userItem.jobs){
+					let secs = 1000 * 60 * 60 * 24,
+						totalDuration = 0;
+					if(job.job_items && job.job_items.length >0){
+						job.job_items.forEach(job_item => {
+							let createdTimezone = job_item.timezone ? job_item.timezone : user.timezone;
+							let days = getTotalDays(job_item.start_date,job_item.end_date,createdTimezone,timezone);
+							job_item.daily_duration = job_item.duration / days;
+							totalDuration += job_item.daily_duration;
+						});
+
+						
+						job.job_items.forEach(job_item => {
+							job_item.daily_percentage = Math.round(job_item.daily_duration / totalDuration * 100);
+						});
+					}
 				}
 				
 				result.push(userItem);
