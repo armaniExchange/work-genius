@@ -168,15 +168,23 @@ class ResourceMapModalWorkLog extends Component {
 		}
 		let times;
 		if (this.state.selectTime) {
-			times = Number.parseFloat(moment(startDate).format('x')) + this.state.selectTime;
+			times = Number.parseFloat(moment(moment(startDate).format('YYYY-MM-DD')).format('x')) + this.state.selectTime;
 		} else {
-			times = Number.parseFloat(moment(startDate).format('x')) + 9 * 60 * 60 * 1000 ;
+			if (defaultModalInfos.id !== undefined){
+				times = Number.parseFloat(moment(startDate).format('x'));
+			} else {
+				times = Number.parseFloat(moment(moment(startDate).format('YYYY-MM-DD')).format('x')) + 9 * 60 * 60 * 1000 ;
+			}
 		}
 		let endTimeStamp;
 		if (this.state.endTime){
-			endTimeStamp = Number.parseFloat(moment(endDate).format('x')) + this.state.endTime;
+			endTimeStamp = Number.parseFloat(moment(moment(endDate).format('YYYY-MM-DD')).format('x')) + this.state.endTime;
 		} else {
-			endTimeStamp = Number.parseFloat(moment(endDate).format('x')) + 18 * 60 * 60 * 1000 ;
+			if (defaultModalInfos.id !== undefined){
+				endTimeStamp = Number.parseFloat(moment(endDate).format('x'));
+			} else {
+				endTimeStamp = Number.parseFloat(moment(moment(endDate).format('YYYY-MM-DD')).format('x')) + 18 * 60 * 60 * 1000 ;
+			}
 		}
 		let status = defaultModalInfos.status ? defaultModalInfos.status : 0;
 		// If progress is 100%, the status is 1;
