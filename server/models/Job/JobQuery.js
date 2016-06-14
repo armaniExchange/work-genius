@@ -16,6 +16,8 @@ import { DB_HOST, DB_PORT, ADMIN_ID,TESTER_ID } from '../../constants/configurat
 import moment from 'moment';
 import { GUI_GROUP } from '../../constants/group-constant.js';
 
+let DAY_DURATION = 8;
+
 let JobQuery = {
 	'getJobList': {
 		type: new GraphQLList(UserType),
@@ -102,8 +104,8 @@ let JobQuery = {
 							}else{
 								return pto.applicant_id == user.id
 									&& (moment(dateItem.date).utcOffset(timezone).isBetween(startTime,endtTime)
-										|| moment(dateItem.date).utcOffset(timezone).isSame(startTime)
-										|| moment(dateItem.date).utcOffset(timezone).isSame(endtTime));
+										|| moment(dateItem.date).utcOffset(timezone).isSame(startTime,'day')
+										|| moment(dateItem.date).utcOffset(timezone).isSame(endtTime,'day'));
 							}
 						});
 						if(!!findPTO){
@@ -117,7 +119,7 @@ let JobQuery = {
 						let findHoliday = holidayList.find( holiday => {
 							return moment(holiday.date).utcOffset(timezone).isSame(dateItem.date,'day') && holiday.location == userItem.location;
 						});
-						if(!!findHoliday){
+						if(!!findHoliday && dateItem.day_type != 'pto'){
 							dateItem.day_type = findHoliday.type;
 						}
 					});
@@ -166,11 +168,13 @@ let JobQuery = {
 								let startTime = Number.parseFloat(pto.start_time);
 								let endtTime = Number.parseFloat(pto.end_time);
 								if(moment(startTime).utcOffset(timezone).isSame(endtTime,'day')){
-									return moment(jobStartDate).utcOffset(timezone).isSame(startTime,'day');
+									return pto.applicant_id == user.id
+										&& moment(jobStartDate).utcOffset(timezone).isSame(startTime,'day');
 								}else{
-									return moment(jobStartDate).utcOffset(timezone).isBetween(startTime,endtTime)
-											|| moment(jobStartDate).utcOffset(timezone).isSame(startTime)
-											|| moment(jobStartDate).utcOffset(timezone).isSame(endtTime);
+									return pto.applicant_id == user.id && 
+											(moment(jobStartDate).utcOffset(timezone).isBetween(startTime,endtTime)
+											|| moment(jobStartDate).utcOffset(timezone).isSame(startTime,'day')
+											|| moment(jobStartDate).utcOffset(timezone).isSame(endtTime,'day'));
 								}
 							});
 							if(!!findPTO){
@@ -182,7 +186,8 @@ let JobQuery = {
 
 							//set public holiday info
 							let findHoliday = holidayList.find( holiday => {
-								return moment(holiday.date).utcOffset(timezone).isSame(jobStartDate,'day');
+								return moment(holiday.date).utcOffset(timezone).isSame(jobStartDate,'day') 
+									&& holiday.location == userItem.location;
 							});
 							if(!!findHoliday){
 								if(findHoliday.type == 'holiday'){
@@ -206,17 +211,12 @@ let JobQuery = {
 
 					//set the daily percentage
 					for(let job of userItem.jobs){
-						let secs = 1000 * 60 * 60 * 24,
-							totalDuration = 0;
+						let secs = 1000 * 60 * 60 * 24;
 						if(job.job_items && job.job_items.length >0){
 							job.job_items.forEach(job_item => {
 								let createdTimezone = job_item.timezone ? job_item.timezone : user.timezone;
 								job_item.daily_duration = job_item.duration / getTotalDays(job_item.start_date,job_item.end_date,createdTimezone,timezone);
-								totalDuration += job_item.daily_duration;
-							});
-							
-							job.job_items.forEach(job_item => {
-								job_item.daily_percentage = Math.round(job_item.daily_duration / totalDuration * 100);
+								job_item.daily_percentage = Math.round(job_item.daily_duration / DAY_DURATION * 100);
 							});
 						}
 					}
@@ -316,8 +316,8 @@ let JobQuery = {
 							return moment(dateItem.date).utcOffset(timezone).isSame(startTime,'day');
 						}else{
 							return moment(dateItem.date).utcOffset(timezone).isBetween(startTime,endtTime)
-									|| moment(dateItem.date).utcOffset(timezone).isSame(startTime)
-									|| moment(dateItem.date).utcOffset(timezone).isSame(endtTime);
+									|| moment(dateItem.date).utcOffset(timezone).isSame(startTime,'day')
+									|| moment(dateItem.date).utcOffset(timezone).isSame(endtTime,'day');
 						}
 					});
 					if(!!findPTO){
@@ -331,7 +331,7 @@ let JobQuery = {
 					let findHoliday = holidayList.find(holiday => {
 						return moment(holiday.date).utcOffset(timezone).isSame(dateItem.date,'day');
 					});
-					if(!!findHoliday){
+					if(!!findHoliday && dateItem.day_type != 'pto'){
 						dateItem.day_type = findHoliday.type;
 					}
 				});
@@ -378,8 +378,8 @@ let JobQuery = {
 								return moment(jobStartDate).utcOffset(timezone).isSame(startTime,'day');
 							}else{
 								return moment(jobStartDate).utcOffset(timezone).isBetween(startTime,endtTime)
-										|| moment(jobStartDate).utcOffset(timezone).isSame(startTime)
-										|| moment(jobStartDate).utcOffset(timezone).isSame(endtTime);
+										|| moment(jobStartDate).utcOffset(timezone).isSame(startTime,'day')
+										|| moment(jobStartDate).utcOffset(timezone).isSame(endtTime,'day');
 							}
 						});
 						if(!!findPTO){
@@ -415,19 +415,13 @@ let JobQuery = {
 
 				// //set the daily percentage
 				for(let job of userItem.jobs){
-					let secs = 1000 * 60 * 60 * 24,
-						totalDuration = 0;
+					let secs = 1000 * 60 * 60 * 24;
 					if(job.job_items && job.job_items.length >0){
 						job.job_items.forEach(job_item => {
 							let createdTimezone = job_item.timezone ? job_item.timezone : user.timezone;
 							let days = getTotalDays(job_item.start_date,job_item.end_date,createdTimezone,timezone);
 							job_item.daily_duration = job_item.duration / days;
-							totalDuration += job_item.daily_duration;
-						});
-
-						
-						job.job_items.forEach(job_item => {
-							job_item.daily_percentage = Math.round(job_item.daily_duration / totalDuration * 100);
+							job_item.daily_percentage = Math.round(job_item.daily_duration / DAY_DURATION * 100);
 						});
 					}
 				}

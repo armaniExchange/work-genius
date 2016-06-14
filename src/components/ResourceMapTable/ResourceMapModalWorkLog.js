@@ -173,7 +173,7 @@ class ResourceMapModalWorkLog extends Component {
 			if (defaultModalInfos.id !== undefined){
 				times = Number.parseFloat(moment(startDate).format('x'));
 			} else {
-				times = Number.parseFloat(moment(moment(startDate).format('YYYY-MM-DD')).format('x')) + 9 * 60 * 60 * 1000 ;
+				times = Number.parseFloat(moment(startDate).hour(9).format('x'));
 			}
 		}
 		let endTimeStamp;
@@ -181,9 +181,11 @@ class ResourceMapModalWorkLog extends Component {
 			endTimeStamp = Number.parseFloat(moment(moment(endDate).format('YYYY-MM-DD')).format('x')) + this.state.endTime;
 		} else {
 			if (defaultModalInfos.id !== undefined){
-				endTimeStamp = Number.parseFloat(moment(endDate).format('x'));
+				let hour = moment(defaultModalInfos.end_date).hour(),
+					min = moment(defaultModalInfos.end_date).minute();
+				endTimeStamp = Number.parseFloat(moment(endDate).hour(hour).minute(min).format('x'));
 			} else {
-				endTimeStamp = Number.parseFloat(moment(moment(endDate).format('YYYY-MM-DD')).format('x')) + 18 * 60 * 60 * 1000 ;
+				endTimeStamp = Number.parseFloat(moment(endDate).hour(18).format('x'));
 			}
 		}
 		let status = defaultModalInfos.status ? defaultModalInfos.status : 0;
