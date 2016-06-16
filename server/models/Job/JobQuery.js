@@ -159,22 +159,22 @@ let JobQuery = {
 					}
 
 					//get the total workday number of the job
-					let getTotalDays = (jobStartDate,jobEndDate,createdTimezone,timezone) =>{
+					let getTotalDays = (jobStartDate,jobEndDate,createdTimezone) =>{
 						let totalDays = 0;
 
-						while(moment(jobStartDate).utcOffset(timezone).isBefore(jobEndDate,'day') 
-							|| moment(jobStartDate).utcOffset(timezone).isSame(jobEndDate,'day')){
+						while(moment(jobStartDate).utcOffset(createdTimezone).isBefore(jobEndDate,'day') 
+							|| moment(jobStartDate).utcOffset(createdTimezone).isSame(jobEndDate,'day')){
 							let findPTO = ptoList.find( pto => {
 								let startTime = Number.parseFloat(pto.start_time);
 								let endtTime = Number.parseFloat(pto.end_time);
-								if(moment(startTime).utcOffset(timezone).isSame(endtTime,'day')){
+								if(moment(startTime).utcOffset(createdTimezone).isSame(endtTime,'day')){
 									return pto.applicant_id == user.id
-										&& moment(jobStartDate).utcOffset(timezone).isSame(startTime,'day');
+										&& moment(jobStartDate).utcOffset(createdTimezone).isSame(startTime,'day');
 								}else{
 									return pto.applicant_id == user.id && 
-											(moment(jobStartDate).utcOffset(timezone).isBetween(startTime,endtTime)
-											|| moment(jobStartDate).utcOffset(timezone).isSame(startTime,'day')
-											|| moment(jobStartDate).utcOffset(timezone).isSame(endtTime,'day'));
+											(moment(jobStartDate).utcOffset(createdTimezone).isBetween(startTime,endtTime)
+											|| moment(jobStartDate).utcOffset(createdTimezone).isSame(startTime,'day')
+											|| moment(jobStartDate).utcOffset(createdTimezone).isSame(endtTime,'day'));
 								}
 							});
 							if(!!findPTO){
@@ -186,7 +186,7 @@ let JobQuery = {
 
 							//set public holiday info
 							let findHoliday = holidayList.find( holiday => {
-								return moment(holiday.date).utcOffset(timezone).isSame(jobStartDate,'day') 
+								return moment(holiday.date).utcOffset(createdTimezone).isSame(jobStartDate,'day') 
 									&& holiday.location == userItem.location;
 							});
 							if(!!findHoliday){
@@ -197,7 +197,7 @@ let JobQuery = {
 								
 							}else{
 								let day = moment(jobStartDate).utcOffset(createdTimezone).day();
-								if([0,6].includes(moment(jobStartDate).utcOffset(timezone).day()) 
+								if([0,6].includes(moment(jobStartDate).utcOffset(createdTimezone).day()) 
 									&& [0,6].includes(day)){
 									jobStartDate = jobStartDate + 1000 * 60 * 60 * 24;
 									continue;
@@ -366,20 +366,20 @@ let JobQuery = {
 				}
 
 				//get the total workday number of the job
-				let getTotalDays = (jobStartDate,jobEndDate,createdTimezone,timezone) =>{
+				let getTotalDays = (jobStartDate,jobEndDate,createdTimezone) =>{
 					let totalDays = 0;
 
-					while(moment(jobStartDate).utcOffset(timezone).isBefore(jobEndDate,'day') 
-						|| moment(jobStartDate).utcOffset(timezone).isSame(jobEndDate,'day')){
+					while(moment(jobStartDate).utcOffset(createdTimezone).isBefore(jobEndDate,'day') 
+						|| moment(jobStartDate).utcOffset(createdTimezone).isSame(jobEndDate,'day')){
 						let findPTO = ptoList.find( pto => {
 							let startTime = Number.parseFloat(pto.start_time);
 							let endtTime = Number.parseFloat(pto.end_time);
-							if(moment(startTime).utcOffset(timezone).isSame(endtTime,'day')){
-								return moment(jobStartDate).utcOffset(timezone).isSame(startTime,'day');
+							if(moment(startTime).utcOffset(createdTimezone).isSame(endtTime,'day')){
+								return moment(jobStartDate).utcOffset(createdTimezone).isSame(startTime,'day');
 							}else{
-								return moment(jobStartDate).utcOffset(timezone).isBetween(startTime,endtTime)
-										|| moment(jobStartDate).utcOffset(timezone).isSame(startTime,'day')
-										|| moment(jobStartDate).utcOffset(timezone).isSame(endtTime,'day');
+								return moment(jobStartDate).utcOffset(createdTimezone).isBetween(startTime,endtTime)
+										|| moment(jobStartDate).utcOffset(createdTimezone).isSame(startTime,'day')
+										|| moment(jobStartDate).utcOffset(createdTimezone).isSame(endtTime,'day');
 							}
 						});
 						if(!!findPTO){
@@ -391,7 +391,7 @@ let JobQuery = {
 
 						//set public holiday info
 						let findHoliday = holidayList.find( holiday => {
-							return moment(holiday.date).utcOffset(timezone).isSame(jobStartDate,'day');
+							return moment(holiday.date).utcOffset(createdTimezone).isSame(jobStartDate,'day');
 						});
 						if(!!findHoliday){
 							if(findHoliday.type == 'holiday'){
@@ -401,8 +401,7 @@ let JobQuery = {
 							
 						}else{
 							let day = moment(jobStartDate).utcOffset(createdTimezone).day();
-							if([0,6].includes(moment(jobStartDate).utcOffset(timezone).day()) 
-								&& [0,6].includes(day)){
+							if([0,6].includes(day)){
 								jobStartDate = jobStartDate + 1000 * 60 * 60 * 24;
 								continue;
 							}
@@ -419,7 +418,7 @@ let JobQuery = {
 					if(job.job_items && job.job_items.length >0){
 						job.job_items.forEach(job_item => {
 							let createdTimezone = job_item.timezone ? job_item.timezone : user.timezone;
-							let days = getTotalDays(job_item.start_date,job_item.end_date,createdTimezone,timezone);
+							let days = getTotalDays(job_item.start_date,job_item.end_date,createdTimezone);
 							job_item.daily_duration = job_item.duration / days;
 							job_item.daily_percentage = Math.round(job_item.daily_duration / DAY_DURATION * 100);
 						});
