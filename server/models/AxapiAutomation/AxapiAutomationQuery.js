@@ -1,5 +1,7 @@
 import fs from 'fs';
 import path from 'path';
+import r from 'rethinkdb';
+import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 
 const DATA_FOLDER = 'axapi_automation_data';
 const DATA_ABS_PATH = path.resolve(__dirname, '..', '..', '..', DATA_FOLDER) + '/'; 
@@ -170,11 +172,45 @@ export const changeTabHandler = async (req, res) => {
   const {
     product,
     build,
-    tab
+    tab,
+    api_page
   } = req.query || {};
   if (!tab || VALID_TAB.indexOf(req.query.tab)===-1 || !product || !build) {
     res.json({'code':CODE_SUCC, 'data':[], 'msg':'tab, product AND build are required!'});
   };
+
+  if (tab==='TAB___API') {
+    console.log('TAB___API-----------------------here');
+    let aryAPI = [], // only store fail API results
+        connection = null,
+        query = null,
+        result = null,
+        PAGESIZE = 12,
+        startPage = api_page || 1;
+
+    try {
+        query = r.db('work_genius').table('axapi_test_reports').filter({'createdAt':1465992408501, 'isSuccess':false}).coerceTo('array');
+        connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+        result = await query.run(connection);
+        await connection.close();
+
+        // console.log(result);
+        for (let i=(startPage-1)*PAGESIZE;i<startPage*PAGESIZE;i++) {
+          aryAPI[aryAPI.length] = result[i];
+        }
+    } catch (err) {
+        console.log(err);
+        console.log(`Fail to create category! Error!`);
+    }
+    console.log(aryAPI);
+    res.json({'code':CODE_SUCC, 'data':{
+      aryAPI: aryAPI,
+      total: result.length,
+      curPage: startPage
+    }});
+    return;
+  }
+
   const tabFolder = TAB_MAPPING_FOLDER[tab];
   console.log('--------------', tab, tabFolder, product, build);
   

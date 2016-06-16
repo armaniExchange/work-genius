@@ -11,6 +11,9 @@ const initialState = Map({
   aryBuildNumber: [],
   curBuildNumber: DEFAULT_CURRENT_BUILD,
 
+  curAPIPage:1,
+  curAPITotal:0,
+
   aryDelFiles: [],
   aryModFiles: [],
   aryNewFiles: [],
@@ -38,9 +41,12 @@ export default function searchReducer(state = initialState, action) {
                   .set('aryBuildNumber', action.builds);
     case actionTypes.AXAPIAUTO_CHANGE_BUILD_NUMBER_SUCCESS:
     case actionTypes.AXAPIAUTO_CHANGE_TAB_SUCCESS:
-      console.warn(action);
+      console.warn(action, action.tab);
+      state = state.set('currentTabPage', action.tab);
+      if (action.tab==='TAB___API') {
+        return state;
+      }
       return state.set('curBuildNumber', action.build)
-                .set('currentTabPage', action.tab)
                 .set('aryDelFiles', action.dels)
                 .set('aryModFiles', action.mods)
                 .set('aryNewFiles', action.news)

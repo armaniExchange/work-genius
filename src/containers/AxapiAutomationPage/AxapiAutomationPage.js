@@ -10,6 +10,7 @@ import { bindActionCreators } from 'redux';
 import * as AxapiAutomationPageActions from '../../actions/axapi-automation-actions';
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
+import Pagination from 'rc-pagination';
 
 // let _convertTab = (tab) => {
 //   let mapping = {'TAB___CLI':'cli', 'TAB___JSON':'json', 'TAB___API':'api'};
@@ -46,7 +47,7 @@ const DisplayFileList = (props) => {
   return (<dl style={{display:ary.length===0 ? 'none' : ''}}>
     <dt>{props.title}:</dt>
     <dd>
-      <ul style={{overflow:'auto', width:'99%', 'max-height': '400px'}}>
+      <ul style={{overflow:'auto', width:'99%', 'maxHeight': '400px'}}>
         {ary.map((val, k)=>{
           val = val.split('/').slice(-1)[0];
           if (isModified) {
@@ -98,6 +99,9 @@ class AxapiAutomationPage extends Component {
       aryModFiles,
       aryNewFiles,
       curModifiedDiff,
+      //API request
+      curAPIPage,
+      curAPITotal,
       //actions
       changeTabPage,
       changeBuildNumber,
@@ -112,6 +116,87 @@ class AxapiAutomationPage extends Component {
     const tabAPIProps = currentTabPage==='TAB___API' ? {secondary: true} : {};
 
     const hasModifiedFiles = aryModFiles && aryModFiles.length;
+
+    let rightBody;
+    if (currentTabPage==='TAB___API') {
+      rightBody = (<div>
+          {[1,2,3].map((_,key)=>{
+            return (<div className="automation-page-right__body-row--axapireq" key={key}>
+            <div className="automation-page-right__body-row__head">
+              <span style={{float:'left','borderRadius':'2px',background:'#b00',color:'#fff',padding:'2px 6px'}}>Fail</span>
+              <span style={{float:'left','borderRadius':'2px',background:'green',color:'#fff',padding:'2px 6px'}}>Success</span>
+              <h5 style={{padding:'0 8px'}}>_cases_path_...<span>cases_name.py</span></h5>
+            </div>
+            <div className="automation-page-right__body-row__body">
+              <RaisedButton
+                onClick={()=>{
+                }}  
+                secondary={true}
+                style={{float:'right',width:'8%'}}
+                label="_method_"
+                labelStyle={{'textTransform': 'none'}} />
+              <TextField
+                onChange={(evt)=>{
+                  const val = evt.target.value;
+                  console.log('val', val);
+                }}
+                value="/axapi/v3/object-group/network/"
+                style={{width:'91.9%'}}
+                labelStyle={{textAlign:'center'}}
+                hintText="password" />
+              <table style={{width:'100%'}}>
+              <tbody>
+                <tr>
+                <td>
+                  <label style={{display:'block'}}>REQUEST</label>
+                  <textarea style={{resize:'none',width:'100%',height:'230px'}} defaultValue={"_request_"}></textarea>
+                </td>
+                <td>
+                  <label style={{display:'block'}}>RESPONSE</label>
+                  <textarea style={{resize:'none',width:'100%',height:'230px'}} defaultValue={"_response_"}></textarea>
+                </td>
+                </tr>
+              </tbody>
+              </table>
+              <Pagination onChange={(selected)=>{
+                alert(selected);
+              }} pageSize={12} current={curAPIPage} total={curAPITotal} />
+            </div>
+          </div>);
+          })}
+          </div>);
+    } else {
+      rightBody = (<div className="automation-page-right__body-row--schema" style={{minHeight:'800px', 'display':currentTabPage!=='TAB___API' ? '' : 'none'}}>
+              <div style={{float: hasModifiedFiles ? 'left' : 'none',
+                width: hasModifiedFiles ? '300px' : 'auto'}}>
+              <DisplayFileList title="Modified" 
+              isModified={true} 
+              isModifiedOnClick={aryModFiles.map((val)=>{
+                return ()=>{
+                  console.log('val',val);
+                  changeModifiedFileName(val, curProduct, currentTabPage, curBuildNumber);
+                };
+              })}
+              ary={aryModFiles} />
+              <DisplayFileList title="Created" ary={aryNewFiles} />
+              <DisplayFileList title="Deleted" ary={aryDelFiles} />
+            </div>
+            <div style={{margin:'0 0 0 320px',
+            'display': hasModifiedFiles ? '' : 'none'}}>
+              <div>
+                <DiffLabelTag><strong>{curModifiedFilename}</strong></DiffLabelTag>
+              </div>
+              <div style={{height:'',overflow:'auto'}}>
+                <HighlightMarkdown source={_convertDiffContent(curModifiedDiff)}/>
+              </div>
+              {/*<div style={{display:'', height:'500px', background:'#eee', overflow:'auto', padding:'10px 20px'}}
+                dangerouslySetInnerHTML={{__html:colorfulDiff(curModifiedDiff)}}
+              >
+              </div>*/}
+            </div>
+            <div style={{clear:'both'}}></div>
+          </div>);
+    }
 
     return (<section className="automation-page">
       <div className="automation-page-left">
@@ -154,6 +239,7 @@ class AxapiAutomationPage extends Component {
             changeTabPage('TAB___JSON', curProduct, curBuildNumber);
           }} />
           <RaisedButton {...tabAPIProps} label="API Request" labelStyle={{'textTransform': 'none'}} onClick={()=>{
+            console.log('TAB___API', curProduct, curBuildNumber);
             changeTabPage('TAB___API', curProduct, curBuildNumber);
           }} />
           <div>
@@ -179,38 +265,7 @@ class AxapiAutomationPage extends Component {
           </div>
         </div>
         <div className="automation-page-right__body">
-          <div className="automation-page-right__body-row--schema" style={{minHeight:'800px'}}>
-              <div style={{float: hasModifiedFiles ? 'left' : 'none',
-                width: hasModifiedFiles ? '300px' : 'auto'}}>
-              <DisplayFileList title="Modified" 
-              isModified={true} 
-              isModifiedOnClick={aryModFiles.map((val)=>{
-                return ()=>{
-                  console.log('val',val);
-                  changeModifiedFileName(val, curProduct, currentTabPage, curBuildNumber);
-                };
-              })}
-              ary={aryModFiles} />
-              <DisplayFileList title="Created" ary={aryNewFiles} />
-              <DisplayFileList title="Deleted" ary={aryDelFiles} />
-            </div>
-            <div style={{margin:'0 0 0 320px',
-            'display': hasModifiedFiles ? '' : 'none'}}>
-              <div>
-                <DiffLabelTag><strong>{curModifiedFilename}</strong></DiffLabelTag>
-              </div>
-              <div style={{height:'',overflow:'auto'}}>
-                <HighlightMarkdown source={_convertDiffContent(curModifiedDiff)}/>
-              </div>
-              {/*<div style={{display:'', height:'500px', background:'#eee', overflow:'auto', padding:'10px 20px'}}
-                dangerouslySetInnerHTML={{__html:colorfulDiff(curModifiedDiff)}}
-              >
-              </div>*/}
-            </div>
-            <div style={{clear:'both'}}></div>
-          </div>
-
-          {[1].map(()=>{
+          {/* useless code [1].map(()=>{
             return (<div className="automation-page-right__body-row--schema">
             <div className="automation-page-right__body-row--schema__right" style={{'margin':'0 0 10px', width:'64%'}}>
               <div>
@@ -220,47 +275,8 @@ class AxapiAutomationPage extends Component {
               <div style={{height:'500px', background:'#ddd'}}></div>
             </div>
           </div>);
-          })}
-
-          {[1,2,3].map(()=>{
-            return (<div className="automation-page-right__body-row--axapireq">
-            <div className="automation-page-right__body-row__head">
-              <span style={{float:'left','border-radius':'2px',background:'#b00',color:'#fff',padding:'2px 6px'}}>Fail</span>
-              <span style={{float:'left','border-radius':'2px',background:'green',color:'#fff',padding:'2px 6px'}}>Success</span>
-              <h5 style={{padding:'0 8px'}}>_cases_path_...<span>cases_name.py</span></h5>
-            </div>
-            <div className="automation-page-right__body-row__body">
-              <RaisedButton
-                onClick={()=>{
-                }}  
-                secondary={true}
-                style={{float:'right',width:'8%'}}
-                label="_method_"
-                labelStyle={{'textTransform': 'none'}} />
-              <TextField
-                onChange={(evt)=>{
-                  const val = evt.target.value;
-                  console.log('val', val);
-                }}
-                value="/axapi/v3/object-group/network/"
-                style={{width:'91.9%'}}
-                labelStyle={{textAlign:'center'}}
-                hintText="password" />
-              <table style={{width:'100%'}}>
-                <tr>
-                <td>
-                  <label style={{display:'block'}}>REQUEST</label>
-                  <textarea style={{resize:'none',width:'100%',height:'230px'}}>_request_</textarea>
-                </td>
-                <td>
-                  <label style={{display:'block'}}>RESPONSE</label>
-                  <textarea style={{resize:'none',width:'100%',height:'230px'}}>_response_</textarea>
-                </td>
-                </tr>
-              </table>
-            </div>
-          </div>);
-          })}
+          })*/}
+          {rightBody}
         </div>{/*automation-page-right__body*/}
         {/*<div className="automation-page-right__foot">
           pagination here
@@ -282,6 +298,9 @@ AxapiAutomationPage.propTypes = {
   aryNewFiles: PropTypes.array,
   curModifiedFilename: PropTypes.string,
   curModifiedDiff: PropTypes.string,
+
+  curAPIPage: PropTypes.number,
+  curAPITotal: PropTypes.number,
 
   fetchProduct: PropTypes.func,
   fetchBuildNumber: PropTypes.func,

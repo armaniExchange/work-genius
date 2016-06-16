@@ -56,6 +56,7 @@ const axapiAutomationApi = (handle, conf={}) => {
       url += url.indexOf('?')===-1 ? '?' : '&';
       url += `${k}=${v}`;
     }
+    console.log('handle', handle, url);
     return fetch(url, config)
       .then((res) => res.json())
       .then((body) => {
@@ -92,13 +93,16 @@ const axapiAutomationApi = (handle, conf={}) => {
             if (handle==='change_tab') {
               _type = actionTypes.AXAPIAUTO_CHANGE_TAB_SUCCESS;
             }
-            dispatch({
+            console.log('_type', _type);
+            const obj = {
               type: _type,
               ...jsonBuildDetail(data.build, data.dels, data.mods, data.news, data.curMod,
                 data.curModFile,
                 conf.tab, //should be 'TAB___*'
                 )
-            });
+            };
+            console.log('obj', obj);
+            dispatch(obj);
           break;
           case 'change_modified_filename':
             dispatch({
@@ -128,6 +132,7 @@ export function changeProduct(product) {
 };
 
 export function changeTabPage(tab, product, build) {
+  console.log('changeTabPage', tab, product, build);
   return axapiAutomationApi('change_tab', {tab, product, build});
 };
 
