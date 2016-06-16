@@ -23,28 +23,28 @@ export const addTestReportHandler = async (req, res) => {
   try {
     connection = await r.connect({ host: DB_HOST, port: DB_PORT });
     const { type } = req.params;
-    const { reports, meta } = req.body;
+    const { reports } = req.body;
     const createdAt = req.body.createdAt || new Date().getTime();
     const data = reports.map((report)=> {
       const {
         path, // for e2e and unit test
         api, // for axapi
         isSuccess,
-        errorMessage
+        errorMessage,
+        meta
       } = report;
       const PathOrApiProperty = type === 'axapiTest' ? {
         api: api || ''
       } : {
         path: path || ''
       };
-      console.log('createdAt');
-      console.log(createdAt);
       return Object.assign({
         errorMessage: errorMessage || '',
         isSuccess,
         type,
+        meta,
         createdAt,
-      }, meta && { meta }, PathOrApiProperty);
+      }, PathOrApiProperty);
     });
 
     let reportsTableName;
