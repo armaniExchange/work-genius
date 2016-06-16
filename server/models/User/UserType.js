@@ -92,7 +92,7 @@ let UserType = new GraphQLObjectType({
 			description: 'User alias'
 		},
 		overtime_hours: {
-			type: GraphQLInt,
+			type: GraphQLFloat,
 			description: 'User\'s leftover hours'
 		},
 		jobs: {

@@ -161,3 +161,6 @@ td {
 .mdl-checkbox__label {
     white-space: nowrap;
 }
+.left-align{
+  text-align: left;
+}

@@ -79,6 +79,14 @@ const JobType = new GraphQLObjectType({
         'update_time':{
             type: GraphQLFloat,
             description: 'update time'
+        },
+        'daily_percentage':{
+            type: GraphQLInt,
+            description: 'daily percent'
+        },
+        'timezone':{
+            type: GraphQLInt,
+            description: 'The timezone that the task is created/updated on'
         }
     })
 });
