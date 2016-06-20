@@ -11,6 +11,8 @@ const initialState = Map({
   aryBuildNumber: [],
   curBuildNumber: DEFAULT_CURRENT_BUILD,
 
+  aryAPIData: [],
+  curAPIResultCreatedTime:0,
   curAPIPage:1,
   curAPITotal:0,
 
@@ -44,7 +46,11 @@ export default function searchReducer(state = initialState, action) {
       console.warn(action, action.tab);
       state = state.set('currentTabPage', action.tab);
       if (action.tab==='TAB___API') {
-        return state;
+        // console.info('action', action);
+        return state.set('aryAPIData', action.aryAPI)
+                  .set('curAPIResultCreatedTime', action.createdAt)
+                  .set('curAPIPage', +action.curPage)
+                  .set('curAPITotal', +action.total);
       }
       return state.set('curBuildNumber', action.build)
                 .set('aryDelFiles', action.dels)

@@ -89,19 +89,33 @@ const axapiAutomationApi = (handle, conf={}) => {
           break;
           case 'change_build_number':
           case 'change_tab':
-            let _type = actionTypes.AXAPIAUTO_CHANGE_BUILD_NUMBER_SUCCESS;
+            let _type = actionTypes.AXAPIAUTO_CHANGE_BUILD_NUMBER_SUCCESS,
+                obj;
             if (handle==='change_tab') {
               _type = actionTypes.AXAPIAUTO_CHANGE_TAB_SUCCESS;
             }
             console.log('_type', _type);
-            const obj = {
-              type: _type,
-              ...jsonBuildDetail(data.build, data.dels, data.mods, data.news, data.curMod,
-                data.curModFile,
-                conf.tab, //should be 'TAB___*'
-                )
-            };
-            console.log('obj', obj);
+
+            if (conf.tab==='TAB___API') {
+              console.warn('-----------data', data);
+              obj = {
+                type: _type,
+                tab: conf.tab,
+                ...data
+                // aryAPI: data.aryAPI,
+                // total: data.total,
+                // curPage: data.curPage
+              };
+            } else {
+              obj = {
+                type: _type,
+                ...jsonBuildDetail(data.build, data.dels, data.mods, data.news, data.curMod,
+                  data.curModFile,
+                  conf.tab, //should be 'TAB___*'
+                  )
+              };
+            }
+            console.log('obj...........', obj);
             dispatch(obj);
           break;
           case 'change_modified_filename':
@@ -131,8 +145,11 @@ export function changeProduct(product) {
   return axapiAutomationApi('change_product', {product});
 };
 
-export function changeTabPage(tab, product, build) {
+export function changeTabPage(tab, product, build, conf={}) {
   console.log('changeTabPage', tab, product, build);
+  if (tab==='TAB___API') {
+    return axapiAutomationApi('change_tab', {tab, product, ...conf});
+  }
   return axapiAutomationApi('change_tab', {tab, product, build});
 };
 

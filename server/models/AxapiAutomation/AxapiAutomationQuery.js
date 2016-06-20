@@ -3,6 +3,7 @@ import path from 'path';
 import r from 'rethinkdb';
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 
+const API_DATA_PAGESIZE = 10;
 const DATA_FOLDER = 'axapi_automation_data';
 const DATA_ABS_PATH = path.resolve(__dirname, '..', '..', '..', DATA_FOLDER) + '/'; 
 const CODE_SUCC = 0;
@@ -171,33 +172,55 @@ export const changeModifiedFilenameHandler = async (req, res) => {
 export const changeTabHandler = async (req, res) => {
   const {
     product,
+    curAPIResultCreatedTime,
     build,
     tab,
-    api_page
+    apiPage
   } = req.query || {};
-  if (!tab || VALID_TAB.indexOf(req.query.tab)===-1 || !product || !build) {
-    res.json({'code':CODE_SUCC, 'data':[], 'msg':'tab, product AND build are required!'});
+  const IS_TAB_API = tab==='TAB___API';
+
+  if (!tab || VALID_TAB.indexOf(req.query.tab)===-1 || !product) {
+    if (IS_TAB_API) {
+      if (!curAPIResultCreatedTime) {
+        res.json({'code':CODE_SUCC, 'data':[], 'msg':'tab, product AND curAPIResultCreatedTime are required!'});
+      }
+    } else {
+      if (!build) {
+        res.json({'code':CODE_SUCC, 'data':[], 'msg':'tab, product AND build are required!'});
+      }
+    }
   };
 
-  if (tab==='TAB___API') {
+  if (IS_TAB_API) {
     console.log('TAB___API-----------------------here');
     let aryAPI = [], // only store fail API results
         connection = null,
         query = null,
-        result = null,
-        PAGESIZE = 12,
-        startPage = api_page || 1;
+        results = null,
+        PAGESIZE = API_DATA_PAGESIZE,
+        startPage = apiPage || 1,
+        total;
 
     try {
-        query = r.db('work_genius').table('axapi_test_reports').filter({'createdAt':1465992408501, 'isSuccess':false}).coerceTo('array');
+        const filteredQuery = () => {
+          return r.db('work_genius')
+                .table('axapi_test_reports')
+                .filter({'createdAt':1466053870000 //<---curAPIResultCreatedTime
+                        , 'isSuccess':false}) //Only fail is needed to show.
+                ;
+        };
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-        result = await query.run(connection);
+        query = filteredQuery()
+                .skip((startPage-1)*PAGESIZE)
+                .limit(PAGESIZE)
+                .coerceTo('array');
+        results = await query.run(connection);
+        query = filteredQuery()
+                .count();
+        total = await query.run(connection);
         await connection.close();
-
-        // console.log(result);
-        for (let i=(startPage-1)*PAGESIZE;i<startPage*PAGESIZE;i++) {
-          aryAPI[aryAPI.length] = result[i];
-        }
+        // console.log(results);
+        aryAPI = results;
     } catch (err) {
         console.log(err);
         console.log(`Fail to create category! Error!`);
@@ -205,8 +228,9 @@ export const changeTabHandler = async (req, res) => {
     console.log(aryAPI);
     res.json({'code':CODE_SUCC, 'data':{
       aryAPI: aryAPI,
-      total: result.length,
-      curPage: startPage
+      total: total,
+      curPage: startPage,
+      createdAt: 1466053870000
     }});
     return;
   }
