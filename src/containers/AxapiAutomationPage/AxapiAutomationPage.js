@@ -96,11 +96,13 @@ class AxapiAutomationPage extends Component {
               curAPIResultCreatedTime: query.curAPIResultCreatedTime || '1466053870000', 
               apiPage: query.apiPage || '1'
             });
+    } else {
+      // for TAB___CLI TAB___JSON
+
+      //fetch aryProduct
+      //fetch aryBuildNumber
+      this.props.fetchProduct();
     }
-    
-    //fetch aryProduct
-    //fetch aryBuildNumber
-    this.props.fetchProduct();
   };
   componentWillReceiveProps(nextProps) {
     if (this.props.curProduct!==nextProps.curProduct) {
