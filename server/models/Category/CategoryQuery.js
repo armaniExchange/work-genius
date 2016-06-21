@@ -79,6 +79,7 @@ let CategoryQuery = {
           return acc.concat(article.tags);
         }, []);
         result = dedupe(result);
+        result = result.slice(0, 20);
         await connection.close();
       } catch (err) {
         return err;
@@ -98,6 +99,7 @@ let CategoryQuery = {
         query = r.db('work_genius').table('articles')('milestone').distinct();
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         result = await query.run(connection);
+        result = result.filter(item =>  item.trim() !== '');
         await connection.close();
       } catch (err) {
         return err;

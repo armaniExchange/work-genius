@@ -3,6 +3,8 @@ import './_color.css';
 import React, { Component, PropTypes } from 'react';
 import moment from 'moment';
 
+import FlatButton from 'material-ui/lib/flat-button';
+import Dialog from 'material-ui/lib/dialog';
 import ResourceMapCellAddButton from './ResourceMapCellAddButton.js';
 import ResourceMapCellPto from './ResourceMapCellPto.js';
 import ResourceMapCellWorkLog from './ResourceMapCellWorkLog.js';
@@ -34,16 +36,18 @@ const RESOURCE_MAP_CELLS = {
         );
     },
     holiday: (config) => {
-        // return (
-        //     <ResourceMapCellWorkLog
-        //         config={config}
-        //         className={'holiday-style'}
-        //         onModalHander={onModalHander}
-        //         onSubmitStatus={onSubmitStatus}
-        //         onDeleteItemHander={onDeleteItemHander}
-        //     />
-        // );
         return (<ResourceMapCellHoliday config={config} />);
+    },
+    weekend: (config, onModalHander, onSubmitStatus, onDeleteItemHander) => {
+        return (
+            <ResourceMapCellWorkLog
+                config={config}
+                className={'holiday-style'}
+                onModalHander={onModalHander}
+                onSubmitStatus={onSubmitStatus}
+                onDeleteItemHander={onDeleteItemHander}
+            />
+        );
     }
 };
 
@@ -54,6 +58,12 @@ class ResourceMapTableBody extends Component {
     constructor() {
         super();
         this._onShowModalHandler = ::this._onShowModalHandler;
+        this._showDetailWorkLog = ::this._showDetailWorkLog;
+        this._onCancelDialogHander = ::this._onCancelDialogHander;
+        this.state = {
+          panel: '',
+          open: false
+        };
     }
 
     _onShowModalHandler(config) {
@@ -61,8 +71,48 @@ class ResourceMapTableBody extends Component {
         onModalHander(true, config);
     }
 
+    _showDetailWorkLog(user) {
+        const { data } = this.props;
+        let userLog = data.find((log) => {
+            return log.name === user;
+        });
+        var allItemIds = [];
+        var panel = '';
+        var index = 1;
+        userLog.jobs.map((job) => {
+            let jobItems = job.job_items;
+            if (jobItems) {
+                jobItems.map((item) => {
+                    let id = allItemIds.find((itemId) => {
+                        return itemId === item.id;
+                    });
+                    if ( !id ) {
+                        allItemIds.push(item.id);
+                        panel += 'Work ' + index + '. ';
+                        panel += '[' + item.release + '] ' + item.title + '\n';
+                        if (item.progress > 0) {
+                          panel += '   Progress: ' + item.progress + '%\n';
+                        }
+                        if (item.content !== undefined && item.content !== '') {
+                          panel += '   Work log: \n      ';
+                          panel += item.content.replace(/\n/ig, '\n      ') + '\n';
+                        }
+                        index ++;
+                    }
+                });
+            }
+        });
+        // window.clipboardData.setData('Text', panel);
+        // panel.replace(/\n/ig, '<br/>');
+        this.setState({open: true, panel: panel});
+    }
+
+    _onCancelDialogHander() {
+      this.setState({open: false, panel: ''});
+    }
 	render() {
-		const {data, startDate, totalDays, onModalHander, onSubmitStatus, onDeleteItemHander} = this.props;
+    const {data, startDate, totalDays, onModalHander, onSubmitStatus, onDeleteItemHander} = this.props;
+
 		let bodyHtml = (
             <tr>
                 <Td
@@ -78,7 +128,16 @@ class ResourceMapTableBody extends Component {
                 let worklogs = resource.jobs;
                 var user = resource.name;
                 var userId = resource.id;
-                let userHtml = (<Td key={0} colSpan={1} className={'cell-layout-style'}>{user}</Td>);
+                let __showDetailWorkLog = () => {
+                    this._showDetailWorkLog(user);
+                };
+                let userHtml = (
+                  <Td key={0} colSpan={1}
+                    className={'cell-layout-style'} >
+                      {user}
+                      <i className="fa fa-list-alt detail-icon" onClick={__showDetailWorkLog}></i>
+                  </Td>
+                );
                 let itemsHtml = worklogs.map((itemValue, itemIndex) => {
                     // If the day is weekday, will be show weekday style.
                     let currentDay = moment(startDate).add(itemIndex, 'days');
@@ -116,7 +175,7 @@ class ResourceMapTableBody extends Component {
                     // } else
                     if (type === 'pto') {
                         className += '__pto';
-                    } else if (type === 'holiday') {
+                    } else if (type === 'holiday' || type === 'weekend') {
                         className += '__holiday';
                     }
 
@@ -137,10 +196,27 @@ class ResourceMapTableBody extends Component {
                 );
         	});
         }
-		return (
+        let actions = [
+          <FlatButton
+		        label="Cancel"
+		        secondary={true}
+		        onTouchTap={this._onCancelDialogHander}
+		      />
+        ];
+    return (
 			<tbody className="pto-table__body">
 				{bodyHtml}
-            </tbody>
+        <tr style={{display: 'none'}}><td>
+        <Dialog
+		          title="The selected days work log:"
+		          actions={actions}
+		          modal={false}
+		          open={this.state.open}
+		          onRequestClose={this._onCancelDialogHander}
+		    >
+            <textarea className="mdl-textfield__input" style={{'fontSize': '12px', 'padding': '5px'}} cols="50" rows= "15" defaultValue={this.state.panel}></textarea>
+        </Dialog></td></tr>
+      </tbody>
 		);
 	}
 
@@ -149,7 +225,7 @@ class ResourceMapTableBody extends Component {
 ResourceMapTableBody.propTypes = {
     startDate: PropTypes.string.isRequired,
     totalDays: PropTypes.number.isRequired,
-	data:  PropTypes.array.isRequired,
+    data:  PropTypes.array.isRequired,
     onModalHander: PropTypes.func.isRequired,
     onSubmitStatus: PropTypes.func.isRequired,
     onDeleteItemHander: PropTypes.func.isRequired

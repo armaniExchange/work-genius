@@ -5,6 +5,8 @@ import {
     apiFailure
 } from './app-actions';
 
+const DOCUMENT_CATEGORY_UPDATE_TIME_MIN = 30;
+
 export function setSelectedCategory(data) {
 	return {
 		type: actionTypes.SET_SELECTED_CATEGORY,
@@ -24,13 +26,6 @@ export function fetchArticlesSuccess(articleList, count) {
     type: actionTypes.FETCH_ARTICLES_SUCCESS,
     articleList,
     count
-  };
-}
-
-export function fetchDocumentCategoriesSuccess(data) {
-  return {
-    type: actionTypes.FETCH_DOCUMENT_CATEGORIES_SUCCESS,
-    data
   };
 }
 
@@ -174,7 +169,7 @@ export function fetchAllTags() {
     const config = {
       method: 'POST',
       body: `{
-        tags
+        documentTags
       }`,
       headers: {
         'Content-Type': 'application/graphql',
@@ -189,7 +184,7 @@ export function fetchAllTags() {
         return res.json();
       })
       .then((body) => {
-        dispatch(fetchAllTagsSuccess(body.data.tags));
+        dispatch(fetchAllTagsSuccess(body.data.documentTags));
       })
       .catch((error) => {
         dispatch(fetchAllTagsFail(error));
@@ -302,6 +297,60 @@ export function updateArticlesQuery(query) {
   };
 }
 
+function forceDocumentCategoriesUpdateNextTime() {
+  // when really need to fetch docment categories from server
+  const localDocumentCategoriesBody = localStorage['documentCategoriesBody'];
+  if (localDocumentCategoriesBody) {
+    let parsedDocumentCategoriesBody = JSON.parse(localDocumentCategoriesBody);
+    parsedDocumentCategoriesBody.enableForceUpdate = true;
+    localStorage['documentCategoriesBody'] = JSON.stringify(parsedDocumentCategoriesBody);
+  }
+}
+
+export function fetchDocumentCategoriesSuccess(data) {
+  return {
+    type: actionTypes.FETCH_DOCUMENT_CATEGORIES_SUCCESS,
+    data
+  };
+}
+
+function setDocumentCategoriesBodyCached(documentCategoriesBody) {
+  documentCategoriesBody.updatedAt = new Date().getTime();
+  localStorage['documentCategoriesBody'] = JSON.stringify(documentCategoriesBody);
+}
+
+function getCachedDocumentCategoriesOrFetchIt(dispatch, config) {
+  return new Promise((resolve, reject) => {
+    const localDocumentCategoriesBody = localStorage['documentCategoriesBody'];
+    if (localDocumentCategoriesBody) {
+      const parsedDocumentCategoriesBody = JSON.parse(localDocumentCategoriesBody);
+      if (!parsedDocumentCategoriesBody.enableForceUpdate &&
+        new Date().getTime() - parsedDocumentCategoriesBody.updatedAt < DOCUMENT_CATEGORY_UPDATE_TIME_MIN * 60 *1000) {
+        resolve(parsedDocumentCategoriesBody);
+      }
+      if (!parsedDocumentCategoriesBody.enableForceUpdate) {
+        // return a cached categories from document first
+        dispatch(fetchDocumentCategoriesSuccess(parsedDocumentCategoriesBody.data.getAllDocumentCategories));
+        dispatch(setLoadingState(false));
+      }
+    }
+    // event use cached result, still fetch in background for next time
+    fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then(body => {
+        setDocumentCategoriesBodyCached(body);
+        // if resolved with cached result before, this resolve will be ignored
+        resolve(body);
+      })
+      .catch(reject);
+  });
+}
+
 export function fetchDocumentCategories() {
   return dispatch => {
     dispatch(setLoadingState(true));
@@ -315,7 +364,8 @@ export function fetchDocumentCategories() {
           id,
           parentId,
           name,
-          articlesCount
+          articlesCount,
+          isFeature
         }
       }`,
       headers: {
@@ -323,19 +373,13 @@ export function fetchDocumentCategories() {
         'x-access-token': localStorage.token
       }
     };
-    return fetch(SERVER_API_URL, config)
-      .then((res) => {
-        if (res.status >= 400) {
-          throw new Error(res.statusText);
-        }
-        return res.json();
-      })
+    return getCachedDocumentCategoriesOrFetchIt(dispatch, config)
       .then((body) => {
+        const getAllDocumentCategories = body.data.getAllDocumentCategories;
         dispatch(setLoadingState(false));
-        dispatch(fetchDocumentCategoriesSuccess(body.data.getAllDocumentCategories));
+        dispatch(fetchDocumentCategoriesSuccess(getAllDocumentCategories));
       })
       .catch((error) => {
-        dispatch(setLoadingState(false));
         dispatch(apiFailure(error));
       });
   };
@@ -366,10 +410,10 @@ export function upsertDocumentCategory(data) {
         return res.json();
       })
       .then(() => {
+        forceDocumentCategoriesUpdateNextTime();
         dispatch(fetchDocumentCategories());
       })
       .catch((error) => {
-        dispatch(setLoadingState(false));
         dispatch(apiFailure(error));
       });
   };
@@ -399,10 +443,10 @@ export function deleteDocumentCategory(id) {
         return res.json();
       })
       .then(() => {
+        forceDocumentCategoriesUpdateNextTime();
         dispatch(fetchDocumentCategories());
       })
       .catch((error) => {
-        dispatch(setLoadingState(false));
         dispatch(apiFailure(error));
       });
   };

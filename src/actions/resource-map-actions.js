@@ -1,3 +1,4 @@
+
 import actionTypes from '../constants/action-types';
 import { SERVER_API_URL } from '../constants/config';
 import moment from 'moment';
@@ -59,6 +60,80 @@ export function fetchResourecMapNewTag(tag){
     };
 }
 
+export function fetchResourecMapRelease(releases) {
+    return {
+        type: actionTypes.FETCH_RESOURCE_MAP_ALL_RELEASE,
+        releases
+    };
+}
+
+export function fetchResourecMapNewRelease(release) {
+    return {
+        type: actionTypes.FETCH_RESOURCE_MAP_NEW_RELEASE,
+        release
+    };
+}
+
+export function fetchResourceMapTaskTitle(titles) {
+  return {
+    type: actionTypes.FETCH_RESOURCE_MAP_TITLE,
+    titles
+  };
+}
+
+function reloadResourceMapDataByUser(userId , getState) {
+    let startDate = getState().resourceMap.toJS().startDate;
+    let days = getState().resourceMap.toJS().totalDays;
+    let date = parseInt(moment(startDate).format('x'));
+    let timezone = Number.parseInt(moment().utcOffset());
+    return (dispatch) => {
+        let config = {
+            method: 'POST',
+            body: `{
+                getJobByEmployeeId(startDate:` + date + `,dateRange:` + days +`,employeeId:\"` + userId + `\",timezone:`+timezone+`){
+                    id,
+                    name,
+                    jobs{
+                        date,
+                        day_type,
+                        job_items{
+                            id,
+                            start_date,
+                            content,
+                            progress,
+                            color,
+                            status,
+                            title,
+                            duration,
+                            release,
+                            creator,
+                            tags,
+                            end_date,
+                            daily_percentage
+                        }
+                    }
+                }
+            }`,
+            headers: {
+                'Content-Type': 'application/graphql',
+                'x-access-token': localStorage.token
+            }
+        };
+        return fetch(SERVER_API_URL, config)
+            .then((res) => res.json())
+            .then((body) => {
+                dispatch(setLoadingState(false));
+                let data = body.data.getJobByEmployeeId;
+                data = data === undefined ? [] : data;
+                dispatch(fetchWorklogItem(data));
+            })
+            .catch((err) => {
+                dispatch(setLoadingState(false));
+                throw new Error(err);
+            });
+    };
+}
+
 var taskWorkItemActions = {
     create: (item) => {
         return (dispatch, getState) => {
@@ -66,6 +141,7 @@ var taskWorkItemActions = {
             var data = item.data;
             data.employee_id = item.employee_id;
             data.creator = user.id;
+            data.timezone = moment().utcOffset();
             let config = {
                 method: 'POST',
                 body: `mutation RootMutationType {
@@ -83,7 +159,8 @@ var taskWorkItemActions = {
                     let id = body.data.createJobAndWorkLog;
                     if (id !== undefined && id !== '' && id !== 0) {
                         item.data.id = id;
-                        dispatch(fetchWorklogItem(item));
+                        //dispatch(fetchWorklogItem(item));
+                        dispatch(reloadResourceMapDataByUser(item.employee_id,getState));
                     }
                 })
                 .catch((err) => {
@@ -96,7 +173,8 @@ var taskWorkItemActions = {
         if (item.isStatus) {
             data = {status: data.status};
         }
-        return (dispatch) => {
+        data.timezone = moment().utcOffset();
+        return (dispatch,getState) => {
             // let date = parseInt(moment(item.date).format('X')) * 1000;
             // var updateData = {
             //     employee_id: item.employee_id,
@@ -109,7 +187,7 @@ var taskWorkItemActions = {
             let config = {
                 method: 'POST',
                 body: `mutation RootMutationType {
-                    updateJobAndWorkLog(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}",id:"` + item.id + `")
+                    updateJobAndWorkLog(data:"${JSON.stringify(data).replace(/\\/gi, '\\\\').replace(/\"/gi, '\\"')}",id:"` + item.id + `")
                 }`,
                 headers: {
                     'Content-Type': 'application/graphql',
@@ -120,7 +198,8 @@ var taskWorkItemActions = {
             return fetch(SERVER_API_URL, config)
                 .then((res) => res.json())
                 .then(() => {
-                    dispatch(fetchWorklogItem(item));
+                    //dispatch(fetchWorklogItem(item));
+                    dispatch(reloadResourceMapDataByUser(item.employee_id,getState));
                 })
                 .catch((err) => {
                     throw new Error(err);
@@ -149,7 +228,6 @@ var taskWorkItemActions = {
         };
     }
 };
-
 
 var tagActions = {
     get: function () {
@@ -205,6 +283,85 @@ var tagActions = {
     }
 };
 
+function taskTitleAction() {
+  return (dispatch) => {
+      let config = {
+          method: 'POST',
+          body: `{
+                  getAllJobTitle
+          }`,
+          headers: {
+              'Content-Type': 'application/graphql',
+              'x-access-token': localStorage.token
+          }
+      };
+      return fetch(SERVER_API_URL, config)
+          .then((res) => res.json())
+          .then((body) => {
+              let titles = body.data.getAllJobTitle;
+              titles = titles ? titles : [];
+              dispatch(fetchResourceMapTaskTitle(titles));
+          })
+          .catch((err) => {
+              throw new Error(err);
+          });
+  };
+}
+
+var releaseActions = {
+    get: function () {
+        return (dispatch) => {
+            let config = {
+                method: 'POST',
+                body: `{
+                        getAllRelease(name:""){
+                            id,
+                            tag_name,
+                            type
+                        }
+                }`,
+                headers: {
+                    'Content-Type': 'application/graphql',
+                    'x-access-token': localStorage.token
+                }
+            };
+            return fetch(SERVER_API_URL, config)
+                .then((res) => res.json())
+                .then((body) => {
+                    let release = body.data.getAllRelease;
+                    dispatch(fetchResourecMapRelease(release));
+                })
+                .catch((err) => {
+                    throw new Error(err);
+                });
+        };
+    },
+    add: function (tag) {
+        return (dispatch) => {
+            var data = {tag_name: tag};
+            let config = {
+                method: 'POST',
+                body: `mutation RootMutationType {
+                    createRelease(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+                }`,
+                headers: {
+                    'Content-Type': 'application/graphql',
+                    'x-access-token': localStorage.token
+                }
+            };
+
+            return fetch(SERVER_API_URL, config)
+                .then((res) => res.json())
+                .then(() => {
+                    dispatch(fetchResourecMapNewRelease(data));
+                })
+                .catch((err) => {
+                    throw new Error(err);
+                });
+        };
+    }
+};
+
 export function fetchAllUsersRequest(){
   return (dispatch) => {
         let config = {
@@ -234,14 +391,14 @@ export function fetchAllUsersRequest(){
     };
 }
 
-
 function queryResourceMapDataFromServer(startDate, days) {
-    let date = parseInt(moment(startDate).format('X')) * 1000;
+    let date = parseInt(moment(startDate).format('x'));
+    let timezone = Number.parseInt(moment().utcOffset());
     return (dispatch) => {
         let config = {
             method: 'POST',
             body: `{
-                getJobList(startDate:` + date + `,dateRange:` + days +`){
+                getJobList(startDate:` + date + `,dateRange:` + days +`,timezone:`+timezone+`){
 			        id,
 			        name,
 			        jobs{
@@ -258,7 +415,9 @@ function queryResourceMapDataFromServer(startDate, days) {
                             duration,
                             release,
                             creator,
-                            tags
+                            tags,
+                            end_date,
+                            daily_percentage
 			            }
 			        }
 			    }
@@ -284,12 +443,13 @@ function queryResourceMapDataFromServer(startDate, days) {
 }
 
 function queryResourceMapDataFromServerByUser(startDate, days, userId) {
-    let date = parseInt(moment(startDate).format('X')) * 1000;
+    let date = parseInt(moment(startDate).format('x'));
+    let timezone = Number.parseInt(moment().utcOffset());
     return (dispatch) => {
         let config = {
             method: 'POST',
             body: `{
-                getJobByEmployeeId(startDate:` + date + `,dateRange:` + days +`,employeeId:\"` + userId + `\"){
+                getJobByEmployeeId(startDate:` + date + `,dateRange:` + days +`,employeeId:\"` + userId + `\",timezone:`+timezone+`){
                     id,
                     name,
                     jobs{
@@ -306,7 +466,9 @@ function queryResourceMapDataFromServerByUser(startDate, days, userId) {
                             duration,
                             release,
                             creator,
-                            tags
+                            tags,
+                            end_date,
+                            daily_percentage
                         }
                     }
                 }
@@ -378,7 +540,7 @@ function workLogItemCreateMulti(items) {
 }
 
 function workLogItemDelete(item) {
-    return (dispatch) => {
+    return (dispatch,getState) => {
         let config = {
             method: 'POST',
             body: `mutation RootMutationType {deleteJob(id:\"` + item.id + `\")}`,
@@ -391,7 +553,8 @@ function workLogItemDelete(item) {
         return fetch(SERVER_API_URL, config)
             .then((res) => res.json())
             .then(() => {
-                dispatch(fetchWorklogItem(item));
+                //dispatch(fetchWorklogItem(item));
+                dispatch(reloadResourceMapDataByUser(item.employee_id,getState));
             })
             .catch((err) => {
                 throw new Error(err);
@@ -446,7 +609,6 @@ export function fetchResourceMapAddMulti(items) {
         );
     };
 }
-
 
 export function fetchResourceMapDeleteItem(item) {
     return (dispatch) => {
@@ -517,5 +679,26 @@ export function addResourceMapTag(tag) {
     };
 }
 
+export function queryResourceMapRelease() {
+    return (dispatch) => {
+        Promise.all([
+            dispatch(releaseActions.get())
+        ]);
+    };
+}
 
+export function addResourceMapRelease(release) {
+    return (dispatch) => {
+        Promise.all([
+            dispatch(releaseActions.add(release))
+        ]);
+    };
+}
 
+export function queryTaskTitle() {
+  return (dispatch) => {
+      Promise.all([
+          dispatch(taskTitleAction())
+      ]);
+  };
+}

@@ -3,7 +3,7 @@
 .bgm-red-light { background-color: rgba(244, 67, 54, 0.5) !important;}
 .bgm-pink-light { background-color: rgba(233, 30, 99, 0.5) !important;}
 .bgm-blue-light { background-color: rgba(33, 150, 243, 0.5) !important;}
-.bgm-lime-light { background-color: rgba(205, 220, 57, 0.5) !important;}
+.bgm-lime-light { background-color: rgba(251, 188, 5, 0.65) !important;}
 .bgm-green-light { background-color: rgba(76, 175, 80, 0.5) !important;}
 .bgm-cyan-light { background-color: rgba(0, 188, 212, 0.5) !important;}
 .bgm-orange-light { background-color: rgba(255, 152, 0, 0.5) !important;}
@@ -115,7 +115,7 @@
 }
 
 .bgm-lime {
-  background-color: #cddc39 !important;
+  background-color: #FBBC05 !important;
 }
 
 .c-lime {

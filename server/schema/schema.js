@@ -32,52 +32,63 @@ import DocumentCategoryQuery from '../models/DocumentCategory/DocumentCategoryQu
 import DocumentCategoryMutation from '../models/DocumentCategory/DocumentCategoryMutation.js';
 import DocumentTemplateQuery from '../models/DocumentTemplate/DocumentTemplateQuery.js';
 import DocumentTemplateMutation from '../models/DocumentTemplate/DocumentTemplateMutation.js';
+import GroupMutation from '../models/Group/GroupMutation.js';
+import GroupQuery from '../models/Group/GroupQuery.js';
+import TestReportMutation from '../models/TestReport/TestReportMutation';
+import TestReportQuery from '../models/TestReport/TestReportQuery';
 
 const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
       // PTO Page
-      allUserWithPto           : UserQuery.allUserWithPto,
-      allUserWithOvertime      : UserQuery.allUserWithOvertime,
-      ptoApplications          : PTOQuery.ptoApplications,
-      overtimeApplications     : PTOQuery.overtimeApplications,
+      allUserWithPto                         : UserQuery.allUserWithPto,
+      allUserWithOvertime                    : UserQuery.allUserWithOvertime,
+      ptoApplications                        : PTOQuery.ptoApplications,
+      overtimeApplications                   : PTOQuery.overtimeApplications,
       // Task Page
-      allUserWithTasks         : UserQuery.allUserWithTasks,
-      tasks                    : TaskQuery.tasks,
+      allUserWithTasks                       : UserQuery.allUserWithTasks,
+      tasks                                  : TaskQuery.tasks,
       // User page
-      allUserWithPrivilege     : UserQuery.allUserWithPrivilege,
-      currentUser              : UserQuery.currentUser,
-      allUsers                 : UserQuery.allUsers,
+      allUserWithPrivilege                   : UserQuery.allUserWithPrivilege,
+      currentUser                            : UserQuery.currentUser,
+      allUsers                               : UserQuery.allUsers,
+      allUsersWithGroup                      : UserQuery.allUsersWithGroup,
       // Document page
-      allCategories            : CategoryQuery.getAllCategories,
-      getAllMilestones         : CategoryQuery.getAllMilestones,
-      categoryTree             : CategoryQuery.getCategoryTree,
-      commentById              : CommentQuery.getCommentById,
-      tags                     : CategoryQuery.getAllTags,
-      getArticle               : ArticleQuery.getArticle,
-      getAllArticles           : ArticleQuery.getAllArticles,
-      getAllBugs               : BugQuery.getAllBugs,
-      getAllBugTags            : BugTagQuery.getAllBugTags,
-      getAllRelease            : BugTagQuery.getAllRelease,
-      getAllWorklogTags		     : BugTagQuery.getAllWorklogTags,
-      getAllDocumentCategories : DocumentCategoryQuery.getAllDocumentCategories,
-      getDcoumentTemplate      : DocumentTemplateQuery.getDcoumentTemplate,
+      allCategories                          : CategoryQuery.getAllCategories,
+      getAllMilestones                       : CategoryQuery.getAllMilestones,
+      categoryTree                           : CategoryQuery.getCategoryTree,
+      commentById                            : CommentQuery.getCommentById,
+      documentTags                           : CategoryQuery.getAllTags,
+      getArticle                             : ArticleQuery.getArticle,
+      getAllArticles                         : ArticleQuery.getAllArticles,
+      getAllBugs                             : BugQuery.getAllBugs,
+      getAllBugTags                          : BugTagQuery.getAllBugTags,
+      getAllRelease                          : BugTagQuery.getAllRelease,
+      getAllWorklogTags                      : BugTagQuery.getAllWorklogTags,
+      getAllDocumentCategories               : DocumentCategoryQuery.getAllDocumentCategories,
+      getDcoumentTemplate                    : DocumentTemplateQuery.getDcoumentTemplate,
       // Feature Analysis
-      assignmentCategoryTree   : AssignmentCategoryQuery.getAssignmentCategoryTree,
-      allAssignmentCategories  : AssignmentCategoryQuery.getAllAssignmentCategories,
-      tags                     : AssignmentCategoryQuery.getAllTags,
-      allDifficulties          : AssignmentCategoryQuery.getAllDifficulties,
-      getRootCauseSummary      : BugStats.getRootCauseSummary,
-      getOwnerSummary          : BugStats.getOwnerSummary,
-      getTagSummary            : BugStats.getBugSummary,
-      getOwnerRootCauseSummary : BugStats.getOwnerRootCauseSummary,
+      assignmentCategoryTree                 : AssignmentCategoryQuery.getAssignmentCategoryTree,
+      allAssignmentCategories                : AssignmentCategoryQuery.getAllAssignmentCategories,
+      tags                                   : AssignmentCategoryQuery.getAllTags,
+      allDifficulties                        : AssignmentCategoryQuery.getAllDifficulties,
+      getRootCauseSummary                    : BugStats.getRootCauseSummary,
+      getOwnerSummary                        : BugStats.getOwnerSummary,
+      getTagSummary                          : BugStats.getBugSummary,
+      getOwnerRootCauseSummary               : BugStats.getOwnerRootCauseSummary,
       //worklog
-      getWorkLogByEmployeeId   : WorkLogQuery.getWorkLogByEmployeeId,
-      getWorkLogList           : WorkLogQuery.getWorkLogList,
+      getWorkLogByEmployeeId                 : WorkLogQuery.getWorkLogByEmployeeId,
+      getWorkLogList                         : WorkLogQuery.getWorkLogList,
       //job
-      getJobList               : JobQuery.getJobList,
-      getJobByEmployeeId       : JobQuery.getJobByEmployeeId
+      getJobList                             : JobQuery.getJobList,
+      getJobByEmployeeId                     : JobQuery.getJobByEmployeeId,
+      getAllJobTitle                         : JobQuery.getAllJobTitle,
+      //group
+      getAllGroups                           : GroupQuery.getAllGroups,
+      // test report
+      getAllDocumentCategoriesWithTestReport : TestReportQuery.getAllDocumentCategoriesWithTestReport,
+      getTestReportCreatedTimeList           : TestReportQuery.getTestReportCreatedTimeList
     }
   }),
   mutation: new GraphQLObjectType({
@@ -117,7 +128,7 @@ const schema = new GraphQLSchema({
       updateBug                       : BugMutation.updateBug,
       createBugTag                    : BugTagMutation.createBugTag,
       createRelease                   : BugTagMutation.createRelease,
-      createWorklogTag				  : BugTagMutation.createWorklogTag,
+      createWorklogTag                : BugTagMutation.createWorklogTag,
       //work log page
       createWorkLog                   : WorkLogMutation.createWorkLog,
       updateWorkLog                   : WorkLogMutation.updateWorkLog,
@@ -125,8 +136,13 @@ const schema = new GraphQLSchema({
       //job page
       createJobAndWorkLog             : JobMutation.createJobAndWorkLog,
       updateJobAndWorkLog             : JobMutation.updateJobAndWorkLog,
-      deleteJob                       : JobMutation.deleteJob
-
+      deleteJob                       : JobMutation.deleteJob,
+      //group page
+      createGroup                     : GroupMutation.createGroup,
+      updateGroup                     : GroupMutation.updateGroup,
+      deleteGroup                     : GroupMutation.deleteGroup,
+      // test report
+      setupTestReportOfCategory       : TestReportMutation.setupTestReportOfCategory
     }
   })
 });

@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import RaisedButton from 'material-ui/lib/raised-button';
+import { flatTree } from '../../libraries/tree';
 
 import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
 import ArticleEditor from '../../components/ArticleEditor/ArticleEditor';
@@ -15,9 +16,9 @@ import * as DocumentActions from '../../actions/document-page-actions';
 
 class EditArticlePage extends Component {
 
-  constructor(props) {
+  constructor(props, context) {
     super(props);
-    this.state = Object.assign(this.getEditingStateFromProps(props), {
+    this.state = Object.assign(this.getEditingStateFromProps(props, context), {
       isPreviewVisible: false,
       isArticleFormValid: false,
       isContentFromTemplate: false,
@@ -43,7 +44,7 @@ class EditArticlePage extends Component {
 
     if (!this.props.isLoaded && nextProps.isLoaded){
       // first time loaded
-      const newState = this.getEditingStateFromProps(nextProps);
+      const newState = this.getEditingStateFromProps(nextProps, this.context);
       this.setState(newState, () => {::this.ValidateForm();});
       return;
     }
@@ -53,15 +54,19 @@ class EditArticlePage extends Component {
       return;
     }
 
+    // replace file url in content
     const thisFiles = this.props.files;
     const nextFiles = nextProps.files;
     const justUpdateFile = this.getJustUpdatedFile(thisFiles, nextFiles);
-    if ( justUpdateFile ) {
+    const { editingContent } = this.state;
+    if ( justUpdateFile && editingContent) {
       const { name, url } = justUpdateFile;
       this.setState({
-        editingContent: this.state.editingContent.replace(this.getUploadingFileMarkdown(justUpdateFile), `[${name}](${url})`)
+        editingContent: editingContent.replace(this.getUploadingFileMarkdown(justUpdateFile), `[${name}](${url})`)
       });
     }
+
+    // load template to content
     if (this.state.isContentFromTemplate || (this.props.documentTemplate.id !== nextProps.documentTemplate.id) ){
       this.setState({
         isContentFromTemplate: true,
@@ -90,7 +95,7 @@ class EditArticlePage extends Component {
     });
   }
 
-  getEditingStateFromProps(props) {
+  getEditingStateFromProps(props, context) {
     const {
       title,
       content,
@@ -101,13 +106,16 @@ class EditArticlePage extends Component {
       milestone,
       reportTo
     } = props;
+    const {
+      query
+    } = context.location;
 
     return {
-      editingTitle: title,
+      editingTitle: title || (query && query.title),
       editingContent: content,
-      editingTags: tags,
+      editingTags: tags.length>0 ? tags : (query && query.tags && query.tags.split(',') || []),
       editingCategoryId: categoryId,
-      editingDocumentType: documentType,
+      editingDocumentType: documentType || (query && query.document_type),
       editingPriority: priority,
       editingMilestone: milestone,
       editingReportTo: reportTo
@@ -121,7 +129,7 @@ class EditArticlePage extends Component {
   }
 
   onContentChange(newContent) {
-    this.setState({ 
+    this.setState({
       editingContent: newContent,
       isContentFromTemplate: false
     }, () => {
@@ -165,6 +173,9 @@ class EditArticlePage extends Component {
   }
 
   onMilestoneChange(value) {
+    if (typeof value === 'string' ) {
+      value = value.trim();
+    }
     this.setState({ editingMilestone: value });
   }
 
@@ -212,22 +223,11 @@ class EditArticlePage extends Component {
     return `[Uploading ${file.name} ...]()`;
   }
   _transformToOptions(categories) {
-    return this._transformFromTree(categories).filter((item) => {
-      return item.path !== 'root';
-    }).map((item) => ({
-      label: item.path ? item.path.replace('root/', '').replace(/\//gi, ' > ') : '',
-      value: item.id
-    }));
-  }
-
-  _transformFromTree(categories) {
-    if (!categories || typeof categories !== 'object' || Array.isArray(categories)) {
-      return [];
-    }
-    if (!categories.children || categories.children.length === 0) {
-      return [categories];
-    }
-    return categories.children.reduce((result, next) => result.concat(this._transformFromTree(next)), []);
+    return flatTree(categories).filter((item) => item.path !== 'root')
+      .map((item) => ({
+        label: item.path ? item.path.replace('root/', '').replace(/\//gi, ' > ') : '',
+        value: item.id
+      }));
   }
 
   onDocumentTemplateUpdate(documentTemplate) {
@@ -357,6 +357,9 @@ class EditArticlePage extends Component {
   }
 }
 
+EditArticlePage.contextTypes = {
+    location: PropTypes.object
+};
 EditArticlePage.propTypes = {
   id                 : PropTypes.string,
   title              : PropTypes.string,
