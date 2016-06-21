@@ -151,8 +151,10 @@ class AxapiAutomationPage extends Component {
     console.info(aryAPIData,curAPIResultCreatedTime,curAPIPage,curAPITotal);
     
     const IS_TAB_API = currentTabPage==='TAB___API';
-    const tabCLIProps = currentTabPage==='TAB___CLI' ? {secondary: true} : {};
-    const tabJSONProps = currentTabPage==='TAB___JSON' ? {secondary: true} : {};
+    const IS_TAB_CLI = currentTabPage==='TAB___CLI';
+    const IS_TAG_JSON = currentTabPage==='TAB___JSON';
+    const tabCLIProps = IS_TAB_CLI ? {secondary: true} : {};
+    const tabJSONProps = IS_TAG_JSON ? {secondary: true} : {};
     const tabAPIProps = IS_TAB_API ? {secondary: true} : {};
     const IS_SHOW_BUILD_NUMBER = !IS_TAB_API;
     const IS_SHOW_CONNECT_AREA = IS_TAB_API;
@@ -256,6 +258,20 @@ class AxapiAutomationPage extends Component {
               </div>*/}
             </div>
             <div style={{clear:'both'}}></div>
+            <RaisedButton
+                onClick={()=>{
+                  const whatSchemaChange = IS_TAG_JSON ? 'JOSN-Schema' : 'CLI-Schema';
+                  const tags = [whatSchemaChange.toLowerCase(),
+                        'schema-changes' //,
+                        // curProduct + '-build' + curBuildNumber
+                        ].join(',');
+                  const title = `${whatSchemaChange} - ${curModifiedFilename} changes on ${curProduct}-build${curBuildNumber}`;
+                  location.href = `/main/knowledge/document/edit/new?title=${title}&tags=${tags}&document_type=knowledges`;
+                }}  
+                secondary={true}
+                style={{position:'fixed', right:'120px', bottom:'80px', opacity: curModifiedFilename ? '1' : '0', 'transition': 'opacity 1s'}}
+                label={`To write article/knowledge for these changes in ${curModifiedFilename}`}
+                labelStyle={{'textTransform': 'none'}} />
           </div>);
     }
 

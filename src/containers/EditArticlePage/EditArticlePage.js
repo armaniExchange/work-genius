@@ -16,9 +16,9 @@ import * as DocumentActions from '../../actions/document-page-actions';
 
 class EditArticlePage extends Component {
 
-  constructor(props) {
+  constructor(props, context) {
     super(props);
-    this.state = Object.assign(this.getEditingStateFromProps(props), {
+    this.state = Object.assign(this.getEditingStateFromProps(props, context), {
       isPreviewVisible: false,
       isArticleFormValid: false,
       isContentFromTemplate: false,
@@ -44,7 +44,7 @@ class EditArticlePage extends Component {
 
     if (!this.props.isLoaded && nextProps.isLoaded){
       // first time loaded
-      const newState = this.getEditingStateFromProps(nextProps);
+      const newState = this.getEditingStateFromProps(nextProps, this.context);
       this.setState(newState, () => {::this.ValidateForm();});
       return;
     }
@@ -95,7 +95,7 @@ class EditArticlePage extends Component {
     });
   }
 
-  getEditingStateFromProps(props) {
+  getEditingStateFromProps(props, context) {
     const {
       title,
       content,
@@ -106,13 +106,16 @@ class EditArticlePage extends Component {
       milestone,
       reportTo
     } = props;
+    const {
+      query
+    } = context.location;
 
     return {
-      editingTitle: title,
+      editingTitle: title || (query && query.title),
       editingContent: content,
-      editingTags: tags,
+      editingTags: tags.length>0 ? tags : (query && query.tags && query.tags.split(',') || []),
       editingCategoryId: categoryId,
-      editingDocumentType: documentType,
+      editingDocumentType: documentType || (query && query.document_type),
       editingPriority: priority,
       editingMilestone: milestone,
       editingReportTo: reportTo
@@ -354,6 +357,9 @@ class EditArticlePage extends Component {
   }
 }
 
+EditArticlePage.contextTypes = {
+    location: PropTypes.object
+};
 EditArticlePage.propTypes = {
   id                 : PropTypes.string,
   title              : PropTypes.string,
