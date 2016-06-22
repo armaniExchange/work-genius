@@ -114,7 +114,7 @@ class ArticleEditor extends Component {
     this.setState({enableDocumentTypeError: true});
   }
 
-  capitalizeFirst(str) {
+  capitalizeFirst(str = '') {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 

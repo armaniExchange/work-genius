@@ -115,7 +115,7 @@ class EditArticlePage extends Component {
       editingContent: content,
       editingTags: tags.length>0 ? tags : (query && query.tags && query.tags.split(',') || []),
       editingCategoryId: categoryId,
-      editingDocumentType: documentType || (query && query.document_type),
+      editingDocumentType: documentType || (query && query.document_type) || '', // || '' in order to avoid undefined
       editingPriority: priority,
       editingMilestone: milestone,
       editingReportTo: reportTo
