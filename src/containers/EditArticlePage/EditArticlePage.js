@@ -111,11 +111,11 @@ class EditArticlePage extends Component {
     } = context.location;
 
     return {
-      editingTitle: title || (query && query.title),
+      editingTitle: (query && query.title) || title,
       editingContent: content,
-      editingTags: tags.length>0 ? tags : (query && query.tags && query.tags.split(',') || []),
+      editingTags: (query && query.tags && query.tags.split(',')) || tags,
       editingCategoryId: categoryId,
-      editingDocumentType: documentType || (query && query.document_type),
+      editingDocumentType: (query && query.document_type) || documentType,
       editingPriority: priority,
       editingMilestone: milestone,
       editingReportTo: reportTo
