@@ -25,13 +25,15 @@ export const addTestReportHandler = async (req, res) => {
     const { type } = req.params;
     const { reports } = req.body;
     const createdAt = req.body.createdAt || new Date().getTime();
+    const product = req.body.product || '';
+    const build = req.body.build || '';
     const data = reports.map((report)=> {
       const {
         path, // for e2e and unit test
         api, // for axapi
         isSuccess,
         errorMessage,
-        meta
+        meta = {}
       } = report;
       const PathOrApiProperty = type === 'axapiTest' ? {
         api: api || ''
@@ -44,6 +46,8 @@ export const addTestReportHandler = async (req, res) => {
         type,
         meta,
         createdAt,
+        product,
+        build
       }, PathOrApiProperty);
     });
 
