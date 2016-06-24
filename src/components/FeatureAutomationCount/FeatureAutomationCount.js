@@ -1,6 +1,8 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import Tooltip from 'rc-tooltip';
+import { UNIT_TEST_REPORT_URL } from '../../constants/config.js';
+
 // Styles
 import './_FeatureAutomationCount.css';
 
@@ -24,16 +26,16 @@ class FeatureAutomationCount extends Component {
 
   renderTotalCount() {
     const {
-      keyName,
+      type,
       testReport,
       totalCount,
       hasChildren
     } = this.props;
 
-    if (!hasChildren && keyName === 'path' && testReport && testReport.length > 0 && testReport[0].path) {
-      const link = `/tests/a10_coverage/unit-test/${testReport[0].path}/index.html`;
+    if (!hasChildren && type === 'unit-test' && testReport && testReport.length > 0 && testReport[0].path) {
+      const link = `${UNIT_TEST_REPORT_URL}/${testReport[0].path}/index.html`;
       return (
-        <a href={link}> { totalCount } </a>
+        <a href={link} target="_blank"> { totalCount } </a>
       );
     } else {
       return <span>{ totalCount }</span>;
@@ -75,7 +77,8 @@ FeatureAutomationCount.propTypes = {
   failCount  : PropTypes.number,
   testReport : PropTypes.array,
   keyName    : PropTypes.string,
-  hasChildren: PropTypes.bool
+  hasChildren: PropTypes.bool,
+  type       : PropTypes.string
 };
 
 FeatureAutomationCount.defaultProps = {

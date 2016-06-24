@@ -360,6 +360,7 @@ class FeatureAutomationRow extends Component {
         <span className="articles-count">{articlesCount}</span>
         <FeatureAutomationCount
           className="end2end-test"
+          type="end2end-test"
           totalCount={end2endTestTotalCount}
           failCount={end2endTestFailCount}
           testReport={end2endTest}
@@ -368,6 +369,7 @@ class FeatureAutomationRow extends Component {
         />
         <FeatureAutomationCount
           className="unit-test"
+          type="unit-test"
           totalCount={unitTestTotalCount}
           failCount={unitTestFailCount}
           testReport={unitTest}
@@ -376,6 +378,7 @@ class FeatureAutomationRow extends Component {
         />
         <FeatureAutomationCount
           className="axapi-test"
+          type="axapi-test"
           totalCount={axapiTestTotalCount}
           failCount={axapiTestFailCount}
           testReport={axapiTest}
