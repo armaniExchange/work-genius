@@ -363,6 +363,7 @@ class FeatureAutomationRow extends Component {
           totalCount={end2endTestTotalCount}
           failCount={end2endTestFailCount}
           testReport={end2endTest}
+          hasChildren={hasChildren}
           keyName="path"
         />
         <FeatureAutomationCount
@@ -370,6 +371,7 @@ class FeatureAutomationRow extends Component {
           totalCount={unitTestTotalCount}
           failCount={unitTestFailCount}
           testReport={unitTest}
+          hasChildren={hasChildren}
           keyName="path"
         />
         <FeatureAutomationCount
@@ -377,6 +379,7 @@ class FeatureAutomationRow extends Component {
           totalCount={axapiTestTotalCount}
           failCount={axapiTestFailCount}
           testReport={axapiTest}
+          hasChildren={hasChildren}
           keyName="api"
         />
       </div>

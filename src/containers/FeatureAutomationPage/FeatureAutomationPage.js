@@ -316,7 +316,7 @@ class FeatureAutomationPage extends Component {
               })}
             />
           </div>
-          <div style={{width: 20}}/>
+          <div style={{width: 20}} />
           <div style={{flex: 1, top: -32, position: 'relative'}}>
             <AutoComplete
               hintText="Search Category"
@@ -326,6 +326,14 @@ class FeatureAutomationPage extends Component {
               filter={::this.filterSearchCategoryName}
               floatingLabelText="Search Category"
               fullWidth={true}
+            />
+          </div>
+          <div style={{width: 20}} />
+          <div>
+            <RaisedButton
+              secondary={true}
+              onClick={::this.searchByCreatedTime}
+              label="Search"
             />
           </div>
         </div>
@@ -347,12 +355,6 @@ class FeatureAutomationPage extends Component {
             title={this.getCreatedTimeTitle(axapiTestCreatedTime, axapiTestCreatedTimeList)}
             onOptionClick={::this.onAxapiTestCreatedTimeChange}
             aryOptionConfig={axapiTestCreatedTimeList.map(this.parseCreatedTimeToDropdownListItem)}
-          />
-          <RaisedButton
-            secondary={true}
-            style={{float: 'right'}}
-            onClick={::this.searchByCreatedTime}
-            label="search"
           />
         </div>
         <br />

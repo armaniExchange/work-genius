@@ -22,17 +22,37 @@ class FeatureAutomationCount extends Component {
     );
   }
 
+  renderTotalCount() {
+    const {
+      keyName,
+      testReport,
+      totalCount,
+      hasChildren
+    } = this.props;
+
+    if (!hasChildren && keyName === 'path' && testReport && testReport.length > 0 && testReport[0].path) {
+      const link = `/tests/a10_coverage/unit-test/${testReport[0].path}/index.html`;
+      return (
+        <a href={link}> { totalCount } </a>
+      );
+    } else {
+      return <span>{ totalCount }</span>;
+    }
+  }
+
   render() {
     const {
       totalCount,
-      failCount
+      failCount,
     } = this.props;
+    if ( totalCount === 0 ) {
+      return <span {...this.props}>N/A</span>;
+    }
     return (
       <span
-        {...this.props}
-        className="end2end-test">
+        {...this.props}>
         {
-          failCount === 0 ? <span>&nbsp;0&nbsp;</span> :
+          failCount === 0 ? <span style={{color: 'green'}}>Pass</span> :
           (
             <Tooltip
               placement="bottom"
@@ -42,7 +62,8 @@ class FeatureAutomationCount extends Component {
             </Tooltip>
           )
         }
-         / {totalCount}
+        &nbsp;/&nbsp;
+        { this.renderTotalCount() }
       </span>
     );
 
@@ -53,13 +74,15 @@ FeatureAutomationCount.propTypes = {
   totalCount : PropTypes.number,
   failCount  : PropTypes.number,
   testReport : PropTypes.array,
-  keyName    : PropTypes.string
+  keyName    : PropTypes.string,
+  hasChildren: PropTypes.bool
 };
 
 FeatureAutomationCount.defaultProps = {
   totalCount : 0,
   failCount  : 0,
-  testReport : []
+  testReport : [],
+  hasChildren: false
 };
 
 export default FeatureAutomationCount;
