@@ -16,7 +16,7 @@ const _getAllProduct = () => {
   });
 };
 const _getAllBuildNumber = (productValue) => {
-  return fs.readdirSync(DATA_ABS_PATH + productValue).map((val)=>{
+  return fs.readdirSync(DATA_ABS_PATH + productValue).sort((a,b)=> a-b).map((val)=>{
     return {title: val, value: val};
   });
 };
