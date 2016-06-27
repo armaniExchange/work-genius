@@ -95,12 +95,13 @@ const axapiAutomationApi = (handle, conf={}) => {
             if (handle==='change_tab') {
               _type = actionTypes.AXAPIAUTO_CHANGE_TAB_SUCCESS;
             }
+
             console.log('_type', _type);
 
             if (conf.tab==='TAB___API') {
               console.warn('-----------data', data);
               obj = {
-                type: _type,
+                type: _type, //<---ready for dispatch
                 tab: conf.tab,
                 ...data
                 // aryAPI: data.aryAPI,
@@ -109,7 +110,7 @@ const axapiAutomationApi = (handle, conf={}) => {
               };
             } else {
               obj = {
-                type: _type,
+                type: _type, //<---ready for dispatch
                 ...jsonBuildDetail(data.build, data.dels, data.mods, data.news, data.curMod,
                   data.curModFile,
                   conf.tab, //should be 'TAB___*'
@@ -132,8 +133,8 @@ const axapiAutomationApi = (handle, conf={}) => {
   };
 };
 
-export function fetchBuildNumber(product) { //async
-  return axapiAutomationApi('fetch_build_number', {product});
+export function fetchBuildNumber(product, tab) { //async
+  return axapiAutomationApi('fetch_build_number', {product, tab});
 };
 export function changeBuildNumber(product, build, tab) {
   return axapiAutomationApi('change_build_number', {product, build, tab});

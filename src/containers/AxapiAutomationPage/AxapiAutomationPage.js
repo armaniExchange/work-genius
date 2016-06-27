@@ -108,10 +108,19 @@ class AxapiAutomationPage extends Component {
     }
   };
   componentWillReceiveProps(nextProps) {
-    if (this.props.curProduct!==nextProps.curProduct) {
-      this.props.fetchBuildNumber(nextProps.curProduct);
+    console.info(['this.props nextProps', this.props.curProduct, nextProps.curProduct,
+      this.props.currentTabPage, nextProps.currentTabPage,
+      this.props.aryBuildNumber, nextProps.aryBuildNumber].join('#')
+      );
+    const isNeedFetchBuildNumber = this.props.curProduct!==nextProps.curProduct  // change product, then re-fetching all builds.
+      || (this.props.currentTabPage!==nextProps.currentTabPage 
+          && [this.props.currentTabPage, nextProps.currentTabPage].indexOf('TAB___API')>=0); // No need re-fetch when CLI<->JSON because they obtain same builds.
+    console.info('isNeedFetchBuildNumber', isNeedFetchBuildNumber);
+    if (isNeedFetchBuildNumber) {
+      this.props.fetchBuildNumber(nextProps.curProduct, nextProps.currentTabPage);
     }
-   if (this.props.aryBuildNumber!==nextProps.aryBuildNumber
+
+    if (this.props.aryBuildNumber!==nextProps.aryBuildNumber
     && nextProps.aryBuildNumber
     && nextProps.aryBuildNumber.length) { // EX: changed product dropdownlist
       this.props.changeBuildNumber(nextProps.curProduct,
@@ -159,7 +168,6 @@ class AxapiAutomationPage extends Component {
     const tabCLIProps = IS_TAB_CLI ? {secondary: true} : {};
     const tabJSONProps = IS_TAG_JSON ? {secondary: true} : {};
     const tabAPIProps = IS_TAB_API ? {secondary: true} : {};
-    const IS_SHOW_BUILD_NUMBER = !IS_TAB_API;
     const IS_SHOW_CONNECT_AREA = IS_TAB_API;
 
     const hasModifiedFiles = aryModFiles && aryModFiles.length;
@@ -342,7 +350,7 @@ class AxapiAutomationPage extends Component {
                 }}
                 aryOptionConfig={aryProduct}
             />
-            <span style={{display:IS_SHOW_BUILD_NUMBER ? '' : 'none'}}>
+            <span>
             <label>Build number:&nbsp;</label>
             <DropDownList
                 isNeedAll={false}
