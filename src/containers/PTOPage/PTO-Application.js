@@ -52,6 +52,7 @@ class PTOApplication extends Component {
                 hours: data.hours,
                 apply_time: moment().format('x'),
                 applicant_id: currentUser.id,
+                applicant: currentUser.name,
                 status: PTOConstants.PENDING
             },
             mailingConfig = {
@@ -60,8 +61,8 @@ class PTOApplication extends Component {
                     <PTOMailCard
                         type={'PTO_' + finalData.status}
                         applicant={finalData.applicant}
-                        startDate={moment(finalData.start_time).format('YYYY-MM-DD HH:mm')}
-                        endDate={moment(finalData.end_time).format('YYYY-MM-DD HH:mm')}
+                        startDate={moment(+finalData.start_time).format('YYYY-MM-DD HH:mm')}
+                        endDate={moment(+finalData.end_time).format('YYYY-MM-DD HH:mm')}
                         hours={finalData.hours}
                         link={PTO_URL} />
                 ).replace(/"/g, '\\"'),
@@ -108,8 +109,8 @@ class PTOApplication extends Component {
                 <PTOMailCard
                     type={'PTO_' + status}
                     applicant={applicant}
-                    startDate={start_time}
-                    endDate={end_time}
+                    startDate={moment(+start_time).format('YYYY-MM-DD HH:mm')}
+                    endDate={moment(+end_time).format('YYYY-MM-DD HH:mm')}
                     status={status}
                     manager={currentUser.name}
                     hours={hours}
