@@ -6,7 +6,7 @@ const initialState = Map({
 	isLoading: false,
 });
 
-export default function demoReducer(state = initialState, action) {
+export default function deviceReducer(state = initialState, action) {
 	switch (action.type) {
 		case actionTypes.INCREASE_COUNTER:
 		    return state

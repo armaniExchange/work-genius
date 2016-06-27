@@ -50,6 +50,10 @@ const initialState = Map({
       {
         name: 'Team Members',
         url: '/main/resource/team'
+      },
+      {
+        name: 'Device',
+        url: '/main/resource/device'
       }
     ),
     'Bug Analysis': List.of(

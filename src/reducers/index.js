@@ -17,11 +17,13 @@ import resourceMap from './resource-map-reducer';
 import workLog from './work-log-reducer';
 import documentTemplate from './document-template-reducer';
 import featureAutomation from './feature-automation-reducer';
+import device from './device-reducer';
 
 const rootReducer = combineReducers({
   app,
   main,
   demo,
+  device,
   task,
   axapiAutomation,
   search,

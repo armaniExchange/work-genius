@@ -20,6 +20,7 @@ import BugReviewPage from '../containers/BugAnalysisPage/BugReviewPage';
 import BugReportPage from '../containers/BugAnalysisPage/BugReportPage';
 import ResourcePage from '../containers/ResourcePage/ResourcePage.js';
 import ResourceMapPage from '../containers/ResourcePage/ResourceMapPage.js';
+import DevicePage from '../containers/ResourcePage/DevicePage.js';
 import TeamMemberPage from '../containers/ResourcePage/TeamMemberPage.js';
 import DataExplorerPage from '../containers/DataExplorerPage/DataExplorerPage';
 import DataExplorerFolderView from '../containers/DataExplorerFolderView/DataExplorerFolderView';
@@ -71,6 +72,7 @@ const appRoutes = () => (
         <Route path="resource" component={requireAuth(ResourcePage)}>
           <Route path="resource-map" component={requireAuth(ResourceMapPage)} />
           <Route path="team" component={requireAuth(TeamMemberPage)} />
+          <Route path="device" component={requireAuth(DevicePage)} />
         </Route>
         <Route path="valid-demo" component={requireAuth(ValidDemoPage)} />
 
