@@ -68,5 +68,9 @@ export const GK2_FEATURE_URLS = [
 	GK2_SJ_4_0_3_FEATURE_URL
 ];
 
+// daily-case-results path relatived ./work-genius/server/models/AxapiAutomation/AxapiAutomationQuery.js
+export const DAILY_CASES_RESULT_GIT_PATH = '../../../../daily-case-results/'; // development (parallel with this project folder)
+// export const DAILY_CASES_RESULT_GIT_PATH = '/home/admin/git/daily-case-results/'; // production
+
 // file upload
 export const UPLOAD_FILE_LOCATION = '../files';

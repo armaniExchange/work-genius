@@ -107,7 +107,7 @@ app.route('/axapi_automation_api/fetch_build_number/').get(fetchBuildNumberHandl
 app.route('/axapi_automation_api/change_product/').get(changeProductHandler);
 app.route('/axapi_automation_api/change_build_number/').get(changeBuildNumberHandler);
 app.route('/axapi_automation_api/change_modified_filename/').get(changeModifiedFilenameHandler);
-app.route('/axapi_automation_api/change_tab/').get(changeTabHandler);
+app.route('/axapi_automation_api/change_tab/').get(changeTabHandler); // for http://localhost:3000/axapi_automation_api/change_tab?product=4_1_1&build=2&tab=TAB___CLI
 
 app.route('/search')
   .get((req, res)=>{
