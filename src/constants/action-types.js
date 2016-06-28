@@ -193,6 +193,9 @@ export default keyMirror({
     FETCH_RESOURCE_MAP_NEW_RELEASE: null,
     FETCH_RESOURCE_MAP_TITLE: null,
 
+    // Resource Device
+    FETCH_RESOURCE_DEVIE_INFO: null,
+
     // Work Log actions
     FETCH_WORKLOGS: null,
     FETCH_WORKLOGS_SUCCESS: null,

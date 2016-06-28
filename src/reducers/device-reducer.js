@@ -27,19 +27,20 @@ const initialState = Map({
       Map({ip: '192.168.105.196', apc: {id : '11', url: 'http://192.168.6.118/NMC/itt+FtpX0p800clEEEtQWw/outlctrl.htm', username: 'apc', password: 'apc'}, address: 'BJ', console: 'telnet 192.168.105.11:2002', 'ax-model': 'TH2600', 'product-id-magic': 'No', 'vcs': 'Master', 'e2e-test-machine': 'Yes', 'traffic-mahcine': 'Yes', release: '4.1.1', build: '99'}),
       Map({ip: '192.168.105.197', apc: {id : '3', url: 'http://192.168.6.118/NMC/itt+FtpX0p800clEEEtQWw/outlctrl.htm', username: 'apc', password: 'apc'}, address: 'BJ', console: 'telnet 192.168.105.2:2008', 'ax-model': 'TH2600', 'product-id-magic': 'No', 'vcs': 'Blade', 'e2e-test-machine': 'Yes', 'traffic-mahcine': 'Yes', release: '4.1.1', build: '99'}),
       Map({ip: '192.168.99.59', apc: {id : 'N/A', url: 'http://192.168.99.56/', username: 'stsai', password: 'a10@stsaiA!)'}, address: 'TP', console: 'ssh 192.168.99.29:7027', 'ax-model': 'TH3030s', 'product-id-magic': 'Yes', 'vcs': 'No', 'e2e-test-machine': 'Yes', 'traffic-mahcine': 'No', release: '4.1.1', build: '99'}),
-      Map({ip: '192.168.105.86', apc: {id : '9', url: 'http://192.168.6.118/NMC/itt+FtpX0p800clEEEtQWw/outlctrl.htm', username: 'apc', password: 'apc'}, address: 'BJ', console: 'telnet 192.168.105.11:2004', 'ax-model': 'TH3030s', 'product-id-magic': 'Yes', 'vcs': 'No', 'e2e-test-machine': 'Yes', 'traffic-mahcine': 'No', release: '4.1.1', build: '99'})
+      Map({ip: '192.168.105.86', apc: {id : '9', url: 'http://192.168.6.118/NMC/itt+FtpX0p800clEEEtQWw/outlctrl.htm', username: 'apc', password: 'apc'}, address: 'BJ', console: 'telnet 192.168.105.11:2004', 'ax-model': 'TH3030s', 'product-id-magic': 'Yes', 'vcs': 'No', 'e2e-test-machine': 'Yes', 'traffic-mahcine': 'No', release: '4.1.1', build: '99'}),
   ),
-  counter: 0,
-  isLoading: false,
+  releases: List.of(),
+  builds: List.of()
 });
 
 export default function demoReducer(state = initialState, action) {
+  let nextState = state;
   switch (action.type) {
-    case actionTypes.INCREASE_COUNTER:
-        return state
-            .update('counter', (counterState) => counterState + 1)
-            .update('isLoading', () => false);
+    case actionTypes.FETCH_RESOURCE_DEVIE_INFO:
+      nextState = nextState.set('releases', action.data.releases);
+      nextState = nextState.set('builds', action.data.builds);
+      return nextState;
     default:
-      return state;
+      return nextState;
   }
 };
