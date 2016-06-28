@@ -36,6 +36,8 @@ import GroupMutation from '../models/Group/GroupMutation.js';
 import GroupQuery from '../models/Group/GroupQuery.js';
 import TestReportMutation from '../models/TestReport/TestReportMutation';
 import TestReportQuery from '../models/TestReport/TestReportQuery';
+import DeviceQuery from '../models/Devices/DeviceQuery';
+import DeviceMutation from '../models/Devices/DeviceMutation';
 
 const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -88,7 +90,12 @@ const schema = new GraphQLSchema({
       getAllGroups                           : GroupQuery.getAllGroups,
       // test report
       getAllDocumentCategoriesWithTestReport : TestReportQuery.getAllDocumentCategoriesWithTestReport,
-      getTestReportCreatedTimeList           : TestReportQuery.getTestReportCreatedTimeList
+      getTestReportCreatedTimeList           : TestReportQuery.getTestReportCreatedTimeList,
+
+      // device 
+      // versionInfo                            : DeviceQuery.versionInfo,
+      allDevices                             : DeviceQuery.allDevices,
+      // releaseInfo                            : DeviceQuery.releaseInfo
     }
   }),
   mutation: new GraphQLObjectType({
@@ -142,7 +149,11 @@ const schema = new GraphQLSchema({
       updateGroup                     : GroupMutation.updateGroup,
       deleteGroup                     : GroupMutation.deleteGroup,
       // test report
-      setupTestReportOfCategory       : TestReportMutation.setupTestReportOfCategory
+      setupTestReportOfCategory       : TestReportMutation.setupTestReportOfCategory,
+
+      // system upgrade
+      // upgrade                         : DeviceMutation.upgrade,
+      updateDevice                    : DeviceMutation.updateDevice    
     }
   })
 });

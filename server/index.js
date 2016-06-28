@@ -7,6 +7,7 @@ import nodemailer from 'nodemailer';
 // GraphQL and schema
 import schema from './schema/schema.js';
 import { loginHandler } from './models/User/UserMutation';
+import { getVersion, upgrade, getReleases } from './models/Devices/DeviceQuery';
 import {
   fileUploadHandler,
   fileDeleteHandler
@@ -50,6 +51,9 @@ app.use((req, res, next) => {
 });
 
 app.post('/login', loginHandler);
+app.get('/getVersion', getVersion);
+app.post('/upgrade', upgrade);
+app.get('/getReleases', getReleases);
 
 app.use((req, res, next) => {
   if ( (req.method === 'GET' && req.url.includes('/files/') )||
