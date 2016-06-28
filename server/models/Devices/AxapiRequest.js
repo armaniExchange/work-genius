@@ -2,14 +2,18 @@ import request from 'request';
 import r from 'rethinkdb';
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 
-class AxapiRequest {
+export default class AxapiRequest {
     options = {
         json:true,
-        headers: {'Connection': 'close'}
+        headers: {'Connection': 'close', 'Authorization': ''}
     }
 
     host = '192.168.105.72'
 
+    constructor(apiHost) {
+        // console.log('setApiHost', apiHost);
+        this.host = apiHost;
+    }
 
     async getDeviceInfo(ip) 
     {
@@ -19,7 +23,7 @@ class AxapiRequest {
         try {
             connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 
-            query = r.db('work_genius').table('devices').fitler({ip:ip}).coerceTo('array');
+            query = r.db('work_genius').table('devices').filter({ip:ip}).coerceTo('array');
             result = await query.run(connection);
             await connection.close();            
             return result;
@@ -28,17 +32,13 @@ class AxapiRequest {
         }
     }
 
-
-    setApiHost(apiHost) {
-        this.host = apiHost;
-    }
-
     axapiPromise (options) {
         return new Promise((resolve, reject) => {
             request(options, function(err, response, result) {
                 if (err) {
                     reject(new Error(err));
                 }
+                // console.log(response);
                 if (!err && response.statusCode === 200) {
                     resolve(result);
                 } else {
@@ -55,7 +55,9 @@ class AxapiRequest {
     }
 
     async getAuthToken() {
-        let deviceInfo = this.getDeviceInfo(this.host);
+        // let deviceInfo = this.getDeviceInfo(this.host);
+        let deviceInfo = {username: 'admin', password: 'a10'};
+        // console.log('=============== device info ==============', deviceInfo);
         let authOptions = Object.assign({}, this.options, {
             url: this.buildAXAPI('auth'),
             method: 'POST',
@@ -65,7 +67,6 @@ class AxapiRequest {
         });
 
         let result =  await this.axapiPromise(authOptions);
-        this.options.headers['Authorization'] = 'A10 ' + result.authresponse.signature;
         return 'A10 ' + result.authresponse.signature;
     }
 
@@ -80,12 +81,15 @@ class AxapiRequest {
     }
 
     async getVersion() {
+        let token = await this.getAuthToken();
+        this.options.headers['Authorization'] = token;
         let authOptions = Object.assign({}, this.options, {
             url: this.buildAXAPI('version/oper'),
             method: 'GET',
         });
-
+        console.log('get version auth options', authOptions);
         let result =  await this.axapiPromise(authOptions);
+        console.log('result is : ' , result);
         this.logOff();
         return result;
     }
@@ -128,6 +132,9 @@ class AxapiRequest {
     }
 
     async upgrade(imageHost, release, build, withFPGA=false) {
+        let token = await this.getAuthToken();
+        this.options.headers['Authorization'] = token;
+
         let authOptions = Object.assign({}, this.options, {
             url: this.buildAXAPI('upgrade/hd'),
             method: 'POST',
@@ -148,6 +155,4 @@ class AxapiRequest {
         return result;
     }
 
-}
-
-export default AxapiRequest;
+};
