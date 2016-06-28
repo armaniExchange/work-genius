@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import * as appActions from '../../actions/app-actions';
 import * as mainActions from '../../actions/main-actions';
+import * as deviceActions from '../../actions/device-actions';
 
 import Breadcrumb from '../../components/A10-UI/Breadcrumb';
 import BREADCRUMB from '../../constants/breadcrumb';
@@ -15,7 +16,14 @@ class DevicePage extends Component{
   static propTypes = {
     name: PropTypes.string,
     cloumns: PropTypes.array,
-    data: PropTypes.array
+    data: PropTypes.array,
+    releases: PropTypes.array.isRequired,
+    deviceActions: PropTypes.object.isRequired
+  }
+
+  componentWillMount() {
+    const { queryDeviceInfo } = this.props.deviceActions;
+    queryDeviceInfo();
   }
 
   render() {
@@ -23,7 +31,7 @@ class DevicePage extends Component{
     return (
       <section>
         <Breadcrumb data={BREADCRUMB.device} />
-        <DeviceTable {...this.props}/>
+        <DeviceTable {...this.props} {...this.props.deviceActions}/>
       </section>);
   }
 }
@@ -37,12 +45,11 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    return Object.assign(
-        {},
-        // bindActionCreators(ResourceMapActions, dispatch),
-        bindActionCreators(mainActions, dispatch),
-        bindActionCreators(appActions, dispatch)
-    );
+  return {
+    deviceActions: bindActionCreators(deviceActions, dispatch),
+    mainActions: bindActionCreators(mainActions, dispatch),
+    appActions: bindActionCreators(appActions, dispatch)
+  };
 }
 
 export default connect(
