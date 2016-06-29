@@ -102,10 +102,19 @@ let JobQuery = {
 								return pto.applicant_id == user.id
 									&& moment(dateItem.date).utcOffset(timezone).isSame(startTime,'day');
 							}else{
-								return pto.applicant_id == user.id
-									&& (moment(dateItem.date).utcOffset(timezone).isBetween(startTime,endtTime)
+								pto.calcedHours = pto.calcedHours || 0;
+								if(pto.calcedHours < Number.parseInt(pto.hours)){
+									let isShow = pto.applicant_id == user.id 
+										&& (moment(dateItem.date).utcOffset(timezone).isBetween(startTime,endtTime)
 										|| moment(dateItem.date).utcOffset(timezone).isSame(startTime,'day')
 										|| moment(dateItem.date).utcOffset(timezone).isSame(endtTime,'day'));
+									if(isShow){
+										pto.calcedHours += 8;
+									}
+									return isShow;
+								}else{
+									return false;
+								}
 							}
 						});
 						if(!!findPTO){
@@ -315,9 +324,18 @@ let JobQuery = {
 						if(moment(startTime).utcOffset(timezone).isSame(endtTime,'day')){
 							return moment(dateItem.date).utcOffset(timezone).isSame(startTime,'day');
 						}else{
-							return moment(dateItem.date).utcOffset(timezone).isBetween(startTime,endtTime)
+							pto.calcedHours = pto.calcedHours || 0;
+							if(pto.calcedHours < Number.parseInt(pto.hours)){
+								let isShow = moment(dateItem.date).utcOffset(timezone).isBetween(startTime,endtTime)
 									|| moment(dateItem.date).utcOffset(timezone).isSame(startTime,'day')
 									|| moment(dateItem.date).utcOffset(timezone).isSame(endtTime,'day');
+								if(isShow){
+									pto.calcedHours += 8;
+								}
+								return isShow;
+							}else{
+								return false;
+							}
 						}
 					});
 					if(!!findPTO){

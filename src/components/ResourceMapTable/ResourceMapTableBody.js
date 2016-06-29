@@ -89,7 +89,8 @@ class ResourceMapTableBody extends Component {
                     if ( !id ) {
                         allItemIds.push(item.id);
                         panel += 'Work ' + index + '. ';
-                        panel += '[' + item.release + '] ' + item.title + '\n';
+                        let releaseText = item.release ? ('[' + item.release + '] ') : '';
+                        panel += releaseText + item.title + '\n';
                         if (item.progress > 0) {
                           panel += '   Progress: ' + item.progress + '%\n';
                         }
