@@ -12,6 +12,9 @@ export const IMAGE_HOST = {
 	password: ''
 };
 
+// debug mode
+export const PRODUCTION_MODE = false;
+
 export const ADMIN = ['zli', 'stsai'];
 export const LDAP_AUTH_PREFIX = 'corp\\';
 export const SECURE_KEY = '77de68daecd823babbb58edb1c8e14d7106e83bb';

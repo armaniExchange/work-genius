@@ -1,6 +1,6 @@
 import request from 'request';
 import r from 'rethinkdb';
-import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
+import { DB_HOST, DB_PORT, PRODUCTION_MODE } from '../../constants/configurations.js';
 
 export default class AxapiRequest {
     options = {
@@ -10,7 +10,7 @@ export default class AxapiRequest {
 
     host = '192.168.105.72'
 
-    constructor(apiHost) {
+    constructor(apiHost='192.168.105.72') {
         // console.log('setApiHost', apiHost);
         this.host = apiHost;
     }
@@ -94,6 +94,21 @@ export default class AxapiRequest {
         return result;
     }
 
+    async getAliveReleases() {
+        let glob = require('glob');
+        let options = {};
+        return new Promise((resolve, reject) => {
+            glob('/mnt/bldimage/BLD_STO_REL_*/output/*.upg', options, function (err, files) {
+                if (!err) {
+                    resolve(files);
+                } else {
+                    reject(new Error(err));
+                }
+            });
+        });
+
+    }    
+
     buildImagePath(imageHost, release, build, withFPGA=false) {
         // let fpgaBit = 20;
         // if (withFPGA) {
@@ -104,12 +119,22 @@ export default class AxapiRequest {
         return `${imageUrl}/mnt/bldimage/ax/BLD_STO_REL_4_1_1_106_182629_20160625_113516_0000.42.64/output/ACOS_FTA_V2_4_1_1_106.64.upg`;
     }
 
-    parseRelease(stdout) {
-        let data = JSON.parse(stdout);
+    async getAllReleases() {
+        var data = [];
+        if (PRODUCTION_MODE) {            
+            data = await this.getAliveReleases();
+        } else {
+            let dataDemo = require('./release_demo_data');
+            data = dataDemo.default;
+            // console.log('data from lib', data.default);
+        }
+
+        // let data = JSON.parse(stdout);
         let outputs = {};
+        // console.log(data, 'is data');
         data.map((v) => {
             let secs = v.split('/');
-            let build = secs[4];
+            let build = secs[3];
             // let imageName = secs[6];
             let releaseSecs = build.split('_');
             let releaseNo = [releaseSecs[3], releaseSecs[4], releaseSecs[5]].join('_');
@@ -118,18 +143,21 @@ export default class AxapiRequest {
             if (!outputs[releaseNo]) {
                 outputs[releaseNo] = {};
             }
-            outputs[releaseNo][releaseBuild] =  [releaseDate, v]; 
-                
+
+            if (!outputs[releaseNo][releaseBuild]) {
+                outputs[releaseNo][releaseBuild] = [];
+            }
+            outputs[releaseNo][releaseBuild].push([releaseDate, v]); 
         });
         return outputs;
     }
 
-    async getImageList() {
-        let rf=require('fs');
-        let data=rf.readFileSync('/var/www/work-genius/upgrade_list.txt','utf-8');
-        let outputs = this.parseRelease(data);
-        return outputs;
-    }
+    // async getImageList() {
+    //     let rf=require('fs');
+    //     let data=rf.readFileSync('/var/www/work-genius/upgrade_list.txt','utf-8');
+    //     let outputs = this.parseRelease(data);
+    //     return outputs;
+    // }
 
     async upgrade(imageHost, release, build, withFPGA=false) {
         let token = await this.getAuthToken();

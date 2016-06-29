@@ -44,17 +44,12 @@ export const upgrade = async (req, res) => {
 	return res.json(await apiRequest.upgrade(IMAGE_HOST, req.decoded.release, req.decoded.build, req.decoded.with_fpga));
 };
 
+
 export const getReleases = async (req, res) => {
-	console.log(req);
-	// let apiRequest = AxapiRequest();
-	// apiRequest.setApiHost(ip);
-	// return apiRequest.getVersion();
-
-	 //    try {
-
-
-	 //    } catch (err) {
-
-	 //    }
-	 return res.json([]);
+	// console.log(req);	
+	let apiRequest = new AxapiRequest();
+	console.log('before get releases');
+	let releases = await apiRequest.getAllReleases();	
+	console.log('after get releases');
+	return res.json(releases);
 };
