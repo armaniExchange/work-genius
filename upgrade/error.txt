@@ -1,8 +1,0 @@
-upgrading...
-upgraded
-upgrade failed { response: 
-   { status: 'fail',
-     err: 
-      { code: 520683527,
-        from: 'BACKEND',
-        msg: 'Incorrect software for the model' } } }

@@ -1,3 +1,4 @@
+console.log(Date());
 var glob = require("glob")
 
 // options 是可选的
@@ -44,7 +45,7 @@ function doUpgrade(host, imagePath)
 		console.log('finished upgrade');
 	    } else {
 		// upgrade
-		console.log('upgrade failed, authenticate fail');
+		console.log('upgrade failed, authenticate fail', host);
 	    }
 	}
 
@@ -52,10 +53,11 @@ function doUpgrade(host, imagePath)
 }
 
 function upgrade(device) {
-	var release=device.release, withFpga;
+	var release=device.release.replace(/\./g, '_') ,withFpga;
+	console.log('================ RELEASE =====================', release);
 	var options = {}, fpga = withFpga ? '52' : 20;
 	var promise = new Promise(function (resolve, reject)  { 
-		glob("/mnt/bldimage/BLD_STO_REL_" + release + "*." + fpga +  ".64*/output/*.upg", options, function (err, files) {
+		glob("/mnt/bldimage/BLD_STO_REL_" + release + "*." + fpga +  ".64/output/*.upg", options, function (err, files) {
 			if (!err) {
 				resolve(files);
 			} else {
@@ -68,6 +70,7 @@ function upgrade(device) {
 	var largeBuildNo = 0;
 	promise.then(
 		function resolved(result) {
+			console.log("=========", result, device, "===============");
 			result.map(function(v) {
 				var buildNo = getBuildNo(v);
 				if (buildNo > largeBuildNo) {
