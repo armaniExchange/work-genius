@@ -30,9 +30,9 @@ const initialState = Map({
   //     Map({ip: '192.168.105.86', apc: {id : '9', url: 'http://192.168.6.118/NMC/itt+FtpX0p800clEEEtQWw/outlctrl.htm', username: 'apc', password: 'apc'}, address: 'BJ', console: 'telnet 192.168.105.11:2004', 'ax-model': 'TH3030s', 'product-id-magic': 'Yes', 'vcs': 'No', 'e2e-test-machine': 'Yes', 'traffic-mahcine': 'No', release: '4.1.1', build: '99'}),
   // ),
   data: List.of(),
-  releases: List.of(),
+  releases: Map({}),
   builds: List.of(),
-  currentUser: ''
+  currentUser: Map({})
 });
 
 export default function demoReducer(state = initialState, action) {

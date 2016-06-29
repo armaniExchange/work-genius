@@ -1,6 +1,6 @@
 
 import actionTypes from '../constants/action-types';
-import { SERVER_API_URL } from '../constants/config';
+import { SERVER_API_URL, SERVER_DEVICE_RELEASE_URL } from '../constants/config';
 
 // ******** Fetch data to redux. ********
 const fetchData = {
@@ -84,9 +84,14 @@ const deviceActions = {
     return (dispatch) => {
       let data = {
         ip: item.ip,
+        console: item.console,
+        model: item.model,
+        product_id_magic: item.product_id_magic,
         vcs_configured: item.vcs_configured,
         is_e2e_machine: item.is_e2e_machine,
         can_send_traffic: item.can_send_traffic,
+        release: item.release,
+        build: item.build,
         locked_by: item.locked_by,
         locked_date: item.locked_date
       };
@@ -110,55 +115,20 @@ const deviceActions = {
               throw new Error(err);
           });
     };
-  }
-};
-
-const releaseActions = {
-  get: function () {
+  },
+  release: () => {
     return (dispatch) => {
       let config = {
-          method: 'POST',
-          body: `{
-                  getAllRelease(name:""){
-                      id,
-                      tag_name,
-                      type
-                  }
-          }`,
-          headers: {
-              'Content-Type': 'application/graphql',
-              'x-access-token': localStorage.token
-          }
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': localStorage.token
+        }
       };
-      return fetch(SERVER_API_URL, config)
+      return fetch(SERVER_DEVICE_RELEASE_URL, config)
           .then((res) => res.json())
           .then((body) => {
-              let release = body.data.getAllRelease;
-              dispatch(fetchData.release(release));
-          })
-          .catch((err) => {
-              throw new Error(err);
-          });
-    };
-  },
-  add: function (tag) {
-    return (dispatch) => {
-      var data = {tag_name: tag};
-      let config = {
-          method: 'POST',
-          body: `mutation RootMutationType {
-              createRelease(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
-          }`,
-          headers: {
-              'Content-Type': 'application/graphql',
-              'x-access-token': localStorage.token
-          }
-      };
-
-      return fetch(SERVER_API_URL, config)
-          .then((res) => res.json())
-          .then(() => {
-              dispatch(fetchData.release(data));
+            dispatch(fetchData.release(body));
           })
           .catch((err) => {
               throw new Error(err);
@@ -166,14 +136,13 @@ const releaseActions = {
     };
   }
 };
-
 
 // Get all device info.
 export function queryDeviceInfo() {
   return (dispatch, getState) => {
     let currentUser = getState().app.toJS().currentUser;
     dispatch(fetchData.user(currentUser));
-    dispatch(releaseActions.get());
+    dispatch(deviceActions.release());
     dispatch(deviceActions.info());
   };
 }
@@ -187,6 +156,9 @@ export function updateDevice(item){
 
 export function upgradeDevice(item) {
   console.log(item);
+  return (dispatch) => {
+    dispatch(deviceActions.release());
+  };
 }
 
 
