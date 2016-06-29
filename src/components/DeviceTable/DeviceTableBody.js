@@ -14,7 +14,7 @@ class DeviceTableBody extends Component {
     builds           : PropTypes.array.isRequired,
     upgradeDevice    : PropTypes.func.isRequired,
     updateDevice     : PropTypes.func.isRequired,
-    currentUser      : PropTypes.string.isRequired
+    currentUser      : PropTypes.object.isRequired
   }
 
   constructor() {
