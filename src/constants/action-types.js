@@ -195,6 +195,10 @@ export default keyMirror({
 
     // Resource Device
     FETCH_RESOURCE_DEVIE_INFO: null,
+    FETCH_RESOURCE_DEVICE_INFO: null,
+    FETCH_RESOURCE_DEVICE_RELEASE: null,
+    FETCH_RESOURCE_DEVICE_LOCK: null,
+    FETCH_RESOURCE_DEVICE_USER: null,
 
     // Work Log actions
     FETCH_WORKLOGS: null,

@@ -30,7 +30,6 @@ let DeviceQuery = {
 			}
 		}
 	}
-	
 };
 
 export default DeviceQuery;

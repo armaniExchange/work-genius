@@ -18,8 +18,28 @@ let DeviceType = new GraphQLObjectType({
 			description: 'Location'
 		},
 		'apc': {
-			type: GraphQLString,
-			description: 'APC URL'
+			type: new GraphQLObjectType({
+				name: 'apc',
+				fields:{
+					id: {
+		        		type: GraphQLString,
+		        		description: 'id'
+		        },
+		        url: {
+		            type: GraphQLString,
+		            description: 'url'
+		        },
+		        'username': {
+		            type: GraphQLString,
+		            description: 'username'
+		        },
+		        password: {
+		            type: GraphQLString,
+		            description: 'password'
+		        }
+				}
+			}),
+			description: 'job list'
 		},
 		'console': {
 			type: GraphQLString,
@@ -34,15 +54,15 @@ let DeviceType = new GraphQLObjectType({
 			description: 'Product ID Magic'
 		},
 		'vcs_configured': {
-			type: GraphQLInt,
+			type: GraphQLString,
 			description: 'Whether configured VCS Pairs',
 		},
 		'is_e2e_machine': {
-			type: GraphQLInt,
+			type: GraphQLString,
 			description: 'If it is a E2E Or AXAPI test machine'
 		},
 		'can_send_traffic': {
-			type: GraphQLInt,
+			type: GraphQLString,
 			description: 'Can Send Traffic'
 		},
 		'release': {

@@ -10,7 +10,7 @@ import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 let BugMutation = {
     'updateDevice': {
         type: GraphQLString,
-        description: 'edit a devic3 ',
+        description: 'edit a devices ',
         args: {
             data: {
                 type: GraphQLString,
@@ -22,31 +22,25 @@ let BugMutation = {
                 query = null;
 
             try {
-                console.log('data:');
-                console.log(data);
-                let bug = JSON.parse(data);
+                let device = JSON.parse(data);
                 //total_row is used for pagination, don't need to be insert into db
-                if ('total_row' in bug){
-                    delete bug['total_row'];
+                let ip = null;
+                if (!!device.ip){
+                    ip = device.ip;
+                    delete device.ip;
                 }
-                console.log('bug:');
-                console.log(bug);
-                let id = null;
-                if (!!bug.id){
-                    id = bug.id;
-                    delete bug.id;
+                if (!ip){
+                    return 'Fail to update device! No IP';
                 }
-                if (!id){
-                    return 'Fail to update bug!';
-                }
-                query = r.db('work_genius').table('bugs_review').get(id).update(bug);
+                console.log(device);
+                query = r.db('work_genius').table('devices').filter({ip: ip}).update(device);
                 connection = await r.connect({ host: DB_HOST, port: DB_PORT });
                 await query.run(connection);
                 await connection.close();
             } catch (err) {
-                return 'Fail to update bug!';
+                return 'Fail to update device!';
             }
-            return 'Update bug successfully!';
+            return 'Update device successfully!';
         }
     }
 
