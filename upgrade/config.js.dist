@@ -1,6 +1,0 @@
-module.exports = {
-	location: 'BJ', // or TP
-	imageHost: '192.168.95.29',
-	imageUser: 'upgrade', 
-	imagePassword: 'upgrade'
-};
