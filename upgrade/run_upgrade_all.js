@@ -68,8 +68,8 @@ function upgradeRequest(authData, versionData, matchedImagePath, host) {
 	};
 	console.log("upgrade options", options);
 	console.log('upgrading' + host.ip +  '...' );
-	console.log("Upgrade full URL ", options.body.hd["file-url"]);
-	//return send(options);
+	//console.log("Upgrade full URL ", options.body.hd["file-url"]);
+	return send(options);
 	return authData;
 }
 
