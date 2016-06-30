@@ -1,14 +1,27 @@
 console.log(Date());
 var glob = require("glob")
+var config = require("./config");
+var request=require('request');
+var devices = require('./devices');
 
-// options 是可选的
-var IMAGE_HOST = '192.168.105.93';
-function doUpgrade(host, imagePath)
-{
-	var request=require('request');
 
+function send(requestOptions) {
+	//return new Promise(function(resolve, reject) {});
+	return new Promise(function(resolve, reject) {
+		console.log(requestOptions);
+		request(requestOptions, function(error, response, data) {
+			if (!error && response.statusCode == 200) {
+				resolve(data);
+			} else {
+				reject(new Error(error));
+			}	
+		});
+	});
+}
+
+function getBasicOptions(host) {
 	var options = {
-	    headers: {"Connection": "close"},
+	    headers: {"Connection":"close"},
 	    url:'http://' + host.ip + '/axapi/v3/auth',
 	    method: 'POST',
 	    json:true,
@@ -16,77 +29,48 @@ function doUpgrade(host, imagePath)
 		credentials:{username: host.user_name , password: host.password }
 	    }
 	};
-
-	function callback(error, response, data) {
-	    if (!error && response.statusCode == 200) {
-		//console.log('----info------',data);
-		//data = JSON.parse(data);
-		options.headers['Authorization'] = 'A10 ' + data.authresponse.signature;
-		options.url = 'http://' + host.ip + '/axapi/v3/upgrade/hd';
-		
-		options.body = {
-		    "hd": {
-			"image": "pri",
-			"use-mgmt-port": 1,
-			"reboot-after-upgrade": 1,
-			"file-url": "scp://upgrade:upgrade@" + IMAGE_HOST + ":" + imagePath
-		    }
-		};
-		//console.log("Upgrade Options ", options);
-		var upgradeCallback = function(error, response, data) {
-			if (!error && response.statusCode == 200) {
-				console.log('upgrade successful', host.ip);
-			} else {
-				console.log('upgrade failed on Host:', host.ip, 'reason:',  data);
-			}
-		}
-		console.log('upgrading' + host.ip +  '...' );
-		request(options, upgradeCallback);
-		console.log('finished upgrade');
-	    } else {
-		// upgrade
-		console.log('upgrade failed, authenticate fail', host);
-	    }
-	}
-
-	request(options, callback);
+	return options;
 }
 
-function upgrade(device) {
-	var release=device.release.replace(/\./g, '_') ,withFpga;
-	console.log('================ RELEASE =====================', release);
-	var options = {}, fpga = withFpga ? '52' : 20;
-	var promise = new Promise(function (resolve, reject)  { 
-		glob("/mnt/bldimage/BLD_STO_REL_" + release + "*." + fpga +  ".64/output/*.upg", options, function (err, files) {
-			if (!err) {
-				resolve(files);
-			} else {
-				reject(err);
-			}
-		});
-	});
+function authenticate(host) {
+	var options = getBasicOptions(host);
+	return send(options);
+}
 
-	var lastImage = "";
-	var largeBuildNo = 0;
-	promise.then(
-		function resolved(result) {
-			console.log("=========", result, device, "===============");
-			result.map(function(v) {
-				var buildNo = getBuildNo(v);
-				if (buildNo > largeBuildNo) {
-					largeBuildNo = buildNo;
-					lastImage = v;
-				}
-			});
-		},
-		function rejected(err) {console.log(err)}
-	).then(
-		function () {
-			console.log('To be upgrade with image path', lastImage, "Build NO:", largeBuildNo);
-			doUpgrade(device, lastImage);
+function getVersion(authData, host) {
+	var options = getBasicOptions(host);
+	//if (!error && response.statusCode == 200) {
+	options.headers['Authorization'] = 'A10 ' + authData.authresponse.signature;
+	options.url = 'http://' + host.ip + '/axapi/v3/version/oper';
+	options.body = '';
+	options.method = 'GET';
+	return send(options);
+}
+
+function upgradeRequest(authData, versionData, matchedImagePath, host) {
+	var options = getBasicOptions(host);
+	//console.log('----info------',data);
+	//data = JSON.parse(data);
+	options.headers['Authorization'] = 'A10 ' + authData.authresponse.signature;
+	options.url = 'http://' + host.ip + '/axapi/v3/upgrade/hd';
+
+	var imageFrom = {
+		'HD_PRIMARY': 'pri',
+		'HD_SECONDARY': 'sec'
+	};
+	options.body = {
+		"hd": {
+			"image": imageFrom[versionData.version.oper['boot-from']],
+			"use-mgmt-port": 1,
+			"reboot-after-upgrade": 1,
+			"file-url": "scp://"+ config.imageUser +":" + config.imagePassword + "@" + config.imageHost + ":" + matchedImagePath
 		}
-	);
-	
+	};
+	console.log("upgrade options", options);
+	console.log('upgrading' + host.ip +  '...' );
+	console.log("Upgrade full URL ", options.body.hd["file-url"]);
+	//return send(options);
+	return authData;
 }
 
 function getBuildNo(imagePath) {
@@ -99,24 +83,95 @@ function getBuildNo(imagePath) {
     return parseInt(releaseBuild);
 }
 
-var devices = require('./devices');
-//console.log(devices);
-//devices = [{
-//"ip":  "192.168.105.72" ,
-//"password":  "a10" ,
-//"release":  "4_1_1" ,
-//"user_name":  "admin",
-//"with_fpga": false
-//}];
+
+function matchRelease(versionData) {
+	var release, fpga, currentRelease;
+	var options = {};
+	var bootFrom = versionData.version.oper['boot-from'];
+	if (bootFrom == 'HD_PRIMARY') {
+		currentRelease = versionData.version.oper['hd-pri'];	
+	} else {
+		currentRelease = versionData.version.oper['hd-sec'];	
+	}
+
+	release = currentRelease.replace(/\.(\d+)$/, '').replace(/\./g, '_');
+	fpga = versionData.version.oper['firmware-version'] == '0.0.0' ? '20' : '52';	
+	var promise = new Promise(function (resolve, reject)  { 
+		glob("/mnt/bldimage/BLD_STO_REL_" + release + "*." + fpga +  ".64/output/*.upg", options, function (err, files) {
+			if (!err) {
+				var buildNo;
+				var lastImage, largeBuildNo = 0;
+				files.map(function(v) {
+					buildNo = getBuildNo(v);
+					if (buildNo > largeBuildNo) {
+						largeBuildNo = buildNo;
+						lastImage = v;
+					}
+				});
+				if (!lastImage) {
+					reject('Wrong Image Path');
+				} else {
+					resolve(lastImage);
+				}
+			} else {
+				reject(err);
+			}
+		});
+	});
+	return promise;
+}
+
+// options 是可选的
+//var IMAGE_HOST = '192.168.105.93';
+function doUpgrade(host)
+{
+	var authData,versionData, matchedImagePath;
+	authenticate(host)
+		.then(
+			function(data) {
+				authData = data;
+				return getVersion(authData, host);
+			}, 
+			function(error) {
+				console.log('Get Version Failed', host.ip);
+			}
+		)
+		.then(
+			function(data) {
+				versionData = data;
+				return matchRelease(versionData);
+			}, 
+			function(error) {
+				console.log('Get Version Failed', host.ip);
+			}
+		)
+		.then(
+			function(matchedImagePath) {
+				return upgradeRequest(authData, versionData, matchedImagePath, host) 
+			}, 
+			function(error) {
+				console.log('Upgrade error', host.ip);
+			}
+		)
+		.then(
+			function(data) {
+				console.log('upgrade successful', host.ip);
+				
+			}, 
+			function(error) {
+				console.log('upgrade failed on Host:', host.ip, 'reason:',  data);
+			}
+		);
+				
+}
+
 devices.then(
 	function(allDevices) {
 		allDevices.map(function(device) {
-			upgrade(device);		
+			doUpgrade(device);		
 		});
 	},
 	function(error) {
 		console.log('Error : ', error);
 	}
 );
-console.log('upgaded hosts');
-//console.log(getBuildNo('/mnt/bldimage/BLD_STO_REL_4_1_1_110_182773_20160628_113515_0000.20.64PGO/output/ACOS_non_FTA_4_1_1_110.64.upg'));

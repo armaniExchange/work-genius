@@ -14,8 +14,7 @@ function getDeviceInfo()
 		try {
 			r.connect({ host: configs.DB_HOST, port: configs.DB_PORT }, function(err, connection) {
 			    	if (!err) {
-					query = r.db('work_genius').table('devices').filter({address:'BJ'}).filter(r.row("vcs_configured").eq("Master").or(r.row("vcs_configured").eq("No"))).pluck("ip", "release","user_name","password","with-fpga","vcs_configured").coerceTo("array")
-					.run(connection, function(err, result) {
+					query = r.db('work_genius').table('devices').filter({address:'BJ'}).filter(r.row("locked_by").eq("").or(r.row("locked_by").eq("N/A"))).filter(r.row("vcs_configured").eq("Master").or(r.row("vcs_configured").eq("No"))).pluck("ip", "release","user_name","password","with-fpga","vcs_configured", "locked_by").coerceTo("array").run(connection, function(err, result) {
 						if (!err) {
 							resolve(result);
 						} else {
