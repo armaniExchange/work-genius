@@ -1,6 +1,6 @@
 .idea {
 	float:left;
-	width:50%;
+	width:100%;
 }
 
 .team {
@@ -13,4 +13,43 @@
 	img {
 		width:100%;
 	}
+}
+.release{
+	float: left;
+	width: 100%;
+	border-bottom: solid 1px #CDCDCD;
+}
+.release-header{
+	float: left;
+	width: 100%;
+	background-color: #E4E4E4;
+	text-align: center;
+	border:solid 2px #E2E2E2;
+}
+.release-header h5{
+	margin:10px 0;
+	font-weight: bold;
+}
+.release-content {
+	float: left;
+	width: 100%;
+	padding: 10px;
+	background-color: #fff;
+}
+.release-content input{
+	max-width: 100px;
+}
+.release-content label {
+	padding: 0 8px;
+}
+.release-content .form-group {
+	margin-right: 15px;
+}
+.left-bar {
+	float:left;
+	width:50%;
+}
+.inline-div, .inline-div div{
+	display: inline;
+	max-width: 100px;
 }

@@ -34,6 +34,8 @@ import DocumentTemplateQuery from '../models/DocumentTemplate/DocumentTemplateQu
 import DocumentTemplateMutation from '../models/DocumentTemplate/DocumentTemplateMutation.js';
 import GroupMutation from '../models/Group/GroupMutation.js';
 import GroupQuery from '../models/Group/GroupQuery.js';
+import ReleaseMutation from '../models/Release/ReleaseMutation.js';
+import ReleaseQuery from '../models/Release/ReleaseQuery.js';
 
 const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -83,7 +85,9 @@ const schema = new GraphQLSchema({
       getJobByEmployeeId       : JobQuery.getJobByEmployeeId,
       getAllJobTitle           : JobQuery.getAllJobTitle,
       //group
-      getAllGroups             : GroupQuery.getAllGroups
+      getAllGroups             : GroupQuery.getAllGroups,
+      //release
+      getReleaseList           : ReleaseQuery.getReleaseList
     }
   }),
   mutation: new GraphQLObjectType({
@@ -135,8 +139,12 @@ const schema = new GraphQLSchema({
       //group page
       createGroup                     : GroupMutation.createGroup,
       updateGroup                     : GroupMutation.updateGroup,
-      deleteGroup                     : GroupMutation.deleteGroup
-
+      deleteGroup                     : GroupMutation.deleteGroup,
+      //dashborad page
+      createRelease                   : ReleaseMutation.createRelease,
+      updateRelease                   : ReleaseMutation.updateRelease,
+      deleteRelease                   : ReleaseMutation.deleteRelease,
+      modifyRelease                   : ReleaseMutation.modifyRelease
 
     }
   })
