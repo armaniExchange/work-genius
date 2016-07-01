@@ -17,6 +17,10 @@ import configureStore from './store/configureStore';
 // Routes
 import appRoutes from './routes/appRoutes';
 
+// register Notification
+import {registerNotificatons} from './libraries/notification';
+registerNotificatons();
+
 const store = configureStore();
 
 injectTapEventPlugin();

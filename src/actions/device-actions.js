@@ -1,7 +1,7 @@
 
 import actionTypes from '../constants/action-types';
 import { SERVER_API_URL, SERVER_BASIC_URL } from '../constants/config';
-// import AxapiRequest from './axapi-request';
+import {notify} from '../libraries/notification';
 
 // ******** Fetch data to redux. ********
 const fetchData = {
@@ -107,7 +107,7 @@ const deviceActions = {
   },
 
   update: (item) => {
-    return (dispatch) => {
+    return () => {
       let data = {
         ip: item.ip,
         console: item.console,
@@ -131,11 +131,21 @@ const deviceActions = {
                     'x-access-token': localStorage.token
                 }
             };
+
+
+      console.log('coming message', data);
       return fetch(SERVER_API_URL, config)
           .then((res) => res.json())
-          .then((body) => {
-            console.log(dispatch);
-            console.log(body);
+          .then(() => {           
+              let info = {
+                      user: data.locked_by,
+                      ip: data.ip
+                    };
+              if (data.locked_by) {
+                notify('lock device', info);    
+              } else {
+                notify('release device', info);    
+              }
           })
           .catch((err) => {
               throw new Error(err);

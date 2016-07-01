@@ -23,6 +23,9 @@ import {
     MAIL_TRANSPORTER_CONFIG
 } from './constants/configurations.js';
 import { articleExportHandler } from './models/Article/ArticleExport.js';
+import SocketIo from 'socket.io';
+import http from 'http';
+import registerNotificatioons from './libraries/notifications';
 
 const PORT = 3000;
 let app = express();
@@ -126,6 +129,13 @@ app.get('/export/document/:articleId', articleExportHandler);
 app.route('/testReport/:type')
   .post(addTestReportHandler);
 
-app.listen(PORT, () => {
+// create a socket to pop up message on KB
+const server = http.createServer(app);
+const io = SocketIo(server);
+io.on('connection', function(socket){
+  registerNotificatioons(socket);
+});
+
+server.listen(PORT, () => {
   console.log(`Server is listening at port: ${PORT}`);
 });

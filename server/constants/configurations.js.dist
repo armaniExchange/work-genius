@@ -5,12 +5,6 @@ export const LDAP = {
     url: 'ldap://192.168.99.64:389',
     baseDN: 'dc=corp,dc=a10networks,dc=com'
 };
-// upgrade image host
-export const IMAGE_HOST = {
-	host: '192.168.3.229',
-	username: 'zli',
-	password: ''
-};
 
 // debug mode
 export const PRODUCTION_MODE = false;
