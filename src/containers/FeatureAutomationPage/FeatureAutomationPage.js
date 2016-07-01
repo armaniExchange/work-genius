@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import Paper from 'material-ui/lib/paper';
 import RaisedButton from 'material-ui/lib/raised-button';
 import AutoComplete from 'material-ui/lib/auto-complete';
+import CircularProgress from 'material-ui/lib/circular-progress';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import moment from 'moment';
@@ -284,6 +285,15 @@ class FeatureAutomationPage extends Component {
     const displayTree = this.getDisplayTree();
     const filterReleaseOptions = documentCategoriesWithReportTest.children || [];
     const filterCaseOptions = ['Failed'];
+    const tableLoadingCoverStyle = {
+      height: '100%',
+      width: '100%',
+      position: 'absolute',
+      zIndex: 1,
+      background: 'rgba(100,100,100,.5)',
+      textAlign: 'center',
+      paddingTop: 100
+    };
     return (
       <div className="feature-automation-page">
         <div style={{display: 'flex', position: 'relative'}}>
@@ -370,7 +380,10 @@ class FeatureAutomationPage extends Component {
               <span className="axapi-test">AXAPI Test</span>
             </div>
           </div>
-          <div className="table-body">
+          <div className="table-body" style={{position: 'relative'}}>
+            {
+              isLoading ? <div style={tableLoadingCoverStyle}> <CircularProgress /></div> : null
+            }
             {
               displayTree.length > 0 ? displayTree.map(row => {
                 return (
@@ -435,10 +448,10 @@ function mapStateToProps(state) {
     documentCategoriesWithReportTest,
     unitTestCreatedTimeList,
     end2endTestCreatedTimeList,
-    axapiTestCreatedTimeList
+    axapiTestCreatedTimeList,
+    isLoading
   } = state.featureAutomation.toJS();
   const {
-    isLoading,
     currentUser
   } = state.app.toJS();
   const { allUsers } = state.documentation.toJS();

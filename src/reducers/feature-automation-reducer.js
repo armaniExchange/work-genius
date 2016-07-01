@@ -109,13 +109,19 @@ const initialState = Map({
   filterOwner: null,
   filterRelease: null,
   filterCase: null,
-  searchCategoryName: ''
+  searchCategoryName: '',
+  isLoading: false
 });
 
 export default function featureAutomationReducer(state = initialState, action) {
   switch (action.type) {
+    case actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_REPORT_TEST:
+      return state.set('isLoading', true);
+    case actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_REPORT_TEST_FAIL:
+      return state.set('isLoading', false);
     case actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_REPORT_TEST_SUCCESS:
-      return state.set('documentCategoriesWithReportTest', fromJS(transformToTree(action.data)));
+      return state.set('documentCategoriesWithReportTest', fromJS(transformToTree(action.data)))
+        .set('isLoading', false);
     case actionTypes.FETCH_TEST_REPORT_CREATED_TIME_LIST_SUCCESS:
       return state.set('unitTestCreatedTimeList', List(action.unitTestCreatedTimeList))
         .set('end2endTestCreatedTimeList', List(action.end2endTestCreatedTimeList))
