@@ -24,6 +24,7 @@ const initialState = Map({
     ),
     // allProjectVersions: List.of('4.1.0', '3.2.1', '3.2.0'),
     allProjectVersions: List.of(
+        Map({title: '4.1.1', value: '4.1.1'}),
         Map({title: '4.1.0', value: '4.1.0'}),
         Map({title: '3.2.0', value: '3.2.0'}),
         Map({title: '3.2.1', value: '3.2.1'})

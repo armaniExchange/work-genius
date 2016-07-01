@@ -1,6 +1,7 @@
 
 import actionTypes from '../constants/action-types';
-import { SERVER_API_URL, SERVER_DEVICE_RELEASE_URL } from '../constants/config';
+import { SERVER_API_URL, SERVER_BASIC_URL } from '../constants/config';
+// import AxapiRequest from './axapi-request';
 
 // ******** Fetch data to redux. ********
 const fetchData = {
@@ -27,8 +28,32 @@ const fetchData = {
       type: actionTypes.FETCH_RESOURCE_DEVICE_USER,
       data
     };
+  },
+  version: (ip, data) => {
+    return {
+      type: actionTypes.FETCH_RESOURCE_DEVICE_VERSION,
+      ip,
+      data
+    };
   }
 };
+
+// const axRequest = {
+//   auth: function () {
+//     console.log('request');
+//     fetch('https://192.168.105.99/axapi/v3/auth', {
+//       method: 'POST',
+//       body: {credentials :{username: 'admin', password: 'a10'}}
+//     })
+//     .then((res) => res.json())
+//     .then((body) => {
+//       console.log(body);
+//     })
+//     .catch((err) => {
+//         throw new Error(err);
+//     });
+//   }
+// };
 
 
 // ******** Request / dispose data actions. ********
@@ -73,6 +98,7 @@ const deviceActions = {
           .then((body) => {
             const data = body.data.allDevices ? body.data.allDevices : [];
             dispatch(fetchData.info(data));
+            dispatch(deviceActions.allVersions(data));
           })
           .catch((err) => {
               throw new Error(err);
@@ -125,10 +151,37 @@ const deviceActions = {
           'x-access-token': localStorage.token
         }
       };
-      return fetch(SERVER_DEVICE_RELEASE_URL, config)
+      return fetch(SERVER_BASIC_URL + 'getReleases', config)
           .then((res) => res.json())
           .then((body) => {
             dispatch(fetchData.release(body));
+          })
+          .catch((err) => {
+              throw new Error(err);
+          });
+    };
+  },
+
+  allVersions: (data) => {
+    return (dispatch) => {
+      data.map((device) => {
+          dispatch(deviceActions.version(device.ip));
+      });
+    };
+  },
+  version: (ip) => {
+    return (dispatch) => {
+      let config = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': localStorage.token
+        }
+      };
+      return fetch(SERVER_BASIC_URL + 'getVersion?ip=' + ip, config)
+          .then((res) => res.json())
+          .then((body) => {
+            dispatch(fetchData.version(ip, body));
           })
           .catch((err) => {
               throw new Error(err);

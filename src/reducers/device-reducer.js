@@ -1,5 +1,5 @@
 import actionTypes from '../constants/action-types';
-import { Map, List } from 'immutable';
+import Immutable, { Map, List } from 'immutable';
 
 const initialState = Map({
   cloumns: List.of(
@@ -35,11 +35,38 @@ const initialState = Map({
   currentUser: Map({})
 });
 
+function fetchVersionToState(state, ip, data) {
+  if (data.version && data.version.oper) {
+    let version = data.version.oper;
+    let devices = state.get('data').toJS();
+    let device = devices.find((dev) => {
+      return dev.ip === ip;
+    });
+    if (device) {
+      device.boot_from = version['boot-from'];
+      device.hd_pri = version['hd-pri'];
+      device.hd_sec = version['hd-sec'];
+
+      let currentRelease = device.boot_from === 'HD_PRIMARY' ? device.hd_pri : device.hd_sec;
+      let currentReleaseSplit = currentRelease.split('.');
+      let build = currentReleaseSplit[currentReleaseSplit.length -1];
+      currentReleaseSplit.length = currentReleaseSplit.length - 1;
+      let release = currentReleaseSplit.join('_');
+      device.release = release;
+      device.build = build;
+      console.log(device);
+      state = state.set('data', Immutable.fromJS(devices));
+    }
+  }
+
+  return state;
+}
+
 export default function demoReducer(state = initialState, action) {
   let nextState = state;
   switch (action.type) {
     case actionTypes.FETCH_RESOURCE_DEVICE_INFO:
-      nextState = nextState.set('data', action.data);
+      nextState = nextState.set('data', Immutable.fromJS(action.data));
       return nextState;
     case actionTypes.FETCH_RESOURCE_DEVICE_RELEASE:
       nextState = nextState.set('releases', action.data);
@@ -48,6 +75,10 @@ export default function demoReducer(state = initialState, action) {
       return nextState;
     case actionTypes.FETCH_RESOURCE_DEVICE_USER:
       nextState = nextState.set('currentUser', action.data);
+      return nextState;
+    case actionTypes.FETCH_RESOURCE_DEVICE_VERSION:
+      nextState = fetchVersionToState(nextState, action.ip, action.data);
+      console.log(nextState.get('data'));
       return nextState;
     default:
       return nextState;

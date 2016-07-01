@@ -6,6 +6,8 @@ import Td from '../A10-UI/Table/Td';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import Select from 'react-select';
 
+import './Device.css';
+
 class DeviceTableBody extends Component {
 
   static propTypes = {
@@ -155,8 +157,20 @@ class DeviceTableBody extends Component {
 
     const bodyHtml = this.state.data.map((row, index) => {
       return (
-        <tr key={index}>
-          <Td>{row.ip}</Td>
+        <tr key={index} >
+          <Td className="td-default">
+            <a className="btn-link" href={'http://' + row.ip} target="_black">{row.ip}</a>
+            <span
+                className={ 'btn-xs btn-success span-default '
+                    + (row.boot_from === 'HD_PRIMARY' ? '' : 'backgroup-gray')}
+                title={'Pri: ' + (row.hd_pri ? row.hd_pri : '')}>
+              Pri: {row.hd_pri}</span>
+            <span
+                className={ 'btn-xs btn-success span-default '
+                    + (row.boot_from === 'HD_SECONDARY' ? '' : 'backgroup-gray') }
+                title={'Sec: ' + (row.hd_sec ? row.hd_sec : '')}>
+              Sec: {row.hd_sec}</span>
+          </Td>
           <Td>{row.address}</Td>
           <Td>{row.apc && (
             <div>
