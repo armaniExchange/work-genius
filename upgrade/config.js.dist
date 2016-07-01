@@ -1,6 +1,8 @@
 module.exports = {
+	DB_HOST: '192.168.95.155',
+	DB_PORT: 28015,
 	location: 'BJ', // or TP
-	imageHost: '192.168.95.29',
+	imageHost: '192.168.105.93',
 	imageUser: 'upgrade', 
 	imagePassword: 'upgrade'
 };
