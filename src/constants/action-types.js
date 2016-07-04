@@ -14,6 +14,10 @@ export default keyMirror({
     SET_CURRENT_SELECTED_PAGE_NAME: null,
     SET_ALL_USER: null,
 
+    // Dashboard Actions
+    FETCH_RELEASE_LIST_SUCCESS: null,
+    FETCH_RELEASE_UPDATE_SUCCESS: null,
+
     // Search page actions
     SEARCH_ARTICLE_SUCCESS: null,
     SEARCH_FILE_SUCCESS: null,

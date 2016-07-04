@@ -6,76 +6,121 @@ import fetch from 'isomorphic-fetch';
 // Constants
 import actionTypes from '../constants/action-types';
 import { SERVER_API_URL } from '../constants/config';
-// Actions
-import {
-    setLoadingState,
-    apiFailure
-} from './app-actions';
 
-export function fetchReleaseListSuccess(data) {
+const fetchState = {
+  releaseList: (data) => {
     return {
-        type: actionTypes.FETCH_RELEASE_LIST_SUCCESS,
-        data
+      type: actionTypes.FETCH_RELEASE_LIST_SUCCESS,
+      data
     };
+  },
+  releaseUpdate: (data) => {
+    return {
+      type: actionTypes.FETCH_RELEASE_UPDATE_SUCCESS,
+      data
+    };
+  }
 };
 
-export function fetchReleaseList() {
+const releaseActions = {
+
+  list: () => {
     return (dispatch) => {
-    	let name = '';
-        let config = {
-            method: 'POST',
-            body: `{
-                getReleaseList(name: "${name}") {
-                    id,
-			        name,
-			        date,
-			        priority
-                }
-            }`,
-            headers: {
-                'Content-Type': 'application/graphql',
-                'x-access-token': localStorage.token
-            }
-        };
-        return fetch(SERVER_API_URL, config)
-            .then((res) => res.json())
-            .then((body) => {
-                dispatch(fetchReleaseListSuccess(body.data.getReleaseList));
-            })
-            .catch((err) => {
-                throw new Error(err);
-            });
+      let name = '';
+      let config = {
+          method: 'POST',
+          body: `{
+              getReleaseList(name: "${name}") {
+                  id,
+                  name,
+                  date,
+                  priority
+              }
+          }`,
+          headers: {
+              'Content-Type': 'application/graphql',
+              'x-access-token': localStorage.token
+          }
+      };
+      return fetch(SERVER_API_URL, config)
+          .then((res) => res.json())
+          .then((body) => {
+            dispatch(fetchState.releaseList(body.data.getReleaseList));
+          })
+          .catch((err) => {
+            throw new Error(err);
+          });
     };
+  },
+
+  modify: (item) => {
+    return (dispatch) => {
+      // var data = item.data;
+      let config = {
+          method: 'POST',
+          body: `mutation RootMutationType {
+              modifyRelease(data:"${JSON.stringify(item).replace(/\"/gi, '\\"')}")
+          }`,
+          headers: {
+              'Content-Type': 'application/graphql',
+              'x-access-token': localStorage.token
+          }
+      };
+
+      return fetch(SERVER_API_URL, config)
+          .then((res) => res.json())
+          .then((body) => {
+            if (body && body.data && body.data.modifyRelease) {
+              dispatch(fetchState.releaseUpdate(item));
+            }
+          })
+          .catch((err) => {
+            throw new Error(err);
+          });
+    };
+  },
+  delete: (item) => {
+    item.delete = true;
+    return (dispatch) => {
+      // var data = item.data;
+      let config = {
+          method: 'POST',
+          body: `mutation RootMutationType {
+              deleteRelease(name:"${item.name}")
+          }`,
+          headers: {
+              'Content-Type': 'application/graphql',
+              'x-access-token': localStorage.token
+          }
+      };
+      return fetch(SERVER_API_URL, config)
+          .then((res) => res.json())
+          .then((body) => {
+            if (body && body.data && body.data) {
+              dispatch(fetchState.releaseUpdate(item));
+            }
+          })
+          .catch((err) => {
+            throw new Error(err);
+          });
+    };
+  }
 };
 
-let ReleaseAction = {
-	modify: function(item){
-		return (dispatch) => {
-            var data = item.data;
-            let config = {
-                method: 'POST',
-                body: `mutation RootMutationType {
-                    modifyRelease(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
-                }`,
-                headers: {
-                    'Content-Type': 'application/graphql',
-                    'x-access-token': localStorage.token
-                }
-            };
+export function releaseList() {
+  return dispatch => {
+    dispatch(releaseActions.list());
+  };
+}
 
-            return fetch(SERVER_API_URL, config)
-                .then((res) => res.json())
-                .then((body) => {
-                    let id = body.data.createJobAndWorkLog;
-                    if (id !== undefined && id !== '' && id !== 0) {
-                        item.data.id = id;
-                        //dispatch(fetchWorklogItem(item));
-                        dispatch(fetchReleaseListSuccess(item.employee_id,getState));
-                    }
-                })
-                .catch((err) => {
-                    throw new Error(err);
-                });
-        };
-	}
-};
+export function addRelease(item) {
+  return (dispatch) => {
+    dispatch(releaseActions.modify(item));
+  };
+}
+
+export function deleteRelease(item) {
+  return dispatch => {
+    dispatch(releaseActions.delete(item));
+  };
+}

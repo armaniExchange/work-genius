@@ -70,7 +70,6 @@ let ReleaseMutation = {
 				let result = await query.run(connection);
 				await connection.close();
 			} catch (err) {
-				console.log(err);
 				await connection.close();
 				return 'Fail to update a release!';
 			}
@@ -81,23 +80,22 @@ let ReleaseMutation = {
 		type: GraphQLString,
 		description: 'Update a new release',
 		args: {
-			id: {
-				type: GraphQLID,
-				description: 'release id'
+			name: {
+				type: GraphQLString,
+				description: 'release name'
         	}
 		},
-		resolve: async (root, { id }) => {
+		resolve: async (root, { name }) => {
 			let connection = null,
 				query = null;
 
 			try {
 				
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				query = r.db('work_genius').table('release').get(id).delete();
+				query = r.db('work_genius').table('release').filter({name: name}).delete();
 				let result = await query.run(connection);
 				await connection.close();
 			} catch (err) {
-				console.log(err);
 				await connection.close();
 				return 'Fail to delete a release!';
 			}

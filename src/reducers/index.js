@@ -7,6 +7,7 @@ import search from './search-reducer';
 import pto from './pto-reducer';
 import admin from './admin-reducer';
 import dataExplorer from './data-explorer-reducer';
+import dashboardReducer from './dashboard-reducer';
 import documentation from './document-reducer';
 import article from './article-reducer';
 import featureAnalysis from './feature-analysis-reducer';
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
   task,
   search,
   dataExplorer,
+  dashboardReducer,
   pto,
   admin,
   documentation,
