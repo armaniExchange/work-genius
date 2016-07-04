@@ -85,7 +85,7 @@ function getBuildNo(imagePath) {
 
 
 function matchRelease(versionData) {
-	var release, fpga, currentRelease;
+	var release, fpga, currentRelease, currentBuildNo;
 	var options = {};
 	var bootFrom = versionData.version.oper['boot-from'];
 	if (bootFrom == 'HD_PRIMARY') {
@@ -94,6 +94,8 @@ function matchRelease(versionData) {
 		currentRelease = versionData.version.oper['hd-sec'];	
 	}
 
+        currentBuildNo = parseInt(currentRelease.replace(/\d+\./g, ''));
+	
 	release = currentRelease.replace(/\.(\d+)$/, '').replace(/\./g, '_');
 	fpga = versionData.version.oper['firmware-version'] == '0.0.0' ? '20' : '52';	
 	var promise = new Promise(function (resolve, reject)  { 
@@ -111,7 +113,7 @@ function matchRelease(versionData) {
 				if (!lastImage) {
 					reject('Wrong Image Path');
 				} else {
-					if ( buildNo === largeBuildNo ) {
+					if ( currentBuildNo === largeBuildNo ) {
 						reject(new Error('Need not upgrade, it is already at the newest build'));
 					} else {
 						resolve(lastImage);
