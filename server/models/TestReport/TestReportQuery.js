@@ -31,6 +31,11 @@ async function getTestReportCreatedTimeList() {
     .reduce(function(left, right){
       return left.merge(right);
     })
+    .default({
+      unitTest: 0,
+      end2endTest: 0,
+      axapiTest: 0
+    })
     .run(connection) || {};
   return result;
 }
