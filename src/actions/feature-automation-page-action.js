@@ -27,7 +27,6 @@ export function fetchDocumentCategoriesWithReport(query) {
       end2endTestCreatedTime,
       axapiTestCreatedTime
     } = query || {};
-    dispatch(setLoadingState(true));
     dispatch({
       type: actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_REPORT_TEST
     });
@@ -68,7 +67,6 @@ export function fetchDocumentCategoriesWithReport(query) {
       })
       .then((body) => {
         const { getAllDocumentCategoriesWithTestReport } = body.data;
-        dispatch(setLoadingState(false));
         dispatch(fetchDocumentCategoriesWithReportSuccess(getAllDocumentCategoriesWithTestReport));
       })
       .catch((error) => {
@@ -119,7 +117,6 @@ export function setupTestReportOfCategory({categoryId, path, axapis, owners, dif
       })
       .then(() => {
         dispatch(fetchDocumentCategoriesWithReport());
-        // dispatch(setLoadingState(false));
         dispatch(setupTestReportOfCategorySuccess());
       })
       .catch((error) => {

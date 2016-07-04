@@ -18,6 +18,24 @@ import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 // multer will save the file instance into disk
 // add metadata into db files
 
+const TEST_REPORT_MAP = {
+  'axapiTest': {
+    testReportType: 'axapiTest',
+    tableIndex: 'api',
+    testReportCategoryTableIndex: 'axapis',
+  },
+  unitTest: {
+    testReportType: 'unitTest',
+    tableIndex: 'path',
+    testReportCategoryTableIndex: 'path',
+  },
+  end2endTest: {
+    testReportType: 'end2endTest',
+    tableIndex: 'path',
+    testReportCategoryTableIndex: 'path',
+  }
+};
+
 export const addTestReportHandler = async (req, res) => {
   let connection = null;
   try {
@@ -50,27 +68,40 @@ export const addTestReportHandler = async (req, res) => {
         build
       }, PathOrApiProperty);
     });
+    const {
+      testReportType,
+      tableIndex,
+      testReportCategoryTableIndex,
+    } = TEST_REPORT_MAP[type];
 
-    let reportsTableName;
-    switch (type) {
-      case 'axapiTest':
-        reportsTableName = 'axapi_test_reports';
-        break;
-      case 'unitTest':
-        reportsTableName = 'unit_test_reports';
-        break;
-      case 'end2endTest':
-        reportsTableName = 'end2end_test_reports';
-        break;
-      default:
-        throw `API ${type} doesn't existed`;
-    }
+
     await r.db('work_genius')
-      .table(reportsTableName)
-      .insert(data)
+      .table('test_report_time_list')
+      .insert({
+        type: testReportType,
+        createdAt: createdAt
+      })
       .run(connection);
-    res.status(200)
-      .send({success: true});
+
+    await r.db('work_genius')
+      .table('test_report_categories')
+      .insert(
+        r.expr(data)
+        .eqJoin(tableIndex, r.db('work_genius').table('test_report_categories'), {index: testReportCategoryTableIndex})
+        .group('right')
+        .map(function(row){return row('left');})
+        .ungroup()
+        .map(function(item){
+          return item('group').merge({
+            [testReportType]: item('group')(testReportType).default([]).add(item('reduction'))
+          });
+        }), {conflict: 'update'}
+      )
+      .run(connection);
+
+      res.status(200)
+        .send({success: true});
+
     await connection.close();
   } catch (err) {
     await connection.close();
