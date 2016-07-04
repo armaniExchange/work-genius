@@ -79,9 +79,9 @@ let CategoryQuery = {
     }) => {
       try {
         const timeList = await getTestReportCreatedTimeList();
-        unitTestCreatedTime = unitTestCreatedTime || timeList.unitTest[0] || 0;
-        end2endTestCreatedTime = end2endTestCreatedTime || timeList.end2endTest[0] || 0;
-        axapiTestCreatedTime = axapiTestCreatedTime || timeList.axapiTest[0] || 0;
+        unitTestCreatedTime = unitTestCreatedTime || (timeList.unitTest ? timeList.unitTest[0] : 0);
+        end2endTestCreatedTime = end2endTestCreatedTime || (timeList.end2endTest ? timeList.end2endTest[0] : 0);
+        axapiTestCreatedTime = axapiTestCreatedTime || (timeList.axapiTest ? timeList.axapiTest[0] : 0);
 
         const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         const result = await r.db('work_genius')
