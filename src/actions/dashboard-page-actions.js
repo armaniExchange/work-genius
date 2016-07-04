@@ -24,7 +24,7 @@ const fetchState = {
 
 const releaseActions = {
 
-  list: () => {
+  list: (callback) => {
     return (dispatch) => {
       let name = '';
       let config = {
@@ -45,7 +45,8 @@ const releaseActions = {
       return fetch(SERVER_API_URL, config)
           .then((res) => res.json())
           .then((body) => {
-            dispatch(fetchState.releaseList(body.data.getReleaseList));
+            dispatch(callback(body.data.getReleaseList));
+            // dispatch(fetchState.releaseList(body.data.getReleaseList));
           })
           .catch((err) => {
             throw new Error(err);
@@ -107,9 +108,16 @@ const releaseActions = {
   }
 };
 
+export function fetchReleaseList(callback) {
+  return dispatch => {
+    dispatch(releaseActions.list(callback));
+  };
+}
+
 export function releaseList() {
   return dispatch => {
-    dispatch(releaseActions.list());
+    dispatch(fetchReleaseList(fetchState.releaseList));
+    // dispatch(releaseActions.list());
   };
 }
 

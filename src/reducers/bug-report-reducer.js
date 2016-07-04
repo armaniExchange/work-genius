@@ -1,5 +1,5 @@
 // Libraries
-import { Map, List, OrderedMap} from 'immutable';
+import Immutable, { Map, List, OrderedMap} from 'immutable';
 // Constants
 import actionTypes from '../constants/action-types';
 
@@ -28,11 +28,7 @@ const initialState = Map({
         Map({ title: 'Others', key: 'item6', colspan: 1})
     ),
     // allProjectVersions: List.of('4.1.0', '3.2.1', '3.2.0'),
-    allProjectVersions: List.of(
-        Map({title: '4.1.0', value: '4.1.0'}),
-        Map({title: '3.2.0', value: '3.2.0'}),
-        Map({title: '3.2.1', value: '3.2.1'})
-    ),
+    allProjectVersions: List.of(),
     currentProjectVersion: ''
 });
 
@@ -84,6 +80,14 @@ function setOwnerTableData(state, data) {
         .set(`ownerTableData`, formatedData);
 }
 
+function setReleaseState(state, data) {
+    var releases = [];
+    data.map(release => {
+        releases.push({title: release.name, value: release.name});
+    });
+    return state.set('allProjectVersions', Immutable.fromJS(releases));
+}
+
 export default function bugReportReducer(state = initialState, action) {
     let nextState = state;
     switch (action.type) {
@@ -101,6 +105,9 @@ export default function bugReportReducer(state = initialState, action) {
             return nextState;
         case actionTypes.SET_BUG_REPORT_PROJECT_VERSION:
             nextState = state.set(`currentProjectVersion`, action.data);
+            return nextState;
+        case actionTypes.FETCH_BUG_REPORT_RELEASE:
+            nextState = setReleaseState(nextState, action.data);
             return nextState;
         default:
             return state;
