@@ -5,6 +5,7 @@ import {
     apiFailure
 } from './app-actions';
 
+
 const DOCUMENT_CATEGORY_UPDATE_TIME_MIN = 30;
 
 export function setSelectedCategory(data) {
