@@ -21,7 +21,7 @@ let DeviceQuery = {
 			try {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 
-				query = r.db('work_genius').table('devices').coerceTo('array');
+				query = r.db('work_genius').table('devices').orderBy({index: 'address_vcs'}).coerceTo('array');
 				result = await query.run(connection);
 				await connection.close();
 				return result;

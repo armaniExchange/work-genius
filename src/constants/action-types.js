@@ -177,12 +177,14 @@ export default keyMirror({
     FETCH_BUG_REVIEW_ALL_USERS: null,
     FETCH_BUG_REVIEW_QUERY_DATA: null,
     FETCH_BUG_REVIEW_ADD_OPTIONS_SUCCESS: null,
+    FETCH_BUG_REVIEW_RELEASE: null,
 
     // Bug Report page actions
     FETCH_BUG_REPORT_ROOT_CAUSE_SUCCESS: null,
     FETCH_BUG_REPORT_TAGS_SUCCESS: null,
     FETCH_BUG_REPORT_OWNER_SUCCESS: null,
     FETCH_BUG_REPORT_OWNER_TOTAL_SUCCESS: null,
+    FETCH_BUG_REPORT_RELEASE: null,
     SET_BUG_REPORT_PROJECT_VERSION: null,
 
     // Resource Map page actions
