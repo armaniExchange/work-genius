@@ -26,6 +26,7 @@ export default class DropDownList extends Component {
             return (<div id={this.htmlid}>
                 <SelectField
                 value={this.state.curDropDownListVisual2Value}
+                fullWidth={true}
                 onChange={(evt, index, value)=>{
                     var name = '';
                     for (let item of aryOptionConfig) {

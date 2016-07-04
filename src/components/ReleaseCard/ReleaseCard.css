@@ -1,0 +1,14 @@
+.table_header_style{
+  border-right: solid 1px #fff;
+  text-align: center !important;
+}
+
+.text-left {
+  line-height: 35px !important;
+  text-align: left !important;
+}
+
+.text-center {
+  line-height: 35px !important;
+  text-align: center !important;
+}
