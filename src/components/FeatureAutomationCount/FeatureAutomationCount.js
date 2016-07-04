@@ -14,7 +14,7 @@ class FeatureAutomationCount extends Component {
       testReport
     } = this.props;
     return (
-      testReport.filter(item => !item.isSuccess)
+      testReport.filter(item => item && !item.isSuccess)
         .map((item, index) => (
           <div key={index} style={{marginBottom: 5}}>
             <span className="feature-automation-tag">{item[keyName]}</span>

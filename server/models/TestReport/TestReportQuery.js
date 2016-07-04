@@ -17,15 +17,21 @@ import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 
-async function getTestReportCreatedTimeList(tableName) {
+async function getTestReportCreatedTimeList() {
   const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-  const result = await r.db('work_genius')
-    .table(tableName)('createdAt')
-    .distinct()
-    .orderBy(r.desc(r.row))
-    .default([0])
-    .coerceTo('array')
-    .run(connection);
+  const result = await r.db('work_genius').table('test_report_time_list')
+    .group('type')
+    .map(function(item){
+      return item('createdAt');
+    })
+    .ungroup()
+    .map(function(item) {
+      return r.object(item('group'), item('reduction'));
+    })
+    .reduce(function(left, right){
+      return left.merge(right);
+    })
+    .run(connection) || {};
   return result;
 }
 
@@ -41,14 +47,12 @@ let CategoryQuery = {
       })
     }),
     resolve: async () => {
+      const timeList = await getTestReportCreatedTimeList();
       try {
-        const unitTestCreatedTimeList = await getTestReportCreatedTimeList('unit_test_reports');
-        const end2endTestCreatedTimeList = await getTestReportCreatedTimeList('end2end_test_reports');
-        const axapiTestCreatedTimeList = await getTestReportCreatedTimeList('axapi_test_reports');
         return {
-          unitTestCreatedTimeList,
-          end2endTestCreatedTimeList,
-          axapiTestCreatedTimeList
+          unitTestCreatedTimeList: timeList.unitTest || [],
+          end2endTestCreatedTimeList: timeList.end2endTest || [],
+          axapiTestCreatedTimeList: timeList.axapiTest || []
         };
       } catch (err) {
         return err;
@@ -69,12 +73,10 @@ let CategoryQuery = {
       axapiTestCreatedTime
     }) => {
       try {
-        const unitTestCreatedTimeList = await getTestReportCreatedTimeList('unit_test_reports');
-        const end2endTestCreatedTimeList = await getTestReportCreatedTimeList('end2end_test_reports');
-        const axapiTestCreatedTimeList = await getTestReportCreatedTimeList('axapi_test_reports');
-        unitTestCreatedTime = unitTestCreatedTime || unitTestCreatedTimeList[0] || 0;
-        end2endTestCreatedTime = end2endTestCreatedTime || end2endTestCreatedTimeList[0] || 0;
-        axapiTestCreatedTime = axapiTestCreatedTime || axapiTestCreatedTimeList[0] || 0;
+        const timeList = await getTestReportCreatedTimeList();
+        unitTestCreatedTime = unitTestCreatedTime || timeList.unitTest[0] || 0;
+        end2endTestCreatedTime = end2endTestCreatedTime || timeList.end2endTest[0] || 0;
+        axapiTestCreatedTime = axapiTestCreatedTime || timeList.axapiTest[0] || 0;
 
         const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         const result = await r.db('work_genius')
@@ -91,26 +93,14 @@ let CategoryQuery = {
               articlesCount: r.db('work_genius')
                 .table('articles')
                 .getAll(category('id'), { index: 'categoryId' })
-                .count(),
-              unitTest: r.db('work_genius')
-                .table('unit_test_reports')
-                .filter({ createdAt: unitTestCreatedTime })
-                .filter({ path: category('path').default('') })
-                .coerceTo('array'),
-              end2endTest: r.db('work_genius')
-                .table('end2end_test_reports')
-                .filter({ createdAt: end2endTestCreatedTime })
-                .filter({ path: category('path').default('') })
-                .coerceTo('array'),
-              axapiTest: r.db('work_genius')
-                .table('axapi_test_reports')
-                .filter({ createdAt: axapiTestCreatedTime })
-                .filter(function(report){
-                  return category('axapis').contains(report('api'));
-                })
-                .coerceTo('array')
+                .count()
             };
           })
+          .merge({
+              unitTest: r.row('unitTest').default([]).filter({createdAt: unitTestCreatedTime }),
+              end2endTest: r.row('end2endTest').default([]).filter({createdAt: end2endTestCreatedTime }),
+              axapiTest: r.row('axapiTest').default([]).filter({createdAt: axapiTestCreatedTime }),
+           })
           .coerceTo('array')
           .run(connection);
         return result;
