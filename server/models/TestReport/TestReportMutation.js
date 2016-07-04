@@ -1,3 +1,8 @@
+// r.db('work_genius').tableCreate('test_report_categories'),
+// r.db('work_genius').table('test_report_categories').createIndex('path')
+// r.db('work_genius').table('test_report_categories').createIndex('axapis')
+// r.db('work_genius').tableCreate('test_report_time_list')
+
 // GraphQL
 import {
   GraphQLString,
@@ -74,15 +79,6 @@ export const addTestReportHandler = async (req, res) => {
       testReportCategoryTableIndex,
     } = TEST_REPORT_MAP[type];
 
-
-    await r.db('work_genius')
-      .table('test_report_time_list')
-      .insert({
-        type: testReportType,
-        createdAt: createdAt
-      })
-      .run(connection);
-
     await r.db('work_genius')
       .table('test_report_categories')
       .insert(
@@ -99,8 +95,16 @@ export const addTestReportHandler = async (req, res) => {
       )
       .run(connection);
 
-      res.status(200)
-        .send({success: true});
+    await r.db('work_genius')
+      .table('test_report_time_list')
+      .insert({
+        type: testReportType,
+        createdAt: createdAt
+      })
+      .run(connection);
+
+    res.status(200)
+      .send({success: true});
 
     await connection.close();
   } catch (err) {

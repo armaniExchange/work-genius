@@ -93,14 +93,6 @@ let CategoryQuery = {
               .get(category('id'))
               .default({});
           })
-          .merge(function(category) {
-            return {
-              articlesCount: r.db('work_genius')
-                .table('articles')
-                .getAll(category('id'), { index: 'categoryId' })
-                .count()
-            };
-          })
           .merge({
               unitTest: r.row('unitTest').default([]).filter({createdAt: unitTestCreatedTime }),
               end2endTest: r.row('end2endTest').default([]).filter({createdAt: end2endTestCreatedTime }),
