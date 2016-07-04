@@ -42,10 +42,6 @@ class ReleaseForm extends Component{
     dateDom.getElementsByTagName('input')[0].value = date;
   }
 
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   return nextProps.
-  // }
-
   selectPriority(priority) {
     this.setState({priority: priority});
   }
@@ -61,9 +57,11 @@ class ReleaseForm extends Component{
 
   submit() {
     let name = this.state.name;
+    if (name === undefined || name === '') {
+      return;
+    }
     let date = this.state.date;
     let priority = this.state.priority;
-
     const { addRelease } = this.props;
     const option = {
       name: name,
