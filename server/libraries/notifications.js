@@ -29,7 +29,7 @@ export default (socket) => {
   console.log('Hi Notification');
   notifications.map((n) => {
     socket.on(n.event, function (data) {
-      socket.emit(n.event, {
+      socket.broadcast.emit(n.event, {
         message: n.message(data)
       });
     });
