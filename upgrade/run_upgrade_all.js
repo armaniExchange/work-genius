@@ -99,7 +99,7 @@ function matchRelease(versionData) {
 	var promise = new Promise(function (resolve, reject)  { 
 		glob("/mnt/bldimage/BLD_STO_REL_" + release + "*." + fpga +  ".64/output/*.upg", options, function (err, files) {
 			if (!err) {
-				var buildNo;
+				var buildNo = 0;
 				var lastImage, largeBuildNo = 0;
 				files.map(function(v) {
 					buildNo = getBuildNo(v);
@@ -111,7 +111,11 @@ function matchRelease(versionData) {
 				if (!lastImage) {
 					reject('Wrong Image Path');
 				} else {
-					resolve(lastImage);
+					if ( buildNo === largeBuildNo ) {
+						reject(new Error('Need not upgrade, it is already at the newest build'));
+					} else {
+						resolve(lastImage);
+					}
 				}
 			} else {
 				reject(err);
@@ -133,7 +137,7 @@ function doUpgrade(host)
 				return getVersion(authData, host);
 			}, 
 			function(error) {
-				console.log('Get Version Failed', host.ip);
+				console.log(error, host.ip);
 			}
 		)
 		.then(
@@ -142,26 +146,18 @@ function doUpgrade(host)
 				return matchRelease(versionData);
 			}, 
 			function(error) {
-				console.log('Get Version Failed', host.ip);
+				console.log(error, host.ip);
 			}
 		)
 		.then(
 			function(matchedImagePath) {
-				return upgradeRequest(authData, versionData, matchedImagePath, host) 
+				return upgradeRequest(authData, versionData, matchedImagePath, host);
 			}, 
 			function(error) {
-				console.log('Upgrade error', host.ip);
+				console.log(error, host.ip);
 			}
 		)
-		.then(
-			function(data) {
-				console.log('upgrade successful', host.ip);
-				
-			}, 
-			function(error) {
-				console.log('upgrade failed on Host:', host.ip, 'reason:',  data);
-			}
-		);
+		;
 				
 }
 
