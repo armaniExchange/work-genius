@@ -46,6 +46,7 @@ function fetchVersionToState(state, ip, data) {
       device.boot_from = version['boot-from'];
       device.hd_pri = version['hd-pri'];
       device.hd_sec = version['hd-sec'];
+      device.serial_number = version['serial-number'];
 
       let currentRelease = device.boot_from === 'HD_PRIMARY' ? device.hd_pri : device.hd_sec;
       let currentReleaseSplit = currentRelease.split('.');
@@ -54,7 +55,6 @@ function fetchVersionToState(state, ip, data) {
       let release = currentReleaseSplit.join('_');
       device.release = release;
       device.build = build;
-      console.log(device);
       state = state.set('data', Immutable.fromJS(devices));
     }
   }

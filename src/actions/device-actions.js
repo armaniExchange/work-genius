@@ -40,10 +40,12 @@ const fetchData = {
 
 // const axRequest = {
 //   auth: function () {
-//     console.log('request');
 //     fetch('https://192.168.105.99/axapi/v3/auth', {
 //       method: 'POST',
-//       body: {credentials :{username: 'admin', password: 'a10'}}
+//       body: {credentials :{username: 'admin', password: 'a10'}},
+//       header: {
+//         'Control-Allow-Origin': '*'
+//       }
 //     })
 //     .then((res) => res.json())
 //     .then((body) => {
@@ -132,19 +134,17 @@ const deviceActions = {
                 }
             };
 
-
-      console.log('coming message', data);
       return fetch(SERVER_API_URL, config)
           .then((res) => res.json())
-          .then(() => {           
+          .then(() => {
               let info = {
                       user: data.locked_by,
                       ip: data.ip
                     };
               if (data.locked_by) {
-                notify('lock device', info);    
+                notify('lock device', info);
               } else {
-                notify('release device', info);    
+                notify('release device', info);
               }
           })
           .catch((err) => {
@@ -171,7 +171,34 @@ const deviceActions = {
           });
     };
   },
-
+  upgrade: (item) => {
+    return (dispatch) => {
+      let config = {
+        method: 'POST',
+        body: `{
+          "ip": "${item.ip}",
+          "release": "${item.release}",
+          "build": "${item.build}",
+          "with_fpga": false
+        }`,
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': localStorage.token
+        }
+      };
+      console.log(config);
+      return fetch(SERVER_BASIC_URL + 'upgrade', config)
+          .then((res) => res.json())
+          .then((body) => {
+            // dispatch(fetchData.release(body));
+            console.log(body);
+            console.log(dispatch);
+          })
+          .catch((err) => {
+              throw new Error(err);
+          });
+    };
+  },
   allVersions: (data) => {
     return (dispatch) => {
       data.map((device) => {
@@ -211,16 +238,14 @@ export function queryDeviceInfo() {
 }
 
 export function updateDevice(item){
-  console.log(item);
   return (dispatch) => {
     dispatch(deviceActions.update(item));
   };
 }
 
 export function upgradeDevice(item) {
-  console.log(item);
   return (dispatch) => {
-    dispatch(deviceActions.release());
+    dispatch(deviceActions.upgrade(item));
   };
 }
 

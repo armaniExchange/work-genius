@@ -1,7 +1,7 @@
 import request from 'request';
 import r from 'rethinkdb';
 import { DB_HOST, DB_PORT, PRODUCTION_MODE } from '../../constants/configurations.js';
-
+import glob from 'glob';
 export default class AxapiRequest {
     options = {
         json:true,
@@ -25,7 +25,7 @@ export default class AxapiRequest {
 
             query = r.db('work_genius').table('devices').filter({ip:ip}).coerceTo('array');
             result = await query.run(connection);
-            await connection.close();            
+            await connection.close();
             return result;
         } catch (err) {
             return err;
@@ -87,9 +87,9 @@ export default class AxapiRequest {
             url: this.buildAXAPI('version/oper'),
             method: 'GET',
         });
-        console.log('get version auth options', authOptions);
+        // console.log('get version auth options', authOptions);
         let result =  await this.axapiPromise(authOptions);
-        console.log('result is : ' , result);
+        // console.log('result is : ' , result);
         this.logOff();
         return result;
     }
@@ -107,16 +107,24 @@ export default class AxapiRequest {
             });
         });
 
-    }    
+    }
 
     buildImagePath(imageHost, release, build, withFPGA=false) {
         // let fpgaBit = 20;
         // if (withFPGA) {
         //     fpgaBit =
         // }
-        console.log(imageHost, release, build, withFPGA );
         let imageUrl = `scp://${imageHost.username}:${imageHost.password}@${imageHost.host}:`;
-        return `${imageUrl}/mnt/bldimage/ax/BLD_STO_REL_4_1_1_106_182629_20160625_113516_0000.42.64/output/ACOS_FTA_V2_4_1_1_106.64.upg`;
+        var fpga = '20';
+        var pattern = "/mnt/bldimage/BLD_STO_REL*" + release + "_" + build + "*" + fpga + ".64/output/*.upg";
+        var files = glob.sync(pattern, {});
+
+        // files = [ '/mnt/bldimage/BLD_STO_REL_4_1_1_108_182691_20160626_211123_0000.20.64/output/ACOS_non_FTA_4_1_1_108.64.upg' ];
+        if (files && files[0]) {
+            return `${imageUrl}${files[0]}`;
+        }
+        var file = '/mnt/bldimage/BLD_STO_REL_4_1_1_108_182691_20160626_211123_0000.20.64/output/ACOS_non_FTA_4_1_1_108.64.upg';
+        return `${imageUrl}${file}`;
     }
 
     async getAllReleases() {
@@ -175,8 +183,7 @@ export default class AxapiRequest {
                 }
             }
         });
-
-        console.log('upgrading...');
+        // let result = {};
         let result =  await this.axapiPromise(authOptions);
         console.log('upgraded', result);
         // this.logOff();

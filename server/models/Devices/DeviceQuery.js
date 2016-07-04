@@ -40,8 +40,12 @@ export const getVersion = async (req, res) => {
 };
 
 export const upgrade = async (req, res) => {
-	let apiRequest = new AxapiRequest(req.query.ip);
-	return res.json(await apiRequest.upgrade(IMAGE_HOST, req.decoded.release, req.decoded.build, req.decoded.with_fpga));
+	let apiRequest = new AxapiRequest(req.body.ip);
+	console.log(IMAGE_HOST);
+	console.log(req.body.release);
+	console.log(req.body.build);
+  console.log(req.body.with_fpga);
+	return res.json(await apiRequest.upgrade(IMAGE_HOST, req.body.release, req.body.build, req.body.with_fpga));
 };
 
 
