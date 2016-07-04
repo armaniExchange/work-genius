@@ -88,6 +88,14 @@ const ArticleMutation = {
           .delete()
           .run(connection);
 
+        await r.db('work_genius').table('document_categories')
+          .get(
+            r.db('work_genius').table('articles')
+              .get(id)
+              .getField('categoryId')
+          ).update({articlesCount: r.row('articlesCount').sub(1)})
+          .run(connection);
+
         await r.db('work_genius')
           .table('articles')
           .get(id)
@@ -133,6 +141,14 @@ const ArticleMutation = {
             .get(id)
             .merge(getArticleDetail)
             .run(connection);
+
+          await r.db('work_genius').table('document_categories').get(
+            r.db('work_genius').table('articles')
+              .get(id)
+              .getField('categoryId')
+          ).update({articlesCount: r.row('articlesCount').add(1)})
+          .run(connection);
+
           await connection.close();
           if (process.env.NODE_ENV === 'production') {
             await transporter.sendMail({
