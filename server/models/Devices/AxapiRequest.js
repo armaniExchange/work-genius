@@ -110,10 +110,7 @@ export default class AxapiRequest {
     }
 
     buildImagePath(imageHost, release, build, withFPGA=false) {
-        // let fpgaBit = 20;
-        // if (withFPGA) {
-        //     fpgaBit =
-        // }
+        build = 115
         let imageUrl = `scp://${imageHost.username}:${imageHost.password}@${imageHost.host}:`;
         var fpga = '20';
         var pattern = "/mnt/bldimage/BLD_STO_REL*" + release + "_" + build + "*" + fpga + ".64/output/*.upg";
@@ -170,7 +167,8 @@ export default class AxapiRequest {
     async upgrade(imageHost, release, build, withFPGA=false) {
         let token = await this.getAuthToken();
         this.options.headers['Authorization'] = token;
-
+        // let buildImagePath = 'scp://upgrade:upgrade@192.168.105.93:/mnt/bldimage/BLD_STO_REL_4_1_1_115_183167_20160704_031553_0000.20.64/output/ACOS_non_FTA_4_1_1_115.64.upg';
+        let buildImagePath = this.buildImagePath(imageHost, release, build, withFPGA);
         let authOptions = Object.assign({}, this.options, {
             url: this.buildAXAPI('upgrade/hd'),
             method: 'POST',
@@ -179,15 +177,19 @@ export default class AxapiRequest {
                     'image': 'pri',
                     'use-mgmt-port': 1,
                     'reboot-after-upgrade': 1,
-                    'file-url': this.buildImagePath(imageHost, release, build, withFPGA)
+                    'file-url': buildImagePath
                 }
             }
         });
         // let result = {};
+        console.log(authOptions);
         let result =  await this.axapiPromise(authOptions);
         console.log('upgraded', result);
         // this.logOff();
-        return result;
+        return {
+            result: result,
+            option: authOptions
+        };
     }
 
 };
