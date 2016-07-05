@@ -7,6 +7,10 @@ const initialState = Map({
 	navHeaderTitle: 'WG',
 	navItems: List.of(
     Map({
+        displayText: 'Home',
+        link: '/main/'
+    }),
+    Map({
         displayText: 'Knowledge',
         link: '/main/knowledge/document'
     }),
@@ -32,6 +36,16 @@ const initialState = Map({
     }),
 	),
 	subMenu: Map({
+    'Home': List.of(
+      {
+        name: 'Resource Map',
+        url: '/main/resource/resource-map'
+      },
+      {
+        name: 'Device',
+        url: '/main/resource/device'
+      }
+    ),
     'Knowledge': List.of(
       {
         name: 'Document',
@@ -121,7 +135,11 @@ export default function mainReducer(state = initialState, action) {
 		case actionTypes.LOGIN_SUCCESS:
 			return updateNavigationItem(state, action);
 		case actionTypes.SET_CURRENT_SELECTED_PAGE_NAME:
-		    let newSubMenu = state.get('subMenu').get(action.name);
+      let name = action.name;
+      if (name === undefined || name === '') {
+        name = 'Home';
+      }
+      let newSubMenu = state.get('subMenu').get(name);
 			return state.set('currentSelectedPageSubMenu', newSubMenu ? newSubMenu : List.of());
 		default:
 			return state;

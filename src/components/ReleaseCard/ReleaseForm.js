@@ -19,8 +19,12 @@ class ReleaseForm extends Component{
     this.state = {
       name: '',
       date: '2016-07-01',
-      priority: 'Middle',
-      priorityList: ['High', 'Middle', 'Low']
+      priority: 5,
+      priorityList: [
+        {label: 'High', value: 1},
+        {label: 'Middle', value: 5},
+        {label: 'Low', value: 9}
+      ]
     };
   }
 
@@ -68,6 +72,7 @@ class ReleaseForm extends Component{
       date: parseInt(moment(date).format('x')),
       priority: priority
     };
+    console.log(option);
     addRelease(option);
   }
 
@@ -99,8 +104,8 @@ class ReleaseForm extends Component{
                 title={this.state.priority}
                 isDropDownListVisual2={true}
                 onOptionClick={::this.selectPriority}
-                aryOptionConfig={this.state.priorityList.map((text) => {
-                  return {title: text, value: text};
+                aryOptionConfig={this.state.priorityList.map((option) => {
+                  return {title: option.label, value: option.value};
                 })} />
           </div>
         </div>

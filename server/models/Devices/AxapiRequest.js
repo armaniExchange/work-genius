@@ -77,7 +77,7 @@ export default class AxapiRequest {
             body: {}
         });
 
-        return await this.axapiPromise(authOptions);        
+        return await this.axapiPromise(authOptions);
     }
 
     async getVersion() {

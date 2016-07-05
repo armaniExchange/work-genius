@@ -277,7 +277,7 @@ class DeviceTableBody extends Component {
                     Upgrade</Button>) }
           </Td>
           <Td>
-            <ButtonGroup>
+            <ButtonGroup style={{ minWidth: '150px' }}>
               { !this.state.isEdit[row.ip]
                 ? (<Button bsSize="xsmall" bsStyle="primary"
                     onClick={ ::this.toEditItem.bind(this, row) }>Edit</Button>)
