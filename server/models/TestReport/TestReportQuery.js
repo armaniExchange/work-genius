@@ -21,6 +21,7 @@ async function getTestReportCreatedTimeList() {
   const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
   const result = await r.db('work_genius').table('test_report_time_list')
     .group('type')
+    .orderBy('createdAt')
     .map(function(item){
       return item('createdAt');
     })
