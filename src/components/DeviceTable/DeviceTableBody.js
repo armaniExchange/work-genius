@@ -94,12 +94,19 @@ class DeviceTableBody extends Component {
   }
 
   upgradeAxServer(item) {
-    const {upgradeDevice} = this.props;
-    upgradeDevice(item);
+    const {upgradeDevice, data} = this.props;
     if ((item._release && item._release !== item.release)
         || (item._build && String(item.build) !== String(item._build))) {
       // const {upgradeDevice} = this.props;
       upgradeDevice(item);
+
+      const itemIn = data.find((one) => {
+        return one.ip === item.ip;
+      });
+      if (itemIn) {
+        itemIn.upgrading = true;
+        this.setState({data: data});
+      }
     }
   }
 
@@ -193,7 +200,7 @@ class DeviceTableBody extends Component {
           </Td>
           <Td>
             { !this.state.isEdit[row.ip]
-              ? (<span>{row.model}</span>)
+              ? (<span>{row.model}<br />{row.serial_number}</span>)
               : (<input
                     className="form-control"
                     type="text"
@@ -238,12 +245,6 @@ class DeviceTableBody extends Component {
                   onChange={ ::this.changeSelectConfig.bind(this, row, 'can_send_traffic') }/>) }
           </Td>
           <Td>
-            <Select
-              className="text-left hidden"
-              value={ row.release }
-              options={ this.state.releaseOptions }
-              onChange={ ::this.changeRelease.bind(this, row) }/>
-
             { !this.state.isEdit[row.ip]
               ? (<span>{row.release}</span>)
               : (<Select
@@ -253,19 +254,6 @@ class DeviceTableBody extends Component {
                     onChange={ ::this.changeRelease.bind(this, row) }/>) }
           </Td>
           <Td>
-            <Select
-              className="text-left hidden"
-              value={row.build}
-              options={ this.state.buildOptions[row.release] }
-              onChange={ ::this.changeBuild.bind(this, row) }/>
-            <Button
-              className="hidden"
-              style={wellStyles}
-              bsSize="xsmall"
-              bsStyle="success"
-              onClick={ ::this.upgradeAxServer.bind(this, row) }>
-                Upgrade</Button>
-
             { !this.state.isEdit[row.ip]
               ? (<span>{row.build}</span>)
               : (<Select
@@ -273,6 +261,20 @@ class DeviceTableBody extends Component {
                     value={row.build}
                     options={ this.state.buildOptions[row.release] }
                     onChange={ ::this.changeBuild.bind(this, row) }/>) }
+            { row.upgrading
+              ? (<Button
+                  className={!this.state.isEdit[row.ip] ? 'hidden' : ''}
+                  style={wellStyles}
+                  bsSize="xsmall"
+                  bsStyle="warning">
+                    Upgrading ...</Button>)
+              : (<Button
+                  className={!this.state.isEdit[row.ip] ? 'hidden' : ''}
+                  style={wellStyles}
+                  bsSize="xsmall"
+                  bsStyle="success"
+                  onClick={ ::this.upgradeAxServer.bind(this, row) }>
+                    Upgrade</Button>) }
           </Td>
           <Td>
             <ButtonGroup>
