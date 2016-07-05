@@ -38,8 +38,10 @@ let ReleaseQuery = {
 					.coerceTo('array');
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				let result = await query.run(connection);
-				
 				await connection.close();
+				result.sort(function(a, b){
+					return a.priority - b.priority;
+				});
 				return result;
 			} catch (err) {
 				await connection.close();

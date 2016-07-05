@@ -179,6 +179,7 @@ const deviceActions = {
           "ip": "${item.ip}",
           "release": "${item.release}",
           "build": "${item.build}",
+          "image": "${item.image}",
           "with_fpga": false
         }`,
         headers: {

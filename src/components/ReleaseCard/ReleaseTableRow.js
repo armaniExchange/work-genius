@@ -5,6 +5,11 @@ import Td from '../A10-UI/Table/Td';
 import ButtonGroup from 'react-bootstrap/lib/ButtonGroup';
 import Button from 'react-bootstrap/lib/Button';
 
+const PRIORITY_OPTIONS = {
+  1: 'High',
+  5: 'Middle',
+  9: 'Low'
+};
 
 class ReleaseTableRow extends Component {
 
@@ -31,14 +36,16 @@ class ReleaseTableRow extends Component {
 
   render() {
     const { release, index } = this.props;
-    const styles = {};
-    (index === 0) && (styles.backgroundColor = '#CC3333');
+    let styles = {};
+    (index === 0) && (styles = {
+      backgroundColor: '#CC3333',
+      color: '#FFF'});
     (index === 1) && (styles.backgroundColor = '#CCCC33');
     return (
       <tr style={ styles }>
         <Td className="text-center">{release.name}</Td>
         <Td className="text-center">{moment(release.date).format('YYYY-MM-DD')}</Td>
-        <Td className="text-center">{release.priority}</Td>
+        <Td className="text-center">{PRIORITY_OPTIONS[release.priority]}</Td>
         <Td className="text-center">
           <ButtonGroup>
             <Button bsSize="xs" bsStyle="primary"
