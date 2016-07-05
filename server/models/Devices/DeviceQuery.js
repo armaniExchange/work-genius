@@ -53,7 +53,7 @@ export const getReleases = async (req, res) => {
 	// console.log(req);
 	let apiRequest = new AxapiRequest();
 	// console.log('before get releases');
-	let releases = await apiRequest.getAllReleases();	
+	let releases = await apiRequest.getAllReleases();
 	// console.log('after get releases');
 	return res.json(releases);
 };

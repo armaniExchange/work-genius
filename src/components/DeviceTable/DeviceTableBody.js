@@ -12,16 +12,19 @@ class DeviceTableBody extends Component {
 
   static propTypes = {
     data             : PropTypes.array.isRequired,
+    updateData       : PropTypes.number,
     releases         : PropTypes.object.isRequired,
     builds           : PropTypes.array.isRequired,
     upgradeDevice    : PropTypes.func.isRequired,
     updateDevice     : PropTypes.func.isRequired,
-    currentUser      : PropTypes.object.isRequired
+    currentUser      : PropTypes.object.isRequired,
+    upgradeState     : PropTypes.object
   }
 
   constructor() {
     super();
     this.state = {
+      updateData: 0,
       isEdit: {},
       data: [],
       releaseOptions: [],
@@ -40,27 +43,45 @@ class DeviceTableBody extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { data, releases } = nextProps;
-    this.setState( {data: data });
-    const releaseOptions = [];
-    const buildOptions = {};
-    for (let release in releases) {
-      if (releases.hasOwnProperty(release)) {
-        releaseOptions.push({label: release, value: release});
-        const builds = releases[release];
-        const options = [];
-        for (let build in builds) {
-          if (builds.hasOwnProperty(build)) {
-            options.push({label: build, value: build});
+    const { updateData, data, releases, upgradeState } = nextProps;
+    const updateData2 = this.state.updateData;
+
+    if (updateData2 === 0 || updateData2 !== updateData) {
+      this.setState( {data: data, updateData: updateData});
+      const releaseOptions = [];
+      const buildOptions = {};
+      for (let release in releases) {
+        if (releases.hasOwnProperty(release)) {
+          releaseOptions.push({label: release, value: release});
+          const builds = releases[release];
+          const options = [];
+          for (let build in builds) {
+            if (builds.hasOwnProperty(build)) {
+              options.push({label: build, value: build});
+            }
           }
+          buildOptions[release] = options;
         }
-        buildOptions[release] = options;
+      }
+      this.setState({
+        releaseOptions: releaseOptions,
+        buildOptions: buildOptions
+      });
+    }
+
+    if (upgradeState.success && upgradeState.item) {
+      const item = upgradeState.item;
+      const dataIn = this.state.data;
+      const itemIn = dataIn.find( o => {
+        return o.ip === item.ip;
+      });
+      if (itemIn) {
+        itemIn.upgrading = false;
+        itemIn['hd_' + item.image] = item.release.replace(/_/g, '.') + '.' + item.build;
+        this.setState({data: dataIn});
       }
     }
-    this.setState({
-      releaseOptions: releaseOptions,
-      buildOptions: buildOptions
-    });
+
   }
 
   changeRelease(item, value) {
@@ -175,10 +196,11 @@ class DeviceTableBody extends Component {
   }
 
   render() {
-    const { currentUser } = this.props;
+    const { currentUser, upgradeState } = this.props;
     const username = currentUser.nickname;
     const wellStyles = {margin: '5px auto', width: '100%'};
-
+    console.log('000000000000000000000000000000000');
+    console.log(upgradeState);
     const bodyHtml = this.state.data.map((row, index) => {
       return (
         <tr key={index} >
