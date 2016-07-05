@@ -202,7 +202,6 @@ class FeatureAutomationPage extends Component {
       displayCategoriesId,
     } = this.state;
 
-
     const filteredReleaseChildrenResult = (documentCategoriesWithReportTest.children || []).filter(node => {
       return !filterRelease || node.id === filterRelease;
     });
@@ -290,7 +289,7 @@ class FeatureAutomationPage extends Component {
       width: '100%',
       position: 'absolute',
       zIndex: 1,
-      background: 'rgba(0,0,0,0)',
+      background: 'rgba(0,0,0,0.2)',
       textAlign: 'center',
       paddingTop: 10
     };
@@ -382,23 +381,29 @@ class FeatureAutomationPage extends Component {
           </div>
           <div className="table-body" style={{position: 'relative'}}>
             {
-              isLoading ? <div style={tableLoadingCoverStyle}> <CircularProgress /></div> :
-                displayTree.length > 0 ? displayTree.map(row => {
-                  return (
-                    <FeatureAutomationRow
-                      key={row.id}
-                      allUsers={allUsers}
-                      onEditAxapis={::this.openAxapisEditDialog}
-                      onPathSave={::this.onPathSave}
-                      onOwnersSave={::this.onOwnersSave}
-                      onDifficultySave={::this.onDifficultySave}
-                      toggleChildren={::this.toggleChildren}
-                      isLoading={isLoading}
-                      {...row} />
-                  );
-                }) : (
-                  <div style={{padding: 15, textAlign: 'center'}}>No data</div>
-                )
+              isLoading ? <div style={
+                Object.assign({},
+                  tableLoadingCoverStyle,
+                  isLoading ? {background: 'rgba(0,0,0,0)'} : null)
+              }> <CircularProgress /></div> : null
+            }
+            {
+              displayTree.length > 0 ? displayTree.map(row => {
+                return (
+                  <FeatureAutomationRow
+                    key={row.id}
+                    allUsers={allUsers}
+                    onEditAxapis={::this.openAxapisEditDialog}
+                    onPathSave={::this.onPathSave}
+                    onOwnersSave={::this.onOwnersSave}
+                    onDifficultySave={::this.onDifficultySave}
+                    toggleChildren={::this.toggleChildren}
+                    isLoading={isLoading}
+                    {...row} />
+                );
+              }) : isLoading ? null : (
+                <div style={{padding: 15, textAlign: 'center'}}>No data</div>
+              )
             }
           </div>
         </Paper>
