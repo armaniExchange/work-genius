@@ -110,7 +110,6 @@ export default class AxapiRequest {
     }
 
     buildImagePath(imageHost, release, build, withFPGA=false) {
-        build = 115
         let imageUrl = `scp://${imageHost.username}:${imageHost.password}@${imageHost.host}:`;
         var fpga = '20';
         var pattern = "/mnt/bldimage/BLD_STO_REL*" + release + "_" + build + "*" + fpga + ".64/output/*.upg";
