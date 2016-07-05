@@ -13,4 +13,9 @@
   white-space: nowrap;
   margin-bottom: 2px;
   overflow: hidden;
+  cursor: pointer;
+}
+
+.choice-image {
+  border: 2px solid #0044ff;
 }

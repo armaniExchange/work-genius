@@ -95,8 +95,16 @@ class DeviceTableBody extends Component {
 
   upgradeAxServer(item) {
     const {upgradeDevice, data} = this.props;
-    if ((item._release && item._release !== item.release)
+    if ( !item.image ) {
+      item.image = item.boot_from === 'HD_PRIMARY' ? 'pri' : 'sec';
+    }
+
+    const currentImage = item.boot_from === 'HD_PRIMARY' ? 'pri' : 'sec';
+
+    if ( item.image !== currentImage
+        || (item._release && item._release !== item.release)
         || (item._build && String(item.build) !== String(item._build))) {
+
       // const {upgradeDevice} = this.props;
       upgradeDevice(item);
 
@@ -124,6 +132,15 @@ class DeviceTableBody extends Component {
     const isEdit = this.state.isEdit;
     isEdit[item.ip] = true;
     this.setState({isEdit: isEdit});
+  }
+
+  choiceImage(item, image) {
+    const {data} = this.props;
+    const itemIn = data.find((one) => {
+      return one.ip === item.ip;
+    });
+    itemIn['image'] = image;
+    this.setState({data: data});
   }
 
   toApplyItem(item) {
@@ -169,14 +186,20 @@ class DeviceTableBody extends Component {
             <a className="btn-link" href={'http://' + row.ip} target="_black">{row.ip}</a>
             <span
                 className={ 'btn-xs btn-success span-default '
-                    + (row.boot_from === 'HD_PRIMARY' ? '' : 'backgroup-gray')}
+                    + (row.boot_from === 'HD_PRIMARY' ? '' : 'backgroup-gray ')
+                    + (row.image === 'pri' ? 'choice-image ' : '')}
+                onClick={ ::this.choiceImage.bind(this, row, 'pri') }
                 title={'Pri: ' + (row.hd_pri ? row.hd_pri : '')}>
               Pri: {row.hd_pri}</span>
+              <checkbox />
             <span
                 className={ 'btn-xs btn-success span-default '
-                    + (row.boot_from === 'HD_SECONDARY' ? '' : 'backgroup-gray') }
+                    + (row.boot_from === 'HD_SECONDARY' ? '' : 'backgroup-gray ')
+                    + (row.image === 'sec' ? 'choice-image ' : '') }
+                onClick={ ::this.choiceImage.bind(this, row, 'sec') }
                 title={'Sec: ' + (row.hd_sec ? row.hd_sec : '')}>
               Sec: {row.hd_sec}</span>
+              <checkbox />
           </Td>
           <Td>{row.address}</Td>
           <Td>{row.apc && (
@@ -272,6 +295,7 @@ class DeviceTableBody extends Component {
                   className={!this.state.isEdit[row.ip] ? 'hidden' : ''}
                   style={wellStyles}
                   bsSize="xsmall"
+                  disabled={username !== row.locked_by}
                   bsStyle="success"
                   onClick={ ::this.upgradeAxServer.bind(this, row) }>
                     Upgrade</Button>) }

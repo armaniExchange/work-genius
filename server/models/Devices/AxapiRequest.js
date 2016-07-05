@@ -181,8 +181,8 @@ export default class AxapiRequest {
                 }
             }
         });
-        // let result = {};
         console.log(authOptions);
+        // let result = {};
         let result =  await this.axapiPromise(authOptions);
         // console.log('upgraded', result);
         // this.logOff();
