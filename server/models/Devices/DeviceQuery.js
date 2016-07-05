@@ -40,20 +40,20 @@ export const getVersion = async (req, res) => {
 };
 
 export const upgrade = async (req, res) => {
-	let apiRequest = new AxapiRequest(req.body.ip);
-	console.log(IMAGE_HOST);
-	console.log(req.body.release);
-	console.log(req.body.build);
-  console.log(req.body.with_fpga);
-	return res.json(await apiRequest.upgrade(IMAGE_HOST, req.body.release, req.body.build, req.body.with_fpga));
+	let query = req.body;
+	if (!query.image || !query.release || !query.build || !query.ip) {
+		return res.json({msg: {err: 'Some fields do not exist'}})
+	}
+	let apiRequest = new AxapiRequest(query.ip);
+	return res.json(await apiRequest.upgrade(IMAGE_HOST, query));
 };
 
 
 export const getReleases = async (req, res) => {
-	// console.log(req);	
+	// console.log(req);
 	let apiRequest = new AxapiRequest();
-	console.log('before get releases');
+	// console.log('before get releases');
 	let releases = await apiRequest.getAllReleases();	
-	console.log('after get releases');
+	// console.log('after get releases');
 	return res.json(releases);
 };
