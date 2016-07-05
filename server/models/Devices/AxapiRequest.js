@@ -167,8 +167,8 @@ export default class AxapiRequest {
     async upgrade(imageHost, release, build, withFPGA=false) {
         let token = await this.getAuthToken();
         this.options.headers['Authorization'] = token;
-        let buildImagePath = 'scp://upgrade:upgrade@192.168.105.93:/mnt/bldimage/BLD_STO_REL_4_1_1_115_183167_20160704_031553_0000.20.64/output/ACOS_non_FTA_4_1_1_115.64.upg';
-        // let buildImagePath = this.buildImagePath(imageHost, release, build, withFPGA);
+        // let buildImagePath = 'scp://upgrade:upgrade@192.168.105.93:/mnt/bldimage/BLD_STO_REL_4_1_1_115_183167_20160704_031553_0000.20.64/output/ACOS_non_FTA_4_1_1_115.64.upg';
+        let buildImagePath = this.buildImagePath(imageHost, release, build, withFPGA);
         let authOptions = Object.assign({}, this.options, {
             url: this.buildAXAPI('upgrade/hd'),
             method: 'POST',
