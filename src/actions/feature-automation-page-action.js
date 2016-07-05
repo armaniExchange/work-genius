@@ -118,6 +118,7 @@ export function setupTestReportOfCategory({categoryId, path, axapis, owners, dif
       .then(() => {
         dispatch(fetchDocumentCategoriesWithReport());
         dispatch(setupTestReportOfCategorySuccess());
+        dispatch(setLoadingState(false));
       })
       .catch((error) => {
         dispatch(apiFailure(error));
