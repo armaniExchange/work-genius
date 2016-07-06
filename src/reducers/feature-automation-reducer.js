@@ -106,6 +106,7 @@ const initialState = Map({
   unitTestCreatedTimeList: List.of(),
   end2endTestCreatedTimeList: List.of(),
   axapiTestCreatedTimeList: List.of(),
+  testReportAxapiSuggestions: List.of(),
   filterOwner: null,
   filterRelease: null,
   filterCase: null,
@@ -138,6 +139,8 @@ export default function featureAutomationReducer(state = initialState, action) {
         resultState = resultState.set('filterCase', action.filterCase);
       }
       return resultState;
+    case actionTypes.FETCH_TEST_REPORT_AXAPI_SUGGESTIONS_SUCCESS:
+      return state.set('testReportAxapiSuggestions', List(action.testReportAxapiSuggestions));
     case actionTypes.SEARCH_AUTOMATION_CATEGORY_BY_NAME:
       return state.set('searchCategoryName', action.searchCategoryName);
     default:

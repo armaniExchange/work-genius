@@ -3,7 +3,7 @@ import React, { Component, PropTypes } from 'react';
 import Select from 'react-select';
 import Dialog from 'material-ui/lib/dialog';
 import FlatButton from 'material-ui/lib/flat-button';
-import TextField from 'material-ui/lib/text-field';
+import AutoComplete from 'material-ui/lib/auto-complete';
 // Styles
 import './_EditFeatureAutomationAxapiDialog.css';
 
@@ -75,7 +75,7 @@ class EditFeatureAutomationAxapiDialog extends Component {
     this.props.onRequestClose();
   }
 
-  onAddToAllUrlKeyUp(event) {
+  onAddToAllUrlKeyDown(event) {
     if (event.which === 13) {
       event.stopPropagation();
       this.onAddToAllUrlDone();
@@ -85,8 +85,8 @@ class EditFeatureAutomationAxapiDialog extends Component {
     }
   }
 
-  onAddToAllUrlChange(event) {
-    this.setState({ addToAllUrl: event.target.value });
+  onAddToAllUrlChange(addToAllUrl) {
+    this.setState({ addToAllUrl });
   }
 
   onAddToAllUrlDone() {
@@ -122,8 +122,19 @@ class EditFeatureAutomationAxapiDialog extends Component {
     this.setState({ editingDeleteUrls: value.trim() });
   }
 
+  getFilteredTestReportAxapiSuggestion() {
+    const { testReportAxapiSuggestions } = this.props;
+    const { addToAllUrl } = this.state;
+    return testReportAxapiSuggestions
+      .filter((item)=>item.includes(addToAllUrl))
+      .slice(0, 8);
+  }
+
   render() {
-    const { open } = this.props;
+    const {
+      open,
+      testReportAxapiSuggestions
+    } = this.props;
     const {
       addToAllUrl,
       editingPostUrls,
@@ -131,6 +142,8 @@ class EditFeatureAutomationAxapiDialog extends Component {
       editingPutUrls,
       editingDeleteUrls
     } = this.state;
+    const testReportAxapiSuggestionOptions = testReportAxapiSuggestions.map(item=>({value: item, label: item}));
+
     const actions = [
       <FlatButton
         label="Cancel"
@@ -164,12 +177,14 @@ class EditFeatureAutomationAxapiDialog extends Component {
         bodyStyle={{overflowY: 'auto'}}
       >
         <div style={styles.wrapper}>
-          <TextField
-            style={{width: '100%'}}
+          <AutoComplete
+            fullWidth={true}
             hintText="Add url to all method"
-            value={addToAllUrl}
-            onChange={::this.onAddToAllUrlChange}
-            onKeyUp={::this.onAddToAllUrlKeyUp}/>
+            searchText={addToAllUrl}
+            dataSource={::this.getFilteredTestReportAxapiSuggestion()}
+            onUpdateInput={::this.onAddToAllUrlChange}
+            onNewRequest={::this.onAddToAllUrlChange}
+            onKeyDown={::this.onAddToAllUrlKeyDown}/>
           <FlatButton
             secondary={true}
             label="Add"
@@ -184,6 +199,7 @@ class EditFeatureAutomationAxapiDialog extends Component {
               allowCreate={true}
               multi={true}
               value={editingPostUrls}
+              options={testReportAxapiSuggestionOptions}
               onChange={::this.onEditingPostUrlsChange}
             />
           </div>
@@ -195,6 +211,7 @@ class EditFeatureAutomationAxapiDialog extends Component {
               allowCreate={true}
               multi={true}
               value={editingGetUrls}
+              options={testReportAxapiSuggestionOptions}
               onChange={::this.onEditingGetUrlsChange}
             />
           </div>
@@ -206,6 +223,7 @@ class EditFeatureAutomationAxapiDialog extends Component {
               allowCreate={true}
               multi={true}
               value={editingPutUrls}
+              options={testReportAxapiSuggestionOptions}
               onChange={::this.onEditingPutUrlsChange}
             />
           </div>
@@ -217,6 +235,7 @@ class EditFeatureAutomationAxapiDialog extends Component {
               allowCreate={true}
               multi={true}
               value={editingDeleteUrls}
+              options={testReportAxapiSuggestionOptions}
               onChange={::this.onEditingDeleteUrlsChange}
             />
           </div>
@@ -228,17 +247,19 @@ class EditFeatureAutomationAxapiDialog extends Component {
 
 
 EditFeatureAutomationAxapiDialog.propTypes = {
-  id             : PropTypes.string,
-  open           : PropTypes.bool,
-  axapis         : PropTypes.array,
-  onRequestClose : PropTypes.func,
-  onSubmit       : PropTypes.func
+  id                         : PropTypes.string,
+  open                       : PropTypes.bool,
+  axapis                     : PropTypes.array,
+  onRequestClose             : PropTypes.func,
+  onSubmit                   : PropTypes.func,
+  testReportAxapiSuggestions : PropTypes.array
 };
 
 
 EditFeatureAutomationAxapiDialog.defaultProps = {
-  open           : false,
-  axapis         : []
+  open                       : false,
+  testReportAxapiSuggestions : [],
+  axapis                     : []
 };
 
 export default EditFeatureAutomationAxapiDialog;

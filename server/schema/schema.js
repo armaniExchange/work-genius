@@ -93,6 +93,7 @@ const schema = new GraphQLSchema({
       // test report
       getAllDocumentCategoriesWithTestReport : TestReportQuery.getAllDocumentCategoriesWithTestReport,
       getTestReportCreatedTimeList           : TestReportQuery.getTestReportCreatedTimeList,
+      getTestReportAxapiSuggestion           : TestReportQuery.getTestReportAxapiSuggestion,
 
       // device
       // versionInfo                            : DeviceQuery.versionInfo,

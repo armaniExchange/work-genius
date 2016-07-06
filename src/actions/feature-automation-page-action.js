@@ -179,6 +179,44 @@ export function fetchTestReportCreatedTimeList() {
   };
 }
 
+export function fetchTestReportAxapiSuggestionsSuccess(testReportAxapiSuggestions) {
+  return {
+    type: actionTypes.FETCH_TEST_REPORT_AXAPI_SUGGESTIONS_SUCCESS,
+    testReportAxapiSuggestions
+  };
+}
+
+export function fetchTestReportAxapiSuggestions() {
+  return dispatch => {
+    dispatch({
+      type: actionTypes.FETCH_TEST_REPORT_AXAPI_SUGGESTIONS
+    });
+    const config = {
+      method: 'POST',
+      body: `{ getTestReportAxapiSuggestion }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((body) => {
+        const { getTestReportAxapiSuggestion } = body.data;
+        dispatch(fetchTestReportAxapiSuggestionsSuccess(getTestReportAxapiSuggestion));
+      })
+      .catch((error) => {
+        dispatch(apiFailure(error));
+      });
+
+  };
+}
+
 export function filterTestReport(filters) {
 
   return dispatch => {
