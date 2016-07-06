@@ -1,8 +1,5 @@
 // Use tables:
 // test_report_categories
-// unit_test_reports
-// end2end_test_reports
-// axapi_test_reports
 
 // GraphQL
 import {
