@@ -17,7 +17,9 @@ class DevicePage extends Component{
     name: PropTypes.string,
     cloumns: PropTypes.array,
     data: PropTypes.array,
+    updateData: PropTypes.number,
     currentUser: PropTypes.object.isRequired,
+    upgradeState: PropTypes.object,
     releases: PropTypes.object.isRequired,
     deviceActions: PropTypes.object.isRequired
   }

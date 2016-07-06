@@ -109,9 +109,9 @@ export default class AxapiRequest {
 
     }
 
-    buildImagePath(imageHost, release, build, withFPGA=false) {
+    buildImagePath(imageHost, release, build, fpga) {
         let imageUrl = `scp://${imageHost.username}:${imageHost.password}@${imageHost.host}:`;
-        var fpga = '20';
+        // var fpga = '20';
         var pattern = "/mnt/bldimage/BLD_STO_REL*" + release + "_" + build + "*" + fpga + ".64/output/*.upg";
         var files = glob.sync(pattern, {});
 
@@ -119,13 +119,14 @@ export default class AxapiRequest {
         if (files && files[0]) {
             return `${imageUrl}${files[0]}`;
         }
-        var file = '/mnt/bldimage/BLD_STO_REL_4_1_1_108_182691_20160626_211123_0000.20.64/output/ACOS_non_FTA_4_1_1_108.64.upg';
-        return `${imageUrl}${file}`;
+        // var file = '/mnt/bldimage/BLD_STO_REL_4_1_1_108_182691_20160626_211123_0000.20.64/output/ACOS_non_FTA_4_1_1_108.64.upg';
+        // return `${imageUrl}${file}`;
+        return undefined;
     }
 
     async getAllReleases() {
         var data = [];
-        if (PRODUCTION_MODE) {            
+        if (PRODUCTION_MODE) {
             data = await this.getAliveReleases();
         } else {
             let dataDemo = require('./release_demo_data');
@@ -164,11 +165,14 @@ export default class AxapiRequest {
     // }
 
     async upgrade(imageHost, query) {
-        let token = await this.getAuthToken();
         console.log(query);
+        let buildImagePath = this.buildImagePath(imageHost, query.release, query.build, query.fpga);
+        if (!buildImagePath) {
+            return {msg: {err: 'Cannot find image file.'}}
+        }
+        let token = await this.getAuthToken();
         this.options.headers['Authorization'] = token;
         // let buildImagePath = 'scp://upgrade:upgrade@192.168.105.93:/mnt/bldimage/BLD_STO_REL_4_1_1_115_183167_20160704_031553_0000.20.64/output/ACOS_non_FTA_4_1_1_115.64.upg';
-        let buildImagePath = this.buildImagePath(imageHost, query.release, query.build, query.withFPGA);
         let authOptions = Object.assign({}, this.options, {
             url: this.buildAXAPI('upgrade/hd'),
             method: 'POST',
@@ -184,11 +188,12 @@ export default class AxapiRequest {
         console.log(authOptions);
         // let result = {};
         let result =  await this.axapiPromise(authOptions);
-        // console.log('upgraded', result);
         // this.logOff();
         return {
-            result: result,
-            option: authOptions
+            msg: {
+                result: result,
+                option: authOptions
+            }
         };
     }
 

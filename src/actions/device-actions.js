@@ -35,6 +35,13 @@ const fetchData = {
       ip,
       data
     };
+  },
+  upgradeResult: (item, data) => {
+    return {
+      type: actionTypes.FETCH_RESOURCE_DEVICE_UPGRADE_RESULT,
+      item,
+      data
+    };
   }
 };
 
@@ -180,7 +187,7 @@ const deviceActions = {
           "release": "${item.release}",
           "build": "${item.build}",
           "image": "${item.image}",
-          "with_fpga": false
+          "fpga": "${item.firmware_version}"
         }`,
         headers: {
           'Content-Type': 'application/json',
@@ -191,9 +198,9 @@ const deviceActions = {
       return fetch(SERVER_BASIC_URL + 'upgrade', config)
           .then((res) => res.json())
           .then((body) => {
-            // dispatch(fetchData.release(body));
-            console.log(body);
-            console.log(dispatch);
+            if (body) {
+              dispatch(fetchData.upgradeResult(item, body));
+            }
           })
           .catch((err) => {
               throw new Error(err);

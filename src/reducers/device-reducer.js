@@ -1,5 +1,6 @@
 import actionTypes from '../constants/action-types';
 import Immutable, { Map, List } from 'immutable';
+import moment from 'moment';
 
 const initialState = Map({
   cloumns: List.of(
@@ -30,9 +31,15 @@ const initialState = Map({
   //     Map({ip: '192.168.105.86', apc: {id : '9', url: 'http://192.168.6.118/NMC/itt+FtpX0p800clEEEtQWw/outlctrl.htm', username: 'apc', password: 'apc'}, address: 'BJ', console: 'telnet 192.168.105.11:2004', 'ax-model': 'TH3030s', 'product-id-magic': 'Yes', 'vcs': 'No', 'e2e-test-machine': 'Yes', 'traffic-mahcine': 'No', release: '4.1.1', build: '99'}),
   // ),
   data: List.of(),
+  updateData: 0,
   releases: Map({}),
   builds: List.of(),
-  currentUser: Map({})
+  currentUser: Map({}),
+  upgradeState: Map({
+    success: false,
+    item: undefined,
+    times: 0
+  })
 });
 
 function fetchVersionToState(state, ip, data) {
@@ -47,6 +54,7 @@ function fetchVersionToState(state, ip, data) {
       device.hd_pri = version['hd-pri'];
       device.hd_sec = version['hd-sec'];
       device.serial_number = version['serial-number'];
+      device.firmware_version = version['firmware-version'] === '0.0.0' ? '20' : '52';
 
       let currentRelease = device.boot_from === 'HD_PRIMARY' ? device.hd_pri : device.hd_sec;
       let currentReleaseSplit = currentRelease.split('.');
@@ -55,6 +63,7 @@ function fetchVersionToState(state, ip, data) {
       let release = currentReleaseSplit.join('_');
       device.release = release;
       device.build = build;
+      state = state.set('updateData', parseInt(moment().format('x')));
       state = state.set('data', Immutable.fromJS(devices));
     }
   }
@@ -62,10 +71,18 @@ function fetchVersionToState(state, ip, data) {
   return state;
 }
 
+function fetchUpgradeResultToState(state, item, data) {
+  var upgradeState = state.get('upgradeState').toJS();
+  upgradeState.success = (data && data.msg && !data.msg.err);
+  upgradeState.item = item;
+  return state.set('upgradeState', Immutable.fromJS(upgradeState));
+}
+
 export default function demoReducer(state = initialState, action) {
   let nextState = state;
   switch (action.type) {
     case actionTypes.FETCH_RESOURCE_DEVICE_INFO:
+      state = state.set('updateData', parseInt(moment().format('x')));
       nextState = nextState.set('data', Immutable.fromJS(action.data));
       return nextState;
     case actionTypes.FETCH_RESOURCE_DEVICE_RELEASE:
@@ -78,7 +95,9 @@ export default function demoReducer(state = initialState, action) {
       return nextState;
     case actionTypes.FETCH_RESOURCE_DEVICE_VERSION:
       nextState = fetchVersionToState(nextState, action.ip, action.data);
-      console.log(nextState.get('data'));
+      return nextState;
+    case actionTypes.FETCH_RESOURCE_DEVICE_UPGRADE_RESULT:
+      nextState = fetchUpgradeResultToState(nextState, action.item, action.data);
       return nextState;
     default:
       return nextState;
