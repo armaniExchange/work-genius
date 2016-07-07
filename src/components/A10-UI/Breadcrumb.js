@@ -6,7 +6,7 @@ export default class Breadcrumb extends Component {
   render() {
     let { data } = this.props;
     data  = FIRST_BREADCRUMB.concat(data);
-    return (<ol className="breadcrumb a10-breadcrumb">{
+    return (<ol {...this.props} className="breadcrumb a10-breadcrumb">{
       data.map((item,idx) => {
         let isLast = idx===data.length-1;
         let child = isLast ? [item.txt] : [<Link key={idx} to={item.url}>{item.txt}</Link>];

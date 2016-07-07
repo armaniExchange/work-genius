@@ -193,7 +193,7 @@ class DocumentPage extends Component {
 
     return (
       <section>
-        <Breadcrumb data={BREADCRUMB.document} />
+        <Breadcrumb data={BREADCRUMB.document} style={{position: 'fixed'}}/>
         <div className="document-page-content">
           <div className="left-navigation">
             <Link to="/main/knowledge/document/edit/new">
@@ -207,12 +207,14 @@ class DocumentPage extends Component {
               tags={allTags}
               value={tag} />
             <div className="knowledge-tree-label">
-              <h5>KNOWLEDGE TREE</h5>
-              <Link to="/main/knowledge/document/category/edit">
-                <i className="fa fa-pencil" ariaHidden="true" />
-              </Link>
+              <h5>KNOWLEDGE TREE
+                <Link to="/main/knowledge/document/category/edit">
+                  <i className="fa fa-pencil" ariaHidden="true" />
+                </Link>
+              </h5>
             </div>
             <CategoryTree
+              className="category-tree"
               data={documentCategories}
               selectedPath={currentSelectedCategory.path}
               onNodeClick={::this._onNodeClick}
