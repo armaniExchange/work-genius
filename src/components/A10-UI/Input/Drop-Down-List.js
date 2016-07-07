@@ -4,6 +4,10 @@ import SelectField from 'material-ui/lib/select-field';
 import MenuItem from 'material-ui/lib/menus/menu-item';
 
 export default class DropDownList extends Component {
+    static defaultProps = {
+        maxHeight: 300
+    };
+
     constructor(props) {
         super(props);
         this.DEFAULT_ALL_VALUE = '';
@@ -15,7 +19,8 @@ export default class DropDownList extends Component {
 
     render() {
         let { title, aryOptionConfig=[], onOptionClick, isNeedAll, AllValue,
-            isDropDownListVisual2
+            isDropDownListVisual2,
+            maxHeight
          } = this.props;
 
         if (isNeedAll) {
@@ -45,13 +50,19 @@ export default class DropDownList extends Component {
               </div>);
         }
 
+
+        const dropdownListStyle = {
+          maxHeight,
+          overflowY: 'auto',
+          overflowX: 'hidden'
+        };
         return (<div style={{'display':'inline'}} id={this.htmlid}>
             {title}
             <button
                     className="mdl-button mdl-js-button mdl-button--icon">
               <i className="material-icons">more_vert</i>
             </button>
-            <ul className="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" htmlFor={this.htmlid}>
+            <ul className="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" style={dropdownListStyle} htmlFor={this.htmlid}>
                 {aryOptionConfig.map((item, i) => {
                     return (<li key={i} onClick={()=>{
                         onOptionClick && onOptionClick(item.value);
@@ -68,5 +79,6 @@ DropDownList.propTypes = {
     isNeedAll: PropTypes.bool,
     AllValue: PropTypes.oneOfType([PropTypes.string,PropTypes.number]),
     aryOptionConfig: PropTypes.array,
-    onOptionClick: PropTypes.func
+    onOptionClick: PropTypes.func,
+    maxHeight: PropTypes.number
 };
