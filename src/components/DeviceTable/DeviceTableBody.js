@@ -273,7 +273,9 @@ class DeviceTableBody extends Component {
           </Td>
           <Td>
             { !this.state.isEdit[row.ip]
-              ? (<span>{row.is_e2e_machine}</span>)
+              ? (<span>{row.is_e2e_machine === 'Yes'
+                  ? (<strong>{row.is_e2e_machine}</strong>)
+                  : (<span>{row.is_e2e_machine}</span>)}</span>)
               : (<Select
                   className="text-left"
                   value={ row.is_e2e_machine }

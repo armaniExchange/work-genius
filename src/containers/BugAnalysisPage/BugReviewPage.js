@@ -34,7 +34,7 @@ class BugReviewPage extends Component {
         // Get the init bug review page data
         fetchPreventTagsOptions();
         fetchAllUsers();
-        fetchBugReviewPageData(pager);
+        fetchBugReviewPageData(pager, '4.1.1');
     }
 
     _onClickPaginate(selected) {

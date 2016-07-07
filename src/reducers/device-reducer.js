@@ -11,7 +11,7 @@ const initialState = Map({
       Map({ title: 'Ax Model', key: 'ax-model', colspan: 1}),
       Map({ title: 'Product ID Magic', key: 'product-id-magic', colspan: 1}),
       Map({ title: 'VCS', key: 'vcs', colspan: 1}),
-      Map({ title: 'E2E Test Machine', key: 'e2e-test-machine', colspan: 1}),
+      Map({ title: 'Test Machine', key: 'e2e-test-machine', colspan: 1}),
       Map({ title: 'Traffic Mahcine', key: 'traffic-mahcine', colspan: 1}),
       Map({ title: 'Release', key: 'release', colspan: 1}),
       Map({ title: 'Build', key: 'build', colspan: 1}),
