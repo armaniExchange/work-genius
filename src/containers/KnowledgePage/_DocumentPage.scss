@@ -5,7 +5,6 @@
     a {
       position: absolute;
       right: 0;
-      bottom: 0;
       color: #00bcd4;
       &:hover,&:focus {
         color: #23527c
@@ -14,18 +13,37 @@
   }
   .left-navigation {
     width: 300px;
-    position: absolute;
     left: 40px;
     top: 60px;
+    position: fixed;
+    height: 100%;
+    padding-top: 130px;
+    display: flex;
+    padding-bottom: 80px;
+    flex-direction: column;
+    .category-tree {
+      margin: 0;
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 20px;
+    }
   }
   .main-content {
     margin:0 auto;
     max-width: 1200px;
     min-width: 650px;
+    position: relative;
   }
-  .blank-article {
+  .blank-article,
+  .loading-articles {
     text-align: center;
     padding: 30px;
     color: gray;
+  }
+  .loading-articles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
   }
 }

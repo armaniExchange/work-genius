@@ -91,8 +91,8 @@ class FeatureAutomationRow extends Component {
   renderAxapis() {
     const { axapis } = this.props;
     const wrapperStyle = {overflow: 'hidden', textOverflow: 'ellipsis'};
-    const result = _.chain(axapis)
-      .union(['POST', 'GET', 'PUT', 'DELETE'])
+    const result = _.chain(['POST', 'GET', 'PUT', 'DELETE'])
+      .union(axapis)
       .map(axapi => {
         const [ method, url ] = axapi.split(' ');
         return { method, url };

@@ -7,6 +7,7 @@ import { Link } from 'react-router';
 import { bindActionCreators } from 'redux';
 import Pagination from 'rc-pagination';
 import RaisedButton from 'material-ui/lib/raised-button';
+import CircularProgress from 'material-ui/lib/circular-progress';
 
 import Breadcrumb from '../../components/A10-UI/Breadcrumb';
 import BREADCRUMB from '../../constants/breadcrumb';
@@ -144,10 +145,11 @@ class DocumentPage extends Component {
 
   renderArticleList() {
     const {
+      isArticleLoading,
       articleList,
       tag
     } = this.props;
-    if (articleList.length === 0) {
+    if (!isArticleLoading && articleList.length === 0) {
       return (
         <div className="blank-article">
           <i className="fa fa-file-text-o fa-5x"/>
@@ -184,7 +186,8 @@ class DocumentPage extends Component {
       milestone,
       owner,
       tag,
-      currentPage
+      currentPage,
+      isArticleLoading
     } = this.props;
     const {
       isConfirmDeleteArticleDialogVisible,
@@ -193,7 +196,7 @@ class DocumentPage extends Component {
 
     return (
       <section>
-        <Breadcrumb data={BREADCRUMB.document} />
+        <Breadcrumb data={BREADCRUMB.document} style={{position: 'fixed'}}/>
         <div className="document-page-content">
           <div className="left-navigation">
             <Link to="/main/knowledge/document/edit/new">
@@ -207,12 +210,14 @@ class DocumentPage extends Component {
               tags={allTags}
               value={tag} />
             <div className="knowledge-tree-label">
-              <h5>KNOWLEDGE TREE</h5>
-              <Link to="/main/knowledge/document/category/edit">
-                <i className="fa fa-pencil" ariaHidden="true" />
-              </Link>
+              <h5>KNOWLEDGE TREE
+                <Link to="/main/knowledge/document/category/edit">
+                  <i className="fa fa-pencil" ariaHidden="true" />
+                </Link>
+              </h5>
             </div>
             <CategoryTree
+              className="category-tree"
               data={documentCategories}
               selectedPath={currentSelectedCategory.path}
               onNodeClick={::this._onNodeClick}
@@ -229,6 +234,9 @@ class DocumentPage extends Component {
               onChange={::this.onFilterChange}
               onClearAll={::this.resetQueryAndFetchArticles}
             />
+            {
+              isArticleLoading ? <div className="loading-articles"> <CircularProgress /></div> : null
+            }
             { this.renderArticleList() }
             {
               articleTotalCount > PAGE_SIZE ? (
@@ -263,6 +271,7 @@ DocumentPage.propTypes = {
   allMilestones           : PropTypes.array,
   documentActions         : PropTypes.object.isRequired,
   articleActions          : PropTypes.object.isRequired,
+  isArticleLoading        : PropTypes.bool,
   // query object
   currentPage             : PropTypes.number,
   tag                     : PropTypes.string,

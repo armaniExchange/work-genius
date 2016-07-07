@@ -33,15 +33,17 @@ class FeatureAutomationPage extends Component {
     const {
       fetchDocumentCategoriesWithReport,
       fetchTestReportCreatedTimeList,
+      fetchTestReportAxapiSuggestions,
       filterTestReport
     } = this.props.featureAutomationActions;
     const { fetchAllUsers } = this.props.documentActions;
-
     const { currentUser } = this.props;
     const { privilege, id } = currentUser;
+
     if (privilege <= 5) {
       filterTestReport({ filterOwner: id });
     }
+    fetchTestReportAxapiSuggestions();
     fetchTestReportCreatedTimeList();
     fetchDocumentCategoriesWithReport();
     fetchAllUsers();
@@ -266,6 +268,7 @@ class FeatureAutomationPage extends Component {
       unitTestCreatedTimeList,
       end2endTestCreatedTimeList,
       axapiTestCreatedTimeList,
+      testReportAxapiSuggestions,
       allUsers,
       isLoading,
       filterOwner,
@@ -411,6 +414,7 @@ class FeatureAutomationPage extends Component {
           open={isAxapiEditDialogDisplay}
           id={editingCategoryId}
           axapis={editingAxapis}
+          testReportAxapiSuggestions={testReportAxapiSuggestions}
           onRequestClose={::this.closeAxapisEditDialog}
           onSubmit={::this.onAxapisSave}
         />
@@ -427,6 +431,7 @@ FeatureAutomationPage.propTypes = {
   end2endTestCreatedTimeList       : PropTypes.array,
   axapiTestCreatedTimeList         : PropTypes.array,
   allUsers                         : PropTypes.array,
+  testReportAxapiSuggestions       : PropTypes.array,
   isLoading                        : PropTypes.bool,
   filterOwner                      : PropTypes.string,
   filterRelease                    : PropTypes.string,
@@ -439,6 +444,7 @@ FeatureAutomationPage.defaultProps = {
   unitTestCreatedTimeList          : [],
   end2endTestCreatedTimeList       : [],
   axapiTestCreatedTimeList         : [],
+  testReportAxapiSuggestions       : [],
   allUsers                         : []
 };
 
@@ -452,6 +458,7 @@ function mapStateToProps(state) {
     unitTestCreatedTimeList,
     end2endTestCreatedTimeList,
     axapiTestCreatedTimeList,
+    testReportAxapiSuggestions,
     isLoading
   } = state.featureAutomation.toJS();
   const {
@@ -469,6 +476,7 @@ function mapStateToProps(state) {
     unitTestCreatedTimeList,
     end2endTestCreatedTimeList,
     axapiTestCreatedTimeList,
+    testReportAxapiSuggestions,
     allUsers
   };
 }

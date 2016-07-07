@@ -35,7 +35,6 @@ export function fetchArticles(query = {}) {
     dispatch({
       type: actionTypes.FETCH_ARTICLES
     });
-    dispatch(setLoadingState(true));
 
     let queryString = Object.keys(query)
       .reduce((previous, key) => previous + `${key}: ${JSON.stringify(query[key])} `, '');
@@ -86,7 +85,6 @@ export function fetchArticles(query = {}) {
       })
       .then((body) => {
         dispatch(fetchArticlesSuccess(body.data.getAllArticles.articles, body.data.getAllArticles.count));
-        dispatch(setLoadingState(false));
       })
       .catch((error) => {
         dispatch(fetchArticlesFail(error));

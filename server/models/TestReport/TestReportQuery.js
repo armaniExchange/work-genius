@@ -1,14 +1,13 @@
 // Use tables:
 // test_report_categories
-// unit_test_reports
-// end2end_test_reports
-// axapi_test_reports
+// test_report_axapi_suggestions
 
 // GraphQL
 import {
   GraphQLList,
   GraphQLObjectType,
-  GraphQLFloat
+  GraphQLFloat,
+  GraphQLString
 } from 'graphql';
 // Models
 import TestReportCategoryType from './TestReportCategoryType';
@@ -99,6 +98,24 @@ let CategoryQuery = {
               end2endTest: r.row('end2endTest').default([]).filter({createdAt: end2endTestCreatedTime }),
               axapiTest: r.row('axapiTest').default([]).filter({createdAt: axapiTestCreatedTime }),
            })
+          .coerceTo('array')
+          .run(connection);
+        return result;
+        await connection.close();
+      } catch (err) {
+        return err;
+      }
+    }
+  },
+  'getTestReportAxapiSuggestion': {
+    type: new GraphQLList(GraphQLString),
+    description: 'Get axapi suggestion',
+    resolve: async () => {
+      try {
+        const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+        const result = await r.db('work_genius')
+          .table('test_report_axapi_suggestions')
+          .map(r.row('api'))
           .coerceTo('array')
           .run(connection);
         return result;
