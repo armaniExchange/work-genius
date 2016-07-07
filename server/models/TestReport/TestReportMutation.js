@@ -19,6 +19,11 @@ import { DB_HOST, DB_PORT, MAILER_ADDRESS } from '../../constants/configurations
 
 import parseMarkdown from '../../libraries/parseMarkdown';
 
+const testReportTypeTextMap = {
+  axapiTest: 'AXAPI Test',
+  end2endTest: 'End to end Test',
+  unitTest: 'Unit Test',
+};
 
 const notifyOwnersErrorsWithEmail = async (transporter, testReportType, createdAt)=> {
   const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
@@ -45,10 +50,11 @@ const notifyOwnersErrorsWithEmail = async (transporter, testReportType, createdA
     console.log('No issues found');
     return;
   }
-  const HeaderMd = `Hi Team,  \nAutomation test found issues, please take a look at it.\n`;
+  const testReportTypeText = testReportTypeTextMap[testReportType];
+  const HeaderMd = `Hi Team,  \nFeature Automation test found issues, please take a look at it, thank you.\n`;
   const errorReportsMd = errorReports.map(errorReport=>{
       return `## ${errorReport.name}\n
-<span style="color:red;">${testReportType}: ${errorReport[testReportType].length} Fails</span>\n
+<span style="color:red;">${testReportTypeText}: ${errorReport[testReportType].length} Fails</span>\n
 ---\n\`\`\`js\n
 ${JSON.stringify(errorReport[testReportType], null, '  ')}\n
 \`\`\`\n`;
@@ -56,7 +62,7 @@ ${JSON.stringify(errorReport[testReportType], null, '  ')}\n
   const mailOption = {
     from: MAILER_ADDRESS,
     to: errorReports.map(item => item.email),
-    subject: `[KB - Feature Automation] ${testReportType} failed report`,
+    subject: `[KB - Feature Automation] ${testReportTypeText} failed report`,
     html: parseMarkdown(HeaderMd + errorReportsMd),
     cc: 'ax-web-DL@a10networks.com'
   };
