@@ -67,6 +67,7 @@ const initialState = Map({
   allTags: List.of(),
   allUsers: List.of(),
   allMilestones: List.of(),
+  isArticleLoading: true,
   // query object
   categoryId: '',
   currentPage: 1,
@@ -79,8 +80,14 @@ const initialState = Map({
 
 export default function documentReducer(state = initialState, action) {
   switch (action.type) {
+    case actionTypes.FETCH_ARTICLES:
+      return state.set('isArticleLoading', true);
     case actionTypes.FETCH_ARTICLES_SUCCESS:
-      return state.set('articleList', action.articleList).set('articleTotalCount', action.count);
+        return state.set('articleList', action.articleList)
+        .set('articleTotalCount', action.count)
+        .set('isArticleLoading', false);
+    case actionTypes.FETCH_ARTICLES_FAIL:
+      return state.set('isArticleLoading', false);
     case actionTypes.FETCH_ALL_TAGS_SUCCESS:
       return state.set('allTags', action.allTags);
     case actionTypes.SET_SELECTED_CATEGORY:
