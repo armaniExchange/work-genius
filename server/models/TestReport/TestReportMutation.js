@@ -149,9 +149,7 @@ export const addTestReportHandler = async (req, res) => {
       .send({success: true});
 
     await connection.close();
-    if (process.env.NODE_ENV === 'production') {
-      notifyOwnersErrorsWithEmail(transporter, testReportType, createdAt);
-    }
+    await notifyOwnersErrorsWithEmail(transporter, testReportType, createdAt);
   } catch (err) {
     await connection.close();
     res.status(err.status)

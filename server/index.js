@@ -19,8 +19,9 @@ import { fetchProductHandler, fetchBuildNumberHandler, changeProductHandler, cha
 } from './models/AxapiAutomation/AxapiAutomationQuery';
 import { searchArticleHandler, searchFileHandler, searchWorklogHandler, searchCommentHandler, searchBugtrackingHandler } from './models/Search/SearchQuery';
 import {
-    SECURE_KEY,
-    MAIL_TRANSPORTER_CONFIG
+  IS_PRODUCTION,
+  SECURE_KEY,
+  MAIL_TRANSPORTER_CONFIG
 } from './constants/configurations.js';
 import { articleExportHandler } from './models/Article/ArticleExport.js';
 import SocketIo from 'socket.io';
@@ -87,6 +88,13 @@ app.use((req, res, next) => {
 });
 
 let transporter = nodemailer.createTransport(MAIL_TRANSPORTER_CONFIG);
+if (!IS_PRODUCTION) {
+  transporter.sendMail = async(mailData) => {
+    console.log(`Since IS_PRODUCTION in server/configurations.js is false`);
+    console.log(`Stop sending email, and mailData is:`);
+    console.log(mailData);
+  };
+}
 
 app.use('/graphql', graphqlHTTP(request => ({
     schema: schema,
