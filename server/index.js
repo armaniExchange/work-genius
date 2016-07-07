@@ -126,6 +126,10 @@ app.route('/files/:id')
  .get(fileDownloadHandler)
  .delete(fileDeleteHandler);
 app.get('/export/document/:articleId', articleExportHandler);
+app.use('/testReport', (req, res, next)=> {
+  req.transporter = transporter;
+  next();
+});
 app.route('/testReport/:type')
   .post(addTestReportHandler);
 

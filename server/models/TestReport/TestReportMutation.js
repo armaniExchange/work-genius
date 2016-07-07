@@ -15,13 +15,53 @@ import {
 import r from 'rethinkdb';
 
 // Constants
-import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
+import { DB_HOST, DB_PORT, MAILER_ADDRESS } from '../../constants/configurations.js';
 
-// upload file
-//
-// POST http://server/files
-// multer will save the file instance into disk
-// add metadata into db files
+import parseMarkdown from '../../libraries/parseMarkdown';
+
+
+const notifyOwnersErrorsWithEmail = async (transporter, testReportType, createdAt)=> {
+  const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+  const errorReports = await r.db('work_genius').table('users')
+    .eqJoin('id', r.db('work_genius').table('test_report_categories'), {index: 'owners'})
+    .zip()
+    .map({
+      email: r.row('email'),
+      name: r.row('name'),
+      [testReportType]: r.row(testReportType).filter({isSuccess: false, createdAt: createdAt}).default([])
+    })
+    .filter(r.row('email').and(r.row('name')).and(r.row(testReportType).count().gt(0)))
+    .group('email', 'name')
+    .ungroup()
+    .map({
+      email: r.row('group')(0).default(''),
+      name: r.row('group')(1).default('unknown'),
+      [testReportType]: r.row('reduction')(testReportType)
+        .reduce((left, right)=> left.add(right)).default([])
+    })
+    .run(connection);
+
+  if (errorReports.length === 0) {
+    console.log('No issues found');
+    return;
+  }
+  const HeaderMd = `Hi Team,  \nAutomation test found issues, please take a look at it.\n`;
+  const errorReportsMd = errorReports.map(errorReport=>{
+      return `## ${errorReport.name}\n
+<span style="color:red;">${testReportType}: ${errorReport[testReportType].length} Fails</span>\n
+---\n\`\`\`js\n
+${JSON.stringify(errorReport[testReportType], null, '  ')}\n
+\`\`\`\n`;
+    }).join('\n');
+  const mailOption = {
+    from: MAILER_ADDRESS,
+    to: errorReports.map(item => item.email),
+    subject: `[KB - Feature Automation] ${testReportType} failed report`,
+    html: parseMarkdown(HeaderMd + errorReportsMd),
+    cc: 'ax-web-DL@a10networks.com'
+  };
+  await transporter.sendMail(mailOption);
+};
 
 const TEST_REPORT_MAP = {
   'axapiTest': {
@@ -42,6 +82,8 @@ const TEST_REPORT_MAP = {
 };
 
 export const addTestReportHandler = async (req, res) => {
+  const { transporter } = req;
+
   let connection = null;
   try {
     connection = await r.connect({ host: DB_HOST, port: DB_PORT });
@@ -107,6 +149,9 @@ export const addTestReportHandler = async (req, res) => {
       .send({success: true});
 
     await connection.close();
+    if (process.env.NODE_ENV === 'production') {
+      notifyOwnersErrorsWithEmail(transporter, testReportType, createdAt);
+    }
   } catch (err) {
     await connection.close();
     res.status(err.status)
