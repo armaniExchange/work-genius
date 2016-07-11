@@ -145,30 +145,30 @@ export function fetchAllCategories() {
   };
 }
 
-export function fetchAllTagsFail(error) {
+export function fetchDocumentHotTagsFail(error) {
   return {
-    type: actionTypes.FETCH_ALL_TAGS_SUCCESS,
+    type: actionTypes.FETCH_DOCUMENT_HOT_TAGS_SUCCESS,
     error
   };
 }
 
-export function fetchAllTagsSuccess(allTags) {
+export function fetchDocumentHotTagsSuccess(documentHotTags) {
   return {
-    type: actionTypes.FETCH_ALL_TAGS_SUCCESS,
-    allTags
+    type: actionTypes.FETCH_DOCUMENT_HOT_TAGS_SUCCESS,
+    documentHotTags
   };
 }
 
-export function fetchAllTags() {
+export function fetchDocumentHotTags() {
   return dispatch => {
     dispatch({
-      type: actionTypes.FETCH_ALL_TAGS
+      type: actionTypes.FETCH_DOCUMENT_HOT_TAGS
     });
 
     const config = {
       method: 'POST',
       body: `{
-        documentTags
+        getDocumentHotTags
       }`,
       headers: {
         'Content-Type': 'application/graphql',
@@ -183,10 +183,10 @@ export function fetchAllTags() {
         return res.json();
       })
       .then((body) => {
-        dispatch(fetchAllTagsSuccess(body.data.documentTags));
+        dispatch(fetchDocumentHotTagsSuccess(body.data.getDocumentHotTags));
       })
       .catch((error) => {
-        dispatch(fetchAllTagsFail(error));
+        dispatch(fetchDocumentHotTagsFail(error));
         dispatch(apiFailure(error));
       });
   };

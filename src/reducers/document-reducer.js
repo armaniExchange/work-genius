@@ -64,7 +64,7 @@ const initialState = Map({
   articleTotalCount: 0,
   documentCategories: Map({}),
   currentSelectedCategory: Map({}),
-  allTags: List.of(),
+  documentHotTags: List.of(),
   allUsers: List.of(),
   allMilestones: List.of(),
   isArticleLoading: true,
@@ -88,8 +88,8 @@ export default function documentReducer(state = initialState, action) {
         .set('isArticleLoading', false);
     case actionTypes.FETCH_ARTICLES_FAIL:
       return state.set('isArticleLoading', false);
-    case actionTypes.FETCH_ALL_TAGS_SUCCESS:
-      return state.set('allTags', action.allTags);
+    case actionTypes.FETCH_DOCUMENT_HOT_TAGS_SUCCESS:
+      return state.set('documentHotTags', action.documentHotTags);
     case actionTypes.SET_SELECTED_CATEGORY:
       let updatedTree;
       if (action.data && action.data.isLeaf) {

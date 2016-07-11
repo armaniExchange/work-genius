@@ -63,23 +63,26 @@ let CategoryQuery = {
       return result;
     }
   },
-  'getAllTags': {
+  'getHotTags': {
     type: new GraphQLList(GraphQLString),
     description: 'Get all documentation tags',
     resolve: async () => {
       let connection = null,
-          result = null,
-        query = null;
+          result = null;
 
       try {
-        query = r.db('work_genius').table('articles').coerceTo('array');
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-        result = await query.run(connection);
-        result = result.reduce((acc, article) => {
-          return acc.concat(article.tags);
-        }, []);
-        result = dedupe(result);
-        result = result.slice(0, 20);
+        result = await r.db('work_genius').table('articles').map(r.row('tags'))
+          .reduce((left, right)=> left.add(right))
+          .map((item)=>({tag: item}))
+          .group('tag')
+          .count()
+          .ungroup()
+          .orderBy(r.desc('reduction'))
+          .map(r.row('group'))
+          .slice(0, 20)
+          .run(connection);
+
         await connection.close();
       } catch (err) {
         return err;

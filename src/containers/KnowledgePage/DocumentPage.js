@@ -35,14 +35,14 @@ class DocumentPage extends Component {
   componentWillMount() {
     const {
       fetchDocumentCategories,
-      fetchAllTags,
+      fetchDocumentHotTags,
       fetchAllUsers,
       fetchAllMilestones
     } = this.props.documentActions;
 
     // Todo: find a better way to handle jumpling this page from other page
     fetchDocumentCategories();
-    fetchAllTags();
+    fetchDocumentHotTags();
     fetchAllUsers();
     fetchAllMilestones();
     this.queryArticles();
@@ -177,7 +177,7 @@ class DocumentPage extends Component {
     const {
       allUsers,
       allMilestones,
-      allTags,
+      documentHotTags,
       documentCategories,
       articleTotalCount,
       currentSelectedCategory,
@@ -207,7 +207,7 @@ class DocumentPage extends Component {
             <h5>HOT TAGS</h5>
             <ArticleTagList
               onChange={::this.onTagChange}
-              tags={allTags}
+              tags={documentHotTags}
               value={tag} />
             <div className="knowledge-tree-label">
               <h5>KNOWLEDGE TREE
@@ -266,7 +266,7 @@ DocumentPage.propTypes = {
   articleTotalCount       : PropTypes.number,
   documentCategories      : PropTypes.object,
   currentSelectedCategory : PropTypes.object,
-  allTags                 : PropTypes.array,
+  documentHotTags         : PropTypes.array,
   allUsers                : PropTypes.array,
   allMilestones           : PropTypes.array,
   documentActions         : PropTypes.object.isRequired,
