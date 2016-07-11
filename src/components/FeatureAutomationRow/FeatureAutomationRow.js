@@ -28,14 +28,10 @@ class FeatureAutomationRow extends Component {
 
   updateStateFromProps(props) {
     const {
-      owners,
-      path,
-      difficulty
+      path
     } = props;
     return {
-      editingOwners: (owners || []).toString(),
-      editingPath: path,
-      editingDifficulty: difficulty
+      editingPath: path
     };
   }
 
@@ -118,22 +114,13 @@ class FeatureAutomationRow extends Component {
     );
   }
 
-  onOwnersChange(value) {
-    this.setState({ editingOwners: value });
-  }
-
-  onOwnersSave() {
+  onOwnersSave(value) {
     const {
       id,
       onOwnersSave
     } = this.props;
-    const { editingOwners } = this.state;
 
-    onOwnersSave(id, editingOwners === '' ? [] : editingOwners.split(','));
-  }
-
-  onOwnerCancel() {
-    this.setState({ editingOwners: this.props.owners.toString()});
+    onOwnersSave(id, value === '' ? [] : value.split(','));
   }
 
   renderOwners() {
@@ -141,9 +128,9 @@ class FeatureAutomationRow extends Component {
       owners,
       allUsers,
       children,
-      accumOwners
+      accumOwners,
     } = this.props;
-    const { editingOwners } = this.state;
+
     const hasChildren = children && children.length > 0;
     const ownerNames = (accumOwners || []).map( ownerId => {
       return allUsers.filter(user => user.id === ownerId)[0].name;
@@ -164,15 +151,10 @@ class FeatureAutomationRow extends Component {
     // owners.map((owner, index) => <span key={index}>{owner}&nbsp;</span>)
     return !hasChildren ?  (
       <div>
-        <FeatureAutomationRowInlineToolbar
-          onSave={::this.onOwnersSave}
-          onCancel={::this.onOwnerCancel}
-          show={editingOwners !== owners.toString()}
-        />
         <Select
           multi={true}
-          value={editingOwners}
-          onChange={::this.onOwnersChange}
+          value={owners}
+          onChange={::this.onOwnersSave}
           options={allUsers.map(item => {
             return { label: item.name, value: item.id};
           })}
@@ -203,21 +185,12 @@ class FeatureAutomationRow extends Component {
     );
   }
 
-  onDifficultySave() {
+  onDifficultySave(value) {
     const {
       id,
       onDifficultySave
     } = this.props;
-    onDifficultySave(id, this.state.editingDifficulty);
-  }
-
-  onDifficultyCancel() {
-    const { difficulty } = this.props;
-    this.setState({ editingDifficulty: difficulty });
-  }
-
-  onDifficultyChange(value) {
-    this.setState({ editingDifficulty: value });
+    onDifficultySave(id, value);
   }
 
   renderDiffcultyOrDiffculties() {
@@ -226,7 +199,6 @@ class FeatureAutomationRow extends Component {
       difficulty,
       difficulties,
     } = this.props;
-    const { editingDifficulty } = this.state;
     const hasChildren = children && children.length > 0;
 
     const DIFFICULTY_COLORS = {
@@ -249,14 +221,9 @@ class FeatureAutomationRow extends Component {
 
     return !hasChildren ? (
       <div>
-        <FeatureAutomationRowInlineToolbar
-          onSave={::this.onDifficultySave}
-          onCancel={::this.onDifficultyCancel}
-          show={editingDifficulty !== difficulty}
-        />
         <Select
-          value={editingDifficulty}
-          onChange={::this.onDifficultyChange}
+          value={difficulty}
+          onChange={::this.onDifficultySave}
           options={FEATURE_ANALYSIS_DIFFICULTIES.map((difficultyName, index) => {
             return { label: difficultyName, value: index };
           })}
