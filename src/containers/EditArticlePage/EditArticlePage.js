@@ -37,7 +37,7 @@ class EditArticlePage extends Component {
       articleActions.fetchArticle(params.articleId);
     }
     documentActions.fetchDocumentCategories();
-    documentActions.fetchAllTags();
+    documentActions.fetchDocumentHotTags();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -288,7 +288,7 @@ class EditArticlePage extends Component {
       params,
       files,
       documentCategories,
-      allTags
+      documentHotTags
     } = this.props;
 
     const editorStyle = {
@@ -309,7 +309,7 @@ class EditArticlePage extends Component {
             content={editingContent}
             categoryId={editingCategoryId}
             files={files}
-            tagSuggestions={allTags}
+            tagSuggestions={documentHotTags}
             allCategoriesOptions={::this._transformToOptions(documentCategories)}
             documentType={editingDocumentType}
             priority={editingPriority}
@@ -377,7 +377,7 @@ EditArticlePage.propTypes = {
   updatedAt          : PropTypes.number,
   params             : PropTypes.object,
   documentCategories : PropTypes.object,
-  allTags            : PropTypes.arrayOf(PropTypes.string),
+  documentHotTags    : PropTypes.arrayOf(PropTypes.string),
   isEditing          : PropTypes.bool,
   isLoaded           : PropTypes.bool,
   articleActions     : PropTypes.object.isRequired,
@@ -403,12 +403,12 @@ EditArticlePage.defaultProps = {
 function mapStateToProps(state) {
   const {
     documentCategories,
-    allTags,
+    documentHotTags,
   } = state.documentation.toJS();
   const documentTemplate = state.documentTemplate.toJS();
   return Object.assign({}, state.article.toJS(), {
     documentCategories,
-    allTags,
+    documentHotTags,
     documentTemplate
   });
 }
