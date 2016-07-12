@@ -23,11 +23,15 @@ class ReleaseCard extends Component {
     this.setState({release: release});
   }
 
+  editDone() {
+    this.setState({release: {}});
+  }
+
   render() {
     const { releases } = this.props;
     return (
       <div className="release-content">
-        <ReleaseForm release={this.state.release} {...this.props}/>
+        <ReleaseForm release={this.state.release} editDone={::this.editDone} {...this.props}/>
         <ReleaseTable editRelease={::this.editRelease} releases={ releases } {...this.props}/>
       </div>
     );

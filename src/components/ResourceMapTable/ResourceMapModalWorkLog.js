@@ -43,7 +43,8 @@ let initialState = {
 	//the properties for valiation
 	isTitleEmpty: false,
 	isDurationEmpty: false,
-	isEndLessThanStart: false
+	isEndLessThanStart: false,
+	onFocusRelease: false
 };
 
 class ResourceMapModalWorkLog extends Component {
@@ -105,6 +106,7 @@ class ResourceMapModalWorkLog extends Component {
 				endTime: ''
 			});
 		}
+		this.setState({onFocusRelease: false});
 	}
 
 	//validate the input
@@ -217,7 +219,6 @@ class ResourceMapModalWorkLog extends Component {
 			onModalSubmit(item);
 			this._onCloseModelHandler();
 		}
-		
 		// this._$PrintFormData(this);
 	}
 
@@ -331,6 +332,14 @@ class ResourceMapModalWorkLog extends Component {
 		}
 	}
 
+	releaseSelectFocus(){
+		this.setState({onFocusRelease: true});
+	}
+
+	releaseSelectBlur(){
+		this.setState({onFocusRelease: false});
+	}
+
 	// When select a new tag color, change the state tag value.
 	_onSelectTagColor(e) {
 		let color = e.target.getAttribute('data-tag');
@@ -366,6 +375,7 @@ class ResourceMapModalWorkLog extends Component {
 		let title = titleRef._optionsFilterString === ''
 			? titleRef.state.value : titleRef._optionsFilterString;
 		this.setState({ title: title });
+		this.setState({onFocusRelease: false});
 	}
 
 	_changeStartTime(e, date) {
@@ -378,8 +388,6 @@ class ResourceMapModalWorkLog extends Component {
 	}
 
 	_changeEndTime(e, date) {
-		console.log('end time');
-		console.log(date);
 		let time = moment(date);
 		let hour = time.hour(),
 		    minute = time.minute(),
@@ -506,6 +514,7 @@ class ResourceMapModalWorkLog extends Component {
 						})}
 						ref="titleRef"
 						onChange={this._handleSelectTitleChange}
+		        onFocus={::this.releaseSelectFocus}
 						onBlur={::this._handleSelectTitleBlur}
 					/>
 				</div>
@@ -526,6 +535,8 @@ class ResourceMapModalWorkLog extends Component {
 		                	return {label: option.tag_name, value: option.tag_name};
 		                })}
 		                onChange={this._handleSelectReleaseChange}
+		                onFocus={::this.releaseSelectFocus}
+		                onBlur={::this.releaseSelectBlur}
 		            />
 				</div>
 			</div>
@@ -539,6 +550,7 @@ class ResourceMapModalWorkLog extends Component {
 				    <div className="col-xs-6 layout-design-padding-left-0 layout-design-over">
 					<DatePicker
 						className="option-layout"
+						disabled={this.state.onFocusRelease}
 						onChange={this._changeStartDate}
 						defaultDate={nowDate}
 						placeholder="Start Date"
@@ -546,6 +558,7 @@ class ResourceMapModalWorkLog extends Component {
 					</div>
 					<div className="col-xs-6 layout-design-over">
 					<TimePicker
+						disabled={this.state.onFocusRelease}
 						defaultTime={new Date(nowDate)}
 						onChange={this._changeStartTime}
 					/>
@@ -561,6 +574,7 @@ class ResourceMapModalWorkLog extends Component {
 				        ref="endDate" />
 				    <div className="col-xs-6 layout-design-padding-left-0 layout-design-over">
 					<DatePicker
+						disabled={this.state.onFocusRelease}
 						className="option-layout"
 						onChange={(newDate) => {
 							this.setState({
@@ -573,6 +587,7 @@ class ResourceMapModalWorkLog extends Component {
 					</div>
 					<div className="col-xs-6 layout-design-over">
 					<TimePicker
+						disabled={this.state.onFocusRelease}
 						defaultTime={new Date(defaultEndDate)}
 						onChange={this._changeEndTime}
 					/>

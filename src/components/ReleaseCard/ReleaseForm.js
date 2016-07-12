@@ -11,7 +11,8 @@ import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 class ReleaseForm extends Component{
 
   static propTypes = {
-    addRelease: PropTypes.func.isRequired
+    addRelease: PropTypes.func.isRequired,
+    editDone: PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -34,7 +35,7 @@ class ReleaseForm extends Component{
       this.setState({
         name: release.name,
         date: moment(release.date).format('YYYY-MM-DD'),
-        priority: release.priority
+        priority: parseInt(release.priority)
       });
     }
   }
@@ -66,14 +67,19 @@ class ReleaseForm extends Component{
     }
     let date = this.state.date;
     let priority = this.state.priority;
-    const { addRelease } = this.props;
+    const { addRelease, editDone } = this.props;
     const option = {
       name: name,
       date: parseInt(moment(date).format('x')),
       priority: priority
     };
-    console.log(option);
+    editDone();
     addRelease(option);
+    this.setState({
+      name: '',
+      date: '2016-07-01',
+      priority: 5
+    });
   }
 
   render() {
