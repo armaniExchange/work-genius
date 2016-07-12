@@ -19,7 +19,9 @@ class FeatureAutomationRow extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState(this.updateStateFromProps(nextProps));
+    if (nextProps.isLoading === false && this.props.isLoading !== nextProps.isLoading){
+      this.setState(this.updateStateFromProps(nextProps));
+    }
   }
 
   shouldComponentUpdate(nextProps, /*nextState*/) {
@@ -49,7 +51,7 @@ class FeatureAutomationRow extends Component {
   }
 
   onPathChange(event) {
-    this.setState({ editingPath: event.target.value});
+    this.setState({ editingPath: event.target.value.trim()});
   }
 
   onPathKeyDown(event) {
@@ -71,7 +73,10 @@ class FeatureAutomationRow extends Component {
   onPathSave() {
     const { id } = this.props;
     const { editingPath } = this.state;
-    this.props.onPathSave(id, editingPath);
+    const firstSlash = editingPath[0] === '/' ? '' : '/' ;
+    const lastSlash = editingPath.trim().slice(-1) === '/' ? '' : '/';
+    const finalEditingPath = editingPath.trim().length !== 0  ? firstSlash + editingPath.trim() + lastSlash : '';
+    this.props.onPathSave(id, finalEditingPath);
   }
 
   onPathCancel() {
@@ -81,7 +86,7 @@ class FeatureAutomationRow extends Component {
   onEditAxapis(event) {
     event.preventDefault();
     const { id, axapis } = this.props;
-    this.props.onEditAxapis(id, axapis);
+    this.props.onEditAxapis(id, axapis.map(item=>item.replace(/_/g, '-')));
   }
 
   renderAxapis() {
