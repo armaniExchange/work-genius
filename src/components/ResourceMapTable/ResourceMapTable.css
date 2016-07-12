@@ -9,6 +9,23 @@ td {
   border-right: solid 1px #fff;
 }
 
+.none-pre {
+  display: block;
+  padding: 0;
+  margin: 0 auto;
+  font-size: 13px;
+  line-height: 1.42857143;
+  color: #000;
+  word-break: break-all;
+  word-wrap: break-word;
+  background-color: #fff;
+  border: 0px;
+  border-radius: 0px;
+  overflow-x: hidden;
+  max-height: 350px;
+  white-space: pre-wrap;
+}
+
 .table-tr {
 	height: 100px !important;
 }
