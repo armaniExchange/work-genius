@@ -86,7 +86,7 @@ class FeatureAutomationRow extends Component {
   onEditAxapis(event) {
     event.preventDefault();
     const { id, axapis } = this.props;
-    this.props.onEditAxapis(id, axapis.map(item=>item.replace(/_/g, '-')));
+    this.props.onEditAxapis(id, (axapis || []).map(item=>item.replace(/_/g, '-')));
   }
 
   renderAxapis() {
