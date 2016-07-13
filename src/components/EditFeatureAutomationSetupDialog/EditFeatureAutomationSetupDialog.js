@@ -195,6 +195,7 @@ class EditFeatureAutomationSetupDialog extends Component {
 
     return (
       <Dialog
+        title="Page Settings"
         actions={actions}
         open={open}
         bodyStyle={{overflowY: 'auto'}}
