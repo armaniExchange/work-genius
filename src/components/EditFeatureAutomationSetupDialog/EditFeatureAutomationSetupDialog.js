@@ -6,10 +6,10 @@ import FlatButton from 'material-ui/lib/flat-button';
 import AutoComplete from 'material-ui/lib/auto-complete';
 import TextField from 'material-ui/lib/text-field';
 // Styles
-import './_EditFeatureAutomationAxapiDialog.css';
+import './_EditFeatureAutomationSetupDialog.css';
 
 
-class EditFeatureAutomationAxapiDialog extends Component {
+class EditFeatureAutomationSetupDialog extends Component {
 
   constructor(props) {
     super(props);
@@ -195,7 +195,6 @@ class EditFeatureAutomationAxapiDialog extends Component {
 
     return (
       <Dialog
-        title="Edit Page Setting"
         actions={actions}
         open={open}
         bodyStyle={{overflowY: 'auto'}}
@@ -281,7 +280,7 @@ class EditFeatureAutomationAxapiDialog extends Component {
 }
 
 
-EditFeatureAutomationAxapiDialog.propTypes = {
+EditFeatureAutomationSetupDialog.propTypes = {
   id                         : PropTypes.string,
   open                       : PropTypes.bool,
   path                       : PropTypes.string,
@@ -292,11 +291,11 @@ EditFeatureAutomationAxapiDialog.propTypes = {
 };
 
 
-EditFeatureAutomationAxapiDialog.defaultProps = {
+EditFeatureAutomationSetupDialog.defaultProps = {
   open                       : false,
   testReportAxapiSuggestions : [],
   axapis                     : [],
   path                       : ''
 };
 
-export default EditFeatureAutomationAxapiDialog;
+export default EditFeatureAutomationSetupDialog;

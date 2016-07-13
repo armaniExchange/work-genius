@@ -17,7 +17,7 @@ import * as DocumentActions from '../../actions/document-page-actions';
 
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 import FeatureAutomationRow from '../../components/FeatureAutomationRow/FeatureAutomationRow';
-import EditFeatureAutomationAxapiDialog from '../../components/EditFeatureAutomationAxapiDialog/EditFeatureAutomationAxapiDialog';
+import EditFeatureAutomationSetupDialog from '../../components/EditFeatureAutomationSetupDialog/EditFeatureAutomationSetupDialog';
 
 class FeatureAutomationPage extends Component {
 
@@ -395,7 +395,7 @@ class FeatureAutomationPage extends Component {
             }
           </div>
         </Paper>
-        <EditFeatureAutomationAxapiDialog
+        <EditFeatureAutomationSetupDialog
           open={isAxapiEditDialogDisplay}
           id={editingCategoryId}
           axapis={editingAxapis}
