@@ -31,7 +31,7 @@
     .table-row {
 
       > span {
-        display: inline-block;
+        display: table-cell;
         vertical-align: middle;
         width: 100px;
         padding: 5px;
@@ -41,9 +41,9 @@
           text-align: left;
         }
       }
-      .category-name, .path {
+      .category-name {
         min-width: 200px;
-        width: 20%;
+        width: 25%;
       }
       .owners {
         min-width: 250px;
@@ -51,8 +51,8 @@
       }
 
       .page-settings {
-        min-width: 210px;
-        max-width: 210px;
+        min-width: 250px;
+        max-width: 250px;
         padding: 0 30px;
         a {
           text-decoration: underline;
