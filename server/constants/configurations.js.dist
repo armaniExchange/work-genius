@@ -22,6 +22,11 @@ export const TESTER_ID = '99999';
 
 
 export const MAILER_ADDRESS = '"Knowlege Base" <kb@a10networks.com>';
+export const MAIL_CC_LIST = [
+  'ax-web-DL@a10networks.com',
+  'AHuang@a10networks.com',
+  'shuang@a10networks.com'
+];
 export const MAIL_TRANSPORTER_CONFIG = {
     host: '192.168.1.100',
     port: 25

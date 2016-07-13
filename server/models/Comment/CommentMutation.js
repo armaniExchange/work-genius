@@ -6,7 +6,7 @@ import {
 // RethinkDB
 import r from 'rethinkdb';
 // Constants
-import { DB_HOST, DB_PORT, MAILER_ADDRESS } from '../../constants/configurations.js';
+import { DB_HOST, DB_PORT, MAILER_ADDRESS, MAIL_CC_LIST } from '../../constants/configurations.js';
 import { getArticleLink } from '../Article/ArticleMutation';
 import generateEmailMarkdown from '../../libraries/generateEmailMarkdown';
 import parseMarkdown from '../../libraries/parseMarkdown';
@@ -105,7 +105,7 @@ const CommentMutation = {
                 title: commentedArticle.title,
                 content: comment.content
               })),
-              cc: 'ax-web-DL@a10networks.com'
+              cc: MAIL_CC_LIST
             });
           }
 

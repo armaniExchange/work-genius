@@ -10,7 +10,7 @@ import ArticleType from './ArticleType.js';
 import ArticleInputType from './ArticleInputType.js';
 
 // Constants
-import { DB_HOST, DB_PORT, MAILER_ADDRESS } from '../../constants/configurations.js';
+import { DB_HOST, DB_PORT, MAILER_ADDRESS, MAIL_CC_LIST } from '../../constants/configurations.js';
 
 import { deleteFile } from '../File/FileMutation';
 import { getArticleDetail } from './ArticleQuery';
@@ -161,7 +161,7 @@ const ArticleMutation = {
               title: result.title,
               content: result.content
             })),
-            cc: 'ax-web-DL@a10networks.com'
+            cc: MAIL_CC_LIST
           });
 
           return result;

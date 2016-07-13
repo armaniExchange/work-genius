@@ -15,7 +15,7 @@ import {
 import r from 'rethinkdb';
 
 // Constants
-import { DB_HOST, DB_PORT, MAILER_ADDRESS } from '../../constants/configurations.js';
+import { DB_HOST, DB_PORT, MAILER_ADDRESS, MAIL_CC_LIST } from '../../constants/configurations.js';
 
 import parseMarkdown from '../../libraries/parseMarkdown';
 
@@ -64,7 +64,7 @@ ${JSON.stringify(errorReport[testReportType], null, '  ')}\n
     to: errorReports.map(item => item.email),
     subject: `[KB - Feature Automation] ${testReportTypeText} failed report`,
     html: parseMarkdown(HeaderMd + errorReportsMd),
-    cc: 'ax-web-DL@a10networks.com'
+    cc: MAIL_CC_LIST
   };
   await transporter.sendMail(mailOption);
 };
