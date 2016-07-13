@@ -1,11 +1,8 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
-import _ from 'lodash';
-import TextField from 'material-ui/lib/text-field';
+
 import Select from 'react-select';
 import FeatureAutomationCount from '../FeatureAutomationCount/FeatureAutomationCount';
-import FeatureAutomationRowInlineToolbar from '../FeatureAutomationRowInlineToolbar/FeatureAutomationRowInlineToolbar';
-import { FEATURE_ANALYSIS_DIFFICULTIES } from '../../constants/featureAnalysis';
 import Tooltip from 'rc-tooltip';
 
 // Styles
@@ -50,73 +47,11 @@ class FeatureAutomationRow extends Component {
     return { paddingLeft: ( level - 1 )* 20 + 10 };
   }
 
-  onPathChange(event) {
-    this.setState({ editingPath: event.target.value.trim()});
-  }
-
-  onPathKeyDown(event) {
-    const { keyCode } = event;
-    if (keyCode === 13) {
-      // enter
-      this.onPathSave();
-      return;
-    }
-
-    if (keyCode === 27) {
-      // esc
-      this.onPathCancel();
-      return;
-    }
-
-  }
-
-  onPathSave() {
-    const { id } = this.props;
-    const { editingPath } = this.state;
-    const firstSlash = editingPath[0] === '/' ? '' : '/' ;
-    const lastSlash = editingPath.trim().slice(-1) === '/' ? '' : '/';
-    const finalEditingPath = editingPath.trim().length !== 0  ? firstSlash + editingPath.trim() + lastSlash : '';
-    this.props.onPathSave(id, finalEditingPath);
-  }
-
-  onPathCancel() {
-    this.setState({ editingPath: this.props.path });
-  }
 
   onEditAxapis(event) {
     event.preventDefault();
-    const { id, axapis } = this.props;
-    this.props.onEditAxapis(id, (axapis || []).map(item=>item.replace(/_/g, '-')));
-  }
-
-  renderAxapis() {
-    const { axapis } = this.props;
-    const wrapperStyle = {overflow: 'hidden', textOverflow: 'ellipsis'};
-    const result = _.chain(['POST', 'GET', 'PUT', 'DELETE'])
-      .union(axapis)
-      .map(axapi => {
-        const [ method, url ] = axapi.split(' ');
-        return { method, url };
-      })
-      .groupBy(axapi => axapi.method)
-      .map((val, key) => {
-        const hasNoAnyAxapis = val.length === 1 && val[0].url == null;
-        return (
-          <div key={key} style={wrapperStyle}>
-            <span>{key}</span>
-            {
-               hasNoAnyAxapis ? ( <span className="feature-automation-tag alert">None</span> ) : (
-                val.filter(item=> !!item.url)
-                .map((item, index) => <span className="feature-automation-tag" key={index}>{item.url}</span>)
-              )
-            }
-          </div>
-        );
-      })
-      .value();
-    return (
-      <div>{ result }</div>
-    );
+    const { id, axapis, path } = this.props;
+    this.props.onEditAxapis(id, (axapis || []).map(item=>item.replace(/_/g, '-')), path);
   }
 
   onOwnersSave(value) {
@@ -190,76 +125,6 @@ class FeatureAutomationRow extends Component {
     );
   }
 
-  onDifficultySave(value) {
-    const {
-      id,
-      onDifficultySave
-    } = this.props;
-    onDifficultySave(id, value);
-  }
-
-  renderDiffcultyOrDiffculties() {
-    const {
-      children,
-      difficulty,
-      difficulties,
-    } = this.props;
-    const hasChildren = children && children.length > 0;
-
-    const DIFFICULTY_COLORS = {
-      'Nothing': '#777',
-      'Easy': '#5cb85c',
-      'Medium': '#f0ad4e',
-      'Hard': '#d9534f',
-      'Very Hard': 'purple',
-      'total': '#5bc0de'
-    };
-
-    const difficultyStyle = (difficultyName) => ({
-      backgroundColor: DIFFICULTY_COLORS[difficultyName],
-      color: 'white',
-      padding: '0 4px',
-      borderRadius: 5,
-      margin: 1,
-      cursor: 'help'
-    });
-
-    return !hasChildren ? (
-      <div>
-        <Select
-          value={difficulty}
-          onChange={::this.onDifficultySave}
-          options={FEATURE_ANALYSIS_DIFFICULTIES.map((difficultyName, index) => {
-            return { label: difficultyName, value: index };
-          })}
-        />
-      </div>
-    ) : (
-      difficulties
-      .map((difficultyCount, index) => {
-        return {
-          difficultyName: FEATURE_ANALYSIS_DIFFICULTIES[index],
-          difficultyCount
-        };
-      })
-      .reverse()
-      .map((eachDiffculty, index) => {
-        const {
-          difficultyName,
-          difficultyCount
-        } = eachDiffculty;
-        return (
-          <span
-            key={index}
-            style={difficultyStyle(difficultyName)}
-            title ={difficultyName}>
-            {difficultyCount}
-          </span>
-        );
-      })
-    );
-  }
-
   render() {
     const {
       name,
@@ -267,6 +132,7 @@ class FeatureAutomationRow extends Component {
       collapsed,
       children,
       path,
+      axapis,
       articlesCount,
       axapiTest,
       unitTest,
@@ -278,9 +144,7 @@ class FeatureAutomationRow extends Component {
       end2endTestTotalCount,
       end2endTestFailCount
     } = this.props;
-    const {
-      editingPath
-    } = this.state;
+
     const hasChildren = children && children.length > 0;
     const Indicator = !hasChildren ? <span style={{width: 20, height: 18, display: 'inline-block'}}/> : (
       <span className={`tree-view_arrow${collapsed ? ' tree-view_arrow-collapsed': ''}`} />
@@ -297,37 +161,33 @@ class FeatureAutomationRow extends Component {
         <span className="owners">
           { this.renderOwners() }
         </span>
-        <span className="difficulty">
-          { this.renderDiffcultyOrDiffculties() }
-        </span>
-        <span className="path">
+        <span className="page-settings">
           {
             !hasChildren ? (
               <div>
-                <FeatureAutomationRowInlineToolbar
-                  onSave={::this.onPathSave}
-                  onCancel={::this.onPathCancel}
-                  show={editingPath !== path}
-                />
-                <TextField
-                  value={editingPath}
-                  onChange={::this.onPathChange}
-                  onKeyDown={::this.onPathKeyDown}
-                  style={{width: '95%'}}
-                />
+                <div>
+                  <a href="#" onClick={::this.onEditAxapis}>Page URL</a>
+                  {
+                    path ? (
+                      <strong className="float-right text-success">[OK]</strong>
+                    ) : (
+                      <strong className="float-right text-danger">[N/A]</strong>
+                    )
+                  }
+                </div>
+                <div>
+                  <a href="#" onClick={::this.onEditAxapis}>AXAPI</a>
+                  {
+                    axapis && axapis.length ? (
+                     <strong className="float-right text-success">[OK]</strong>
+                    ) : (
+                      <strong className="float-right text-danger">[N/A]</strong>
+                    )
+                  }
+                </div>
               </div>
             ) : null
           }
-        </span>
-        <span className="axapis">
-          {
-            !hasChildren ? (
-              <a href="#" onClick={!hasChildren ? ::this.onEditAxapis : (e)=> e.preventDefault()}>
-                <i className="fa fa-pencil" />&nbsp;Edit
-              </a>
-            ): null
-          }
-          {!hasChildren ? this.renderAxapis() : null}
         </span>
         <span className="articles-count">{articlesCount}</span>
         <FeatureAutomationCount
@@ -373,7 +233,6 @@ FeatureAutomationRow.propTypes = {
   onEditAxapis          : PropTypes.func,
   onPathSave            : PropTypes.func,
   onOwnersSave          : PropTypes.func,
-  onDifficultySave      : PropTypes.func,
   articlesCount         : PropTypes.number,
   path                  : PropTypes.string,
   axapis                : PropTypes.array,
@@ -388,8 +247,6 @@ FeatureAutomationRow.propTypes = {
   end2endTestFailCount  : PropTypes.number,
   owners                : PropTypes.array,
   accumOwners           : PropTypes.array,
-  difficulties          : PropTypes.array,
-  difficulty            : PropTypes.number,
   allUsers              : PropTypes.array,
   isLoading             : PropTypes.bool
 };

@@ -93,11 +93,12 @@ class FeatureAutomationPage extends Component {
     this.setState({displayCategoriesId: result});
   }
 
-  openAxapisEditDialog(id, axapis) {
+  openAxapisEditDialog(id, axapis, path) {
     this.setState({
       isAxapiEditDialogDisplay: true,
       editingCategoryId: id,
-      editingAxapis: axapis
+      editingAxapis: axapis,
+      editingPath: path
     });
   }
 
@@ -105,24 +106,11 @@ class FeatureAutomationPage extends Component {
     this.setState({ isAxapiEditDialogDisplay: false });
   }
 
-  onAxapisSave(id, axapis) {
+  onPageSettingSave(id, axapis, path) {
     this.props.featureAutomationActions.setupTestReportOfCategory({
       categoryId: id,
-      axapis
-    });
-  }
-
-  onPathSave(id, path) {
-    this.props.featureAutomationActions.setupTestReportOfCategory({
-      categoryId: id,
+      axapis,
       path
-    });
-  }
-
-  onDifficultySave(id, difficulty) {
-    this.props.featureAutomationActions.setupTestReportOfCategory({
-      categoryId: id,
-      difficulty
     });
   }
 
@@ -278,6 +266,7 @@ class FeatureAutomationPage extends Component {
     const {
       isAxapiEditDialogDisplay,
       editingCategoryId,
+      editingPath,
       editingAxapis,
       axapiTestCreatedTime,
       end2endTestCreatedTime,
@@ -373,9 +362,7 @@ class FeatureAutomationPage extends Component {
             <div className="table-row">
               <span className="category-name">Category Name</span>
               <span className="owners">Owners</span>
-              <span className="difficulty">Difficulty</span>
-              <span className="path">Path</span>
-              <span className="axapis">AXAPIs</span>
+              <span className="page-settings"> <i className="fa fa-gears" /> Page Setting</span>
               <span className="articles-count">Unit Test Documents</span>
               <span className="end2end-test">End2end test</span>
               <span className="unit-test">Unit Test</span>
@@ -397,9 +384,7 @@ class FeatureAutomationPage extends Component {
                     key={row.id}
                     allUsers={allUsers}
                     onEditAxapis={::this.openAxapisEditDialog}
-                    onPathSave={::this.onPathSave}
                     onOwnersSave={::this.onOwnersSave}
-                    onDifficultySave={::this.onDifficultySave}
                     toggleChildren={::this.toggleChildren}
                     isLoading={isLoading}
                     {...row} />
@@ -414,9 +399,10 @@ class FeatureAutomationPage extends Component {
           open={isAxapiEditDialogDisplay}
           id={editingCategoryId}
           axapis={editingAxapis}
+          path={editingPath}
           testReportAxapiSuggestions={testReportAxapiSuggestions}
           onRequestClose={::this.closeAxapisEditDialog}
-          onSubmit={::this.onAxapisSave}
+          onSubmit={::this.onPageSettingSave}
         />
       </div>
     );

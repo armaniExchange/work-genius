@@ -31,7 +31,7 @@
     .table-row {
 
       > span {
-        display: table-cell;
+        display: inline-block;
         vertical-align: middle;
         width: 100px;
         padding: 5px;
@@ -45,26 +45,23 @@
         min-width: 200px;
         width: 20%;
       }
-      .axapis,  .owners {
+      .owners {
         min-width: 250px;
         max-width: 250px;
       }
-      .difficulty {
-        min-width: 180px;
-        text-align: center;
+
+      .page-settings {
+        min-width: 210px;
+        max-width: 210px;
+        padding: 0 30px;
+        a {
+          text-decoration: underline;
+        }
       }
+
       .articles-count, .unit-test, .end2end-test, .axapi-test {
         text-align: center;
         min-width: 100px;
-      }
-      .axapis > div {
-        line-height: 1.8;
-        font-size: .8em;
-        white-space: nowrap;
-        span:first-child {
-          width: 46px;
-          display: inline-block;
-        }
       }
       .button {
         cursor: pointer;

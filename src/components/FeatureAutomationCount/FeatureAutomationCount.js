@@ -60,7 +60,7 @@ class FeatureAutomationCount extends Component {
               placement="bottom"
               trigger={['hover']}
               overlay={this.renderTooltip()}>
-              <a href="#" style={{color: 'red'}}>&nbsp;{failCount}&nbsp;</a>
+              <a href="#" style={{color: 'red'}} onClick={e=>e.preventDefault()}>&nbsp;{failCount}&nbsp;</a>
             </Tooltip>
           )
         }

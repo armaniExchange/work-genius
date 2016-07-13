@@ -4,20 +4,22 @@ import Select from 'react-select';
 import Dialog from 'material-ui/lib/dialog';
 import FlatButton from 'material-ui/lib/flat-button';
 import AutoComplete from 'material-ui/lib/auto-complete';
+import TextField from 'material-ui/lib/text-field';
 // Styles
 import './_EditFeatureAutomationAxapiDialog.css';
+
 
 class EditFeatureAutomationAxapiDialog extends Component {
 
   constructor(props) {
     super(props);
-    const { axapis } = this.props;
-    this.state = Object.assign({addToAllUrl: ''}, this.parseAxapiToState(axapis));
+    const { axapis, path } = this.props;
+    this.state = Object.assign({addToAllUrl: '', editingPath: path}, this.parseAxapiToState(axapis));
   }
 
   componentWillReceiveProps(nextProps) {
-    const { axapis } = nextProps;
-    this.setState(this.parseAxapiToState(axapis));
+    const { axapis, path} = nextProps;
+    this.setState(Object.assign({editingPath: path}, this.parseAxapiToState(axapis)));
   }
 
   parseAxapiToState(axapis) {
@@ -51,6 +53,7 @@ class EditFeatureAutomationAxapiDialog extends Component {
       onRequestClose
     } = this.props;
     const {
+      editingPath,
       editingPostUrls,
       editingGetUrls,
       editingPutUrls,
@@ -67,13 +70,32 @@ class EditFeatureAutomationAxapiDialog extends Component {
       .map(({method, urls}) => urls.trim().split(',').map(url => `${method} ${url}`))
       .reduce((prev, current) => prev.concat(current), []);
 
-    onSubmit(id, axapis);
+
+    const firstSlash = editingPath[0] === '/' ? '' : '/' ;
+    const lastSlash = editingPath.trim().slice(-1) === '/' ? '' : '/';
+    const finalEditingPath = editingPath.trim().length !== 0  ? `${firstSlash}${editingPath.trim()}${lastSlash}` : '';
+
+    onSubmit(id, axapis, finalEditingPath);
     onRequestClose();
   }
 
   onCancel() {
     this.props.onRequestClose();
   }
+
+  onPathChange(event) {
+    this.setState({ editingPath: event.target.value});
+  }
+
+  onPathKeyDown(event) {
+     const { keyCode } = event;
+
+     if (keyCode === 27) {
+       // esc
+       this.onPathCancel();
+       return;
+     }
+   }
 
   onAddToAllUrlKeyDown(event) {
     if (event.which === 13) {
@@ -136,11 +158,12 @@ class EditFeatureAutomationAxapiDialog extends Component {
       testReportAxapiSuggestions
     } = this.props;
     const {
+      editingPath,
       addToAllUrl,
       editingPostUrls,
       editingGetUrls,
       editingPutUrls,
-      editingDeleteUrls
+      editingDeleteUrls,
     } = this.state;
     const testReportAxapiSuggestionOptions = testReportAxapiSuggestions.map(item=>({value: item, label: item}));
 
@@ -159,6 +182,7 @@ class EditFeatureAutomationAxapiDialog extends Component {
     const styles = {
       wrapper: {
         display: 'flex',
+        marginLeft: 10,
         marginBottom: 10
       },
       label: {
@@ -171,11 +195,22 @@ class EditFeatureAutomationAxapiDialog extends Component {
 
     return (
       <Dialog
-        title="Dialog With Actions"
+        title="Edit Page Setting"
         actions={actions}
         open={open}
         bodyStyle={{overflowY: 'auto'}}
       >
+        <label>Page URL</label>
+        <div style={styles.wrapper}>
+          <TextField
+            value={editingPath}
+            placeholder="Page URL"
+            onChange={::this.onPathChange}
+            onKeyDown={::this.onPathKeyDown}
+          />
+        </div>
+        <br />
+        <label>AXAPI</label>
         <div style={styles.wrapper}>
           <AutoComplete
             fullWidth={true}
@@ -249,6 +284,7 @@ class EditFeatureAutomationAxapiDialog extends Component {
 EditFeatureAutomationAxapiDialog.propTypes = {
   id                         : PropTypes.string,
   open                       : PropTypes.bool,
+  path                       : PropTypes.string,
   axapis                     : PropTypes.array,
   onRequestClose             : PropTypes.func,
   onSubmit                   : PropTypes.func,
@@ -259,7 +295,8 @@ EditFeatureAutomationAxapiDialog.propTypes = {
 EditFeatureAutomationAxapiDialog.defaultProps = {
   open                       : false,
   testReportAxapiSuggestions : [],
-  axapis                     : []
+  axapis                     : [],
+  path                       : ''
 };
 
 export default EditFeatureAutomationAxapiDialog;
