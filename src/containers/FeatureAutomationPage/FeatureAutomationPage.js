@@ -363,7 +363,7 @@ class FeatureAutomationPage extends Component {
               <span className="category-name">Category Name</span>
               <span className="owners">Owners</span>
               <span className="page-settings"> <i className="fa fa-gears" /> Page Setting</span>
-              <span className="articles-count">Unit Test Documents</span>
+              <span className="articles-count">UT Doc</span>
               <span className="end2end-test">End2end test</span>
               <span className="unit-test">Unit Test</span>
               <span className="axapi-test">AXAPI Test</span>
