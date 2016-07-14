@@ -39,6 +39,7 @@ import MarkdownCheatSheet from '../containers/MarkdownCheatSheet/MarkdownCheatSh
 import EditDocumentCategoryPage from '../containers/EditDocumentCategoryPage/EditDocumentCategoryPage';
 import FeatureAutomationPage from '../containers/FeatureAutomationPage/FeatureAutomationPage';
 import WorkLogPage from '../containers/WorkLogPage/WorkLogPage';
+import UTDocTaskPage from '../containers/UTDocTaskPage/UTDocTaskPage';
 
 // Utilities
 import requireAuth from '../containers/Require-Auth/Require-Auth';
@@ -102,6 +103,7 @@ const appRoutes = () => (
         {/* automation*/}
         <Route path="automation">
           <IndexRoute component={requireAuth(FeatureAutomationPage)} />
+          <Route path="UTDocTask" component={requireAuth(UTDocTaskPage)} />
         </Route>
 
         {/* axapi automation*/}
