@@ -143,13 +143,25 @@ export const addTestReportHandler = async (req, res) => {
       )
       .run(connection);
 
-    await r.db('work_genius')
+    const hasOptionsInReportTimeList = await r.db('work_genius')
       .table('test_report_time_list')
-      .insert({
+      .filter({
         type: testReportType,
         createdAt: createdAt
       })
+      .count()
+      .gt(0)
       .run(connection);
+
+    if (!hasOptionsInReportTimeList) {
+      await r.db('work_genius')
+        .table('test_report_time_list')
+        .insert({
+          type: testReportType,
+          createdAt: createdAt
+        })
+        .run(connection);
+    }
 
     res.status(200)
       .send({success: true});
