@@ -16,6 +16,7 @@ import ResourceMapTable from '../../components/ResourceMapTable/ResourceMapTable
 import DatePicker from '../../components/A10-UI/Input/Date-Picker.js';
 import Tooltip from 'rc-tooltip';
 import 'rc-tooltip/assets/bootstrap_white.css';
+import RaisedButton from 'material-ui/lib/raised-button';
 
 class ResourceMapPage extends Component{
 
@@ -49,8 +50,38 @@ class ResourceMapPage extends Component{
             currentUserId,
 			queryResourceMapData
 		} = this.props;
+        console.log(date);
 		queryResourceMapData(date, totalDays, currentUserId);
 	}
+
+    prevMonthResourceMap() {
+        const { startDate } = this.props;
+        let newDate = moment(startDate).subtract(1, 'months').format('YYYY-MM-DD');
+        this._changeStartDate(newDate);
+        // console.log(startDate, newDate);
+    }
+
+    prevWeekResourceMap() {
+        const { startDate } = this.props;
+        let newDate = moment(startDate).subtract(7, 'days').format('YYYY-MM-DD');
+        this._changeStartDate(newDate);
+        // console.log(startDate, newDate);
+    }
+
+    nextWeekResourceMap() {
+        const { startDate } = this.props;
+        let newDate = moment(startDate).add(7, 'days').format('YYYY-MM-DD');
+        this._changeStartDate(newDate);
+        // console.log(startDate, newDate);
+    }
+
+    nextMonthReourceMap() {
+        const { startDate } = this.props;
+        let newDate = moment(startDate).add(1, 'months').format('YYYY-MM-DD');
+        this._changeStartDate(newDate);
+        // console.log(startDate, newDate);
+    }
+
 
     _selectUser(user) {
         const {
@@ -79,14 +110,41 @@ class ResourceMapPage extends Component{
         });
 
         let username = userObj ? userObj.name : 'All';
+        let style = {'minWidth':'25px', 'minHeight':'25px', height:'25px', 'lineHeight':1};
 		return (
 			<section>
         		<Breadcrumb data={BREADCRUMB.resourcemap} />
                     <div className = "top-selector pull-left">
-                        <label>Date:&nbsp;</label>
+                        <RaisedButton
+                            title="Prev Month"
+                            label="<<"
+                            style={style}
+                            onClick={ ::this.prevMonthResourceMap }/>
+                            &nbsp;&nbsp;
+                        <RaisedButton
+                            title="Prev Week"
+                            label="<"
+                            style={style}
+                            onClick={ ::this.prevWeekResourceMap }/>
+                            &nbsp;&nbsp;
                     </div>
-                    <div className = "pull-left">
-                        <DatePicker className="option-layout" defaultDate={startDate} placeholder="Start Date" onChange={this._changeStartDate} />
+                    <div className = "pull-left" style={{ width: '120px', overflow: 'hidden' }}>
+                        <DatePicker className="option-layout" fullWidth={true} defaultDate={startDate} placeholder="Start Date" onChange={this._changeStartDate} />
+                    </div>
+                    <div className = "top-selector pull-left">
+                            &nbsp;&nbsp;
+                        <RaisedButton
+                            title="Next Week"
+                            label=">"
+                            style={style}
+                            onClick={ ::this.nextWeekResourceMap } />
+                            &nbsp;&nbsp;
+                        <RaisedButton
+                            title="Next Month"
+                            label=">>"
+                            style={style}
+                            onClick={ ::this.nextMonthReourceMap } />
+                            &nbsp;&nbsp;&nbsp;
                     </div>
                     <div className = "top-selector pull-left">
                         &nbsp;&nbsp;&nbsp;
