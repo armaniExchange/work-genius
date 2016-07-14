@@ -11,7 +11,7 @@ import {
 
 const TestReportCategoryType = new GraphQLObjectType({
   name: 'TestReportCategory',
-  descriptyion: 'A file',
+  descriptyion: 'TestReportCategory',
   fields: () => ({
     'id': {
       type: GraphQLID,
@@ -53,7 +53,8 @@ const TestReportCategoryType = new GraphQLObjectType({
           createdAt: { type: GraphQLFloat},
           api: { type: GraphQLString},
           isSuccess: {type: GraphQLBoolean},
-          errorMessage: {type: GraphQLString}
+          errorMessage: {type: GraphQLString},
+          framework: {type: GraphQLString}
         })
       }))
     },
@@ -65,7 +66,8 @@ const TestReportCategoryType = new GraphQLObjectType({
           createdAt: { type: GraphQLFloat},
           path: { type: GraphQLString},
           isSuccess: {type: GraphQLBoolean},
-          errorMessage: {type: GraphQLString}
+          errorMessage: {type: GraphQLString},
+          framework: {type: GraphQLString}
         })
       }))
     },
@@ -77,7 +79,8 @@ const TestReportCategoryType = new GraphQLObjectType({
           createdAt: { type: GraphQLFloat},
           path: { type: GraphQLString},
           isSuccess: {type: GraphQLBoolean},
-          errorMessage: {type: GraphQLString}
+          errorMessage: {type: GraphQLString},
+          framework: {type: GraphQLString}
         })
       }))
     }

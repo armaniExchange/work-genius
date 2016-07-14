@@ -78,6 +78,63 @@ class FeatureAutomationPage extends Component {
     }
   }
 
+  onPageSettingSave(id, axapis, path) {
+    const { featureAutomationActions } = this.props;
+    const {
+      setupTestReportOfCategory,
+      fetchDocumentCategoriesWithReport
+    } = featureAutomationActions;
+    setupTestReportOfCategory({
+      categoryId: id,
+      axapis,
+      path
+    }, fetchDocumentCategoriesWithReport);
+  }
+
+  onOwnersSave(id, owners) {
+    const { featureAutomationActions } = this.props;
+    const {
+      setupTestReportOfCategory,
+      fetchDocumentCategoriesWithReport
+    } = featureAutomationActions;
+    setupTestReportOfCategory({
+      categoryId: id,
+      owners
+    }, fetchDocumentCategoriesWithReport);
+  }
+
+  onAxapiTestCreatedTimeChange(value) {
+    this.setState({ axapiTestCreatedTime: value });
+  }
+
+  onEnd2endTestCreatedTimeChange(value) {
+    this.setState({ end2endTestCreatedTime: value });
+  }
+
+  onUnitTestAngularCreatedTimeChange(value) {
+    this.setState({ unitTestAngularCreatedTime: value });
+  }
+
+  onUnitTestDjangoCreatedTimeChange(value) {
+    this.setState({ unitTestDjangoCreatedTime: value });
+  }
+
+  onFilterOwnerChange(value) {
+    this.props.featureAutomationActions.filterTestReport({ filterOwner: value });
+  }
+
+  onFilterReleaseChange(value) {
+    this.props.featureAutomationActions.filterTestReport({ filterRelease: value });
+  }
+
+  onFilterCaseChange(value) {
+    this.props.featureAutomationActions.filterTestReport({ filterCase: value });
+  }
+
+  onSearchCategoryNameUpdateInput(value) {
+    this.props.featureAutomationActions.searchAutomationCategoryByName(value);
+  }
+
   toggleChildren({id, forceEnable}) {
     const { displayCategoriesId } = this.state;
     let result = displayCategoriesId;
@@ -106,61 +163,46 @@ class FeatureAutomationPage extends Component {
     this.setState({ isAxapiEditDialogDisplay: false });
   }
 
-  onPageSettingSave(id, axapis, path) {
-    const { featureAutomationActions } = this.props;
-    const {
-      setupTestReportOfCategory,
-      fetchDocumentCategoriesWithReport
-    } = featureAutomationActions;
-    setupTestReportOfCategory({
-      categoryId: id,
-      axapis,
-      path
-    }, fetchDocumentCategoriesWithReport);
-  }
-
-  onOwnersSave(id, owners) {
-    const { featureAutomationActions } = this.props;
-    const {
-      setupTestReportOfCategory,
-      fetchDocumentCategoriesWithReport
-    } = featureAutomationActions;
-    setupTestReportOfCategory({
-      categoryId: id,
-      owners
-    }, fetchDocumentCategoriesWithReport);
-  }
-
-  onUnitTestCreatedTimeChange(value) {
-    this.setState({unitTestCreatedTime: value});
-  }
-
-  onAxapiTestCreatedTimeChange(value) {
-    this.setState({axapiTestCreatedTime: value});
-  }
-
-  onEnd2endTestCreatedTimeChange(value) {
-    this.setState({end2endTestCreatedTime: value});
-  }
-
   searchByCreatedTime() {
     const {
-      unitTestCreatedTime,
       axapiTestCreatedTime,
-      end2endTestCreatedTime
+      end2endTestCreatedTime,
+      unitTestAngularCreatedTime,
+      unitTestDjangoCreatedTime,
     } = this.state;
+
+    let axapiTestQuery = [];
+    let end2endTestQuery = [];
+    let unitTestQuery = [];
+
+    if (axapiTestCreatedTime) {
+      axapiTestQuery.push({ createdAt: axapiTestCreatedTime });
+    }
+
+    if (end2endTestCreatedTime) {
+      end2endTestQuery.push({ createdAt: end2endTestCreatedTime });
+    }
+
+    if (unitTestAngularCreatedTime) {
+      unitTestQuery.push({ createdAt: unitTestAngularCreatedTime, framework: 'angular' });
+    }
+
+    if (unitTestDjangoCreatedTime) {
+      unitTestQuery.push({ createdAt: unitTestDjangoCreatedTime, framework: 'django' });
+    }
+
     const queryObject = Object.assign({},
-      unitTestCreatedTime ? { unitTestCreatedTime } : null,
-      axapiTestCreatedTime ? { axapiTestCreatedTime } : null,
-      end2endTestCreatedTime ? { end2endTestCreatedTime } : null
+      axapiTestQuery.length > 0 ? { axapiTestQuery } : null,
+      end2endTestQuery.length > 0 ? { end2endTestQuery } : null,
+      unitTestQuery.length > 0 ? { unitTestQuery } : null,
     );
     this.props.featureAutomationActions.fetchDocumentCategoriesWithReport(queryObject);
   }
 
   parseCreatedTimeToDropdownListItem(item, index) {
     return {
-      title: `${index === 0 ? '(last) ': ''} ${moment(item).format('lll')}`,
-      value: item
+      title: `${index === 0 ? '(last) ': ''} ${moment(item.createdAt).format('lll')}`,
+      value: item.createdAt
     };
   }
 
@@ -169,25 +211,9 @@ class FeatureAutomationPage extends Component {
       return 'No Log';
     }
     if (createdTime === createdTimeList[0] || (!createdTime && createdTimeList.length !== 0) ){
-      return `(last) ${moment(createdTimeList[0]).format('lll')}`;
+      return `(last) ${moment(createdTimeList[0].createdAt).format('lll')}`;
     }
     return moment(createdTime).format('lll');
-  }
-
-  onFilterOwnerChange(value) {
-    this.props.featureAutomationActions.filterTestReport({ filterOwner: value });
-  }
-
-  onFilterReleaseChange(value) {
-    this.props.featureAutomationActions.filterTestReport({ filterRelease: value });
-  }
-
-  onFilterCaseChange(value) {
-    this.props.featureAutomationActions.filterTestReport({ filterCase: value });
-  }
-
-  onSearchCategoryNameUpdateInput(value) {
-    this.props.featureAutomationActions.searchAutomationCategoryByName(value);
   }
 
   getDisplayTree() {
@@ -280,7 +306,8 @@ class FeatureAutomationPage extends Component {
       editingAxapis,
       axapiTestCreatedTime,
       end2endTestCreatedTime,
-      unitTestCreatedTime,
+      unitTestAngularCreatedTime,
+      unitTestDjangoCreatedTime
     } = this.state;
 
     const displayTree = this.getDisplayTree();
@@ -294,7 +321,10 @@ class FeatureAutomationPage extends Component {
       background: 'rgba(0,0,0,0.2)',
       textAlign: 'center',
       paddingTop: 10
-  };
+    };
+    const unitTestAngualrCreatedTimeList = unitTestCreatedTimeList.filter(item => item.framework === 'angular');
+    const unitTestDjangoCreatedTimeList = unitTestCreatedTimeList.filter(item => item.framework === 'django');
+
     return (
       <div className="feature-automation-page">
         <div style={{display: 'flex', position: 'relative'}}>
@@ -347,11 +377,17 @@ class FeatureAutomationPage extends Component {
             onOptionClick={::this.onEnd2endTestCreatedTimeChange}
             aryOptionConfig={end2endTestCreatedTimeList.map(this.parseCreatedTimeToDropdownListItem)}
           />
-          <label>Unit Test:&nbsp;</label>
+          <label>Unit Test Angular:&nbsp;</label>
           <DropDownList
-            title={this.getCreatedTimeTitle(unitTestCreatedTime, unitTestCreatedTimeList)}
-            onOptionClick={::this.onUnitTestCreatedTimeChange}
-            aryOptionConfig={unitTestCreatedTimeList.map(this.parseCreatedTimeToDropdownListItem)}
+            title={this.getCreatedTimeTitle(unitTestAngularCreatedTime, unitTestAngualrCreatedTimeList)}
+            onOptionClick={::this.onUnitTestAngularCreatedTimeChange}
+            aryOptionConfig={unitTestAngualrCreatedTimeList.map(this.parseCreatedTimeToDropdownListItem)}
+          />
+          <label>Unit Test Django:&nbsp;</label>
+          <DropDownList
+            title={this.getCreatedTimeTitle(unitTestDjangoCreatedTime, unitTestDjangoCreatedTimeList)}
+            onOptionClick={::this.onUnitTestDjangoCreatedTimeChange}
+            aryOptionConfig={unitTestDjangoCreatedTimeList.map(this.parseCreatedTimeToDropdownListItem)}
           />
           <label>AXAPI:&nbsp;</label>
           <DropDownList
@@ -375,7 +411,8 @@ class FeatureAutomationPage extends Component {
               <span className="page-settings"> <i className="fa fa-gears" /> Page Setting</span>
               <span className="articles-count">UT Doc</span>
               <span className="end2end-test">End2end test</span>
-              <span className="unit-test">Unit Test</span>
+              <span className="unit-test">Unit Test <br /> Angular</span>
+              <span className="unit-test">Unit Test <br /> Django</span>
               <span className="axapi-test">AXAPI Test</span>
             </div>
           </div>

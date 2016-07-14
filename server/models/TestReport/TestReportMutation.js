@@ -102,6 +102,8 @@ export const addTestReportHandler = async (req, res) => {
     const createdAt = req.body.createdAt || new Date().getTime();
     const product = req.body.product || '';
     const build = req.body.build || '';
+    const framework = req.body.framework || null;
+
     const data = reports.map((report)=> {
       const {
         path, // for e2e and unit test
@@ -111,7 +113,7 @@ export const addTestReportHandler = async (req, res) => {
         meta = {}
       } = report;
       const PathOrApiProperty = type === 'axapiTest' ? {
-        api: api || ''
+        api: api || '',
       } : {
         path: path || ''
       };
@@ -123,7 +125,7 @@ export const addTestReportHandler = async (req, res) => {
         createdAt,
         product,
         build
-      }, PathOrApiProperty);
+      }, PathOrApiProperty, framework ? { framework } : null);
     });
     const {
       testReportType,
@@ -146,24 +148,21 @@ export const addTestReportHandler = async (req, res) => {
         }), {conflict: 'update'}
       )
       .run(connection);
-
-    const hasOptionsInReportTimeList = await r.db('work_genius')
-      .table('test_report_time_list')
-      .filter({
+    const reportTime = Object.assign({
         type: testReportType,
         createdAt: createdAt
-      })
+      }, framework ? { framework } : null );
+    const hasReportTime = await r.db('work_genius')
+      .table('test_report_time_list')
+      .filter(reportTime)
       .count()
       .gt(0)
       .run(connection);
 
-    if (!hasOptionsInReportTimeList) {
+    if (!hasReportTime) {
       await r.db('work_genius')
         .table('test_report_time_list')
-        .insert({
-          type: testReportType,
-          createdAt: createdAt
-        })
+        .insert(reportTime)
         .run(connection);
     }
 

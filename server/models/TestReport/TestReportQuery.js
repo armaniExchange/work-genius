@@ -7,7 +7,8 @@ import {
   GraphQLList,
   GraphQLObjectType,
   GraphQLFloat,
-  GraphQLString
+  GraphQLString,
+  GraphQLInputObjectType
 } from 'graphql';
 // Models
 import TestReportCategoryType from './TestReportCategoryType';
@@ -22,12 +23,10 @@ async function getTestReportCreatedTimeList() {
   const result = await r.db('work_genius').table('test_report_time_list')
     .group('type')
     .orderBy(r.desc('createdAt'))
-    .map(function(item){
-      return item('createdAt');
-    })
+    .without('type', 'id')
     .ungroup()
     .map(function(item) {
-      return r.object(item('group'), item('reduction'));
+      return r.object(item('group') , item('reduction'));
     })
     .reduce(function(left, right){
       return left.merge(right);
@@ -41,15 +40,39 @@ async function getTestReportCreatedTimeList() {
   return result;
 }
 
+function filterByQueryCreatedAt(item, query) {
+  return r.expr(query.map(eachItem=> ({ createdAt: eachItem.createdAt }))).contains({
+    createdAt: item('createdAt')
+  });
+}
+
+const TestReportQueryParamsType = new GraphQLList(
+  new GraphQLInputObjectType({
+    name: 'testReportQueryParams',
+    fields:{
+      createdAt: { type: GraphQLFloat },
+      framework: { type: GraphQLString }
+    }
+  })
+);
+
+const TestReportCreatedTimeType =  new GraphQLObjectType({
+  name: 'TestReportCreatedTimeType',
+  fields: {
+    createdAt: { type: GraphQLFloat },
+    framework: { type: GraphQLString }
+  }
+});
+
 let CategoryQuery = {
   'getTestReportCreatedTimeList' : {
     description: 'Get created time list',
     type: new GraphQLObjectType({
       name: 'testCreatedTimeListType',
       fields: () => ({
-        unitTestCreatedTimeList: { type : new GraphQLList(GraphQLFloat) },
-        end2endTestCreatedTimeList: { type : new GraphQLList(GraphQLFloat) },
-        axapiTestCreatedTimeList: { type : new GraphQLList(GraphQLFloat) }
+        unitTestCreatedTimeList: { type: new GraphQLList(TestReportCreatedTimeType) },
+        end2endTestCreatedTimeList: { type: new GraphQLList(TestReportCreatedTimeType) },
+        axapiTestCreatedTimeList: { type: new GraphQLList(TestReportCreatedTimeType) },
       })
     }),
     resolve: async () => {
@@ -69,20 +92,52 @@ let CategoryQuery = {
     type: new GraphQLList(TestReportCategoryType),
     description: 'Get all documentation categories in tree form with test report',
     args: {
-      unitTestCreatedTime: { type: GraphQLFloat },
-      end2endTestCreatedTime: { type: GraphQLFloat },
-      axapiTestCreatedTime: { type: GraphQLFloat }
+      unitTestQuery: {
+        type: TestReportQueryParamsType
+      },
+      end2endTestQuery: {
+        type:TestReportQueryParamsType
+      },
+      axapiTestQuery: {
+        type: TestReportQueryParamsType
+      },
     },
     resolve: async (root, {
-      unitTestCreatedTime,
-      end2endTestCreatedTime,
-      axapiTestCreatedTime
+      unitTestQuery,
+      end2endTestQuery,
+      axapiTestQuery
     }) => {
       try {
         const timeList = await getTestReportCreatedTimeList();
-        unitTestCreatedTime = unitTestCreatedTime || (timeList.unitTest ? timeList.unitTest[0] : 0);
-        end2endTestCreatedTime = end2endTestCreatedTime || (timeList.end2endTest ? timeList.end2endTest[0] : 0);
-        axapiTestCreatedTime = axapiTestCreatedTime || (timeList.axapiTest ? timeList.axapiTest[0] : 0);
+        const defaultTime = { createdAt: 0 };
+        axapiTestQuery = axapiTestQuery || [(timeList.axapiTest ? timeList.axapiTest[0] : defaultTime)];
+        end2endTestQuery = end2endTestQuery || [(timeList.end2endTest ? timeList.end2endTest[0] : defaultTime)];
+
+
+        unitTestQuery = unitTestQuery || [];
+
+        const unitTestAngularList = timeList.unitTest.filter(item => item.framework === 'angular');
+        const unitTestDjangoList = timeList.unitTest.filter(item => item.framework === 'django');
+
+        if (unitTestQuery.filter(item => item.framework === 'angular').length === 0) {
+          if (unitTestAngularList.length > 0) {
+            unitTestQuery.push({ createdAt: unitTestAngularList[0].createdAt });
+          }
+        }
+
+        if (unitTestQuery.filter(item => item.framework === 'django').length === 0) {
+          if (unitTestDjangoList.length > 0) {
+            unitTestQuery.push({ createdAt: unitTestDjangoList[0].createdAt });
+          }
+        }
+
+
+        if (unitTestQuery.length === 0) {
+          unitTestQuery.push(timeList.unitTest.length > 0 ?{
+            createdAt:  timeList.unitTest[0].createdAt
+          }: defaultTime);
+        }
+
 
         const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         const result = await r.db('work_genius')
@@ -95,9 +150,9 @@ let CategoryQuery = {
               .default({});
           })
           .merge({
-              unitTest: r.row('unitTest').default([]).filter({createdAt: unitTestCreatedTime }),
-              end2endTest: r.row('end2endTest').default([]).filter({createdAt: end2endTestCreatedTime }),
-              axapiTest: r.row('axapiTest').default([]).filter({createdAt: axapiTestCreatedTime }),
+              unitTest: r.row('unitTest').default([]).filter(item => filterByQueryCreatedAt(item, unitTestQuery)),
+              end2endTest: r.row('end2endTest').default([]).filter(item => filterByQueryCreatedAt(item, end2endTestQuery)),
+              axapiTest: r.row('axapiTest').default([]).filter(item => filterByQueryCreatedAt(item, axapiTestQuery)),
            })
           .coerceTo('array')
           .run(connection);

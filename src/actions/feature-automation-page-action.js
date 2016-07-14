@@ -23,17 +23,17 @@ export function fetchDocumentCategoriesWithReportFail(error) {
 export function fetchDocumentCategoriesWithReport(query) {
   return dispatch => {
     const {
-      unitTestCreatedTime,
-      end2endTestCreatedTime,
-      axapiTestCreatedTime
+      unitTestQuery,
+      end2endTestQuery,
+      axapiTestQuery
     } = query || {};
     dispatch({
       type: actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_REPORT_TEST
     });
     let queryCreatedTime = '';
-    queryCreatedTime += typeof unitTestCreatedTime !== 'undefined' ? `unitTestCreatedTime:${unitTestCreatedTime} `: '';
-    queryCreatedTime += typeof end2endTestCreatedTime !== 'undefined' ? `end2endTestCreatedTime:${end2endTestCreatedTime} ` : '';
-    queryCreatedTime += typeof axapiTestCreatedTime !== 'undefined' ? `axapiTestCreatedTime:${axapiTestCreatedTime} ` : '';
+    queryCreatedTime += typeof unitTestQuery !== 'undefined' ? `unitTestQuery:${stringifyObject(unitTestQuery)} `: '';
+    queryCreatedTime += typeof end2endTestQuery !== 'undefined' ? `end2endTestQuery:${stringifyObject(end2endTestQuery)} ` : '';
+    queryCreatedTime += typeof axapiTestQuery !== 'undefined' ? `axapiTestQuery:${stringifyObject(axapiTestQuery)} ` : '';
     queryCreatedTime = queryCreatedTime === '' ? queryCreatedTime : `(\n${queryCreatedTime}\n)`;
 
     const config = {
@@ -49,8 +49,8 @@ export function fetchDocumentCategoriesWithReport(query) {
           owners,
           difficulty,
           axapiTest { isSuccess, errorMessage, api },
-          unitTest { isSuccess, errorMessage, path },
-          end2endTest { isSuccess, errorMessage, path }
+          unitTest { isSuccess, errorMessage, path, framework },
+          end2endTest { isSuccess, errorMessage, path  }
         }
       }`,
       headers: {
@@ -237,9 +237,9 @@ export function fetchTestReportCreatedTimeList() {
       method: 'POST',
       body: `{
         getTestReportCreatedTimeList {
-          unitTestCreatedTimeList,
-          end2endTestCreatedTimeList,
-          axapiTestCreatedTimeList
+          unitTestCreatedTimeList {createdAt, framework},
+          end2endTestCreatedTimeList {createdAt, framework},
+          axapiTestCreatedTimeList {createdAt, framework}
         }
       }`,
       headers: {

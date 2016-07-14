@@ -29,10 +29,11 @@ class FeatureAutomationCount extends Component {
       type,
       testReport,
       totalCount,
-      hasChildren
+      framework,
+      hasChildren,
     } = this.props;
 
-    if (!hasChildren && type === 'unit-test' && testReport && testReport.length > 0 && testReport[0].path) {
+    if (!hasChildren && type === 'unit-test' && framework === 'angular' && testReport && testReport.length > 0 && testReport[0].path) {
       const link = `${UNIT_TEST_REPORT_URL}/${testReport[0].path}/index.html`;
       return (
         <a href={link} target="_blank"> { totalCount } </a>
@@ -78,7 +79,8 @@ FeatureAutomationCount.propTypes = {
   testReport : PropTypes.array,
   keyName    : PropTypes.string,
   hasChildren: PropTypes.bool,
-  type       : PropTypes.string
+  type       : PropTypes.string,
+  framework  : PropTypes.string
 };
 
 FeatureAutomationCount.defaultProps = {

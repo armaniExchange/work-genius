@@ -9,7 +9,7 @@ import {
 } from 'graphql';
 
 const TestReportCategorySetupType = new GraphQLObjectType({
-  name: 'TestReportCategorySetupType',
+  name: 'TestReportCategorySetup',
   descriptyion: 'A file',
   fields: () => ({
     'id': {

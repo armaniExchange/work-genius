@@ -135,12 +135,15 @@ class FeatureAutomationRow extends Component {
       axapis,
       articlesCount,
       axapiTest,
-      unitTest,
+      unitTestAngular,
+      unitTestDjango,
       end2endTest,
       axapiTestFailCount,
       axapiTestTotalCount,
-      unitTestTotalCount,
-      unitTestFailCount,
+      unitTestAngularTotalCount,
+      unitTestAngularFailCount,
+      unitTestDjangoTotalCount,
+      unitTestDjangoFailCount,
       end2endTestTotalCount,
       end2endTestFailCount
     } = this.props;
@@ -202,9 +205,20 @@ class FeatureAutomationRow extends Component {
         <FeatureAutomationCount
           className="unit-test"
           type="unit-test"
-          totalCount={unitTestTotalCount}
-          failCount={unitTestFailCount}
-          testReport={unitTest}
+          framework="angular"
+          totalCount={unitTestAngularTotalCount}
+          failCount={unitTestAngularFailCount}
+          testReport={unitTestAngular}
+          hasChildren={hasChildren}
+          keyName="path"
+        />
+        <FeatureAutomationCount
+          className="unit-test"
+          type="unit-test"
+          framework="django"
+          totalCount={unitTestDjangoTotalCount}
+          failCount={unitTestDjangoFailCount}
+          testReport={unitTestDjango}
           hasChildren={hasChildren}
           keyName="path"
         />
@@ -223,48 +237,56 @@ class FeatureAutomationRow extends Component {
 }
 
 FeatureAutomationRow.propTypes = {
-  id                    : PropTypes.string,
-  parentId              : PropTypes.string,
-  name                  : PropTypes.string,
-  level                 : PropTypes.number,
-  collapsed             : PropTypes.bool,
-  children              : PropTypes.array,
-  toggleChildren        : PropTypes.func,
-  onEditAxapis          : PropTypes.func,
-  onPathSave            : PropTypes.func,
-  onOwnersSave          : PropTypes.func,
-  articlesCount         : PropTypes.number,
-  path                  : PropTypes.string,
-  axapis                : PropTypes.array,
-  axapiTest             : PropTypes.array,
-  axapiTestTotalCount   : PropTypes.number,
-  axapiTestFailCount    : PropTypes.number,
-  unitTest              : PropTypes.array,
-  unitTestTotalCount    : PropTypes.number,
-  unitTestFailCount     : PropTypes.number,
-  end2endTest           : PropTypes.array,
-  end2endTestTotalCount : PropTypes.number,
-  end2endTestFailCount  : PropTypes.number,
-  owners                : PropTypes.array,
-  accumOwners           : PropTypes.array,
-  allUsers              : PropTypes.array,
-  isLoading             : PropTypes.bool
+  id                        : PropTypes.string,
+  parentId                  : PropTypes.string,
+  name                      : PropTypes.string,
+  level                     : PropTypes.number,
+  collapsed                 : PropTypes.bool,
+  children                  : PropTypes.array,
+  toggleChildren            : PropTypes.func,
+  onEditAxapis              : PropTypes.func,
+  onPathSave                : PropTypes.func,
+  onOwnersSave              : PropTypes.func,
+  articlesCount             : PropTypes.number,
+  path                      : PropTypes.string,
+  axapis                    : PropTypes.array,
+  axapiTest                 : PropTypes.array,
+  axapiTestTotalCount       : PropTypes.number,
+  axapiTestFailCount        : PropTypes.number,
+
+  unitTestAngular           : PropTypes.array,
+  unitTestAngularTotalCount : PropTypes.number,
+  unitTestAngularFailCount  : PropTypes.number,
+
+  unitTestDjango            : PropTypes.array,
+  unitTestDjangoTotalCount  : PropTypes.number,
+  unitTestDjangoFailCount   : PropTypes.number,
+
+  end2endTest               : PropTypes.array,
+  end2endTestTotalCount     : PropTypes.number,
+  end2endTestFailCount      : PropTypes.number,
+  owners                    : PropTypes.array,
+  accumOwners               : PropTypes.array,
+  allUsers                  : PropTypes.array,
+  isLoading                 : PropTypes.bool
 };
 
 FeatureAutomationRow.defaultProps = {
-  level                 : 0,
-  collapsed             : false,
-  axapis                : [],
-  path                  : '',
-  axapiTestTotalCount   : 0,
-  axapiTestFailCount    : 0,
-  unitTestTotalCount    : 0,
-  unitTestFailCount     : 0,
-  end2endTestTotalCount : 0,
-  end2endTestFailCount  : 0,
-  articlesCount         : 0,
-  allUsers              : [],
-  isLoading             : false
+  level                     : 0,
+  collapsed                 : false,
+  axapis                    : [],
+  path                      : '',
+  axapiTestTotalCount       : 0,
+  axapiTestFailCount        : 0,
+  unitTestAngularTotalCount : 0,
+  unitTestAngularFailCount  : 0,
+  unitTestDjangoTotalCount  : 0,
+  unitTestDjangoFailCount   : 0,
+  end2endTestTotalCount     : 0,
+  end2endTestFailCount      : 0,
+  articlesCount             : 0,
+  allUsers                  : [],
+  isLoading                 : false
 };
 
 export default FeatureAutomationRow;

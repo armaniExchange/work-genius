@@ -24,6 +24,12 @@ function transformToTree(dataArr) {
       const axapiTest = node.axapiTest || [];
       const unitTest = node.unitTest || [];
       const end2endTest = node.end2endTest || [];
+      const unitTestAngular = unitTest.filter(item=> item.framework==='angular');
+      const unitTestDjango = unitTest.filter(item=> item.framework==='django');
+
+      node.unitTestAngular = unitTestAngular;
+      node.unitTestDjango = unitTestDjango;
+
       return {
         owners: node.owners || [],
         difficulty: node.difficulty || 0,
@@ -33,6 +39,12 @@ function transformToTree(dataArr) {
         axapiTestFailCount: axapiTest.filter(item => !item.isSuccess).length,
         unitTestTotalCount: unitTest.length,
         unitTestFailCount: unitTest.filter(item => !item.isSuccess).length,
+        unitTestAngularTotalCount: unitTestAngular.length,
+        unitTestAngularFailCount: unitTestAngular.filter(item => !item.isSuccess).length,
+        unitTestAngularTotalCount: unitTestAngular.length,
+        unitTestDjangoTotalCount: unitTestDjango.length,
+        unitTestDjangoFailCount: unitTestDjango.filter(item => !item.isSuccess).length,
+        unitTestDjangoTotalCount: unitTestDjango.length,
         end2endTestTotalCount: end2endTest.length,
         end2endTestFailCount: end2endTest.filter(item => !item.isSuccess).length
       };
@@ -49,6 +61,12 @@ function transformToTree(dataArr) {
         accumUnitTest: [],
         accumUnitTestTotalCount: 0,
         accumUnitTestFailCount: 0,
+        accumUnitTestAngular: [],
+        accumUnitTestAngularTotalCount: 0,
+        accumUnitTestAngularFailCount: 0,
+        accumUnitTestDjango: [],
+        accumUnitTestDjangoTotalCount: 0,
+        accumUnitTestDjangoFailCount: 0,
         accumEnd2endTest: [],
         accumEnd2endTestTotalCount: 0,
         accumEnd2endTestFailCount: 0,
@@ -76,6 +94,12 @@ function transformToTree(dataArr) {
           accumUnitTest: prev.accumUnitTest.concat(current.unitTest),
           accumUnitTestTotalCount: prev.accumUnitTestTotalCount + current.unitTestTotalCount,
           accumUnitTestFailCount: prev.accumUnitTestFailCount + current.unitTestFailCount,
+          accumUnitTestAngular: prev.accumUnitTestAngular.concat(current.unitTestAngular),
+          accumUnitTestAngularTotalCount: prev.accumUnitTestAngularTotalCount + current.unitTestAngularTotalCount,
+          accumUnitTestAngularFailCount: prev.accumUnitTestAngularFailCount + current.unitTestAngularFailCount,
+          accumUnitTestDjango: prev.accumUnitTestDjango.concat(current.unitTestDjango),
+          accumUnitTestDjangoTotalCount: prev.accumUnitTestDjangoTotalCount + current.unitTestDjangoTotalCount,
+          accumUnitTestDjangoFailCount: prev.accumUnitTestDjangoFailCount + current.unitTestDjangoFailCount,
           accumEnd2endTest: prev.accumEnd2endTest.concat(current.end2endTest),
           accumEnd2endTestTotalCount: prev.accumEnd2endTestTotalCount + current.end2endTestTotalCount,
           accumEnd2endTestFailCount: prev.accumEnd2endTestFailCount + current.end2endTestFailCount,
@@ -92,6 +116,12 @@ function transformToTree(dataArr) {
           unitTest: (parent.unitTest || []).concat(childrenResult.accumUnitTest),
           unitTestTotalCount: childrenResult.accumUnitTestTotalCount + parent.unitTestTotalCount,
           unitTestFailCount: childrenResult.accumUnitTestFailCount + parent.unitTestFailCount,
+          unitTestAngular: (parent.unitTestAngular || []).concat(childrenResult.accumUnitTestAngular),
+          unitTestAngularTotalCount: childrenResult.accumUnitTestAngularTotalCount + parent.unitTestAngularTotalCount,
+          unitTestAngularFailCount: childrenResult.accumUnitTestAngularFailCount + parent.unitTestAngularFailCount,
+          unitTestDjango: (parent.unitTestDjango || []).concat(childrenResult.accumUnitTestDjango),
+          unitTestDjangoTotalCount: childrenResult.accumUnitTestDjangoTotalCount + parent.unitTestDjangoTotalCount,
+          unitTestDjangoFailCount: childrenResult.accumUnitTestDjangoFailCount + parent.unitTestDjangoFailCount,
           end2endTest: (parent.end2endTest || []).concat(childrenResult.accumEnd2endTest),
           end2endTestTotalCount: childrenResult.accumEnd2endTestTotalCount + parent.end2endTestTotalCount,
           end2endTestFailCount: childrenResult.accumEnd2endTestFailCount + parent.end2endTestFailCount
