@@ -84,6 +84,9 @@ export function fetchArticles(query = {}) {
         return res.json();
       })
       .then((body) => {
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
         dispatch(fetchArticlesSuccess(body.data.getAllArticles.articles, body.data.getAllArticles.count));
       })
       .catch((error) => {
@@ -136,6 +139,9 @@ export function fetchAllCategories() {
         return res.json();
       })
       .then((body) => {
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
         dispatch(fetchAllCategoriesSuccess(body.data.allCategories));
       })
       .catch((error) => {
@@ -183,6 +189,9 @@ export function fetchDocumentHotTags() {
         return res.json();
       })
       .then((body) => {
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
         dispatch(fetchDocumentHotTagsSuccess(body.data.getDocumentHotTags));
       })
       .catch((error) => {
@@ -230,6 +239,9 @@ export function fetchAllUsers() {
         return res.json();
       })
       .then((body) => {
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
         dispatch(fetchAllUsersSuccess(body.data.allUsers));
       })
       .catch((error) => {
@@ -278,6 +290,9 @@ export function fetchAllMilestones() {
         return res.json();
       })
       .then((body) => {
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
         dispatch(fetchAllMilestonesSuccess(body.data.getAllMilestones));
       })
       .catch((error) => {
@@ -374,6 +389,9 @@ export function fetchDocumentCategories() {
     };
     return getCachedDocumentCategoriesOrFetchIt(dispatch, config)
       .then((body) => {
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
         const getAllDocumentCategories = body.data.getAllDocumentCategories;
         dispatch(setLoadingState(false));
         dispatch(fetchDocumentCategoriesSuccess(getAllDocumentCategories));

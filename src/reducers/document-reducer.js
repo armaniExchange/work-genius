@@ -107,7 +107,7 @@ export default function documentReducer(state = initialState, action) {
     case actionTypes.FETCH_DOCUMENT_CATEGORIES_SUCCESS:
       return state.set('documentCategories', fromJS(transformToTree(action.data)));
     case actionTypes.FETCH_ALL_MILESTONES_SUCCESS:
-      return state.set('allMilestones', action.allMilestones);
+      return state.set('allMilestones', fromJS(action.allMilestones));
     case actionTypes.UPDATE_ARTICLES_QUERY:
       const queryParams = ['categoryId', 'currentPage', 'tag', 'documentType', 'priority', 'milestone', 'owner'];
       queryParams.forEach((item) => {

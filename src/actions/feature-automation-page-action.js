@@ -66,6 +66,9 @@ export function fetchDocumentCategoriesWithReport(query) {
         return res.json();
       })
       .then((body) => {
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
         const { getAllDocumentCategoriesWithTestReport } = body.data;
         dispatch(fetchDocumentCategoriesWithReportSuccess(getAllDocumentCategoriesWithTestReport));
       })
@@ -169,6 +172,9 @@ export function fetchTestReportCreatedTimeList() {
         return res.json();
       })
       .then((body) => {
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
         const { getTestReportCreatedTimeList } = body.data;
         dispatch(setLoadingState(false));
         dispatch(fetchTestReportCreatedTimeListSuccess(getTestReportCreatedTimeList));
@@ -207,6 +213,9 @@ export function fetchTestReportAxapiSuggestions() {
         return res.json();
       })
       .then((body) => {
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
         const { getTestReportAxapiSuggestion } = body.data;
         dispatch(fetchTestReportAxapiSuggestionsSuccess(getTestReportAxapiSuggestion));
       })
