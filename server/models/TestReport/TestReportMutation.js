@@ -1,7 +1,7 @@
-// r.db('work_genius').tableCreate('test_report_categories'),
-// r.db('work_genius').table('test_report_categories').createIndex('path')
-// r.db('work_genius').table('test_report_categories').createIndex('axapis')
 // r.db('work_genius').tableCreate('test_report_time_list')
+// r.db('work_genius').tableCreate('test_report_categories'),
+// r.db('work_genius').table('test_report_categories').indexCreate('path')
+// r.db('work_genius').table('test_report_categories').indexCreate('axapis', {multi: true})
 
 // GraphQL
 import {
@@ -127,6 +127,9 @@ export const addTestReportHandler = async (req, res) => {
       testReportCategoryTableIndex,
     } = TEST_REPORT_MAP[type];
 
+    console.log('data');
+    console.log(data);
+
     const dbResult = await r.db('work_genius')
       .table('test_report_categories')
       .insert(
@@ -142,9 +145,6 @@ export const addTestReportHandler = async (req, res) => {
         }), {conflict: 'update'}
       )
       .run(connection);
-
-    console.log('dbResult');
-    console.log(dbResult);
 
     const hasOptionsInReportTimeList = await r.db('work_genius')
       .table('test_report_time_list')
