@@ -139,7 +139,7 @@ class ResourceMapPage extends Component{
                     <div className = "pull-left" style={{ width: '160px', paddingTop: '7px' }}>
                         {/*<DatePicker className="option-layout" fullWidth={true} defaultDate={startDate} placeholder="Start Date" onChange={this._changeStartDate} />*/}
                         <DateField
-                            defaultValue={this.state.startDate}
+                            value={this.state.startDate}
                             onChange={this._changeStartDate}
                             dateFormat="YYYY-MM-DD"/>
                     </div>
