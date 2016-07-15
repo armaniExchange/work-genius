@@ -8,6 +8,7 @@ import { TableRow, TableRowColumn } from 'material-ui/lib/table';
 import DatePicker from 'material-ui/lib/date-picker/date-picker';
 import SelectField from 'material-ui/lib/select-field';
 import MenuItem from 'material-ui/lib/menus/menu-item';
+import moment from 'moment';
 
 class UTDocTaskRow extends Component {
 
@@ -102,7 +103,8 @@ class UTDocTaskRow extends Component {
     const {
       fullpathWithOutRoot,
       owners,
-      allUsers
+      allUsers,
+      readOnly
     } = this.props;
 
     const {
@@ -125,30 +127,46 @@ class UTDocTaskRow extends Component {
         <TableRowColumn style={{width: 150}}>{ownersName[0]}</TableRowColumn>
         <TableRowColumn style={{width: 150}}>{ownersName.slice(1).join()}</TableRowColumn>
         <TableRowColumn style={{width: 150}}>
-          <DatePicker
-            hintText="Doc ETA"
-            value={editingDocETA && new Date(editingDocETA)}
-            onChange={::this.onDocETAChange} />
+          {
+            readOnly ? editingDocETA && moment(editingDocETA).format('M/D/YYYY') : (
+              <DatePicker
+                hintText="Doc ETA"
+                value={editingDocETA && new Date(editingDocETA)}
+                onChange={::this.onDocETAChange} />
+            )
+          }
         </TableRowColumn>
         <TableRowColumn style={{width: 150}}>
-          <SelectField value={editingDocStatus || 'TODO'} onChange={::this.onDocStatusChange}>
-            <MenuItem value={"TODO"} primaryText="TODO"/>
-            <MenuItem value={"REVIEW"} primaryText="REVIEW"/>
-            <MenuItem value ={"DONE"} primaryText="DONE"/>
-          </SelectField>
+        {
+          readOnly ? editingDocStatus : (
+            <SelectField value={editingDocStatus || 'TODO'} onChange={::this.onDocStatusChange}>
+              <MenuItem value={"TODO"} primaryText="TODO"/>
+              <MenuItem value={"REVIEW"} primaryText="REVIEW"/>
+              <MenuItem value ={"DONE"} primaryText="DONE"/>
+            </SelectField>
+          )
+        }
         </TableRowColumn>
         <TableRowColumn style={{width: 150}}>
-          <DatePicker
-            hintText="Code ETA"
-            value={editingCodeETA && new Date(editingCodeETA)}
-            onChange={::this.onCodeETAChange} />
+        {
+          readOnly ? editingCodeETA && moment(editingCodeETA).format('M/D/YYYY') : (
+            <DatePicker
+              hintText="Code ETA"
+              value={editingCodeETA && new Date(editingCodeETA)}
+              onChange={::this.onCodeETAChange} />
+          )
+        }
         </TableRowColumn>
         <TableRowColumn style={{width: 150}}>
-          <SelectField value={editingCodeStatus || 'TODO'} onChange={::this.onCodeStatusChange}>
-            <MenuItem value={"TODO"} primaryText="TODO"/>
-            <MenuItem value={"REVIEW"} primaryText="REVIEW"/>
-            <MenuItem value={"DONE"} primaryText="DONE"/>
-          </SelectField>
+        {
+          readOnly ? editingCodeStatus : (
+            <SelectField value={editingCodeStatus || 'TODO'} onChange={::this.onCodeStatusChange}>
+              <MenuItem value={"TODO"} primaryText="TODO"/>
+              <MenuItem value={"REVIEW"} primaryText="REVIEW"/>
+              <MenuItem value={"DONE"} primaryText="DONE"/>
+            </SelectField>
+          )
+        }
         </TableRowColumn>
         <TableRowColumn style={{width: 120}}>{::this.getOverallStatus()}</TableRowColumn>
       </TableRow>
@@ -168,6 +186,7 @@ UTDocTaskRow.propTypes = {
   codeStatus: PropTypes.string,
   allUsers: PropTypes.array,
   isLoading: PropTypes.bool,
+  readOnly: PropTypes.bool
 };
 
 UTDocTaskRow.defaultProps = {
@@ -177,7 +196,8 @@ UTDocTaskRow.defaultProps = {
   docStatus: '',
   codeETA: null,
   codeStatus: '',
-  allUsers: []
+  allUsers: [],
+  readOnly: false
 };
 
 export default UTDocTaskRow;

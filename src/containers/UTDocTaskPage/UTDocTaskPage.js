@@ -101,7 +101,7 @@ class UTDocTaskPage extends Component {
           <label>Owner:&nbsp;</label>
           <DropDownList
             isNeedAll={true}
-            title={filterOwner && allUsers && allUsers.length ? allUsers.filter(user => user.id === filterOwner)[0].name : 'All'}
+            title={filterOwner && allUsers && allUsers.length ? allUsers.filter(user => user.id === filterOwner)[0].name : 'All(ReadOnly)'}
             onOptionClick={::this.onFilterOwnerChange}
             aryOptionConfig={allUsers.map(item => {
               return { title: item.name, value: item.id};
@@ -136,6 +136,7 @@ class UTDocTaskPage extends Component {
                     isLoading={isLoading}
                     setupTestReportOfCategory={::this.setupTestReportOfCategory}
                     upsertWorklogItem={::this.upsertWorklogItem}
+                    readOnly={!filterOwner}
                     {...task} />
                 );
               })
