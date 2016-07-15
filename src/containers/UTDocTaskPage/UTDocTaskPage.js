@@ -131,10 +131,10 @@ class UTDocTaskPage extends Component {
                     this.state.flatCategories
                     .filter(item => filterRelease ? item.fullpath && item.fullpath.includes(filterRelease) : true)
                     .filter(item => filterOwner ? item.owners && item.owners[0] === filterOwner : true)
-                    .map((task, index)=>{
+                    .map((task)=>{
                       return (
                         <UTDocTaskRow
-                          key={index}
+                          key={task.id}
                           allUsers={allUsers}
                           isLoading={isLoading}
                           setupTestReportOfCategory={::this.setupTestReportOfCategory}
