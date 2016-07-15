@@ -164,6 +164,10 @@ td {
   padding-left: 0px;
 }
 
+.layout-design-padding-right-0{
+  padding-right: 0px;
+}
+
 .layout-design-over{
   overflow: hidden;
 }

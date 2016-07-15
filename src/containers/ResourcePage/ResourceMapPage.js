@@ -13,7 +13,9 @@ import Breadcrumb from '../../components/A10-UI/Breadcrumb';
 import BREADCRUMB from '../../constants/breadcrumb';
 
 import ResourceMapTable from '../../components/ResourceMapTable/ResourceMapTable.js';
-import DatePicker from '../../components/A10-UI/Input/Date-Picker.js';
+// import DatePicker from '../../components/A10-UI/Input/Date-Picker.js';
+import { DateField } from 'react-date-picker';
+import 'react-date-picker/index.css';
 import Tooltip from 'rc-tooltip';
 import 'rc-tooltip/assets/bootstrap_white.css';
 import RaisedButton from 'material-ui/lib/raised-button';
@@ -24,6 +26,7 @@ class ResourceMapPage extends Component{
 		super();
 		this._changeStartDate = ::this._changeStartDate;
         this._selectUser = ::this._selectUser;
+        this.state = {startDate: '2016-07-10'};
 	}
 
 	componentWillMount() {
@@ -44,13 +47,19 @@ class ResourceMapPage extends Component{
         queryTaskTitle();
 	}
 
+    componentWillReceiveProps (nextProps) {
+        const {
+            startDate
+        } = nextProps;
+        this.setState({startDate: startDate});
+    }
+
 	_changeStartDate(date) {
 		const {
             totalDays,
             currentUserId,
 			queryResourceMapData
 		} = this.props;
-        console.log(date);
 		queryResourceMapData(date, totalDays, currentUserId);
 	}
 
@@ -95,7 +104,6 @@ class ResourceMapPage extends Component{
 
 	render () {
 		const {
-			startDate,
             allUsers,
             currentUserId,
 			fetchResourceMapModalHandler,
@@ -128,8 +136,12 @@ class ResourceMapPage extends Component{
                             onClick={ ::this.prevWeekResourceMap }/>
                             &nbsp;&nbsp;
                     </div>
-                    <div className = "pull-left" style={{ width: '120px', overflow: 'hidden' }}>
-                        <DatePicker className="option-layout" fullWidth={true} defaultDate={startDate} placeholder="Start Date" onChange={this._changeStartDate} />
+                    <div className = "pull-left" style={{ width: '160px', paddingTop: '7px' }}>
+                        {/*<DatePicker className="option-layout" fullWidth={true} defaultDate={startDate} placeholder="Start Date" onChange={this._changeStartDate} />*/}
+                        <DateField
+                            defaultValue={this.state.startDate}
+                            onChange={this._changeStartDate}
+                            dateFormat="YYYY-MM-DD"/>
                     </div>
                     <div className = "top-selector pull-left">
                             &nbsp;&nbsp;
