@@ -39,6 +39,7 @@ import MarkdownCheatSheet from '../containers/MarkdownCheatSheet/MarkdownCheatSh
 import EditDocumentCategoryPage from '../containers/EditDocumentCategoryPage/EditDocumentCategoryPage';
 import FeatureAutomationPage from '../containers/FeatureAutomationPage/FeatureAutomationPage';
 import WorkLogPage from '../containers/WorkLogPage/WorkLogPage';
+import UTDocTaskPage from '../containers/UTDocTaskPage/UTDocTaskPage';
 
 // Utilities
 import requireAuth from '../containers/Require-Auth/Require-Auth';
@@ -73,6 +74,7 @@ const appRoutes = () => (
           <Route path="resource-map" component={requireAuth(ResourceMapPage)} />
           <Route path="team" component={requireAuth(TeamMemberPage)} />
           <Route path="device" component={requireAuth(DevicePage)} />
+          <Route path="ut-status" component={requireAuth(UTDocTaskPage)} />
         </Route>
         <Route path="valid-demo" component={requireAuth(ValidDemoPage)} />
 

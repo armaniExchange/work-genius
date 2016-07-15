@@ -107,18 +107,28 @@ class FeatureAutomationPage extends Component {
   }
 
   onPageSettingSave(id, axapis, path) {
-    this.props.featureAutomationActions.setupTestReportOfCategory({
+    const { featureAutomationActions } = this.props;
+    const {
+      setupTestReportOfCategory,
+      fetchDocumentCategoriesWithReport
+    } = featureAutomationActions;
+    setupTestReportOfCategory({
       categoryId: id,
       axapis,
       path
-    });
+    }, fetchDocumentCategoriesWithReport);
   }
 
   onOwnersSave(id, owners) {
-    this.props.featureAutomationActions.setupTestReportOfCategory({
+    const { featureAutomationActions } = this.props;
+    const {
+      setupTestReportOfCategory,
+      fetchDocumentCategoriesWithReport
+    } = featureAutomationActions;
+    setupTestReportOfCategory({
       categoryId: id,
       owners
-    });
+    }, fetchDocumentCategoriesWithReport);
   }
 
   onUnitTestCreatedTimeChange(value) {
@@ -284,7 +294,7 @@ class FeatureAutomationPage extends Component {
       background: 'rgba(0,0,0,0.2)',
       textAlign: 'center',
       paddingTop: 10
-    };
+  };
     return (
       <div className="feature-automation-page">
         <div style={{display: 'flex', position: 'relative'}}>

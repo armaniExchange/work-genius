@@ -84,8 +84,8 @@ let UserQuery = {
 					};
 				}).coerceTo('array');
 				result = await query.run(connection);
-				await connection.close();
-				return result;
+				await connection.close()
+;				return result;
 			} catch (err) {
 				return err;
 			}
