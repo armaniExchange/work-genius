@@ -43,6 +43,7 @@
     "express-session": "^1.12.1",
     "express-session-rethinkdb": "^0.2.0",
     "font-awesome": "^4.5.0",
+    "fuzzy": "^0.1.1",
     "glob": "^7.0.5",
     "graphql": "^0.4.12",
     "highlight.js": "^9.3.0",
