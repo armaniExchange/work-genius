@@ -3,6 +3,7 @@ import './_UTDocTaskPage.scss';
 // React & Redux
 import React, { Component, PropTypes } from 'react';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow } from 'material-ui/lib/table';
+import CircularProgress from 'material-ui/lib/circular-progress';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -101,7 +102,7 @@ class UTDocTaskPage extends Component {
           <label>Owner:&nbsp;</label>
           <DropDownList
             isNeedAll={true}
-            title={filterOwner && allUsers && allUsers.length ? allUsers.filter(user => user.id === filterOwner)[0].name : 'All(ReadOnly)'}
+            title={filterOwner && allUsers && allUsers.length ? allUsers.filter(user => user.id === filterOwner)[0].name : 'All (ReadOnly)'}
             onOptionClick={::this.onFilterOwnerChange}
             aryOptionConfig={allUsers.map(item => {
               return { title: item.name, value: item.id};
@@ -109,40 +110,46 @@ class UTDocTaskPage extends Component {
           />
         </div>
         <br />
+        <div style={{width: '100%', textAlign: 'center'}}>
+          {
+            isLoading ? <CircularProgress /> : (
+              <Table height="600px" style={{maxHeight: 700, minWidth: 900}} fixedHeader={true}>
+                <TableHeader displaySelectAll={false}>
+                  <TableRow>
+                    <TableHeaderColumn>Menu List</TableHeaderColumn>
+                    <TableHeaderColumn style={{width: 150}}>Owner</TableHeaderColumn>
+                    <TableHeaderColumn style={{width: 150}}>Reviewer</TableHeaderColumn>
+                    <TableHeaderColumn style={{width: 150}}><i className="fa fa-calendar-o"/> Doc ETA</TableHeaderColumn>
+                    <TableHeaderColumn style={{width: 150}}>Doc Status</TableHeaderColumn>
+                    <TableHeaderColumn style={{width: 150}}><i className="fa fa-calendar-o"/> Code ETA</TableHeaderColumn>
+                    <TableHeaderColumn style={{width: 150}}>Code Status</TableHeaderColumn>
+                    <TableHeaderColumn style={{width: 120}}>Status</TableHeaderColumn>
+                  </TableRow>
+                </TableHeader>
+                <TableBody showRowHover={true}>
+                  {
+                    this.state.flatCategories
+                    .filter(item => filterRelease ? item.fullpath && item.fullpath.includes(filterRelease) : true)
+                    .filter(item => filterOwner ? item.owners && item.owners[0] === filterOwner : true)
+                    .map((task, index)=>{
+                      return (
+                        <UTDocTaskRow
+                          key={index}
+                          allUsers={allUsers}
+                          isLoading={isLoading}
+                          setupTestReportOfCategory={::this.setupTestReportOfCategory}
+                          upsertWorklogItem={::this.upsertWorklogItem}
+                          readOnly={!filterOwner}
+                          {...task} />
+                      );
+                    })
+                  }
+                </TableBody>
+              </Table>
+            )
+          }
+        </div>
 
-        <Table height="600px" style={{maxHeight: 700, minWidth: 900}} fixedHeader={true}>
-          <TableHeader displaySelectAll={false}>
-            <TableRow>
-              <TableHeaderColumn>Menu List</TableHeaderColumn>
-              <TableHeaderColumn style={{width: 150}}>Owner</TableHeaderColumn>
-              <TableHeaderColumn style={{width: 150}}>Reviewer</TableHeaderColumn>
-              <TableHeaderColumn style={{width: 150}}><i className="fa fa-calendar-o"/> Doc ETA</TableHeaderColumn>
-              <TableHeaderColumn style={{width: 150}}>Doc Status</TableHeaderColumn>
-              <TableHeaderColumn style={{width: 150}}><i className="fa fa-calendar-o"/> Code ETA</TableHeaderColumn>
-              <TableHeaderColumn style={{width: 150}}>Code Status</TableHeaderColumn>
-              <TableHeaderColumn style={{width: 120}}>Status</TableHeaderColumn>
-            </TableRow>
-          </TableHeader>
-          <TableBody showRowHover={true}>
-            {
-              this.state.flatCategories
-              .filter(item => filterRelease ? item.fullpath && item.fullpath.includes(filterRelease) : true)
-              .filter(item => filterOwner ? item.owners && item.owners[0] === filterOwner : true)
-              .map((task, index)=>{
-                return (
-                  <UTDocTaskRow
-                    key={index}
-                    allUsers={allUsers}
-                    isLoading={isLoading}
-                    setupTestReportOfCategory={::this.setupTestReportOfCategory}
-                    upsertWorklogItem={::this.upsertWorklogItem}
-                    readOnly={!filterOwner}
-                    {...task} />
-                );
-              })
-            }
-          </TableBody>
-        </Table>
       </div>
     );
   }
