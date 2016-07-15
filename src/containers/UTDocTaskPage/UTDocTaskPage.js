@@ -112,7 +112,7 @@ class UTDocTaskPage extends Component {
         <br />
         <div style={{width: '100%', textAlign: 'center'}}>
           {
-            isLoading ? <CircularProgress /> : (
+            isLoading && this.state.flatCategories.length <= 1 ? <CircularProgress /> : (
               <Table height="600px" style={{maxHeight: 700, minWidth: 900}} fixedHeader={true}>
                 <TableHeader displaySelectAll={false}>
                   <TableRow>
