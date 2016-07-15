@@ -90,12 +90,10 @@ class UTDocTaskRow extends Component {
       editingDocStatus,
       editingCodeStatus
     } = this.state;
-    if (!editingDocStatus && !editingCodeStatus) {
-      return <strong className="text-warning">ASSIGNED</strong>;
-    } else if (editingDocStatus === 'DONE' && editingCodeStatus === 'DONE') {
+    if (editingDocStatus === 'DONE' && editingCodeStatus === 'DONE') {
      return <strong className="text-success">FINISHED</strong>;
     } else {
-      return <strong className="text-primary">ACTIVE</strong>;
+      return <strong className="text-primary">ASSIGNED</strong>;
     }
   }
 
