@@ -78,16 +78,93 @@ export function fetchDocumentCategoriesWithReport(query) {
   };
 }
 
+
+export function fetchDocumentCategoriesWithSettingsSuccess(data) {
+  return {
+    type: actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_SETTINGS_SUCCESS,
+    data
+  };
+}
+
+export function fetchDocumentCategoriesWithSettingsFail(error) {
+  return {
+    type: actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_SETTINGS_FAIL,
+    error
+  };
+}
+
+export function fetchDocumentCategoriesWithSettings() {
+  return dispatch => {
+    dispatch({
+      type: actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_SETTINGS
+    });
+
+    const config = {
+      method: 'POST',
+      body: `{
+        getAllDocumentCategoriesWithSettings {
+          id,
+          parentId,
+          name,
+          path,
+          axapis,
+          owners,
+          docETA,
+          docStatus,
+          codeETA,
+          codeStatus,
+        }
+      }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((body) => {
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
+        const { getAllDocumentCategoriesWithSettings } = body.data;
+        dispatch(fetchDocumentCategoriesWithSettingsSuccess(getAllDocumentCategoriesWithSettings));
+      })
+      .catch((error) => {
+        dispatch(apiFailure(error));
+      });
+  };
+}
+
+
 export function setupTestReportOfCategorySuccess() {
   return {
     type: actionTypes.SETUP_TEST_REPORT_OF_CATEGORY_SUCCESS
   };
 }
 
+export function setupTestReportOfCategoryFail() {
+  return {
+    type: actionTypes.SETUP_TEST_REPORT_OF_CATEGORY_FAIL
+  };
+}
 
-export function setupTestReportOfCategory({categoryId, path, axapis, owners, difficulty}) {
+export function setupTestReportOfCategory({
+  categoryId,
+  path,
+  axapis,
+  owners,
+  difficulty,
+  codeETA,
+  docETA,
+  codeStatus,
+  docStatus
+}, successAction) {
   return dispatch => {
-    dispatch(setLoadingState(true));
     dispatch({
       type: actionTypes.SETUP_TEST_REPORT_OF_CATEGORY
     });
@@ -97,6 +174,10 @@ export function setupTestReportOfCategory({categoryId, path, axapis, owners, dif
     queryString += typeof axapis !== 'undefined' ? `axapis: ${stringifyObject(axapis)},` : '';
     queryString += typeof owners !== 'undefined' ? `owners: ${stringifyObject(owners)}` : '';
     queryString += typeof difficulty !== 'undefined' ? `difficulty: ${difficulty}` : '';
+    queryString += typeof codeETA !== 'undefined' ? `codeETA: ${codeETA}` : '';
+    queryString += typeof docETA !== 'undefined' ? `docETA: ${docETA}` : '';
+    queryString += typeof codeStatus !== 'undefined' ? `codeStatus: "${codeStatus}"` : '';
+    queryString += typeof docStatus !== 'undefined' ? `docStatus: "${docStatus}"` : '';
 
     const config = {
       method: 'POST',
@@ -119,11 +200,13 @@ export function setupTestReportOfCategory({categoryId, path, axapis, owners, dif
         return res.json();
       })
       .then(() => {
-        dispatch(fetchDocumentCategoriesWithReport());
+        if (successAction) {
+          dispatch(successAction);
+        }
         dispatch(setupTestReportOfCategorySuccess());
-        dispatch(setLoadingState(false));
       })
       .catch((error) => {
+        dispatch(setupTestReportOfCategoryFail());
         dispatch(apiFailure(error));
       });
   };

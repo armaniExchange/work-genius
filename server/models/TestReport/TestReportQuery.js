@@ -11,6 +11,7 @@ import {
 } from 'graphql';
 // Models
 import TestReportCategoryType from './TestReportCategoryType';
+import TestReportCategorySetupType from './TestReportCategorySetupType';
 // RethinkDB
 import r from 'rethinkdb';
 // Constants
@@ -100,8 +101,8 @@ let CategoryQuery = {
            })
           .coerceTo('array')
           .run(connection);
-        return result;
         await connection.close();
+        return result;
       } catch (err) {
         return err;
       }
@@ -118,8 +119,32 @@ let CategoryQuery = {
           .map(r.row('api'))
           .coerceTo('array')
           .run(connection);
-        return result;
         await connection.close();
+        return result;
+      } catch (err) {
+        return err;
+      }
+    }
+  },
+  'getAllDocumentCategoriesWithSettings': {
+    type: new GraphQLList(TestReportCategorySetupType),
+    description: 'Get axapi suggestion',
+    resolve: async () => {
+      try {
+        const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+        const result = await r.db('work_genius')
+          .table('document_categories')
+          .filter({ isFeature: true })
+          .merge(function(category) {
+            return r.db('work_genius')
+              .table('test_report_categories')
+              .get(category('id'))
+              .default({});
+          })
+          .coerceTo('array')
+          .run(connection);
+        await connection.close();
+        return result;
       } catch (err) {
         return err;
       }

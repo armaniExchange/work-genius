@@ -89,10 +89,9 @@ app.use((req, res, next) => {
 
 let transporter = nodemailer.createTransport(MAIL_TRANSPORTER_CONFIG);
 if (!IS_PRODUCTION) {
-  transporter.sendMail = async(mailData) => {
+  transporter.sendMail = async() => {
     console.log(`Since IS_PRODUCTION in server/configurations.js is false`);
-    console.log(`Stop sending email, and mailData is:`);
-    console.log(mailData);
+    console.log(`Stop sending email`);
   };
 }
 

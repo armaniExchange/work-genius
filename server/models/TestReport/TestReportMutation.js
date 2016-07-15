@@ -8,7 +8,8 @@ import {
   GraphQLString,
   GraphQLID,
   GraphQLList,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLFloat
 } from 'graphql';
 
 // RethinkDB
@@ -46,10 +47,6 @@ const notifyOwnersErrorsWithEmail = async (transporter, testReportType, createdA
     })
     .run(connection);
 
-  if (errorReports.length === 0) {
-    console.log('No issues found');
-    return;
-  }
   const testReportTypeText = testReportTypeTextMap[testReportType];
   const HeaderMd = `Hi Team,  \nFeature Automation test found issues, please take a look at it, thank you.\n`;
   const errorReportsMd = errorReports.map(errorReport=>{
@@ -93,6 +90,9 @@ export const addTestReportHandler = async (req, res) => {
   let connection = null;
   try {
     connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+    console.log('=============req.body=============');
+    console.log(JSON.stringify(req.body, null, '  '));
+
     const { type } = req.params;
     const { reports } = req.body;
     const createdAt = req.body.createdAt || new Date().getTime();
@@ -127,7 +127,7 @@ export const addTestReportHandler = async (req, res) => {
       testReportCategoryTableIndex,
     } = TEST_REPORT_MAP[type];
 
-    await r.db('work_genius')
+    const dbResult = await r.db('work_genius')
       .table('test_report_categories')
       .insert(
         r.expr(data)
@@ -142,6 +142,9 @@ export const addTestReportHandler = async (req, res) => {
         }), {conflict: 'update'}
       )
       .run(connection);
+
+    console.log('dbResult');
+    console.log(dbResult);
 
     const hasOptionsInReportTimeList = await r.db('work_genius')
       .table('test_report_time_list')
@@ -164,7 +167,10 @@ export const addTestReportHandler = async (req, res) => {
     }
 
     res.status(200)
-      .send({success: true});
+      .send({
+        success: true,
+        dbResult
+      });
 
     await connection.close();
     await notifyOwnersErrorsWithEmail(transporter, testReportType, createdAt);
@@ -194,6 +200,18 @@ const mutation = {
       },
       difficulty: {
         type: GraphQLInt
+      },
+      codeETA: {
+        type: GraphQLFloat
+      },
+      docETA: {
+        type: GraphQLFloat
+      },
+      codeStatus: {
+        type: GraphQLString
+      },
+      docStatus: {
+        type: GraphQLString
       }
     },
     resolve: async (root, {
@@ -202,6 +220,10 @@ const mutation = {
       axapis,
       owners,
       difficulty,
+      codeETA,
+      docETA,
+      codeStatus,
+      docStatus
     }) => {
       const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
       const data = Object.assign(
@@ -209,7 +231,11 @@ const mutation = {
         typeof path !== 'undefined' ? { path } : null,
         typeof axapis !== 'undefined' ? { axapis } : null,
         typeof owners !== 'undefined' ? { owners } : null,
-        typeof difficulty !== 'undefined' ? { difficulty } : null
+        typeof difficulty !== 'undefined' ? { difficulty } : null,
+        typeof codeETA !== 'undefined' ? { codeETA } : null,
+        typeof docETA !== 'undefined' ? { docETA } : null,
+        typeof codeStatus !== 'undefined' ? { codeStatus } : null,
+        typeof docStatus !== 'undefined' ? { docStatus } : null,
       );
       try {
         await r.db('work_genius')

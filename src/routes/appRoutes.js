@@ -74,6 +74,7 @@ const appRoutes = () => (
           <Route path="resource-map" component={requireAuth(ResourceMapPage)} />
           <Route path="team" component={requireAuth(TeamMemberPage)} />
           <Route path="device" component={requireAuth(DevicePage)} />
+          <Route path="ut-status" component={requireAuth(UTDocTaskPage)} />
         </Route>
         <Route path="valid-demo" component={requireAuth(ValidDemoPage)} />
 
@@ -103,7 +104,6 @@ const appRoutes = () => (
         {/* automation*/}
         <Route path="automation">
           <IndexRoute component={requireAuth(FeatureAutomationPage)} />
-          <Route path="UTDocTask" component={requireAuth(UTDocTaskPage)} />
         </Route>
 
         {/* axapi automation*/}
