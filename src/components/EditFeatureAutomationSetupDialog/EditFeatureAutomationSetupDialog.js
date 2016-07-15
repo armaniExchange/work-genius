@@ -14,12 +14,12 @@ class EditFeatureAutomationSetupDialog extends Component {
   constructor(props) {
     super(props);
     const { axapis, path } = this.props;
-    this.state = Object.assign({addToAllUrl: '', editingPath: path}, this.parseAxapiToState(axapis));
+    this.state = Object.assign({addToAllUrl: '', editingPath: path || ''}, this.parseAxapiToState(axapis));
   }
 
   componentWillReceiveProps(nextProps) {
     const { axapis, path} = nextProps;
-    this.setState(Object.assign({editingPath: path}, this.parseAxapiToState(axapis)));
+    this.setState(Object.assign({editingPath: path || ''}, this.parseAxapiToState(axapis)));
   }
 
   parseAxapiToState(axapis) {
@@ -69,7 +69,6 @@ class EditFeatureAutomationSetupDialog extends Component {
       .filter(({urls}) => urls.trim() !== '')
       .map(({method, urls}) => urls.trim().split(',').map(url => `${method} ${url}`))
       .reduce((prev, current) => prev.concat(current), []);
-
 
     const firstSlash = editingPath[0] === '/' ? '' : '/' ;
     const lastSlash = editingPath.trim().slice(-1) === '/' ? '' : '/';
