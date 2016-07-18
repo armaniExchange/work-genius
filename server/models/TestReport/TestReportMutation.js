@@ -46,6 +46,10 @@ const notifyOwnersErrorsWithEmail = async (transporter, testReportType, createdA
         .reduce((left, right)=> left.add(right)).default([])
     })
     .run(connection);
+  if (errorReports.length === 0) {
+    console.log('no error found this time, skip sending email');
+    return;
+  }
 
   const testReportTypeText = testReportTypeTextMap[testReportType];
   const HeaderMd = `Hi Team,  \nFeature Automation test found issues, please take a look at it, thank you.\n`;
@@ -126,9 +130,6 @@ export const addTestReportHandler = async (req, res) => {
       tableIndex,
       testReportCategoryTableIndex,
     } = TEST_REPORT_MAP[type];
-
-    console.log('data');
-    console.log(data);
 
     const dbResult = await r.db('work_genius')
       .table('test_report_categories')
