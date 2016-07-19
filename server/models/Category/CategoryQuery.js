@@ -80,7 +80,7 @@ let CategoryQuery = {
           .ungroup()
           .orderBy(r.desc('reduction'))
           .map(r.row('group'))
-          .slice(0, 20)
+          .slice(0, 30)
           .run(connection);
 
         await connection.close();

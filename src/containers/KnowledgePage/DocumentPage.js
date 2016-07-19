@@ -28,6 +28,7 @@ class DocumentPage extends Component {
     this.state = {
       // the delete state
       isConfirmDeleteArticleDialogVisible: false,
+      isDisplayAllHotTags: false,
       editingArticle: null
     };
   }
@@ -62,6 +63,10 @@ class DocumentPage extends Component {
   onPaginate(page) {
     this.props.documentActions.updateArticlesQuery({currentPage: page});
     setTimeout(() => this.queryArticles(), 0);
+  }
+
+  toggleDisplayAllHotTags() {
+    this.setState({ isDisplayAllHotTags: !this.state.isDisplayAllHotTags });
   }
 
   resetQueryAndFetchArticles() {
@@ -191,6 +196,7 @@ class DocumentPage extends Component {
     } = this.props;
     const {
       isConfirmDeleteArticleDialogVisible,
+      isDisplayAllHotTags,
       editingArticle
     } = this.state;
 
@@ -204,10 +210,18 @@ class DocumentPage extends Component {
                 label="+ Create Document"
                 secondary={true} />
             </Link>
-            <h5>HOT TAGS</h5>
+            <h5>HOT TAGS
+
+              <span onClick={::this.toggleDisplayAllHotTags} className="hot-tags-more">
+                {
+                  isDisplayAllHotTags ? <i className="fa fa-chevron-down" />: <i className="fa fa-chevron-right" />
+                }
+              </span>
+            </h5>
             <ArticleTagList
               onChange={::this.onTagChange}
               tags={documentHotTags}
+              maxNum={isDisplayAllHotTags ? null : 3}
               value={tag} />
             <div className="knowledge-tree-label">
               <h5>KNOWLEDGE TREE

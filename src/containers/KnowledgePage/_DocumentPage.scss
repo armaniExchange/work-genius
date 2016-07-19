@@ -1,5 +1,10 @@
 .document-page-content {
   padding-left: 340px;
+  .hot-tags-more {
+    float: right;
+    color: #00bcd4;
+    cursor: pointer;
+  }
   .knowledge-tree-label {
     position: relative;
     a {
@@ -14,7 +19,7 @@
   .left-navigation {
     width: 300px;
     left: 40px;
-    top: 60px;
+    top: 50px;
     position: fixed;
     height: 100%;
     padding-top: 130px;
