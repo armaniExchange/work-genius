@@ -102,7 +102,9 @@ class UTDocTaskRow extends Component {
       fullpathWithOutRoot,
       owners,
       allUsers,
-      readOnly
+      readOnly,
+      readOnlyText,
+      isEmpty
     } = this.props;
 
     const {
@@ -111,6 +113,20 @@ class UTDocTaskRow extends Component {
       editingCodeStatus,
       editingDocStatus,
     } = this.state;
+
+    if (isEmpty) {
+      return (
+        <TableRow>
+          <td style={{width: 48}}></td>
+          <TableRowColumn>
+            <div style={{textAlign: 'center', color: 'gray', paddingTop: 20, paddingBottom: 20}}>
+              <i className="fa fa-file-text-o fa-3x"/>
+              <h5>No matching items found.</h5>
+            </div>
+          </TableRowColumn>
+        </TableRow>
+      );
+    }
 
     const ownersName = allUsers && allUsers.length > 0 ? owners.map(ownerId=>{
       const user = allUsers.filter(eachUser=> eachUser.id === ownerId);
@@ -126,7 +142,7 @@ class UTDocTaskRow extends Component {
         <TableRowColumn style={{width: 150}}>{ownersName.slice(1).join()}</TableRowColumn>
         <TableRowColumn style={{width: 150}}>
           {
-            readOnly ? editingDocETA && moment(editingDocETA).format('M/D/YYYY') : (
+            readOnly ? editingDocETA && <span title={readOnlyText}>{moment(editingDocETA).format('M/D/YYYY')}</span> : (
               <DatePicker
                 hintText="Doc ETA"
                 value={editingDocETA && new Date(editingDocETA)}
@@ -136,7 +152,7 @@ class UTDocTaskRow extends Component {
         </TableRowColumn>
         <TableRowColumn style={{width: 150}}>
         {
-          readOnly ? editingDocStatus : (
+          readOnly ? <span title={readOnlyText}>{editingDocStatus}</span> : (
             <SelectField value={editingDocStatus || 'TODO'} onChange={::this.onDocStatusChange}>
               <MenuItem value={"TODO"} primaryText="TODO"/>
               <MenuItem value={"REVIEW"} primaryText="REVIEW"/>
@@ -147,7 +163,7 @@ class UTDocTaskRow extends Component {
         </TableRowColumn>
         <TableRowColumn style={{width: 150}}>
         {
-          readOnly ? editingCodeETA && moment(editingCodeETA).format('M/D/YYYY') : (
+          readOnly ? editingCodeETA && <span title={readOnlyText}>{moment(editingCodeETA).format('M/D/YYYY')}</span> : (
             <DatePicker
               hintText="Code ETA"
               value={editingCodeETA && new Date(editingCodeETA)}
@@ -157,7 +173,7 @@ class UTDocTaskRow extends Component {
         </TableRowColumn>
         <TableRowColumn style={{width: 150}}>
         {
-          readOnly ? editingCodeStatus : (
+          readOnly ? <span title={readOnlyText}>{editingCodeStatus}</span>: (
             <SelectField value={editingCodeStatus || 'TODO'} onChange={::this.onCodeStatusChange}>
               <MenuItem value={"TODO"} primaryText="TODO"/>
               <MenuItem value={"REVIEW"} primaryText="REVIEW"/>
@@ -184,7 +200,9 @@ UTDocTaskRow.propTypes = {
   codeStatus: PropTypes.string,
   allUsers: PropTypes.array,
   isLoading: PropTypes.bool,
-  readOnly: PropTypes.bool
+  readOnly: PropTypes.bool,
+  readOnlyText: PropTypes.string,
+  isEmpty: PropTypes.bool,
 };
 
 UTDocTaskRow.defaultProps = {
@@ -195,7 +213,8 @@ UTDocTaskRow.defaultProps = {
   codeETA: null,
   codeStatus: '',
   allUsers: [],
-  readOnly: false
+  readOnly: false,
+  isEmpty: false
 };
 
 export default UTDocTaskRow;

@@ -26,6 +26,7 @@ class UTDocTaskPage extends Component {
       flatCategories: [],
       filterOwner: privilege <= 5 ? id : null,
       filterRelease: 'root > 4.1',
+      filterReviewer: null
     };
   }
 
@@ -57,6 +58,10 @@ class UTDocTaskPage extends Component {
     this.setState({ filterOwner: value });
   }
 
+  onFilterReviewerChange(value) {
+    this.setState({ filterReviewer: value });
+  }
+
   setupTestReportOfCategory(options) {
     const { featureAutomationActions } = this.props;
     const {
@@ -73,6 +78,19 @@ class UTDocTaskPage extends Component {
     upsertWorklogItem(options);
   }
 
+  combinedFilters(item) {
+    const {
+      filterRelease,
+      filterOwner,
+      filterReviewer
+    } = this.state;
+    let result = true;
+    result = result && (filterRelease ? item.fullpath && item.fullpath.includes(filterRelease) : true);
+    result = result && (filterOwner ? item.owners && item.owners[0] === filterOwner : true);
+    result = result && (filterReviewer ? item.owners && item.owners.slice(1).includes(filterReviewer): true);
+    return result;
+  }
+
   render() {
     const {
       allUsers,
@@ -81,12 +99,14 @@ class UTDocTaskPage extends Component {
     } = this.props;
 
     const {
+      flatCategories,
       filterRelease,
-      filterOwner
+      filterOwner,
+      filterReviewer
     } = this.state;
 
     const filterReleaseOptions = documentCategoriesWithSettings.children || [];
-
+    const displayRows = flatCategories.filter(::this.combinedFilters);
     return (
       <div>
         <div>
@@ -102,8 +122,17 @@ class UTDocTaskPage extends Component {
           <label>Owner:&nbsp;</label>
           <DropDownList
             isNeedAll={true}
-            title={filterOwner && allUsers && allUsers.length ? allUsers.filter(user => user.id === filterOwner)[0].name : 'All (ReadOnly)'}
+            title={filterOwner && allUsers && allUsers.length ? allUsers.filter(user => user.id === filterOwner)[0].name : 'All'}
             onOptionClick={::this.onFilterOwnerChange}
+            aryOptionConfig={allUsers.map(item => {
+              return { title: item.name, value: item.id};
+            })}
+          />
+          <label>Reviewer:&nbsp;</label>
+          <DropDownList
+            isNeedAll={true}
+            title={filterReviewer && allUsers && allUsers.length ? allUsers.filter(user => user.id === filterReviewer)[0].name : 'All'}
+            onOptionClick={::this.onFilterReviewerChange}
             aryOptionConfig={allUsers.map(item => {
               return { title: item.name, value: item.id};
             })}
@@ -128,10 +157,7 @@ class UTDocTaskPage extends Component {
                 </TableHeader>
                 <TableBody showRowHover={true}>
                   {
-                    this.state.flatCategories
-                    .filter(item => filterRelease ? item.fullpath && item.fullpath.includes(filterRelease) : true)
-                    .filter(item => filterOwner ? item.owners && item.owners[0] === filterOwner : true)
-                    .map((task)=>{
+                    displayRows.length > 0 ? displayRows.map((task)=>{
                       return (
                         <UTDocTaskRow
                           key={task.id}
@@ -139,10 +165,13 @@ class UTDocTaskPage extends Component {
                           isLoading={isLoading}
                           setupTestReportOfCategory={::this.setupTestReportOfCategory}
                           upsertWorklogItem={::this.upsertWorklogItem}
-                          readOnly={!filterOwner}
+                          readOnly={!filterOwner && !filterReviewer}
+                          readOnlyText="Reand Only, Choose Owner or Reviewer to Edit"
                           {...task} />
                       );
-                    })
+                    }) : (
+                      <UTDocTaskRow isEmpty={true}/>
+                    )
                   }
                 </TableBody>
               </Table>
