@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import moment from 'moment';
 import _ from 'lodash';
+import fuzzy from 'fuzzy';
 
 import { depthFirstFlat, filterChildren, flatTree } from '../../libraries/tree';
 import * as FeatureAutomationActions from '../../actions/feature-automation-page-action';
@@ -267,7 +268,8 @@ class FeatureAutomationPage extends Component {
   }
 
   filterSearchCategoryName(searchText, key) {
-    return searchText && key.toLowerCase().indexOf(searchText.toLowerCase()) !== -1;
+    var result = fuzzy.filter(searchText.toLowerCase(), [key.toLowerCase()]);
+    return result.length > 0;
   }
 
   getSearchCategoryNameDataSource() {
@@ -382,7 +384,7 @@ class FeatureAutomationPage extends Component {
             title={this.getCreatedTimeTitle(unitTestAngularCreatedTime, unitTestAngualrCreatedTimeList)}
             onOptionClick={::this.onUnitTestAngularCreatedTimeChange}
             aryOptionConfig={unitTestAngualrCreatedTimeList.map(this.parseCreatedTimeToDropdownListItem)}
-          />
+        />
           <label>Unit Test Django:&nbsp;</label>
           <DropDownList
             title={this.getCreatedTimeTitle(unitTestDjangoCreatedTime, unitTestDjangoCreatedTimeList)}
