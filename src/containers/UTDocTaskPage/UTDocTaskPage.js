@@ -147,7 +147,7 @@ class UTDocTaskPage extends Component {
                   <TableRow>
                     <TableHeaderColumn>Menu List</TableHeaderColumn>
                     <TableHeaderColumn style={{width: 150}}>Owner</TableHeaderColumn>
-                    <TableHeaderColumn style={{width: 150}}>Reviewer</TableHeaderColumn>
+                    <TableHeaderColumn style={{width: 200}}>Reviewers</TableHeaderColumn>
                     <TableHeaderColumn style={{width: 150}}><i className="fa fa-calendar-o"/> Doc ETA</TableHeaderColumn>
                     <TableHeaderColumn style={{width: 150}}>Doc Status</TableHeaderColumn>
                     <TableHeaderColumn style={{width: 150}}><i className="fa fa-calendar-o"/> Code ETA</TableHeaderColumn>

@@ -203,6 +203,7 @@ class EditFeatureAutomationSetupDialog extends Component {
         <div style={styles.wrapper}>
           <TextField
             value={editingPath}
+            fullWidth={true}
             placeholder="Page URL"
             onChange={::this.onPathChange}
             onKeyDown={::this.onPathKeyDown}

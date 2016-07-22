@@ -26,7 +26,9 @@ class FeatureAutomationPage extends Component {
     super(props);
     this.state = {
       displayCategoriesId: [],
-      flatCategories: []
+      flatCategories: [],
+      unitTestAngualrCreatedTimeList: [],
+      unitTestDjangoCreatedTimeList: []
     };
   }
 
@@ -53,7 +55,8 @@ class FeatureAutomationPage extends Component {
   componentWillReceiveProps(nextProps) {
     const {
       documentCategoriesWithReportTest,
-      filterOwner
+      filterOwner,
+      unitTestCreatedTimeList
     } = nextProps;
 
     const thisDocumentCategoriesWithReportTest = this.props.documentCategoriesWithReportTest;
@@ -76,6 +79,13 @@ class FeatureAutomationPage extends Component {
       this.setState({ displayCategoriesId: [...toBeDisplayedCategoriesId, ...defaultDisplayCategoriesId] });
     } else if (isFirstLoaded) {
       this.setState({ displayCategoriesId: defaultDisplayCategoriesId });
+    }
+
+    if (unitTestCreatedTimeList !== this.props.unitTestCreatedTimeList) {
+      this.setState({
+        unitTestAngualrCreatedTimeList: unitTestCreatedTimeList.filter(item => item.framework === 'angular'),
+        unitTestDjangoCreatedTimeList: unitTestCreatedTimeList.filter(item => item.framework === 'django')
+      });
     }
   }
 
@@ -277,9 +287,9 @@ class FeatureAutomationPage extends Component {
       flatCategories
     } = this.state;
     const {
-      searchCategoryName
+      searchCategoryName,
+      filterOwner,
     } = this.props;
-    const { filterOwner } = this.props;
 
     return flatCategories.filter((item) => item.fullpath !== 'root')
       .filter(item => !filterOwner || (item.owners && item.owners.includes(filterOwner)) )
@@ -291,7 +301,6 @@ class FeatureAutomationPage extends Component {
   render() {
     const {
       documentCategoriesWithReportTest,
-      unitTestCreatedTimeList,
       end2endTestCreatedTimeList,
       axapiTestCreatedTimeList,
       testReportAxapiSuggestions,
@@ -309,7 +318,9 @@ class FeatureAutomationPage extends Component {
       axapiTestCreatedTime,
       end2endTestCreatedTime,
       unitTestAngularCreatedTime,
-      unitTestDjangoCreatedTime
+      unitTestDjangoCreatedTime,
+      unitTestAngualrCreatedTimeList,
+      unitTestDjangoCreatedTimeList
     } = this.state;
 
     const displayTree = this.getDisplayTree();
@@ -324,8 +335,6 @@ class FeatureAutomationPage extends Component {
       textAlign: 'center',
       paddingTop: 10
     };
-    const unitTestAngualrCreatedTimeList = unitTestCreatedTimeList.filter(item => item.framework === 'angular');
-    const unitTestDjangoCreatedTimeList = unitTestCreatedTimeList.filter(item => item.framework === 'django');
 
     return (
       <div className="feature-automation-page">

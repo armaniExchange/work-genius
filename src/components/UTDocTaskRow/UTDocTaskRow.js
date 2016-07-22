@@ -139,7 +139,7 @@ class UTDocTaskRow extends Component {
         <td style={{width: 48}}></td>
         <TableRowColumn>{fullpathWithOutRoot}</TableRowColumn>
         <TableRowColumn style={{width: 150}}>{ownersName[0]}</TableRowColumn>
-        <TableRowColumn style={{width: 150}}>{ownersName.slice(1).join()}</TableRowColumn>
+        <TableRowColumn style={{width: 200}}>{ownersName.slice(1).join()}</TableRowColumn>
         <TableRowColumn style={{width: 150}}>
           {
             readOnly ? editingDocETA && <span title={readOnlyText}>{moment(editingDocETA).format('M/D/YYYY')}</span> : (
