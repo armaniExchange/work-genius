@@ -143,15 +143,15 @@ class UTDocTaskPage extends Component {
           {
             isLoading && this.state.flatCategories.length <= 1 ? <CircularProgress /> : (
               <Table height="600px" style={{maxHeight: 700, minWidth: 900}} fixedHeader={true}>
-                <TableHeader displaySelectAll={false}>
+                <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                   <TableRow>
                     <TableHeaderColumn>Menu List</TableHeaderColumn>
                     <TableHeaderColumn style={{width: 150}}>Owner</TableHeaderColumn>
                     <TableHeaderColumn style={{width: 200}}>Reviewers</TableHeaderColumn>
-                    <TableHeaderColumn style={{width: 150}}><i className="fa fa-calendar-o"/> Doc ETA</TableHeaderColumn>
-                    <TableHeaderColumn style={{width: 150}}>Doc Status</TableHeaderColumn>
-                    <TableHeaderColumn style={{width: 150}}><i className="fa fa-calendar-o"/> Code ETA</TableHeaderColumn>
-                    <TableHeaderColumn style={{width: 150}}>Code Status</TableHeaderColumn>
+                    <TableHeaderColumn style={{width: 130}}><i className="fa fa-calendar-o"/> Doc ETA</TableHeaderColumn>
+                    <TableHeaderColumn style={{width: 130}}>Doc Status</TableHeaderColumn>
+                    <TableHeaderColumn style={{width: 130}}><i className="fa fa-calendar-o"/> Code ETA</TableHeaderColumn>
+                    <TableHeaderColumn style={{width: 130}}>Code Status</TableHeaderColumn>
                     <TableHeaderColumn style={{width: 120}}>Status</TableHeaderColumn>
                   </TableRow>
                 </TableHeader>

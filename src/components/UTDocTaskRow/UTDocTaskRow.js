@@ -136,11 +136,12 @@ class UTDocTaskRow extends Component {
 
     return (
       <TableRow>
-        <td style={{width: 48}}></td>
-        <TableRowColumn>{fullpathWithOutRoot}</TableRowColumn>
+        <TableRowColumn style={{minWidth: 100}}>
+          <span title={fullpathWithOutRoot}>{fullpathWithOutRoot}</span>
+        </TableRowColumn>
         <TableRowColumn style={{width: 150}}>{ownersName[0]}</TableRowColumn>
         <TableRowColumn style={{width: 200}}>{ownersName.slice(1).join()}</TableRowColumn>
-        <TableRowColumn style={{width: 150}}>
+        <TableRowColumn style={{width: 130}}>
           {
             readOnly ? editingDocETA && <span title={readOnlyText}>{moment(editingDocETA).format('M/D/YYYY')}</span> : (
               <DatePicker
@@ -150,7 +151,7 @@ class UTDocTaskRow extends Component {
             )
           }
         </TableRowColumn>
-        <TableRowColumn style={{width: 150}}>
+        <TableRowColumn style={{width: 130}}>
         {
           readOnly ? <span title={readOnlyText}>{editingDocStatus}</span> : (
             <SelectField value={editingDocStatus || 'TODO'} onChange={::this.onDocStatusChange}>
@@ -161,7 +162,7 @@ class UTDocTaskRow extends Component {
           )
         }
         </TableRowColumn>
-        <TableRowColumn style={{width: 150}}>
+        <TableRowColumn style={{width: 130}}>
         {
           readOnly ? editingCodeETA && <span title={readOnlyText}>{moment(editingCodeETA).format('M/D/YYYY')}</span> : (
             <DatePicker
@@ -171,7 +172,7 @@ class UTDocTaskRow extends Component {
           )
         }
         </TableRowColumn>
-        <TableRowColumn style={{width: 150}}>
+        <TableRowColumn style={{width: 130}}>
         {
           readOnly ? <span title={readOnlyText}>{editingCodeStatus}</span>: (
             <SelectField value={editingCodeStatus || 'TODO'} onChange={::this.onCodeStatusChange}>
