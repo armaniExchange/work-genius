@@ -9,6 +9,23 @@ td {
   border-right: solid 1px #fff;
 }
 
+.none-pre {
+  display: block;
+  padding: 0;
+  margin: 0 auto;
+  font-size: 13px;
+  line-height: 1.42857143;
+  color: #000;
+  word-break: break-all;
+  word-wrap: break-word;
+  background-color: #fff;
+  border: 0px;
+  border-radius: 0px;
+  overflow-x: hidden;
+  max-height: 350px;
+  white-space: pre-wrap;
+}
+
 .table-tr {
 	height: 100px !important;
 }
@@ -32,6 +49,12 @@ td {
   &__holiday {
     background-color : #E2E2E2 !important;
   }
+}
+
+.detail-icon {
+	margin-left: 3px;
+	cursor: pointer;
+	color: #0533FF;
 }
 
 .label-default-style{
@@ -141,6 +164,10 @@ td {
   padding-left: 0px;
 }
 
+.layout-design-padding-right-0{
+  padding-right: 0px;
+}
+
 .layout-design-over{
   overflow: hidden;
 }
@@ -155,5 +182,6 @@ td {
 .mdl-checkbox__label {
     white-space: nowrap;
 }
-
-
+.left-align{
+  text-align: left;
+}

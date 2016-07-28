@@ -23,15 +23,14 @@ export const fileDownloadHandler = async (req, res) => {
     } = result;
     await connection.close();
     res.download(path, name, downloadErr => {
+      // can't catch this asyn error
       if (downloadErr) {
-        throw downloadErr;
+        // throw downloadErr;
+        res.status(404).send();
       }
     });
   } catch (err) {
     await connection.close();
-    res.status(err.status)
-      .send({
-        error: err
-      });
+    res.status(404).send();
   }
 };

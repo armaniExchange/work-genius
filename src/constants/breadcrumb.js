@@ -12,6 +12,7 @@ let BREADCRUMB = {
   resource: [{txt:'Resources', url: BASE_URL + '/resource/resource-map'}],
   resourcemap: [{txt:'Resource Map', url: BASE_URL + '/resource/resource-map'}],
   teammember: [{txt:'Team Member', url: BASE_URL + '/resource/team'}],
+  device: [{txt:'Device', url: BASE_URL + '/resource/device'}],
 
   buganalysis: [{txt:'Bug Analysis', url: BASE_URL + '/bug-analysis/bug-analysis'}],
   bugrootcause: [{txt:'Root Causes', url: BASE_URL + '/bug-analysis/bug-analysis'}],
@@ -34,6 +35,7 @@ BREADCRUMB.editDocumentCategory = BREADCRUMB.knowledge.concat(BREADCRUMB.editDoc
 
 BREADCRUMB.resourcemap = BREADCRUMB.resource.concat(BREADCRUMB.resourcemap);
 BREADCRUMB.teammember = BREADCRUMB.resource.concat(BREADCRUMB.teammember);
+BREADCRUMB.device = BREADCRUMB.resource.concat(BREADCRUMB.device);
 
 BREADCRUMB.bugrootcause = BREADCRUMB.buganalysis.concat(BREADCRUMB.bugrootcause);
 BREADCRUMB.analysisreport = BREADCRUMB.buganalysis.concat(BREADCRUMB.analysisreport);

@@ -1,0 +1,21 @@
+.backgroup-gray {
+  background-color: #AAAAAA !important;
+}
+
+.td-default {
+  text-align: left !important;
+}
+
+.span-default {
+  width: 100px;
+  display: block;
+  padding: 0px 5px;
+  white-space: nowrap;
+  margin-bottom: 2px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.choice-image {
+  border: 2px solid #0044ff;
+}

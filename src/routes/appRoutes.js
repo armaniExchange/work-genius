@@ -20,6 +20,7 @@ import BugReviewPage from '../containers/BugAnalysisPage/BugReviewPage';
 import BugReportPage from '../containers/BugAnalysisPage/BugReportPage';
 import ResourcePage from '../containers/ResourcePage/ResourcePage.js';
 import ResourceMapPage from '../containers/ResourcePage/ResourceMapPage.js';
+import DevicePage from '../containers/ResourcePage/DevicePage.js';
 import TeamMemberPage from '../containers/ResourcePage/TeamMemberPage.js';
 import DataExplorerPage from '../containers/DataExplorerPage/DataExplorerPage';
 import DataExplorerFolderView from '../containers/DataExplorerFolderView/DataExplorerFolderView';
@@ -30,12 +31,15 @@ import KnowledgePage from '../containers/KnowledgePage/KnowledgePage';
 import DocumentPage from '../containers/KnowledgePage/DocumentPage';
 import EditArticlePage from '../containers/EditArticlePage/EditArticlePage';
 import ViewArticlePage from '../containers/ViewArticlePage/ViewArticlePage';
+import AxapiAutomationPage from '../containers/AxapiAutomationPage/AxapiAutomationPage';
 import FeatureAnalysisPage from '../containers/FeatureAnalysisPage/FeatureAnalysisPage';
 import FeatureAnalysisTreePage from '../containers/FeatureAnalysisPage/FeatureAnalysisTree';
 import FeatureAnalysisTablePage from '../containers/FeatureAnalysisPage/FeatureAnalysisTable';
 import MarkdownCheatSheet from '../containers/MarkdownCheatSheet/MarkdownCheatSheet';
 import EditDocumentCategoryPage from '../containers/EditDocumentCategoryPage/EditDocumentCategoryPage';
+import FeatureAutomationPage from '../containers/FeatureAutomationPage/FeatureAutomationPage';
 import WorkLogPage from '../containers/WorkLogPage/WorkLogPage';
+import UTDocTaskPage from '../containers/UTDocTaskPage/UTDocTaskPage';
 
 // Utilities
 import requireAuth from '../containers/Require-Auth/Require-Auth';
@@ -69,6 +73,8 @@ const appRoutes = () => (
         <Route path="resource" component={requireAuth(ResourcePage)}>
           <Route path="resource-map" component={requireAuth(ResourceMapPage)} />
           <Route path="team" component={requireAuth(TeamMemberPage)} />
+          <Route path="device" component={requireAuth(DevicePage)} />
+          <Route path="ut-status" component={requireAuth(UTDocTaskPage)} />
         </Route>
         <Route path="valid-demo" component={requireAuth(ValidDemoPage)} />
 
@@ -94,6 +100,14 @@ const appRoutes = () => (
           <IndexRoute component={requireAuth(DataExplorerFolderView)}/>
           <Route path="data-explorer/:folderName" component={requireAuth(DataExplorerFileView)} />
         </Route>
+
+        {/* automation*/}
+        <Route path="automation">
+          <IndexRoute component={requireAuth(FeatureAutomationPage)} />
+        </Route>
+
+        {/* axapi automation*/}
+        <Route path="axapi-automation" component={requireAuth(AxapiAutomationPage)} />
 
       </Route>
       <Route path="*" component={NotFoundPage} />

@@ -11,6 +11,8 @@ import {
     setLoadingState,
     apiFailure
 } from './app-actions';
+
+import { fetchReleaseList } from './dashboard-page-actions';
 //import { setCurrentSelectedUserId } from './main-actions';
 
 export function fetchBugReviewApplicationsSuccess(data){
@@ -30,6 +32,13 @@ export function fetchAllUsersSuccess(data){
 export function fetchPreventTagsOptionsSuccess(data){
     return {
         type: actionTypes.FETCH_BUG_REVIEW_PREVENT_TAGS_OPTIONS,
+        data
+    };
+}
+
+export function fetchStateRelease(data) {
+    return {
+        type: actionTypes.FETCH_BUG_REVIEW_RELEASE,
         data
     };
 }
@@ -306,7 +315,8 @@ export function fetchAllUsersRequest(){
 export function fetchAllUsers(){
     return (dispatch) => {
       Promise.all(
-          [dispatch(fetchAllUsersRequest())]
+          [dispatch(fetchAllUsersRequest()),
+           dispatch(fetchReleaseList(fetchStateRelease))]
       ).then(
             () => {
                 dispatch(setLoadingState(false));

@@ -6,6 +6,7 @@ import {
     setLoadingState,
     apiFailure
 } from './app-actions';
+import { fetchReleaseList } from './dashboard-page-actions';
 
 export function fetchBugReportRootCauseSuccess(data){
     return {
@@ -42,6 +43,12 @@ export function fetchCurrentProjectVersion(data){
     };
 }
 
+export function fetchStateRelease(data) {
+    return {
+        type: actionTypes.FETCH_BUG_REPORT_RELEASE,
+        data
+    };
+}
 export function fetchBugReportRootCause(version) {
     return (dispatch) => {
         let config = {
@@ -169,7 +176,8 @@ export function fetchBugReportPageData(version) {
             dispatch(fetchBugReportRootCause(version)),
             dispatch(fetchBugReportTags(version)),
             dispatch(fetchBugReportOwner(version)),
-            dispatch(fetchBugReportOwnerTotal(version))
+            dispatch(fetchBugReportOwnerTotal(version)),
+            dispatch(fetchReleaseList(fetchStateRelease))
         ]).then(
             () => {
                 dispatch(setLoadingState(false));

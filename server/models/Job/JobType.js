@@ -71,6 +71,22 @@ const JobType = new GraphQLObjectType({
         'pto_hours': {
             type: GraphQLInt,
             description: 'pto hours'
+        },
+        'create_time':{
+            type: GraphQLFloat,
+            description: 'create time'
+        },
+        'update_time':{
+            type: GraphQLFloat,
+            description: 'update time'
+        },
+        'daily_percentage':{
+            type: GraphQLInt,
+            description: 'daily percent'
+        },
+        'timezone':{
+            type: GraphQLInt,
+            description: 'The timezone that the task is created/updated on'
         }
     })
 });

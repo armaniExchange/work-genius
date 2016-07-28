@@ -9,6 +9,7 @@ import {
 import PTOType from '../PTO/PTOType.js';
 import TaskType from '../Task/TaskType.js';
 import JobType from '../Job/JobType.js';
+import GroupType from '../Group/GroupType.js';
 
 let UserType = new GraphQLObjectType({
 	name: 'User',
@@ -91,7 +92,7 @@ let UserType = new GraphQLObjectType({
 			description: 'User alias'
 		},
 		overtime_hours: {
-			type: GraphQLInt,
+			type: GraphQLFloat,
 			description: 'User\'s leftover hours'
 		},
 		jobs: {
@@ -113,6 +114,10 @@ let UserType = new GraphQLObjectType({
 			        job_items: {
 			            type: new GraphQLList(JobType),
 			            description: 'job items'
+			        },
+			        description: {
+			        	type: GraphQLString,
+			            description: 'public holiday description'
 			        }
 				}
 			})),
@@ -125,6 +130,10 @@ let UserType = new GraphQLObjectType({
 		timezone: {
 			type: GraphQLInt,
 			description: 'timezone'
+		},
+		groups: {
+			type: new GraphQLList(GroupType),
+			description: 'user groups'
 		}
 	})
 });

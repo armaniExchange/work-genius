@@ -10,7 +10,7 @@ import ArticleType from './ArticleType.js';
 import ArticleInputType from './ArticleInputType.js';
 
 // Constants
-import { DB_HOST, DB_PORT, MAILER_ADDRESS } from '../../constants/configurations.js';
+import { DB_HOST, DB_PORT, MAILER_ADDRESS, MAIL_CC_LIST } from '../../constants/configurations.js';
 
 import { deleteFile } from '../File/FileMutation';
 import { getArticleDetail } from './ArticleQuery';
@@ -88,6 +88,14 @@ const ArticleMutation = {
           .delete()
           .run(connection);
 
+        await r.db('work_genius').table('document_categories')
+          .get(
+            r.db('work_genius').table('articles')
+              .get(id)
+              .getField('categoryId')
+          ).update({articlesCount: r.row('articlesCount').sub(1)})
+          .run(connection);
+
         await r.db('work_genius')
           .table('articles')
           .get(id)
@@ -133,8 +141,15 @@ const ArticleMutation = {
             .get(id)
             .merge(getArticleDetail)
             .run(connection);
-          await connection.close();
 
+          await r.db('work_genius').table('document_categories').get(
+            r.db('work_genius').table('articles')
+              .get(id)
+              .getField('categoryId')
+          ).update({articlesCount: r.row('articlesCount').add(1)})
+          .run(connection);
+
+          await connection.close();
           await transporter.sendMail({
             from: MAILER_ADDRESS,
             to: result.reportTo.map((emailName) => `${emailName}@a10networks.com`),
@@ -146,7 +161,7 @@ const ArticleMutation = {
               title: result.title,
               content: result.content
             })),
-            cc: 'ax-web-DL@a10networks.com'
+            cc: MAIL_CC_LIST
           });
 
           return result;
@@ -167,7 +182,6 @@ const ArticleMutation = {
       article: { type: ArticleInputType }
     },
     resolve: async ({ req, transporter }, { article }) => {
-      const user = req.decoded;
       let connection = null, result = null;
 
       try {

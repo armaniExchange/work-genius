@@ -3,11 +3,11 @@ import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 
 import Paper from 'material-ui/lib/paper';
-import RaisedButton from 'material-ui/lib/raised-button';
 
 import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
 import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
 import ArticleMetadata from '../../components/ArticleMetadata/ArticleMetadata';
+import ArticleToolbar from '../../components/ArticleToolbar/ArticleToolbar';
 
 // Styles
 import './_ArticleListItem.css';
@@ -18,7 +18,10 @@ class ArticleListItem extends Component {
 
   getContentAbstract() {
     const { content } = this.props;
-    const splittedContent = content.split('\n') || [];
+    const firstHtmlTagPosition = content.search(/<[^>]+>/i);
+    const splittedContent = firstHtmlTagPosition !== -1 ?
+      content.slice(0, firstHtmlTagPosition).split('\n')
+      : content.split('\n') || [];
     return {
       abstractContent: splittedContent.slice(0, ABSTRACT_LINES).join('\n'),
       readmore: splittedContent.length > ABSTRACT_LINES
@@ -35,7 +38,6 @@ class ArticleListItem extends Component {
       comments,
       updatedAt,
       onDelete,
-      index,
       activeTag,
       onActiveTagChange
     } = this.props;
@@ -48,16 +50,10 @@ class ArticleListItem extends Component {
         <Link to={`/main/knowledge/document/${id}`}>
           <h3 className="title">{title}</h3>
         </Link>
-        <div className="button-group">
-          <Link to={`/main/knowledge/document/edit/${id}`}>
-            <RaisedButton
-              label="Edit"
-              primary={true} />
-          </Link>
-          <RaisedButton
-            label="Delete"
-            onClick={onDelete.bind(this, id, index)} />
-        </div>
+        <ArticleToolbar
+          id={id}
+          onDelete={onDelete}
+        />
         <HighlightMarkdown source={abstractContent}/>
         {
           readmore ? (
@@ -76,7 +72,6 @@ class ArticleListItem extends Component {
           comments={comments}
           files={files}
         />
-        <br />
         <ArticleTagList
           tags={tags}
           value={activeTag}

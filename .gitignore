@@ -32,3 +32,5 @@ node_modules
 config.js
 configurations.js
 /files
+/dist
+mount.sh

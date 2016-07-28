@@ -12,6 +12,7 @@ import {
     CANCEL_REQUEST_PENDING,
     CANCEL_REQUEST_APPROVED
 } from '../../constants/pto-constants';
+import { WORKDAY_URL } from '../../constants/app.js';
 import Table from '../A10-UI/Table/Table';
 import Th from '../A10-UI/Table/Th';
 import Td from '../A10-UI/Table/Td';
@@ -135,6 +136,23 @@ let TableBody = ({ data, titleKeyMap, onStatusUpdateHandler, isUserAdmin, curren
                             {moment(+task[header['key']]).format('YYYY-MM-DD HH:mm')}
                         </Td>
                     );
+                    return actionsHTML;
+                } else if (header['key'] === 'work_day_hours') {
+                    if (task[header['key']]) {
+                        actionsHTML = (
+                            <Td key={cellIndex}>
+                                <a href={WORKDAY_URL} target="_blank">
+                                    {task[header['key']]}
+                                </a>
+                            </Td>
+                        );
+                    } else {
+                        actionsHTML = (
+                            <Td key={cellIndex}>
+                                0
+                            </Td>
+                        );
+                    }
                     return actionsHTML;
                 }
 

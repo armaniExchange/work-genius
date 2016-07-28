@@ -65,7 +65,8 @@ class ArticleEditor extends Component {
     });
   }
 
-  onOverwriteDocumentTemplate() {
+  onOverwriteDocumentTemplate(event) {
+    event.preventDefault();
     this.setState({
       isConfirmOverwriteDocumentTemplateDialogVisible: true,
     });
@@ -193,7 +194,6 @@ class ArticleEditor extends Component {
           value={categoryId}
           options={allCategoriesOptions}
           onChange={::this.onCategoryIdChange}/>
-
         {
           isDocumentTypeKnowlegesOrNull ? null : (
             <div className="report-to" style={{position: 'relative'}}>
