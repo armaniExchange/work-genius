@@ -342,7 +342,7 @@ var releaseActions = {
             let config = {
                 method: 'POST',
                 body: `mutation RootMutationType {
-                    createRelease(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+                    createBugRelease(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
                 }`,
                 headers: {
                     'Content-Type': 'application/graphql',

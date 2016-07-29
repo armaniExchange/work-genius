@@ -141,7 +141,7 @@ const schema = new GraphQLSchema({
       //Bug page
       updateBug                       : BugMutation.updateBug,
       createBugTag                    : BugTagMutation.createBugTag,
-      createRelease                   : BugTagMutation.createRelease,
+      createBugRelease                : BugTagMutation.createRelease,
       createWorklogTag                : BugTagMutation.createWorklogTag,
       //work log page
       createWorkLog                   : WorkLogMutation.createWorkLog,

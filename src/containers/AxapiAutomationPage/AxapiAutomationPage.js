@@ -86,22 +86,25 @@ class AxapiAutomationPage extends Component {
   };
   componentDidMount() {
     const {
-      location
+      location: { query }
     } = this.context;
-    const {
-      query
-    } = location;
-    if (location.query.tab==='TAB___API') { // for /main/axapi-automation?apiPage=3&curProduct=4_1_1&tab=TAB___API
+    if (query.tab==='TAB___API') { // for /main/axapi-automation?apiPage=3&curProduct=4_1_1&tab=TAB___API
       this.props.changeTabPage('TAB___API', query.curProduct || '4_1_1', undefined, {
               curAPIResultCreatedTime: query.curAPIResultCreatedTime || '1466053870000', 
               apiPage: query.apiPage || '1'
             });
     } else {
+      console.log('------query', query);
       // for TAB___CLI TAB___JSON
-
-      //fetch aryProduct
-      //fetch aryBuildNumber
-      this.props.fetchProduct();
+      // for /main/axapi-automation?build=140&curProduct=4_1_1&tab=TAB___CLI
+      // for /main/axapi-automation?build=140&curProduct=4_1_1&tab=TAB___JSON
+      if (query.tab && query.curProduct && query.build) {
+        this.props.changeTabPage(query.tab, 
+                query.curProduct, 
+                query.build);
+      } else {
+        this.props.fetchProduct();
+      }
     }
   };
   componentWillReceiveProps(nextProps) {
@@ -112,7 +115,7 @@ class AxapiAutomationPage extends Component {
     && nextProps.aryBuildNumber
     && nextProps.aryBuildNumber.length) { // EX: changed product dropdownlist
       this.props.changeBuildNumber(nextProps.curProduct,
-        nextProps.aryBuildNumber[0].value,
+        this.context.location.query.build || nextProps.aryBuildNumber[0].value,
         nextProps.currentTabPage);
     }
   };

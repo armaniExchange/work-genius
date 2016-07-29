@@ -15,7 +15,7 @@ const _convertModDiffFilePath = (filePath) => { //filePath should be '4_1_1/cli_
   return 'mod_diff--' + filePath.replace(/\//g, 'ZZZZ'); //should be mod_diff--4_1_1ZZZZcli_schema_diff_resultZZZZrule-set.sch
 };
 
-const jsonBuildDetail = (build, dels, mods, news, curMod, curModFile, tab) => {
+const jsonBuildDetail = (build, dels, mods, news, curMod, curModFile, tab, product) => {
   return {
     build,
     dels, // s means filenames
@@ -23,7 +23,8 @@ const jsonBuildDetail = (build, dels, mods, news, curMod, curModFile, tab) => {
     news,
     curMod,
     curModFile,
-    tab
+    tab,
+    product
   };
 };
 
@@ -112,6 +113,7 @@ const axapiAutomationApi = (handle, conf={}) => {
                 ...jsonBuildDetail(data.build, data.dels, data.mods, data.news, data.curMod,
                   data.curModFile,
                   conf.tab, //should be 'TAB___*'
+                  conf.product
                   )
               };
             }

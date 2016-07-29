@@ -43,7 +43,7 @@ export default function searchReducer(state = initialState, action) {
                   .set('aryBuildNumber', action.builds);
     case actionTypes.AXAPIAUTO_CHANGE_BUILD_NUMBER_SUCCESS:
     case actionTypes.AXAPIAUTO_CHANGE_TAB_SUCCESS:
-      console.warn(action, action.tab);
+      console.warn(action, action.tab, '<==========');
       state = state.set('currentTabPage', action.tab);
       if (action.tab==='TAB___API') {
         // console.info('action', action);
@@ -53,6 +53,7 @@ export default function searchReducer(state = initialState, action) {
                   .set('curAPITotal', +action.total);
       }
       return state.set('curBuildNumber', action.build)
+                .set('curProduct', action.product)
                 .set('aryDelFiles', action.dels)
                 .set('aryModFiles', action.mods)
                 .set('aryNewFiles', action.news)
