@@ -28,6 +28,7 @@ const testReportTypeTextMap = {
 
 const notifyOwnersErrorsWithEmail = async (transporter, testReportType, createdAt)=> {
   const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+  const testReportTypeText = testReportTypeTextMap[testReportType];
   const errorReports = await r.db('work_genius').table('users')
     .eqJoin('id', r.db('work_genius').table('test_report_categories'), {index: 'owners'})
     .zip()
@@ -47,11 +48,22 @@ const notifyOwnersErrorsWithEmail = async (transporter, testReportType, createdA
     })
     .run(connection);
   if (errorReports.length === 0) {
-    console.log('no error found this time, skip sending email');
+    if (testReportType === 'end2endTest') {
+      const HeaderMd = `Hi Team,  \nFeature Automation pass all the cases\n, everything is awesome.`;
+      const mailOption = {
+        from: MAILER_ADDRESS,
+        to: errorReports.map(item => item.email),
+        subject: `[KB - Feature Automation] ${testReportTypeText} report`,
+        html: parseMarkdown(HeaderMd),
+        cc: MAIL_CC_LIST
+      };
+      await transporter.sendMail(mailOption);
+    } else {
+      console.log('no error found this time, skip sending email');
+    }
     return;
   }
 
-  const testReportTypeText = testReportTypeTextMap[testReportType];
   const HeaderMd = `Hi Team,  \nFeature Automation test found issues, please take a look at it, thank you.\n`;
   const errorReportsMd = errorReports.map(errorReport=>{
       return `## ${errorReport.name}\n
