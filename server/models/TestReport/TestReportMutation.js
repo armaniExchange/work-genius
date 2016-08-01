@@ -2,6 +2,7 @@
 // r.db('work_genius').tableCreate('test_report_categories'),
 // r.db('work_genius').table('test_report_categories').indexCreate('path')
 // r.db('work_genius').table('test_report_categories').indexCreate('axapis', {multi: true})
+// r.db('work_genius').tableCreate('test_report_requests')
 
 // GraphQL
 import {
@@ -106,9 +107,6 @@ export const addTestReportHandler = async (req, res) => {
   let connection = null;
   try {
     connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-    console.log('=============req.body=============');
-    console.log(JSON.stringify(req.body, null, '  '));
-
     const { type } = req.params;
     const { reports } = req.body;
     const createdAt = req.body.createdAt || new Date().getTime();
@@ -177,6 +175,15 @@ export const addTestReportHandler = async (req, res) => {
         .insert(reportTime)
         .run(connection);
     }
+
+    // for debugging request
+    await r.db('work_genius')
+      .table('test_report_requests')
+      .insert(Object.assign({
+        body: req.body,
+        ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress
+      }, reportTime))
+      .run(connection);
 
     res.status(200)
       .send({
