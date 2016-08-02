@@ -76,9 +76,9 @@ class UTDocTaskPage extends Component {
     } else {
       const { articleActions: { createArticle } }= this.props;
       createArticle({
-        title: `UT - ${fullpathWithOutRoot}`,
+        title: `UT Doc - ${fullpathWithOutRoot}`,
         categoryId,
-        content: 'For UT status',
+        content: 'For UT status\n',
         documentType: 'test case',
         updateTestReportUt: true
       });

@@ -166,19 +166,25 @@ const ArticleMutation = {
           }
 
           await connection.close();
-          await transporter.sendMail({
-            from: MAILER_ADDRESS,
-            to: result.reportTo.map((emailName) => `${emailName}@a10networks.com`),
-            subject: `[KB - New Document] ${result.title}`,
-            html: parseMarkdown(generateEmailMarkdown({
-              to: 'teams',
-              beginning: `Thanks ${user.name} for sharing the knowledge on KB.`,
-              url: getArticleLink(id),
-              title: result.title,
-              content: result.content
-            })),
-            cc: MAIL_CC_LIST
-          });
+
+          if (article.documentType !== 'test case') {
+            // skip test case
+            await transporter.sendMail({
+              from: MAILER_ADDRESS,
+              to: result.reportTo.map((emailName) => `${emailName}@a10networks.com`),
+              subject: `[KB - New Document] ${result.title}`,
+              html: parseMarkdown(generateEmailMarkdown({
+                to: 'teams',
+                beginning: `Thanks ${user.name} for sharing the knowledge on KB.`,
+                url: getArticleLink(id),
+                title: result.title,
+                content: result.content
+              })),
+              cc: MAIL_CC_LIST
+            });
+          } else {
+            console.log('skip test case email');
+          }
 
           return result;
         } else {
