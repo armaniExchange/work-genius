@@ -10,6 +10,7 @@ import { bindActionCreators } from 'redux';
 import { flatTree } from '../../libraries/tree';
 
 import * as DocumentActions from '../../actions/document-page-actions';
+import * as ArticleActions from '../../actions/article-page-actions';
 import * as FeatureAutomationActions from '../../actions/feature-automation-page-action';
 import * as ResourceMapActions from '../../actions/resource-map-actions';
 
@@ -40,7 +41,10 @@ class UTDocTaskPage extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { documentCategoriesWithSettings } = nextProps;
+    const { documentCategoriesWithSettings, createdUtDocId } = nextProps;
+    if (this.props.createdUtDocId !== createdUtDocId) {
+      this.context.history.pushState(null, this.getUTDocArticleRoute(createdUtDocId));
+    }
     const thisDocumentCategoriesWithSettings = this.props.documentCategoriesWithSettings;
     if (thisDocumentCategoriesWithSettings !== documentCategoriesWithSettings ) {
       this.setState({
@@ -60,6 +64,29 @@ class UTDocTaskPage extends Component {
 
   onFilterReviewerChange(value) {
     this.setState({ filterReviewer: value });
+  }
+
+  onUTDocClick({
+      UTDoc,
+      categoryId,
+      fullpathWithOutRoot,
+    }) {
+    if (UTDoc) {
+      this.context.history.pushState(null, this.getUTDocArticleRoute(UTDoc));
+    } else {
+      const { articleActions: { createArticle } }= this.props;
+      createArticle({
+        title: `UT - ${fullpathWithOutRoot}`,
+        categoryId,
+        content: 'For UT status',
+        documentType: 'test case',
+        updateTestReportUt: true
+      });
+    }
+  }
+
+  getUTDocArticleRoute(articleId) {
+    return `/main/knowledge/document/edit/${articleId}?prev_page=${encodeURI('/main/resource/ut-status')}`;
   }
 
   setupTestReportOfCategory(options) {
@@ -163,6 +190,7 @@ class UTDocTaskPage extends Component {
                           key={task.id}
                           allUsers={allUsers}
                           isLoading={isLoading}
+                          onUTDocClick={::this.onUTDocClick}
                           setupTestReportOfCategory={::this.setupTestReportOfCategory}
                           upsertWorklogItem={::this.upsertWorklogItem}
                           readOnly={!filterOwner && !filterReviewer}
@@ -186,12 +214,14 @@ class UTDocTaskPage extends Component {
 
 UTDocTaskPage.propTypes = {
   documentActions: PropTypes.object.isRequired,
+  articleActions     : PropTypes.object.isRequired,
   featureAutomationActions: PropTypes.object.isRequired,
   resourceMapActions: PropTypes.object.isRequired,
   documentCategoriesWithSettings: PropTypes.object,
   currentUser: PropTypes.object,
   allUsers: PropTypes.array,
-  isLoading: PropTypes.bool
+  isLoading: PropTypes.bool,
+  createdUtDocId: PropTypes.string
 };
 
 UTDocTaskPage.defaultProps = {
@@ -199,15 +229,19 @@ UTDocTaskPage.defaultProps = {
   allUsers: []
 };
 
+UTDocTaskPage.contextTypes = { history: PropTypes.any };
+
 function mapStateToProps(state) {
   const {
     documentCategoriesWithSettings,
+    createdUtDocId,
     isLoading
   } = state.featureAutomation.toJS();
   const { currentUser } = state.app.toJS();
   const { allUsers } = state.documentation.toJS();
   return {
     documentCategoriesWithSettings,
+    createdUtDocId,
     isLoading,
     currentUser,
     allUsers
@@ -217,6 +251,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     documentActions          : bindActionCreators(DocumentActions, dispatch),
+    articleActions           : bindActionCreators(ArticleActions, dispatch),
     featureAutomationActions : bindActionCreators(FeatureAutomationActions, dispatch),
     resourceMapActions       : bindActionCreators(ResourceMapActions, dispatch)
   };

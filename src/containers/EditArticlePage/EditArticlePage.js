@@ -50,7 +50,12 @@ class EditArticlePage extends Component {
     }
 
     if (this.props.isEditing && !nextProps.isEditing) {
-      this.props.history.replace(`/main/knowledge/document/${nextProps.id}`);
+      const { query } = this.context.location;
+      if (query.prev_page) {
+        this.props.history.push(query.prev_page);
+      } else {
+        this.props.history.replace(`/main/knowledge/document/${nextProps.id}`);
+      }
       return;
     }
 
@@ -106,9 +111,7 @@ class EditArticlePage extends Component {
       milestone,
       reportTo
     } = props;
-    const {
-      query
-    } = context.location;
+    const { query } = context.location;
 
     return {
       editingTitle: (query && query.title) || title,

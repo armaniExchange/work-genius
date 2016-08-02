@@ -85,6 +85,20 @@ class UTDocTaskRow extends Component {
     this.save({docStatus: editingDocStatus});
   }
 
+  onUTDocClick() {
+    const {
+      id,
+      onUTDocClick,
+      UTDoc,
+      fullpathWithOutRoot,
+    } = this.props;
+    onUTDocClick({
+      UTDoc,
+      categoryId: id,
+      fullpathWithOutRoot,
+    });
+  }
+
   getOverallStatus(){
     const {
       editingDocStatus,
@@ -141,10 +155,16 @@ class UTDocTaskRow extends Component {
         </TableRowColumn>
         <TableRowColumn style={{width: 150}}>{ownersName[0]}</TableRowColumn>
         <TableRowColumn style={{width: 200}}>{ownersName.slice(1).join()}</TableRowColumn>
+
         <TableRowColumn style={{width: 130}}>
+          <i className="fa fa-file-text-o"
+            style={{cursor: 'pointer'}}
+            onClick={::this.onUTDocClick}/>
+          &nbsp;&nbsp;&nbsp;
           {
             readOnly ? editingDocETA && <span title={readOnlyText}>{moment(editingDocETA).format('M/D/YYYY')}</span> : (
               <DatePicker
+                style={{display: 'inline-block'}}
                 hintText="Doc ETA"
                 value={editingDocETA && new Date(editingDocETA)}
                 onChange={::this.onDocETAChange} />
@@ -191,8 +211,8 @@ class UTDocTaskRow extends Component {
 
 UTDocTaskRow.propTypes = {
   id: PropTypes.string,
-  setupTestReportOfCategory: PropTypes.func.isRequired,
-  upsertWorklogItem: PropTypes.func.isRequired,
+  setupTestReportOfCategory: PropTypes.func,
+  upsertWorklogItem: PropTypes.func,
   fullpathWithOutRoot: PropTypes.string,
   owners: PropTypes.array,
   docETA: PropTypes.number,
@@ -204,6 +224,8 @@ UTDocTaskRow.propTypes = {
   readOnly: PropTypes.bool,
   readOnlyText: PropTypes.string,
   isEmpty: PropTypes.bool,
+  UTDoc: PropTypes.string,
+  onUTDocClick: PropTypes.func
 };
 
 UTDocTaskRow.defaultProps = {
@@ -215,7 +237,9 @@ UTDocTaskRow.defaultProps = {
   codeStatus: '',
   allUsers: [],
   readOnly: false,
-  isEmpty: false
+  isEmpty: false,
+  UTDoc: null
 };
+
 
 export default UTDocTaskRow;

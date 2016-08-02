@@ -113,6 +113,7 @@ export function fetchDocumentCategoriesWithSettings() {
           docStatus,
           codeETA,
           codeStatus,
+          UTDoc
         }
       }`,
       headers: {

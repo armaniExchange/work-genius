@@ -51,6 +51,9 @@ const TestReportCategorySetupType = new GraphQLObjectType({
     },
     'codeStatus': {
       type: GraphQLString
+    },
+    'UTDoc': {
+      type: GraphQLString
     }
   })
 });

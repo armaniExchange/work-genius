@@ -142,18 +142,26 @@ const initialState = Map({
   filterRelease: null,
   filterCase: null,
   searchCategoryName: '',
-  isLoading: false
+  isLoading: false,
+  createdUtDocId: null
 });
 
 export default function featureAutomationReducer(state = initialState, action) {
   switch (action.type) {
+    case actionTypes.CREATE_ARTICLE:
     case actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_REPORT_TEST:
     case actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_SETTINGS:
       return state.set('isLoading', true);
     case actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_REPORT_TEST_FAIL:
     case actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_SETTINGS_FAIL:
+    case actionTypes.CREATE_ARTICLE_FAIL:
     case actionTypes.SETUP_TEST_REPORT_OF_CATEGORY_FAIL:
       return state.set('isLoading', false);
+    case actionTypes.CREATE_ARTICLE_SUCCESS:
+      console.log('actionTypes.CREATE_ARTICLE_SUCCESS');
+      console.log(action);
+      return state.set('isLoading', false)
+        .set('createdUtDocId', action.id);
     case actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_REPORT_TEST_SUCCESS:
       return state.set('documentCategoriesWithReportTest', fromJS(transformToTree(action.data)))
         .set('isLoading', false);

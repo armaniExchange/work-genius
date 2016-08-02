@@ -1,7 +1,7 @@
 // GraphQL
 import {
   GraphQLID,
-  GraphQLString,
+  GraphQLString
 } from 'graphql';
 // RethinkDB
 import r from 'rethinkdb';
@@ -24,6 +24,7 @@ const parseArticle = (article) => {
   // didn't provided categoryId, then result shouldn't contain categoryId property
   let result = {};
   Object.keys(article)
+    .filter(key => key !== 'updateTestReportUt')
     .map( key => {
       switch (key) {
         case 'comments':
@@ -68,11 +69,14 @@ const ArticleMutation = {
           .table('articles')
           .get(id)
           .getField('filesId')
+          .default(null)
           .run(connection);
 
-        // TODO: rewrite this into parallel form
-        for (let i = 0, l = deletingFiles.length; i < l ; i++) {
-          await deleteFile(deletingFiles[i]);
+        if (deletingFiles) {
+          // TODO: rewrite this into parallel form
+          for (let i = 0, l = deletingFiles.length; i < l ; i++) {
+            await deleteFile(deletingFiles[i]);
+          }
         }
 
         const deletingComments = await r.db('work_genius')
@@ -123,7 +127,11 @@ const ArticleMutation = {
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         const user = req.decoded;
         const now = new Date().getTime();
-        const parsedArticle = Object.assign({}, parseArticle(article), {
+        const parsedArticle = Object.assign({
+          tags: [],
+          reportTo: [],
+          files: [],
+        }, parseArticle(article), {
           authorId: user.id,
           createdAt: now,
           updatedAt: now
@@ -148,6 +156,14 @@ const ArticleMutation = {
               .getField('categoryId')
           ).update({articlesCount: r.row('articlesCount').add(1)})
           .run(connection);
+
+          if (article.updateTestReportUt) {
+            await r.db('work_genius')
+              .table('test_report_categories')
+              .get(article.categoryId)
+              .update({ UTDoc: id })
+              .run(connection);
+          }
 
           await connection.close();
           await transporter.sendMail({
