@@ -33,29 +33,41 @@ class UTDocTaskRow extends Component {
   }
 
   _save(option) {
-    const { id, owners, fullpathWithOutRoot } = this.props;
+    const { id, owners, fullpathWithOutRoot, docETA, codeETA } = this.props;
     this.props.setupTestReportOfCategory({
       categoryId: id,
       ...option
     });
     const employee_id = owners && owners[0] ? owners[0] : '';
     if (employee_id && option.hasOwnProperty('docETA') || option.hasOwnProperty('codeETA')) {
-      const prefixTitle = option.hasOwnProperty('docETA') ? 'UT Doc - ' : 'UT Code - ';
-      const title = prefixTitle + fullpathWithOutRoot.slice(fullpathWithOutRoot.indexOf('>', fullpathWithOutRoot.indexOf('>') + 1) + 2);
-      const end_date = option.hasOwnProperty('docETA') ? option.docETA : option.codeETA;
-      const start_date = end_date - 2*24*60*60*1000; // three days agaon
-      this.props.upsertWorklogItem({
-        employee_id,
-        data: {
+      const isUnchanged = option.hasOwnProperty('docETA') ? docETA === option.docETA : codeETA ===  option.codeETA;
+      if (isUnchanged) {
+        return;
+      }
+      const hasETABefore = option.hasOwnProperty('docETA') ? docETA !== null : codeETA !== null;
+      let answer = true;
+      if (hasETABefore) {
+        answer = window.confirm(`You've changed the ETA, Do you want to add NEW task in resource map?`);
+      }
+
+      if (answer) {
+        const prefixTitle = option.hasOwnProperty('docETA') ? 'UT Doc - ' : 'UT Code - ';
+        const title = prefixTitle + fullpathWithOutRoot.slice(fullpathWithOutRoot.indexOf('>', fullpathWithOutRoot.indexOf('>') + 1) + 2);
+        const end_date = option.hasOwnProperty('docETA') ? option.docETA : option.codeETA;
+        const start_date = end_date;
+        this.props.upsertWorklogItem({
           employee_id,
-          title,
-          start_date,
-          end_date,
-          progress: 0,
-          duration: 24,
-          tags: []
-        }
-      });
+          data: {
+            employee_id,
+            title,
+            start_date,
+            end_date,
+            progress: 0,
+            duration: 8,
+            tags: []
+          }
+        });
+      }
     }
   }
 
