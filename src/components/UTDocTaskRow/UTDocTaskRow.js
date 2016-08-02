@@ -130,7 +130,8 @@ class UTDocTaskRow extends Component {
       allUsers,
       readOnly,
       readOnlyText,
-      isEmpty
+      isEmpty,
+      UTDoc
     } = this.props;
 
     const {
@@ -169,9 +170,11 @@ class UTDocTaskRow extends Component {
         <TableRowColumn style={{width: 200}}>{ownersName.slice(1).join()}</TableRowColumn>
 
         <TableRowColumn style={{width: 130}}>
-          <i className="fa fa-file-text-o"
+          <span className="fa-stack fa-lg"
             style={{cursor: 'pointer'}}
-            onClick={::this.onUTDocClick}/>
+            onClick={::this.onUTDocClick}>
+            <i className={`fa ${UTDoc ? 'text-primary fa-file-text' : 'fa-file-text-o'}`} />
+          </span>
           &nbsp;&nbsp;&nbsp;
           {
             readOnly ? editingDocETA && <span title={readOnlyText}>{moment(editingDocETA).format('M/D/YYYY')}</span> : (
