@@ -6,21 +6,26 @@ import { UNIT_TEST_REPORT_URL } from '../../constants/config.js';
 // Styles
 import './_FeatureAutomationCount.css';
 
+const MAX_TOOLTIPS_IN_PARENT_NODE = 10;
 class FeatureAutomationCount extends Component {
 
   renderTooltip() {
     const {
       keyName,
-      testReport
+      testReport,
+      hasChildren,
     } = this.props;
+    const length = testReport.length;
     return (
       testReport.filter(item => item && !item.isSuccess)
+        .slice(0, hasChildren ? MAX_TOOLTIPS_IN_PARENT_NODE : length)
         .map((item, index) => (
           <div key={index} style={{marginBottom: 5}}>
             <span className="feature-automation-tag">{item[keyName]}</span>
             <span>&nbsp;&nbsp;{item.errorMessage}</span>
           </div>
         ))
+        .concat(hasChildren && length > MAX_TOOLTIPS_IN_PARENT_NODE ? (<div className="text-info text-right">Exapnd children to see more ...</div>) : null)
     );
   }
 

@@ -168,7 +168,6 @@ class UTDocTaskRow extends Component {
         </TableRowColumn>
         <TableRowColumn style={{width: 150}}>{ownersName[0]}</TableRowColumn>
         <TableRowColumn style={{width: 200}}>{ownersName.slice(1).join()}</TableRowColumn>
-
         <TableRowColumn style={{width: 130}}>
           <i
             style={{cursor: 'pointer'}}

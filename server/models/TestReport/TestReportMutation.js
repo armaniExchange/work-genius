@@ -67,10 +67,21 @@ const notifyOwnersErrorsWithEmail = async (transporter, testReportType, createdA
 
   const HeaderMd = `Hi Team,  \nFeature Automation test found issues, please take a look at it, thank you.\n`;
   const errorReportsMd = errorReports.map(errorReport=>{
-      return `## ${errorReport.name}\n
+
+    const simplifiedErrorReport = errorReport[testReportType].map(item => {
+      return testReportType === 'axapiTest' ? {
+        api: item.api,
+        errorMessage: item.errorMessage
+      } : {
+        path: item.path,
+        errorMessage: item.errorMessage
+      };
+    });
+
+    return `## ${errorReport.name}\n
 <span style="color:red;">${testReportTypeText}: ${errorReport[testReportType].length} Fails</span>\n
 ---\n\`\`\`js\n
-${JSON.stringify(errorReport[testReportType], null, '  ')}\n
+${JSON.stringify(simplifiedErrorReport, null, '  ')}\n
 \`\`\`\n`;
     }).join('\n');
   const mailOption = {
