@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import r from 'rethinkdb';
-import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
-import exec from 'child_process'
+import { DB_HOST, DB_PORT, DAILY_CASES_RESULT_GIT_PATH } from '../../constants/configurations.js';
+import child_process from 'child_process'
 
 const API_DATA_PAGESIZE = 10;
 const DATA_FOLDER = 'axapi_automation_data';
@@ -23,7 +23,29 @@ const _getAllBuildNumber = (productValue, tab) => {
   };
   
   if (tab==='TAB___API') {
-    return [70,95].map(val=>_convertItem(val));
+    let ary = []; // stores build numbers
+    try{
+      const cd_cmd = DAILY_CASES_RESULT_GIT_PATH.indexOf('..')>=0 // <--relative
+                      ? 'cd ' + __dirname + '/' + DAILY_CASES_RESULT_GIT_PATH
+                      : 'cd ' + DAILY_CASES_RESULT_GIT_PATH; //<-- absolute
+      const cmd = cd_cmd + ' && git log --oneline'
+      const output = child_process.execSync(cmd, {encoding:'utf8'});
+      console.log('----------output--------', output);
+      output.split('\n').reverse().forEach(v => {
+        if (v.substr(-7)===' commit' && v.indexOf('4_1_1#80#20160603152500 commit')<0) {
+          const a = v.split(' ')[1].split('#');
+          if (a[0]===productValue) { //product checking
+            ary[ary.length] = a[1]; //build number
+          }
+        }
+      });
+    }catch(e){
+      console.log('Did you put daily-case-results project folder with the parallel of this project folder?')
+      console.log(' ... or ... ');
+      console.log(e);
+    }
+
+    return ary.map(val=>_convertItem(val));
   }
 
   //CLI|JSON
@@ -43,9 +65,16 @@ const _readDiffStatusFileContent = (diffFilename, productValue, build, tab) => {
   const _path = DATA_ABS_PATH + productValue + '/' + build + '/' + tab + '/';
   console.log('_readDiffStatusFileContent _path', _path);
   console.log('diffFilename', diffFilename);
-  const content = fs.readFileSync(_path + diffFilename, 'utf8');
+  let content = '';
+  try{ 
+    fs.readFileSync(_path + diffFilename, 'utf8');
   // console.log('content-----', content, content.length);
+  }catch(e){
+    console.log('READ _path=' + _path + ' error.');
+  }
+
   return content;
+
 };
 
 const _getDiffStatusFileList = (diffFilename, productValue, build, tab) => {
@@ -139,7 +168,6 @@ const _getTabAPIData = async (req, apiPage, product, build) => {
       console.log(err);
       console.log(`Fail to create category! Error!`);
   }
-  console.log(aryAPI);
   const _data = {
     build,
     aryAPI: aryAPI,
