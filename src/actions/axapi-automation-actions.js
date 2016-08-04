@@ -96,7 +96,7 @@ const axapiAutomationApi = (handle, conf={}) => {
               _type = actionTypes.AXAPIAUTO_CHANGE_TAB_SUCCESS;
             }
 
-            console.log('_type', _type, data);
+            console.log('_type', _type);
 
             if (conf.tab==='TAB___API') {
               console.warn('-----------data', data);

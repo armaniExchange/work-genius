@@ -178,7 +178,7 @@ class AxapiAutomationPage extends Component {
           <Pagination onChange={(selected)=>{
             const _page = selected;
             changeTabPage('TAB___API', curProduct, undefined, {
-              build: curBuildNumber, 
+              curAPIResultCreatedTime, 
               apiPage: _page
             });
           }} pageSize={API_DATA_PAGESIZE} current={curAPIPage} total={curAPITotal} showQuickJump={true} />
@@ -234,7 +234,7 @@ class AxapiAutomationPage extends Component {
           <Pagination onChange={(selected)=>{
             const _page = selected;
             changeTabPage('TAB___API', curProduct, undefined, {
-              build: curBuildNumber, 
+              curAPIResultCreatedTime, 
               apiPage: _page
             });
           }} pageSize={API_DATA_PAGESIZE} current={curAPIPage} total={curAPITotal} showQuickJump={true} />
