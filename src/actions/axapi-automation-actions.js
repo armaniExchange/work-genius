@@ -143,8 +143,8 @@ export function fetchBuildNumber(product, tab) { //async
 export function changeBuildNumber(product, build, tab) {
   return axapiAutomationApi('change_build_number', {product, build, tab});
 };
-export function changeCreatedAt(product, createdAt, tab) {
-  return axapiAutomationApi('change_createdat', {product, createdAt, tab});
+export function changeCreatedAt(product, curAPIResultCreatedTime, tab) {
+  return axapiAutomationApi('change_createdat', {product, curAPIResultCreatedTime, tab});
 };
 
 export function fetchProduct() {

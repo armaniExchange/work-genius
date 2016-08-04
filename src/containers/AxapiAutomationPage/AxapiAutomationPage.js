@@ -368,12 +368,13 @@ class AxapiAutomationPage extends Component {
             <label>Created At:&nbsp;</label>
             <DropDownList
                 isNeedAll={false}
-                title={(new Date(curAPIResultCreatedTime).toString())}
+                title={(new Date(curAPIResultCreatedTime).toString()) + ' ,timestamp=' + curAPIResultCreatedTime}
                 onOptionClick={(val)=>{
                   changeCreatedAt(curProduct, val, currentTabPage); //val is createdAt
                 }}
-                aryOptionConfig={aryCreatedAt.map(v=>{
-                  return {title: (new Date(v)).toString(), value: v};
+                aryOptionConfig={aryCreatedAt.map(value=>{
+                  let title = (new Date(value)).toString() + ' ,timestamp=' + value;
+                  return {title, value};
                 })}
             />
             </span>

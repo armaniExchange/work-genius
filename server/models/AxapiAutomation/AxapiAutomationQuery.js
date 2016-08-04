@@ -23,7 +23,7 @@ const _getAllBuildNumber = (productValue, tab) => {
   };
   
   if (tab==='TAB___API') {
-    return [70,95].map(val=>_convertItem(val));
+    return [70,95].map(val=>_convertItem(val));  // will no need
   }
 
   //CLI|JSON
