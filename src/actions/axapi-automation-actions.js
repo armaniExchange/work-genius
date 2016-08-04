@@ -88,12 +88,15 @@ const axapiAutomationApi = (handle, conf={}) => {
               // ...jsonBuildDetail(data.build, data.dels, data.mods, data.news, data.curMod)
             });
           break;
+          case 'change_createdat':
           case 'change_build_number':
           case 'change_tab':
             let _type = actionTypes.AXAPIAUTO_CHANGE_BUILD_NUMBER_SUCCESS,
                 obj;
             if (handle==='change_tab') {
               _type = actionTypes.AXAPIAUTO_CHANGE_TAB_SUCCESS;
+            } else if (handle==='change_createdat') {
+              _type = actionTypes.AXAPIAUTO_CHANGE_CREATED_AT_SUCCESS;
             }
 
             console.log('_type', _type);
@@ -107,6 +110,7 @@ const axapiAutomationApi = (handle, conf={}) => {
                 // aryAPI: data.aryAPI,
                 // total: data.total,
                 // curPage: data.curPage
+                // createdAt: data.createdAt
               };
             } else {
               obj = {
@@ -138,6 +142,9 @@ export function fetchBuildNumber(product, tab) { //async
 };
 export function changeBuildNumber(product, build, tab) {
   return axapiAutomationApi('change_build_number', {product, build, tab});
+};
+export function changeCreatedAt(product, createdAt, tab) {
+  return axapiAutomationApi('change_createdat', {product, createdAt, tab});
 };
 
 export function fetchProduct() {

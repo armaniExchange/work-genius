@@ -15,7 +15,8 @@ import {
 import { fileDownloadHandler } from './models/File/FileQuery';
 import { addTestReportHandler } from './models/TestReport/TestReportMutation';
 import { fetchProductHandler, fetchBuildNumberHandler, changeProductHandler, changeBuildNumberHandler,
-  changeModifiedFilenameHandler, changeTabHandler
+  changeModifiedFilenameHandler, changeTabHandler,
+  changeCreatedAtHandler
 } from './models/AxapiAutomation/AxapiAutomationQuery';
 import { searchArticleHandler, searchFileHandler, searchWorklogHandler, searchCommentHandler, searchBugtrackingHandler } from './models/Search/SearchQuery';
 import {
@@ -106,6 +107,7 @@ app.route('/axapi_automation_api/fetch_product/').get(fetchProductHandler);
 app.route('/axapi_automation_api/fetch_build_number/').get(fetchBuildNumberHandler);
 app.route('/axapi_automation_api/change_product/').get(changeProductHandler);
 app.route('/axapi_automation_api/change_build_number/').get(changeBuildNumberHandler);
+app.route('/axapi_automation_api/change_createdat/').get(changeCreatedAtHandler);
 app.route('/axapi_automation_api/change_modified_filename/').get(changeModifiedFilenameHandler);
 app.route('/axapi_automation_api/change_tab/').get(changeTabHandler); // for http://localhost:3000/axapi_automation_api/change_tab?product=4_1_1&build=2&tab=TAB___CLI
 
