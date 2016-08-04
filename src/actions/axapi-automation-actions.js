@@ -88,28 +88,33 @@ const axapiAutomationApi = (handle, conf={}) => {
               // ...jsonBuildDetail(data.build, data.dels, data.mods, data.news, data.curMod)
             });
           break;
+          case 'change_createdat':
           case 'change_build_number':
           case 'change_tab':
             let _type = actionTypes.AXAPIAUTO_CHANGE_BUILD_NUMBER_SUCCESS,
                 obj;
             if (handle==='change_tab') {
               _type = actionTypes.AXAPIAUTO_CHANGE_TAB_SUCCESS;
+            } else if (handle==='change_createdat') {
+              _type = actionTypes.AXAPIAUTO_CHANGE_CREATED_AT_SUCCESS;
             }
+
             console.log('_type', _type);
 
             if (conf.tab==='TAB___API') {
               console.warn('-----------data', data);
               obj = {
-                type: _type,
+                type: _type, //<---ready for dispatch
                 tab: conf.tab,
                 ...data
                 // aryAPI: data.aryAPI,
                 // total: data.total,
                 // curPage: data.curPage
+                // createdAt: data.createdAt
               };
             } else {
               obj = {
-                type: _type,
+                type: _type, //<---ready for dispatch
                 ...jsonBuildDetail(data.build, data.dels, data.mods, data.news, data.curMod,
                   data.curModFile,
                   conf.tab, //should be 'TAB___*'
@@ -132,11 +137,14 @@ const axapiAutomationApi = (handle, conf={}) => {
   };
 };
 
-export function fetchBuildNumber(product) { //async
-  return axapiAutomationApi('fetch_build_number', {product});
+export function fetchBuildNumber(product, tab) { //async
+  return axapiAutomationApi('fetch_build_number', {product, tab});
 };
 export function changeBuildNumber(product, build, tab) {
   return axapiAutomationApi('change_build_number', {product, build, tab});
+};
+export function changeCreatedAt(product, curAPIResultCreatedTime, tab) {
+  return axapiAutomationApi('change_createdat', {product, curAPIResultCreatedTime, tab});
 };
 
 export function fetchProduct() {

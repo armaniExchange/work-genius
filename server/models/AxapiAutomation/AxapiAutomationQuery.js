@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import r from 'rethinkdb';
 import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
+import exec from 'child_process'
 
 const API_DATA_PAGESIZE = 10;
 const DATA_FOLDER = 'axapi_automation_data';
@@ -15,10 +16,18 @@ const _getAllProduct = () => {
     return {title: val, value: val};
   });
 };
-const _getAllBuildNumber = (productValue) => {
-  return fs.readdirSync(DATA_ABS_PATH + productValue).map((val)=>{
+const _getAllBuildNumber = (productValue, tab) => {
+  const IS_TAB_API = tab==='TAB___API';
+  const _convertItem = (val) => {
     return {title: val, value: val};
-  });
+  };
+  
+  if (tab==='TAB___API') {
+    return [70,95].map(val=>_convertItem(val));  // will no need
+  }
+
+  //CLI|JSON
+  return fs.readdirSync(DATA_ABS_PATH + productValue).sort((a,b)=> a-b).map((val)=>_convertItem(val));
 };
 
 const _getFileNameOnly = (filePath) => {
@@ -94,6 +103,90 @@ const _getDataWithModifiedContent = (product, build, tab) => {
   return data;
 };
 
+const _getTabAPIData = async (req, apiPage, product, build, curAPIResultCreatedTime=0) => {
+  let aryAPI = [], // only store fail API results
+      connection = null,
+      query = null,
+      results = null,
+      PAGESIZE = API_DATA_PAGESIZE,
+      startPage = apiPage || 1,
+      total,
+      isSuccessFilterValue = false, //Only fail is needed to show in GUI Page.
+      aryCreatedAt = [],
+      maxCreatedAt = 0,
+      _createdAt = 0;
+
+  if (typeof curAPIResultCreatedTime==='string') {
+    curAPIResultCreatedTime = +curAPIResultCreatedTime;
+  }
+  console.log(curAPIResultCreatedTime, curAPIResultCreatedTime<=0)
+
+  try {
+      connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+      let resultGroupCreatedAt = await r.db('work_genius')
+              .table('axapi_test_reports')
+              .filter({'isSuccess': isSuccessFilterValue})
+              .group('createdAt')
+              .map(function(row){return row('isSuccess');}) // <--- I want remove "reduction" but I don't know how, so I just change "reduction" response with 'isSuccess' only for decreasing response size for perfermence.
+              .run(connection);
+      // console.log('resultGroupCreatedAt=========', resultGroupCreatedAt);
+      if (resultGroupCreatedAt.length > 0) {
+        for(let i=0;i<resultGroupCreatedAt.length;i++) {
+          if (resultGroupCreatedAt[i].group > maxCreatedAt) {
+            maxCreatedAt = resultGroupCreatedAt[i].group;
+          }
+          aryCreatedAt.push(resultGroupCreatedAt[i].group);
+        }        
+      }
+      console.log(maxCreatedAt, aryCreatedAt);        
+
+      let objFilter = {'isSuccess':isSuccessFilterValue, product};  //Only fail is needed to show in GUI Page.
+      // if (build) { // remove support build for TAB___API
+      //   objFilter['build'] = build; //<--- DBFieldName VS queryKeyName
+      // }
+      objFilter['createdAt'] = 0; //default
+      if (curAPIResultCreatedTime<=0) { // <------ if 0, auto-pick latest createdAt
+        objFilter['createdAt'] = maxCreatedAt;
+      } else {
+        objFilter['createdAt'] = curAPIResultCreatedTime; //<--pick the createdAt from request query; This value SHOULD be in aryCreatedAt.
+      }
+      console.log('objFilter', objFilter, req.query);
+      const filteredQuery = r.db('work_genius')
+              .table('axapi_test_reports')
+              .filter(objFilter)
+              ;
+      
+      query = filteredQuery
+              .skip((startPage-1)*PAGESIZE)
+              .limit(PAGESIZE)
+              .coerceTo('array');
+      results = await query.run(connection);
+
+      query = filteredQuery
+              .count();
+      total = await query.run(connection);
+      await connection.close();
+
+      console.log(results, total, aryAPI);
+      aryAPI = results;
+      _createdAt = objFilter['createdAt'];
+  } catch (err) {
+      console.log(`=========== _getTabAPIData Error! ================`);
+      console.log(err);
+  }
+  console.log(aryAPI);
+  const _data = {
+    build,
+    aryAPI: aryAPI,
+    product: product,
+    total: total,
+    curPage: startPage,
+    aryCreatedAt: aryCreatedAt,
+    createdAt: +_createdAt
+  };
+  return _data;
+};
+
 export const fetchProductHandler = async (req, res) => {
   const allProduct = _getAllProduct();
   // let allBuilds = allProduct && allProduct.length ? _getAllBuildNumber(allProduct[0].value) : [];
@@ -121,33 +214,55 @@ export const fetchProductHandler = async (req, res) => {
   }});
 };
 export const fetchBuildNumberHandler = async (req, res) => {
-  const { product } = req.query || {};
-  if (!product) {
-    res.json({'code':CODE_SUCC, 'data':[], 'msg':'product is required!'});
+  const { product, tab } = req.query || {};
+  if (!product || !tab) {
+    res.json({'code':CODE_SUCC, 'data':[], 'msg':'product and tab are required!'});
   }
+  let allBuildNumber;
   // console.log('product', product, DATA_ABS_PATH+product);
-  const allBuildNumber = _getAllBuildNumber(product);
+  allBuildNumber = _getAllBuildNumber(product, tab);
   // console.log('allBuildNumber', allBuildNumber);
   res.json({'code':CODE_SUCC, 'data':{builds: allBuildNumber, product: product}});
 };
 
 export const changeProductHandler = async (req, res) => {
+  //TODO
+};
+export const changeCreatedAtHandler = async (req, res) => { //so far, only for TAB___API
+  const {
+    tab,
+    product,
+    build,
+    curAPIResultCreatedTime,
+    apiPage
+  } = req.query || {};
 
+  let data = await _getTabAPIData(req, apiPage, product, build, curAPIResultCreatedTime);
+  res.json({'code':CODE_SUCC, 'data':data});
 };
 export const changeBuildNumberHandler = async (req, res) => {
   const {
     tab,
     product,
-    build
-  } = req.query || {}
-  if (!tab || !product || !build) {
-    res.json({'code':CODE_SUCC, 'data':[], 'msg':'tab, product AND build are required!'});
+    build,
+    createdAt,
+    apiPage
+  } = req.query || {};
+  if (!tab || !product) { //  ||!build
+    res.json({'code':CODE_SUCC, 'data':[], 'msg':'tab, product are required!'});
   };
-  console.log('product, build, tab', product, build, tab);
+  const IS_TAB_API = tab==='TAB___API';
+  console.log('product, build, tab = ', product, build, tab, IS_TAB_API);
+  let data = {};
+  if (IS_TAB_API) { //<---should be deprecated, because there is no `build` dropdown-list in TAB___API
+    data = await _getTabAPIData(req, apiPage, product, build, createdAt);
+  } else { // TAB-CLI & TAB-JSON
   const tabFolder = TAB_MAPPING_FOLDER[tab];
-  const data = _getDataWithModifiedContent(product, build, tabFolder);
+  data = _getDataWithModifiedContent(product, build, tabFolder);
+  }
   // console.log('data-----------', data);
   res.json({'code':CODE_SUCC, 'data':data});
+
 };
 export const changeModifiedFilenameHandler = async (req, res) => {
   const {
@@ -172,66 +287,23 @@ export const changeModifiedFilenameHandler = async (req, res) => {
 export const changeTabHandler = async (req, res) => {
   const {
     product,
-    curAPIResultCreatedTime,
-    build,
+    curAPIResultCreatedTime, //<--API //deprecated in TAB___API because we also can use build for changing.
+    build, //<-- CLI and JSON
     tab,
     apiPage
   } = req.query || {};
   const IS_TAB_API = tab==='TAB___API';
 
   if (!tab || VALID_TAB.indexOf(req.query.tab)===-1 || !product) {
-    if (IS_TAB_API) {
-      if (!curAPIResultCreatedTime) {
-        res.json({'code':CODE_SUCC, 'data':[], 'msg':'tab, product AND curAPIResultCreatedTime are required!'});
-      }
-    } else {
-      if (!build) {
+      if (!build && !IS_TAB_API) {
         res.json({'code':CODE_SUCC, 'data':[], 'msg':'tab, product AND build are required!'});
       }
-    }
   };
 
   if (IS_TAB_API) {
     console.log('TAB___API-----------------------here');
-    let aryAPI = [], // only store fail API results
-        connection = null,
-        query = null,
-        results = null,
-        PAGESIZE = API_DATA_PAGESIZE,
-        startPage = apiPage || 1,
-        total;
-
-    try {
-        const filteredQuery = () => {
-          return r.db('work_genius')
-                .table('axapi_test_reports')
-                .filter({'createdAt':1466053870000 //<---curAPIResultCreatedTime
-                        , 'isSuccess':false}) //Only fail is needed to show.
-                ;
-        };
-        connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-        query = filteredQuery()
-                .skip((startPage-1)*PAGESIZE)
-                .limit(PAGESIZE)
-                .coerceTo('array');
-        results = await query.run(connection);
-        query = filteredQuery()
-                .count();
-        total = await query.run(connection);
-        await connection.close();
-        // console.log(results);
-        aryAPI = results;
-    } catch (err) {
-        console.log(err);
-        console.log(`Fail to create category! Error!`);
-    }
-    console.log(aryAPI);
-    res.json({'code':CODE_SUCC, 'data':{
-      aryAPI: aryAPI,
-      total: total,
-      curPage: startPage,
-      createdAt: 1466053870000
-    }});
+    
+    res.json({'code':CODE_SUCC, 'data': await _getTabAPIData(req, apiPage, product, build, curAPIResultCreatedTime)});
     return;
   }
 
