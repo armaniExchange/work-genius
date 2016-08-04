@@ -89,8 +89,9 @@ class AxapiAutomationPage extends Component {
       location: { query }
     } = this.context;
     if (query.tab==='TAB___API') { // for /main/axapi-automation?apiPage=3&curProduct=4_1_1&tab=TAB___API
-      this.props.changeTabPage('TAB___API', query.curProduct || '4_1_1', undefined, {
-              curAPIResultCreatedTime: query.curAPIResultCreatedTime || '1466053870000', 
+      this.props.changeTabPage('TAB___API', query.curProduct || '4_1_1', undefined /*build*/ , 
+              {
+              curAPIResultCreatedTime: query.curAPIResultCreatedTime || 0, 
               apiPage: query.apiPage || '1'
             });
     } else {
@@ -143,6 +144,7 @@ class AxapiAutomationPage extends Component {
       //API request
       aryAPIData,
       curAPIResultCreatedTime,
+      aryCreatedAt,
       curAPIPage,
       curAPITotal,
       //actions
@@ -151,6 +153,7 @@ class AxapiAutomationPage extends Component {
       changeProduct,
       curModifiedFilename,
       changeModifiedFileName,
+      changeCreatedAt,
     } = this.props;
     const {
       reqBodyValue,
@@ -350,7 +353,7 @@ class AxapiAutomationPage extends Component {
                 }}
                 aryOptionConfig={aryProduct}
             />
-            <span>
+            <span style={{display:IS_TAB_API ? 'none' : ''}}>
             <label>Build number:&nbsp;</label>
             <DropDownList
                 isNeedAll={false}
@@ -359,6 +362,19 @@ class AxapiAutomationPage extends Component {
                   changeBuildNumber(curProduct, val, currentTabPage); //val is build
                 }}
                 aryOptionConfig={aryBuildNumber}
+            />
+            </span>
+            <span style={{display:IS_TAB_API ? '' : 'none'}}>
+            <label>Created At:&nbsp;</label>
+            <DropDownList
+                isNeedAll={false}
+                title={(new Date(curAPIResultCreatedTime).toString())}
+                onOptionClick={(val)=>{
+                  changeCreatedAt(curProduct, val, currentTabPage); //val is createdAt
+                }}
+                aryOptionConfig={aryCreatedAt.map(v=>{
+                  return {title: (new Date(v)).toString(), value: v};
+                })}
             />
             </span>
             <hr />
@@ -404,7 +420,8 @@ AxapiAutomationPage.propTypes = {
   curModifiedDiff: PropTypes.string,
 
   aryAPIData: PropTypes.array,
-  curAPIResultCreatedTime: PropTypes.number,
+  curAPIResultCreatedTime: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  aryCreatedAt: PropTypes.array,
   curAPIPage: PropTypes.number,
   curAPITotal: PropTypes.number,
 
@@ -415,11 +432,13 @@ AxapiAutomationPage.propTypes = {
   changeProduct: PropTypes.func,
   changeBuildNumber: PropTypes.func,
   changeModifiedFileName: PropTypes.func,
+  changeCreatedAt: PropTypes.func,
 };
 AxapiAutomationPage.defaultProps = {
+  aryCreatedAt: [],
   curProduct: '',
   curBuildNumber: '',
-  curAPIResultCreatedTime: 1466053870000
+  curAPIResultCreatedTime: 0 //<---- ...so that ServerCodeLogic will auto-pick latest createdAt as the default value.
 };
 
 

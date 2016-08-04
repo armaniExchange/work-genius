@@ -42,6 +42,7 @@ export default function searchReducer(state = initialState, action) {
       return state.set('curProduct', action.product)
                   .set('aryBuildNumber', action.builds);
     case actionTypes.AXAPIAUTO_CHANGE_BUILD_NUMBER_SUCCESS:
+    case actionTypes.AXAPIAUTO_CHANGE_CREATED_AT_SUCCESS:
     case actionTypes.AXAPIAUTO_CHANGE_TAB_SUCCESS:
       console.warn(action, action.tab, '<==========');
       state = state.set('currentTabPage', action.tab)
@@ -49,6 +50,7 @@ export default function searchReducer(state = initialState, action) {
       if (action.tab==='TAB___API') {
         // console.info('action', action);
         return state.set('aryAPIData', action.aryAPI)
+                  .set('aryCreatedAt', action.aryCreatedAt)
                   .set('curAPIResultCreatedTime', action.createdAt)
                   .set('curAPIPage', +action.curPage)
                   .set('curAPITotal', +action.total);
