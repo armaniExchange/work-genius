@@ -116,12 +116,18 @@ const _getTabAPIData = async (req, apiPage, product, build, curAPIResultCreatedT
       maxCreatedAt = 0,
       _createdAt = 0;
 
+  if (typeof curAPIResultCreatedTime==='string') {
+    curAPIResultCreatedTime = +curAPIResultCreatedTime;
+  }
+  console.log(curAPIResultCreatedTime, curAPIResultCreatedTime<=0)
+
   try {
       connection = await r.connect({ host: DB_HOST, port: DB_PORT });
       let resultGroupCreatedAt = await r.db('work_genius')
               .table('axapi_test_reports')
               .filter({'isSuccess': isSuccessFilterValue})
               .group('createdAt')
+              .map(function(row){return row('isSuccess');}) // <--- I want remove "reduction" but I don't know how, so I just change "reduction" response with 'isSuccess' only for decreasing response size for perfermence.
               .run(connection);
       // console.log('resultGroupCreatedAt=========', resultGroupCreatedAt);
       if (resultGroupCreatedAt.length > 0) {
@@ -139,7 +145,7 @@ const _getTabAPIData = async (req, apiPage, product, build, curAPIResultCreatedT
       //   objFilter['build'] = build; //<--- DBFieldName VS queryKeyName
       // }
       objFilter['createdAt'] = 0; //default
-      if (+curAPIResultCreatedTime<=0) { // <------ if 0, auto-pick latest createdAt
+      if (curAPIResultCreatedTime<=0) { // <------ if 0, auto-pick latest createdAt
         objFilter['createdAt'] = maxCreatedAt;
       } else {
         objFilter['createdAt'] = curAPIResultCreatedTime; //<--pick the createdAt from request query; This value SHOULD be in aryCreatedAt.
@@ -172,6 +178,7 @@ const _getTabAPIData = async (req, apiPage, product, build, curAPIResultCreatedT
   const _data = {
     build,
     aryAPI: aryAPI,
+    product: product,
     total: total,
     curPage: startPage,
     aryCreatedAt: aryCreatedAt,
@@ -226,11 +233,11 @@ export const changeCreatedAtHandler = async (req, res) => { //so far, only for T
     tab,
     product,
     build,
-    createdAt,
+    curAPIResultCreatedTime,
     apiPage
   } = req.query || {};
 
-  let data = await _getTabAPIData(req, apiPage, product, build, createdAt);
+  let data = await _getTabAPIData(req, apiPage, product, build, curAPIResultCreatedTime);
   res.json({'code':CODE_SUCC, 'data':data});
 };
 export const changeBuildNumberHandler = async (req, res) => {
@@ -288,7 +295,7 @@ export const changeTabHandler = async (req, res) => {
   const IS_TAB_API = tab==='TAB___API';
 
   if (!tab || VALID_TAB.indexOf(req.query.tab)===-1 || !product) {
-      if (!build) {
+      if (!build && !IS_TAB_API) {
         res.json({'code':CODE_SUCC, 'data':[], 'msg':'tab, product AND build are required!'});
       }
   };

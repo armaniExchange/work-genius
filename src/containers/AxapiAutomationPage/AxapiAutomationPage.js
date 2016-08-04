@@ -113,7 +113,8 @@ class AxapiAutomationPage extends Component {
       this.props.currentTabPage, nextProps.currentTabPage,
       this.props.aryBuildNumber, nextProps.aryBuildNumber].join('#')
       );
-    const isNeedFetchBuildNumber = this.props.curProduct!==nextProps.curProduct  // change product, then re-fetching all builds.
+    console.info(this.props, nextProps);
+    const isNeedFetchBuildNumber = this.props.curProduct!==nextProps.curProduct  // when changing product, then re-fetching all builds.
       || (this.props.currentTabPage!==nextProps.currentTabPage 
           && [this.props.currentTabPage, nextProps.currentTabPage].indexOf('TAB___API')>=0); // No need re-fetch when CLI<->JSON because they obtain same builds.
     console.info('isNeedFetchBuildNumber', isNeedFetchBuildNumber);
@@ -200,14 +201,14 @@ class AxapiAutomationPage extends Component {
                 }}  
                 secondary={true}
                 style={{float:'right',width:'8%'}}
-                label={item.meta.request.method}
+                label={item && item.meta && item.meta.request && item.meta.request.method}
                 labelStyle={{'textTransform': 'none'}} />
               <TextField
                 onChange={(evt)=>{
                   const val = evt.target.value;
                   console.log('val', val);
                 }}
-                value={item.meta.request.url}
+                value={item && item.meta && item.meta.request && item.meta.request.url}
                 style={{width:'91.9%'}}
                 labelStyle={{textAlign:'center'}}
                 hintText="password" />
@@ -216,14 +217,14 @@ class AxapiAutomationPage extends Component {
                 <tr>
                 <td>
                   <label style={{display:'block'}}>REQUEST</label>
-                  <textarea style={{resize:'none',width:'100%',height:'230px'}} value={typeof reqBodyValue==='undefined' ? displayPlainObject(item.meta.request.body) : reqBodyValue}
+                  <textarea style={{resize:'none',width:'100%',height:'230px'}} value={typeof reqBodyValue==='undefined' ? displayPlainObject(item && item.meta && item.meta.request && item.meta.request.body) : reqBodyValue}
                   onChange={(ev)=>{
                     this.setState({reqBodyValue:ev.target.value});
                   }}></textarea>
                 </td>
                 <td>
                   <label style={{display:'block'}}>RESPONSE</label>
-                  <textarea style={{resize:'none',width:'100%',height:'230px'}} value={typeof resBodyValue==='undefined' ? displayPlainObject(item.meta.response.body) : resBodyValue} 
+                  <textarea style={{resize:'none',width:'100%',height:'230px'}} value={typeof resBodyValue==='undefined' ? displayPlainObject(item && item.meta && item.meta.response && item.meta.response.body) : resBodyValue} 
                   onChange={(ev)=>{
                     this.setState({resBodyValue:ev.target.value});
                   }}></textarea>
@@ -436,6 +437,7 @@ AxapiAutomationPage.propTypes = {
   changeCreatedAt: PropTypes.func,
 };
 AxapiAutomationPage.defaultProps = {
+  aryAPIData: [],
   aryCreatedAt: [],
   curProduct: '',
   curBuildNumber: '',
