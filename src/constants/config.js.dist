@@ -2,8 +2,12 @@ export const SERVER_HOST = '192.168.95.29';
 
 export const SERVER_API_URL = `http://${SERVER_HOST}:3000/graphql`;
 export const SERVER_LOGIN_URL = `http://${SERVER_HOST}:3000/login`;
+export const SERVER_AXAPI_AUTOMATION_API_URL = `http://${SERVER_HOST}:3000/axapi_automation_api/`;
 export const SERVER_SEARCH_API_URL = `http://${SERVER_HOST}:3000/search`;
 export const SERVER_FILES_URL = `http://${SERVER_HOST}:3000/files`;
+export const SERVER_EXPORT_URL = `http://${SERVER_HOST}:3000/export`;
+
+export const SERVER_BASIC_URL = `http://${SERVER_HOST}:3000/`;
 
 export const PRIVILEGE = {
   ADMIN: 10,
@@ -13,21 +17,3 @@ export const PRIVILEGE = {
 
 export const PTO_URL = `http://${SERVER_HOST}/main/pto`;
 export const OVERTIME_URL = `http://${SERVER_HOST}/main/pto/overtime`;
-
-// Documentation
-export const DOCUMENT_TYPE_OPTIONS = [
-  'knowledges',
-  'bugs',
-  'task',
-  'requirement',
-  'enhancement',
-  'test case'
-];
-
-export const PRIORITY_OPTIONS = [
-  'blocker',
-  'critical',
-  'major',
-  'minor',
-  'trival'
-];

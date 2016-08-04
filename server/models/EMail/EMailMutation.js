@@ -54,9 +54,7 @@ let MailMutation = {
                 };
 
 			try {
-                if (process.env.NODE_ENV === 'production') {
-                    await transporter.sendMail(mailConfig);
-                }
+                await transporter.sendMail(mailConfig);
 			} catch (err) {
 				return err;
 			}
@@ -118,9 +116,7 @@ let MailMutation = {
             }
 
 			try {
-                if (process.env.NODE_ENV === 'production') {
-                    await transporter.sendMail(mailConfig);
-                }
+                await transporter.sendMail(mailConfig);
 			} catch (err) {
 				return err;
 			}

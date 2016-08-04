@@ -7,6 +7,7 @@ import { Link } from 'react-router';
 import { bindActionCreators } from 'redux';
 import Pagination from 'rc-pagination';
 import RaisedButton from 'material-ui/lib/raised-button';
+import CircularProgress from 'material-ui/lib/circular-progress';
 
 import Breadcrumb from '../../components/A10-UI/Breadcrumb';
 import BREADCRUMB from '../../constants/breadcrumb';
@@ -27,6 +28,7 @@ class DocumentPage extends Component {
     this.state = {
       // the delete state
       isConfirmDeleteArticleDialogVisible: false,
+      isDisplayAllHotTags: false,
       editingArticle: null
     };
   }
@@ -34,14 +36,14 @@ class DocumentPage extends Component {
   componentWillMount() {
     const {
       fetchDocumentCategories,
-      fetchAllTags,
+      fetchDocumentHotTags,
       fetchAllUsers,
       fetchAllMilestones
     } = this.props.documentActions;
 
     // Todo: find a better way to handle jumpling this page from other page
     fetchDocumentCategories();
-    fetchAllTags();
+    fetchDocumentHotTags();
     fetchAllUsers();
     fetchAllMilestones();
     this.queryArticles();
@@ -61,6 +63,10 @@ class DocumentPage extends Component {
   onPaginate(page) {
     this.props.documentActions.updateArticlesQuery({currentPage: page});
     setTimeout(() => this.queryArticles(), 0);
+  }
+
+  toggleDisplayAllHotTags() {
+    this.setState({ isDisplayAllHotTags: !this.state.isDisplayAllHotTags });
   }
 
   resetQueryAndFetchArticles() {
@@ -111,28 +117,44 @@ class DocumentPage extends Component {
     });
   }
 
-  onConfirmDeleteArticle(deletingArticle) {
-    this.props.articleActions.deleteArticle(deletingArticle.id);
+  onConfirmDeleteArticle() {
+    this.props.articleActions.deleteArticle(this.state.editingArticle.id);
   }
 
-  onArticleDelete(id, index) {
+  onArticleDelete(id) {
     this.setState({
       isConfirmDeleteArticleDialogVisible: true,
-      editingArticle: {
-        id,
-        index
-      }
+      editingArticle: { id }
     });
   }
 
   onCancelDeleteArticle() {}
 
+  _onNodeClick(item) {
+    this.props.documentActions.setSelectedCategory({...item, isLeaf: false});
+  }
+
+  _setAndFetchCategory(item) {
+    const { documentActions } = this.props;
+    documentActions.setSelectedCategory({...item, isLeaf: true});
+    this.props.documentActions.updateArticlesQuery({
+      categoryId: item.id || '',
+      currentPage: 1
+    });
+    setTimeout(() => this.queryArticles(), 0);
+  }
+
+  _clearCategory() {
+    this._setAndFetchCategory({});
+  }
+
   renderArticleList() {
     const {
+      isArticleLoading,
       articleList,
       tag
     } = this.props;
-    if (articleList.length === 0) {
+    if (!isArticleLoading && articleList.length === 0) {
       return (
         <div className="blank-article">
           <i className="fa fa-file-text-o fa-5x"/>
@@ -155,30 +177,12 @@ class DocumentPage extends Component {
     );
   }
 
-  _onNodeClick(item) {
-    this.props.documentActions.setSelectedCategory({...item, isLeaf: false});
-  }
-
-  _setAndFetchCategory(item) {
-    const { documentActions } = this.props;
-    documentActions.setSelectedCategory({...item, isLeaf: true});
-    this.props.documentActions.updateArticlesQuery({
-      categoryId: item.id || '',
-      currentPage: 1
-    });
-    setTimeout(() => this.queryArticles(), 0);
-  }
-
-  _clearCategory() {
-    this._setAndFetchCategory({});
-  }
-
   render() {
     const PAGE_SIZE = 20;
     const {
       allUsers,
       allMilestones,
-      allTags,
+      documentHotTags,
       documentCategories,
       articleTotalCount,
       currentSelectedCategory,
@@ -187,16 +191,18 @@ class DocumentPage extends Component {
       milestone,
       owner,
       tag,
-      currentPage
+      currentPage,
+      isArticleLoading
     } = this.props;
     const {
       isConfirmDeleteArticleDialogVisible,
+      isDisplayAllHotTags,
       editingArticle
     } = this.state;
 
     return (
       <section>
-        <Breadcrumb data={BREADCRUMB.document} />
+        <Breadcrumb data={BREADCRUMB.document} style={{position: 'fixed'}}/>
         <div className="document-page-content">
           <div className="left-navigation">
             <Link to="/main/knowledge/document/edit/new">
@@ -204,18 +210,28 @@ class DocumentPage extends Component {
                 label="+ Create Document"
                 secondary={true} />
             </Link>
-            <h5>HOT TAGS</h5>
+            <h5>HOT TAGS
+
+              <span onClick={::this.toggleDisplayAllHotTags} className="hot-tags-more">
+                {
+                  isDisplayAllHotTags ? <i className="fa fa-chevron-down" />: <i className="fa fa-chevron-right" />
+                }
+              </span>
+            </h5>
             <ArticleTagList
               onChange={::this.onTagChange}
-              tags={allTags}
+              tags={documentHotTags}
+              maxNum={isDisplayAllHotTags ? null : 3}
               value={tag} />
             <div className="knowledge-tree-label">
-              <h5>KNOWLEDGE TREE</h5>
-              <Link to="/main/knowledge/document/category/edit">
-                <i className="fa fa-pencil" ariaHidden="true" />
-              </Link>
+              <h5>KNOWLEDGE TREE
+                <Link to="/main/knowledge/document/category/edit">
+                  <i className="fa fa-pencil" ariaHidden="true" />
+                </Link>
+              </h5>
             </div>
             <CategoryTree
+              className="category-tree"
               data={documentCategories}
               selectedPath={currentSelectedCategory.path}
               onNodeClick={::this._onNodeClick}
@@ -232,6 +248,9 @@ class DocumentPage extends Component {
               onChange={::this.onFilterChange}
               onClearAll={::this.resetQueryAndFetchArticles}
             />
+            {
+              isArticleLoading ? <div className="loading-articles"> <CircularProgress /></div> : null
+            }
             { this.renderArticleList() }
             {
               articleTotalCount > PAGE_SIZE ? (
@@ -261,11 +280,12 @@ DocumentPage.propTypes = {
   articleTotalCount       : PropTypes.number,
   documentCategories      : PropTypes.object,
   currentSelectedCategory : PropTypes.object,
-  allTags                 : PropTypes.array,
+  documentHotTags         : PropTypes.array,
   allUsers                : PropTypes.array,
   allMilestones           : PropTypes.array,
   documentActions         : PropTypes.object.isRequired,
   articleActions          : PropTypes.object.isRequired,
+  isArticleLoading        : PropTypes.bool,
   // query object
   currentPage             : PropTypes.number,
   tag                     : PropTypes.string,

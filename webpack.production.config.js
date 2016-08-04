@@ -20,7 +20,10 @@ process.env.UV_THREADPOOL_SIZE = 100;
 var config = {
     devtool: 'source-map',
     entry: {
-        app: [mainPath],
+        app: [
+            'babel-polyfill',
+            mainPath
+        ],
         vendors: pkg.vendors
     },
     output: {

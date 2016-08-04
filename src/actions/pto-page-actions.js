@@ -122,7 +122,8 @@ export function fetchPTOApplications(userId, timeRange) {
                     apply_time,
                     status,
                     memo,
-                    applicant_email
+                    applicant_email,
+                    work_day_hours
                 }
             }`,
             headers: {
@@ -302,7 +303,7 @@ export function createPTOApplication(data) {
         let config = {
                 method: 'POST',
                 body: `mutation RootMutationType {
-                    createPTOAndRefreshJob(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
+                    createPTOApplication(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
                 }`,
                 headers: {
                     'Content-Type': 'application/graphql',
@@ -389,7 +390,7 @@ export function setPTOApplicationStatus(id, status, hours) {
         let config = {
                 method: 'POST',
                 body: `mutation RootMutationType {
-                    updatePTOStatusAndRefreshJob(id:"${id}", status:"${status}", hours:${hours})
+                    updatePTOApplicationStatus(id:"${id}", status:"${status}", hours:${hours})
                 }`,
                 headers: {
                     'Content-Type': 'application/graphql',

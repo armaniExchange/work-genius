@@ -64,7 +64,7 @@ class PTOOvertime extends Component {
                     <PTOMailCard
                         type={'OVERTIME_' + finalData.status}
                         applicant={finalData.applicant}
-                        startDate={finalData.start_time}
+                        startDate={moment(+finalData.start_time).format('YYYY-MM-DD')}
                         hours={finalData.hours}
                         link={OVERTIME_URL} />
                 ).replace(/"/g, '\\"'),
@@ -96,7 +96,7 @@ class PTOOvertime extends Component {
             html: ReactDOMServer.renderToStaticMarkup(
                 <PTOMailCard
                     type={'OVERTIME_' + status}
-                    startDate={start_time}
+                    startDate={moment(+start_time).format('YYYY-MM-DD')}
                     manager={currentUser.name}
                     status={status}
                     hours={hours}

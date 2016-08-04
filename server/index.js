@@ -7,25 +7,37 @@ import nodemailer from 'nodemailer';
 // GraphQL and schema
 import schema from './schema/schema.js';
 import { loginHandler } from './models/User/UserMutation';
+import { getVersion, upgrade, getReleases } from './models/Devices/DeviceQuery';
 import {
   fileUploadHandler,
   fileDeleteHandler
 } from './models/File/FileMutation';
-import { fileDownloadHandler } from './models/File/FileQuery';// Constants
+import { fileDownloadHandler } from './models/File/FileQuery';
+import { addTestReportHandler } from './models/TestReport/TestReportMutation';
+import { fetchProductHandler, fetchBuildNumberHandler, changeProductHandler, changeBuildNumberHandler,
+  changeModifiedFilenameHandler, changeTabHandler,
+  changeCreatedAtHandler
+} from './models/AxapiAutomation/AxapiAutomationQuery';
 import { searchArticleHandler, searchFileHandler, searchWorklogHandler, searchCommentHandler, searchBugtrackingHandler } from './models/Search/SearchQuery';
 import {
-    SECURE_KEY,
-    MAIL_TRANSPORTER_CONFIG
+  IS_PRODUCTION,
+  SECURE_KEY,
+  MAIL_TRANSPORTER_CONFIG
 } from './constants/configurations.js';
+import { articleExportHandler } from './models/Article/ArticleExport.js';
+import SocketIo from 'socket.io';
+import http from 'http';
+import registerNotificatioons from './libraries/notifications';
 
 const PORT = 3000;
 let app = express();
 
 app.use(bodyParser.text({
-  type: 'application/graphql'
+  type: 'application/graphql',
+  limit: '5mb'
 }));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false , limit: '5mb'}));
+app.use(bodyParser.json({limit: '5mb', type:'application/json'}));
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', req.headers.origin);
@@ -44,10 +56,15 @@ app.use((req, res, next) => {
 });
 
 app.post('/login', loginHandler);
+app.get('/getVersion', getVersion);
+app.post('/upgrade', upgrade);
+app.get('/getReleases', getReleases);
 
 app.use((req, res, next) => {
-  if ( req.method === 'GET' && req.url.includes('/files/')){
+  if ( (req.method === 'GET' && req.url.includes('/files/') )||
+    (req.method === 'POST' && req.url.includes('/testReport/'))){
     // when downloading file skip token checking
+    // when testReport skip token checking
     next();
     return;
   }
@@ -72,6 +89,12 @@ app.use((req, res, next) => {
 });
 
 let transporter = nodemailer.createTransport(MAIL_TRANSPORTER_CONFIG);
+if (!IS_PRODUCTION) {
+  transporter.sendMail = async() => {
+    console.log(`Since IS_PRODUCTION in server/configurations.js is false`);
+    console.log(`Stop sending email`);
+  };
+}
 
 app.use('/graphql', graphqlHTTP(request => ({
     schema: schema,
@@ -79,6 +102,14 @@ app.use('/graphql', graphqlHTTP(request => ({
     pretty: true,
     graphiql: true
 })));
+
+app.route('/axapi_automation_api/fetch_product/').get(fetchProductHandler);
+app.route('/axapi_automation_api/fetch_build_number/').get(fetchBuildNumberHandler);
+app.route('/axapi_automation_api/change_product/').get(changeProductHandler);
+app.route('/axapi_automation_api/change_build_number/').get(changeBuildNumberHandler);
+app.route('/axapi_automation_api/change_createdat/').get(changeCreatedAtHandler);
+app.route('/axapi_automation_api/change_modified_filename/').get(changeModifiedFilenameHandler);
+app.route('/axapi_automation_api/change_tab/').get(changeTabHandler); // for http://localhost:3000/axapi_automation_api/change_tab?product=4_1_1&build=2&tab=TAB___CLI
 
 app.route('/search')
   .get((req, res)=>{
@@ -103,7 +134,21 @@ app.route('/files')
 app.route('/files/:id')
  .get(fileDownloadHandler)
  .delete(fileDeleteHandler);
+app.get('/export/document/:articleId', articleExportHandler);
+app.use('/testReport', (req, res, next)=> {
+  req.transporter = transporter;
+  next();
+});
+app.route('/testReport/:type')
+  .post(addTestReportHandler);
 
-app.listen(PORT, () => {
+// create a socket to pop up message on KB
+const server = http.createServer(app);
+const io = SocketIo(server);
+io.on('connection', function(socket){
+  registerNotificatioons(socket);
+});
+
+server.listen(PORT, () => {
   console.log(`Server is listening at port: ${PORT}`);
 });

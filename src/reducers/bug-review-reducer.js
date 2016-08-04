@@ -2,7 +2,7 @@
  * @author Howard Chang
  */
 // Libraries
-import { Map, List, OrderedMap} from 'immutable';
+import Immutable, { Map, List, OrderedMap} from 'immutable';
 // Constants
 import actionTypes from '../constants/action-types';
 // import { ADMIN_ID } from '../../server/constants/configurations.js';
@@ -23,11 +23,13 @@ const initialState = Map({
         Map({ title: 'Root Cause Detail', key: 'review', colspan: 2})
     ),
     // allProjectVersions: List.of('4.1.0', '3.2.1', '3.2.0'),
-    allProjectVersions: List.of(
-        Map({title: '4.1.0', value: '4.1.0'}),
-        Map({title: '3.2.0', value: '3.2.0'}),
-        Map({title: '3.2.1', value: '3.2.1'})
-    ),
+    // allProjectVersions: List.of(
+    //     Map({title: '4.1.1', value: '4.1.1'}),
+    //     Map({title: '4.1.0', value: '4.1.0'}),
+    //     Map({title: '3.2.0', value: '3.2.0'}),
+    //     Map({title: '3.2.1', value: '3.2.1'})
+    // ),
+    allProjectVersions: List.of(),
     currentProjectVersion: '',
     currentSelectPreventTag: '',
     currentSelectMenu: '',
@@ -166,6 +168,14 @@ function changeOptions(state, data) {
     return state.set(`applications`, result);
 }
 
+function setReleaseState(state, data) {
+    var releases = [];
+    data.map(release => {
+        releases.push({title: release.name, value: release.name});
+    });
+    return state.set('allProjectVersions', Immutable.fromJS(releases));
+}
+
 export default function bugReviewReducer(state = initialState, action) {
     let nextState = state;
     switch (action.type) {
@@ -194,6 +204,9 @@ export default function bugReviewReducer(state = initialState, action) {
             return nextState;
         case actionTypes.FETCH_BUG_REVIEW_ALL_USERS:
             nextState = setAllUsers(state, action.data);
+            return nextState;
+        case actionTypes.FETCH_BUG_REVIEW_RELEASE:
+            nextState = setReleaseState(nextState, action.data);
             return nextState;
         default:
             return state;

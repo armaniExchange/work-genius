@@ -5,6 +5,9 @@ import {
     apiFailure
 } from './app-actions';
 
+
+const DOCUMENT_CATEGORY_UPDATE_TIME_MIN = 30;
+
 export function setSelectedCategory(data) {
 	return {
 		type: actionTypes.SET_SELECTED_CATEGORY,
@@ -27,19 +30,11 @@ export function fetchArticlesSuccess(articleList, count) {
   };
 }
 
-export function fetchDocumentCategoriesSuccess(data) {
-  return {
-    type: actionTypes.FETCH_DOCUMENT_CATEGORIES_SUCCESS,
-    data
-  };
-}
-
 export function fetchArticles(query = {}) {
   return dispatch => {
     dispatch({
       type: actionTypes.FETCH_ARTICLES
     });
-    dispatch(setLoadingState(true));
 
     let queryString = Object.keys(query)
       .reduce((previous, key) => previous + `${key}: ${JSON.stringify(query[key])} `, '');
@@ -89,8 +84,10 @@ export function fetchArticles(query = {}) {
         return res.json();
       })
       .then((body) => {
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
         dispatch(fetchArticlesSuccess(body.data.getAllArticles.articles, body.data.getAllArticles.count));
-        dispatch(setLoadingState(false));
       })
       .catch((error) => {
         dispatch(fetchArticlesFail(error));
@@ -142,6 +139,9 @@ export function fetchAllCategories() {
         return res.json();
       })
       .then((body) => {
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
         dispatch(fetchAllCategoriesSuccess(body.data.allCategories));
       })
       .catch((error) => {
@@ -151,30 +151,30 @@ export function fetchAllCategories() {
   };
 }
 
-export function fetchAllTagsFail(error) {
+export function fetchDocumentHotTagsFail(error) {
   return {
-    type: actionTypes.FETCH_ALL_TAGS_SUCCESS,
+    type: actionTypes.FETCH_DOCUMENT_HOT_TAGS_SUCCESS,
     error
   };
 }
 
-export function fetchAllTagsSuccess(allTags) {
+export function fetchDocumentHotTagsSuccess(documentHotTags) {
   return {
-    type: actionTypes.FETCH_ALL_TAGS_SUCCESS,
-    allTags
+    type: actionTypes.FETCH_DOCUMENT_HOT_TAGS_SUCCESS,
+    documentHotTags
   };
 }
 
-export function fetchAllTags() {
+export function fetchDocumentHotTags() {
   return dispatch => {
     dispatch({
-      type: actionTypes.FETCH_ALL_TAGS
+      type: actionTypes.FETCH_DOCUMENT_HOT_TAGS
     });
 
     const config = {
       method: 'POST',
       body: `{
-        tags
+        getDocumentHotTags
       }`,
       headers: {
         'Content-Type': 'application/graphql',
@@ -189,10 +189,13 @@ export function fetchAllTags() {
         return res.json();
       })
       .then((body) => {
-        dispatch(fetchAllTagsSuccess(body.data.tags));
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
+        dispatch(fetchDocumentHotTagsSuccess(body.data.getDocumentHotTags));
       })
       .catch((error) => {
-        dispatch(fetchAllTagsFail(error));
+        dispatch(fetchDocumentHotTagsFail(error));
         dispatch(apiFailure(error));
       });
   };
@@ -236,6 +239,9 @@ export function fetchAllUsers() {
         return res.json();
       })
       .then((body) => {
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
         dispatch(fetchAllUsersSuccess(body.data.allUsers));
       })
       .catch((error) => {
@@ -284,6 +290,9 @@ export function fetchAllMilestones() {
         return res.json();
       })
       .then((body) => {
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
         dispatch(fetchAllMilestonesSuccess(body.data.getAllMilestones));
       })
       .catch((error) => {
@@ -302,6 +311,60 @@ export function updateArticlesQuery(query) {
   };
 }
 
+function forceDocumentCategoriesUpdateNextTime() {
+  // when really need to fetch docment categories from server
+  const localDocumentCategoriesBody = localStorage['documentCategoriesBody'];
+  if (localDocumentCategoriesBody) {
+    let parsedDocumentCategoriesBody = JSON.parse(localDocumentCategoriesBody);
+    parsedDocumentCategoriesBody.enableForceUpdate = true;
+    localStorage['documentCategoriesBody'] = JSON.stringify(parsedDocumentCategoriesBody);
+  }
+}
+
+export function fetchDocumentCategoriesSuccess(data) {
+  return {
+    type: actionTypes.FETCH_DOCUMENT_CATEGORIES_SUCCESS,
+    data
+  };
+}
+
+function setDocumentCategoriesBodyCached(documentCategoriesBody) {
+  documentCategoriesBody.updatedAt = new Date().getTime();
+  localStorage['documentCategoriesBody'] = JSON.stringify(documentCategoriesBody);
+}
+
+function getCachedDocumentCategoriesOrFetchIt(dispatch, config) {
+  return new Promise((resolve, reject) => {
+    const localDocumentCategoriesBody = localStorage['documentCategoriesBody'];
+    if (localDocumentCategoriesBody) {
+      const parsedDocumentCategoriesBody = JSON.parse(localDocumentCategoriesBody);
+      if (!parsedDocumentCategoriesBody.enableForceUpdate &&
+        new Date().getTime() - parsedDocumentCategoriesBody.updatedAt < DOCUMENT_CATEGORY_UPDATE_TIME_MIN * 60 *1000) {
+        resolve(parsedDocumentCategoriesBody);
+      }
+      if (!parsedDocumentCategoriesBody.enableForceUpdate) {
+        // return a cached categories from document first
+        dispatch(fetchDocumentCategoriesSuccess(parsedDocumentCategoriesBody.data.getAllDocumentCategories));
+        dispatch(setLoadingState(false));
+      }
+    }
+    // event use cached result, still fetch in background for next time
+    fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then(body => {
+        setDocumentCategoriesBodyCached(body);
+        // if resolved with cached result before, this resolve will be ignored
+        resolve(body);
+      })
+      .catch(reject);
+  });
+}
+
 export function fetchDocumentCategories() {
   return dispatch => {
     dispatch(setLoadingState(true));
@@ -315,7 +378,8 @@ export function fetchDocumentCategories() {
           id,
           parentId,
           name,
-          articlesCount
+          articlesCount,
+          isFeature
         }
       }`,
       headers: {
@@ -323,19 +387,16 @@ export function fetchDocumentCategories() {
         'x-access-token': localStorage.token
       }
     };
-    return fetch(SERVER_API_URL, config)
-      .then((res) => {
-        if (res.status >= 400) {
-          throw new Error(res.statusText);
-        }
-        return res.json();
-      })
+    return getCachedDocumentCategoriesOrFetchIt(dispatch, config)
       .then((body) => {
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
+        const getAllDocumentCategories = body.data.getAllDocumentCategories;
         dispatch(setLoadingState(false));
-        dispatch(fetchDocumentCategoriesSuccess(body.data.getAllDocumentCategories));
+        dispatch(fetchDocumentCategoriesSuccess(getAllDocumentCategories));
       })
       .catch((error) => {
-        dispatch(setLoadingState(false));
         dispatch(apiFailure(error));
       });
   };
@@ -366,10 +427,10 @@ export function upsertDocumentCategory(data) {
         return res.json();
       })
       .then(() => {
+        forceDocumentCategoriesUpdateNextTime();
         dispatch(fetchDocumentCategories());
       })
       .catch((error) => {
-        dispatch(setLoadingState(false));
         dispatch(apiFailure(error));
       });
   };
@@ -399,10 +460,10 @@ export function deleteDocumentCategory(id) {
         return res.json();
       })
       .then(() => {
+        forceDocumentCategoriesUpdateNextTime();
         dispatch(fetchDocumentCategories());
       })
       .catch((error) => {
-        dispatch(setLoadingState(false));
         dispatch(apiFailure(error));
       });
   };

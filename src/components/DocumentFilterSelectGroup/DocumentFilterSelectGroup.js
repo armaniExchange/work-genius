@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import FlatButton from 'material-ui/lib/flat-button';
 
-import { DOCUMENT_TYPE_OPTIONS, PRIORITY_OPTIONS } from '../../constants/config';
+import { DOCUMENT_TYPE_OPTIONS, PRIORITY_OPTIONS } from '../../constants/document';
 import capitalizeFirstLetter from '../../libraries/capitalizeFirstLetter';
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 

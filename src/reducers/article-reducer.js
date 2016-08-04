@@ -57,7 +57,7 @@ export default function articleReducer(state = initialState, action) {
     case actionTypes.UPDATE_ARTICLE_SUCCESS:
       return articleToState(state, action).set('isEditing', false);
     case actionTypes.FETCH_ARTICLE_SUCCESS:
-      return articleToState(state, action).set('isLoaded', true);
+      return articleToState(state, action).set('isLoaded', true).set('isEditing', true);
     case actionTypes.DELETE_ARTICLE:
       return state.set('isDeleting', true);
     case actionTypes.DELETE_ARTICLE_SUCCESS:

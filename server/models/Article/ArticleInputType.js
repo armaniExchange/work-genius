@@ -3,7 +3,8 @@ import {
   GraphQLInputObjectType,
 	GraphQLString,
 	GraphQLID,
-  GraphQLList
+  GraphQLList,
+  GraphQLBoolean
 } from 'graphql';
 
 import AuthorInputType from '../User/AuthorInputType';
@@ -66,6 +67,7 @@ const ArticleInputType = new GraphQLInputObjectType({
       type: new GraphQLList(GraphQLString),
       description: 'Article\'s report to'
     },
+    updateTestReportUt: { type: GraphQLBoolean}
   })
 });
 

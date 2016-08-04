@@ -20,7 +20,6 @@ export function fetchArticlesSuccess(articleList, count) {
 }
 
 export function fetchWorkLogList(list) {
-  console.log(list);
   return {
     type: actionTypes.FETCH_WORKLOGS_LIST,
     list
@@ -182,6 +181,7 @@ var workLogActions = {
             method: 'POST',
             body: `{
                     getWorkLogList(startDate:` + startDate + `,dateRange:10){
+                        author_id,
                         tags,
                         title,
                         content
@@ -192,12 +192,10 @@ var workLogActions = {
                 'x-access-token': localStorage.token
             }
         };
-        console.log(JSON.stringify(config, null, 4));
         return fetch(SERVER_API_URL, config)
             .then((res) => res.json())
             .then((body) => {
                 let workLogList = body.data.getWorkLogList;
-                console.log(workLogList);
                 workLogList = workLogList ? workLogList : [];
                 dispatch(fetchWorkLogList(workLogList));
             })
@@ -208,7 +206,6 @@ var workLogActions = {
   },
 
   create: function (data) {
-    console.log(JSON.stringify(data, null, 4));
     return (dispatch) => {
       let config = {
         method: 'POST',
@@ -224,7 +221,6 @@ var workLogActions = {
       return fetch(SERVER_API_URL, config)
         .then((res) => res.json())
         .then(() => {
-          console.log('cccsdfsdf');
           dispatch(fetchWorkLogNew(data));
         })
         .catch((err) => {
@@ -281,7 +277,6 @@ var workLogActions = {
 };
 
 function createWorkLog__ (data) {
-    console.log(JSON.stringify(data, null, 4));
     return (dispatch) => {
       let config = {
         method: 'POST',
@@ -297,7 +292,6 @@ function createWorkLog__ (data) {
       return fetch(SERVER_API_URL, config)
         .then((res) => res.json())
         .then(() => {
-          console.log('cccsdfsdf');
           dispatch(fetchWorkLogNew(data));
         })
         .catch((err) => {
@@ -309,7 +303,6 @@ function createWorkLog__ (data) {
 export function createWorkLog(workLog){
   return (dispatch, getState) => {
     let user = getState().app.toJS().currentUser;
-    console.log(user);
     workLog = workLog ? workLog : {};
     workLog.author_id = user.id;
     Promise.all([

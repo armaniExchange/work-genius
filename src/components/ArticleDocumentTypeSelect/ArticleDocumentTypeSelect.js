@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import SelectField from 'material-ui/lib/SelectField';
 import MenuItem from 'material-ui/lib/menus/menu-item';
 
-import { DOCUMENT_TYPE_OPTIONS } from '../../constants/config';
+import { DOCUMENT_TYPE_OPTIONS } from '../../constants/document';
 import capitalizeFirstLetter from '../../libraries/capitalizeFirstLetter';
 
 // Styles

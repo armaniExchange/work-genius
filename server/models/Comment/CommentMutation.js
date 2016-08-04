@@ -6,7 +6,7 @@ import {
 // RethinkDB
 import r from 'rethinkdb';
 // Constants
-import { DB_HOST, DB_PORT, MAILER_ADDRESS } from '../../constants/configurations.js';
+import { DB_HOST, DB_PORT, MAILER_ADDRESS, MAIL_CC_LIST } from '../../constants/configurations.js';
 import { getArticleLink } from '../Article/ArticleMutation';
 import generateEmailMarkdown from '../../libraries/generateEmailMarkdown';
 import parseMarkdown from '../../libraries/parseMarkdown';
@@ -94,7 +94,6 @@ const CommentMutation = {
               .get(articleId)
               .merge(article => {return {author: r.db('work_genius').table('users').get(article('authorId')).default(null)};})
               .run(connection);
-
             await transporter.sendMail({
               from: MAILER_ADDRESS,
               to: [commentedArticle.author.email, ...(commentedArticle.reportTo.map((emailName) => `${emailName}@a10networks.com`))],
@@ -106,7 +105,7 @@ const CommentMutation = {
                 title: commentedArticle.title,
                 content: comment.content
               })),
-              cc: 'ax-web-DL@a10networks.com'
+              cc: MAIL_CC_LIST
             });
           }
 
@@ -146,7 +145,6 @@ const CommentMutation = {
       try {
         const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         let result = null;
-        const user = req.decoded;
         const now = new Date().getTime();
 
         result = await r.db('work_genius')

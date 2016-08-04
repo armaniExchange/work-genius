@@ -2,14 +2,11 @@
 import './_ViewArticlePage.scss';
 // React & Redux
 import React, { Component, PropTypes } from 'react';
-import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import RaisedButton from 'material-ui/lib/raised-button';
 import Paper from 'material-ui/lib/paper';
-
 import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
-
+import ArticleToolbar from '../../components/ArticleToolbar/ArticleToolbar';
 import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
 import CommentEditor from '../../components/CommentEditor/CommentEditor';
 import CommentListItem from '../../components/CommentListItem/CommentListItem';
@@ -128,18 +125,7 @@ class ViewArticlePage extends Component {
       <section className="view-article-page">
         <Paper className="header" zDepth={1}>
           <h3>{title}</h3>
-          <div className="toolbar">
-            <Link to={`/main/knowledge/document/edit/${id}`}>
-              <RaisedButton
-                style={{margin: 10}}
-                label="Edit"
-                primary={true} />
-            </Link>
-            <RaisedButton
-              style={{margin: 10}}
-              label="Delete"
-              onClick={::this.onArticleDelete} />
-          </div>
+
           <hr />
           <ArticleMetadata
             author={author}
@@ -147,8 +133,11 @@ class ViewArticlePage extends Component {
             comments={comments}
             files={files}
           />
-          <br />
           <ArticleTagList tags={tags} />
+          <ArticleToolbar
+            id={id}
+            onDelete={::this.onArticleDelete}
+          />
         </Paper>
         <Paper className="body" zDepth={1}>
           <HighlightMarkdown source={content} />

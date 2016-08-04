@@ -17,13 +17,14 @@ class ArticleTagList extends Component {
   render() {
     const {
       tags,
-      value
+      value,
+      maxNum
     } = this.props;
 
     return (
       <span className="article-tag-list">
         {
-          (tags || []).map((tag, index) => {
+          (maxNum ? tags.slice(0, maxNum) : tags || []).map((tag, index) => {
             return (
               <span
                 className={`tag ${value === tag ? 'active': ''}`}
@@ -34,6 +35,9 @@ class ArticleTagList extends Component {
             );
           })
         }
+        {
+          maxNum && tags.length > maxNum ? <span className="tag">...</span>: null
+        }
       </span>
     );
   }
@@ -43,6 +47,7 @@ class ArticleTagList extends Component {
 ArticleTagList.propTypes = {
   tags           : PropTypes.arrayOf(PropTypes.string),
   value          : PropTypes.string,
+  maxNum         : PropTypes.number,
   onChange       : PropTypes.func
 };
 
