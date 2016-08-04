@@ -154,6 +154,14 @@ export const addTestReportHandler = async (req, res) => {
       testReportCategoryTableIndex,
     } = TEST_REPORT_MAP[type];
 
+    let reportsTableName = type==='axapiTest' ? 'axapi_test_reports' : '';
+    if (reportsTableName) {
+        if (data.isSuccess===false) { 
+          // only need insert false results at GUI page
+          await r.db('work_genius').table(reportsTableName).insert(data).run(connection);
+        }
+    }
+
     const dbResult = await r.db('work_genius')
       .table('test_report_categories')
       .insert(
