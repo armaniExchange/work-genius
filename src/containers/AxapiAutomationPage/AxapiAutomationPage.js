@@ -89,8 +89,9 @@ class AxapiAutomationPage extends Component {
       location: { query }
     } = this.context;
     if (query.tab==='TAB___API') { // for /main/axapi-automation?apiPage=3&curProduct=4_1_1&tab=TAB___API
-      this.props.changeTabPage('TAB___API', query.curProduct || '4_1_1', undefined, {
-              curAPIResultCreatedTime: query.curAPIResultCreatedTime || '1466053870000', 
+      this.props.changeTabPage('TAB___API', query.curProduct || '4_1_1', undefined /*build*/ , 
+              {
+              curAPIResultCreatedTime: query.curAPIResultCreatedTime || 0, 
               apiPage: query.apiPage || '1'
             });
     } else {
@@ -108,10 +109,20 @@ class AxapiAutomationPage extends Component {
     }
   };
   componentWillReceiveProps(nextProps) {
-    if (this.props.curProduct!==nextProps.curProduct) {
-      this.props.fetchBuildNumber(nextProps.curProduct);
+    console.info(['this.props nextProps', this.props.curProduct, nextProps.curProduct,
+      this.props.currentTabPage, nextProps.currentTabPage,
+      this.props.aryBuildNumber, nextProps.aryBuildNumber].join('#')
+      );
+    console.info(this.props, nextProps);
+    const isNeedFetchBuildNumber = this.props.curProduct!==nextProps.curProduct  // when changing product, then re-fetching all builds.
+      || (this.props.currentTabPage!==nextProps.currentTabPage 
+          && [this.props.currentTabPage, nextProps.currentTabPage].indexOf('TAB___API')>=0); // No need re-fetch when CLI<->JSON because they obtain same builds.
+    console.info('isNeedFetchBuildNumber', isNeedFetchBuildNumber);
+    if (isNeedFetchBuildNumber) {
+      this.props.fetchBuildNumber(nextProps.curProduct, nextProps.currentTabPage);
     }
-   if (this.props.aryBuildNumber!==nextProps.aryBuildNumber
+
+    if (this.props.aryBuildNumber!==nextProps.aryBuildNumber
     && nextProps.aryBuildNumber
     && nextProps.aryBuildNumber.length) { // EX: changed product dropdownlist
       this.props.changeBuildNumber(nextProps.curProduct,
@@ -134,6 +145,7 @@ class AxapiAutomationPage extends Component {
       //API request
       aryAPIData,
       curAPIResultCreatedTime,
+      aryCreatedAt,
       curAPIPage,
       curAPITotal,
       //actions
@@ -142,6 +154,7 @@ class AxapiAutomationPage extends Component {
       changeProduct,
       curModifiedFilename,
       changeModifiedFileName,
+      changeCreatedAt,
     } = this.props;
     const {
       reqBodyValue,
@@ -159,7 +172,6 @@ class AxapiAutomationPage extends Component {
     const tabCLIProps = IS_TAB_CLI ? {secondary: true} : {};
     const tabJSONProps = IS_TAG_JSON ? {secondary: true} : {};
     const tabAPIProps = IS_TAB_API ? {secondary: true} : {};
-    const IS_SHOW_BUILD_NUMBER = !IS_TAB_API;
     const IS_SHOW_CONNECT_AREA = IS_TAB_API;
 
     const hasModifiedFiles = aryModFiles && aryModFiles.length;
@@ -189,14 +201,14 @@ class AxapiAutomationPage extends Component {
                 }}  
                 secondary={true}
                 style={{float:'right',width:'8%'}}
-                label={item.meta.request.method}
+                label={item && item.meta && item.meta.request && item.meta.request.method}
                 labelStyle={{'textTransform': 'none'}} />
               <TextField
                 onChange={(evt)=>{
                   const val = evt.target.value;
                   console.log('val', val);
                 }}
-                value={item.meta.request.url}
+                value={item && item.meta && item.meta.request && item.meta.request.url}
                 style={{width:'91.9%'}}
                 labelStyle={{textAlign:'center'}}
                 hintText="password" />
@@ -205,14 +217,14 @@ class AxapiAutomationPage extends Component {
                 <tr>
                 <td>
                   <label style={{display:'block'}}>REQUEST</label>
-                  <textarea style={{resize:'none',width:'100%',height:'230px'}} value={typeof reqBodyValue==='undefined' ? displayPlainObject(item.meta.request.body) : reqBodyValue}
+                  <textarea style={{resize:'none',width:'100%',height:'230px'}} value={typeof reqBodyValue==='undefined' ? displayPlainObject(item && item.meta && item.meta.request && item.meta.request.body) : reqBodyValue}
                   onChange={(ev)=>{
                     this.setState({reqBodyValue:ev.target.value});
                   }}></textarea>
                 </td>
                 <td>
                   <label style={{display:'block'}}>RESPONSE</label>
-                  <textarea style={{resize:'none',width:'100%',height:'230px'}} value={typeof resBodyValue==='undefined' ? displayPlainObject(item.meta.response.body) : resBodyValue} 
+                  <textarea style={{resize:'none',width:'100%',height:'230px'}} value={typeof resBodyValue==='undefined' ? displayPlainObject(item && item.meta && item.meta.response && item.meta.response.body) : resBodyValue} 
                   onChange={(ev)=>{
                     this.setState({resBodyValue:ev.target.value});
                   }}></textarea>
@@ -342,7 +354,7 @@ class AxapiAutomationPage extends Component {
                 }}
                 aryOptionConfig={aryProduct}
             />
-            <span style={{display:IS_SHOW_BUILD_NUMBER ? '' : 'none'}}>
+            <span style={{display:IS_TAB_API ? 'none' : ''}}>
             <label>Build number:&nbsp;</label>
             <DropDownList
                 isNeedAll={false}
@@ -351,6 +363,20 @@ class AxapiAutomationPage extends Component {
                   changeBuildNumber(curProduct, val, currentTabPage); //val is build
                 }}
                 aryOptionConfig={aryBuildNumber}
+            />
+            </span>
+            <span style={{display:IS_TAB_API ? '' : 'none'}}>
+            <label>Created At:&nbsp;</label>
+            <DropDownList
+                isNeedAll={false}
+                title={(new Date(curAPIResultCreatedTime).toString()) + ' ,timestamp=' + curAPIResultCreatedTime}
+                onOptionClick={(val)=>{
+                  changeCreatedAt(curProduct, val, currentTabPage); //val is createdAt
+                }}
+                aryOptionConfig={aryCreatedAt.map(value=>{
+                  let title = (new Date(value)).toString() + ' ,timestamp=' + value;
+                  return {title, value};
+                })}
             />
             </span>
             <hr />
@@ -396,7 +422,8 @@ AxapiAutomationPage.propTypes = {
   curModifiedDiff: PropTypes.string,
 
   aryAPIData: PropTypes.array,
-  curAPIResultCreatedTime: PropTypes.number,
+  curAPIResultCreatedTime: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  aryCreatedAt: PropTypes.array,
   curAPIPage: PropTypes.number,
   curAPITotal: PropTypes.number,
 
@@ -407,11 +434,14 @@ AxapiAutomationPage.propTypes = {
   changeProduct: PropTypes.func,
   changeBuildNumber: PropTypes.func,
   changeModifiedFileName: PropTypes.func,
+  changeCreatedAt: PropTypes.func,
 };
 AxapiAutomationPage.defaultProps = {
+  aryAPIData: [],
+  aryCreatedAt: [],
   curProduct: '',
   curBuildNumber: '',
-  curAPIResultCreatedTime: 1466053870000
+  curAPIResultCreatedTime: 0 //<---- ...so that ServerCodeLogic will auto-pick latest createdAt as the default value.
 };
 
 

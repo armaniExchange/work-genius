@@ -114,7 +114,7 @@ class EditArticlePage extends Component {
     const { query } = context.location;
 
     return {
-      editingTitle: (query && query.title) || title,
+      editingTitle: (query && query.title) || title, // for /main/knowledge/document/edit/new?title=abc&tags=t1,t2,t3&document_type=knowledges
       editingContent: content,
       editingTags: (query && query.tags && query.tags.split(',')) || tags,
       editingCategoryId: categoryId,
