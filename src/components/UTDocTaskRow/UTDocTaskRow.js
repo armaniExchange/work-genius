@@ -63,7 +63,7 @@ class UTDocTaskRow extends Component {
             start_date,
             end_date,
             progress: 0,
-            duration: 8,
+            duration: 4,
             tags: []
           }
         });
