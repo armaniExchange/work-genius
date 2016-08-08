@@ -39,7 +39,7 @@ class FeatureAutomationCount extends Component {
     } = this.props;
 
     if (!hasChildren && type === 'unit-test' && framework === 'angular' && testReport && testReport.length > 0 && testReport[0].path) {
-      const link = `${UNIT_TEST_REPORT_URL}/${testReport[0].path}/index.html`;
+      const link = `${UNIT_TEST_REPORT_URL}/${testReport[0].path}/index.html`.replace(/\/\//g, '/');
       return (
         <a href={link} target="_blank"> { totalCount } </a>
       );
