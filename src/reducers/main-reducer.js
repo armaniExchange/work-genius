@@ -22,10 +22,10 @@ const initialState = Map({
         displayText: 'Bug Analysis',
         link: '/main/bug-analysis/bug-analysis'
     }),
-    Map({
-        displayText: 'Page Assignment',
-        link: '/main/feature-analysis'
-    }),
+    // Map({
+    //     displayText: 'Page Assignment',
+    //     link: '/main/feature-analysis'
+    // }),
     Map({
       displayText: 'PTO',
       link: '/main/pto'
@@ -84,16 +84,16 @@ const initialState = Map({
         url: '/main/bug-analysis/bug-report'
       }
     ),
-		'Page Assignment': List.of(
-			{
-				name: 'Tree View',
-				url: '/main/feature-analysis'
-			},
-		    {
-				name: 'Table View',
-				url: '/main/feature-analysis/table'
-			}
-		),
+		// 'Page Assignment': List.of(
+		// 	{
+		// 		name: 'Tree View',
+		// 		url: '/main/feature-analysis'
+		// 	},
+		//     {
+		// 		name: 'Table View',
+		// 		url: '/main/feature-analysis/table'
+		// 	}
+		// ),
     'PTO': List.of(
       {
         name: 'Apply',

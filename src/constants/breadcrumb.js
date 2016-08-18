@@ -18,7 +18,7 @@ let BREADCRUMB = {
   bugrootcause: [{txt:'Root Causes', url: BASE_URL + '/bug-analysis/bug-analysis'}],
   analysisreport: [{txt:'Analysis Reports', url: BASE_URL + '/bug-analysis/bug-report'}],
 
-  pageassignment: [{txt:'Page Assignment', url: BASE_URL + '/feature-analysis'}],
+  // pageassignment: [{txt:'Page Assignment', url: BASE_URL + '/feature-analysis'}],
   treepageassignment: [{txt:'Tree View', url: BASE_URL + '/feature-analysis'}],
   tablepageassignment: [{txt:'Table View', url: BASE_URL + '/feature-analysis/table'}],
 
@@ -40,8 +40,8 @@ BREADCRUMB.device = BREADCRUMB.resource.concat(BREADCRUMB.device);
 BREADCRUMB.bugrootcause = BREADCRUMB.buganalysis.concat(BREADCRUMB.bugrootcause);
 BREADCRUMB.analysisreport = BREADCRUMB.buganalysis.concat(BREADCRUMB.analysisreport);
 
-BREADCRUMB.treepageassignment = BREADCRUMB.pageassignment.concat(BREADCRUMB.treepageassignment);
-BREADCRUMB.tablepageassignment = BREADCRUMB.pageassignment.concat(BREADCRUMB.tablepageassignment);
+// BREADCRUMB.treepageassignment = BREADCRUMB.pageassignment.concat(BREADCRUMB.treepageassignment);
+// BREADCRUMB.tablepageassignment = BREADCRUMB.pageassignment.concat(BREADCRUMB.tablepageassignment);
 
 BREADCRUMB.ptoapply = BREADCRUMB.pto.concat(BREADCRUMB.ptoapply);
 BREADCRUMB.overtime = BREADCRUMB.pto.concat(BREADCRUMB.overtime);
