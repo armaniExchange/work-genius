@@ -93,25 +93,25 @@ class FeatureAutomationPage extends Component {
     const { featureAutomationActions } = this.props;
     const {
       setupTestReportOfCategory,
-      fetchDocumentCategoriesWithReport
+      // fetchDocumentCategoriesWithReport
     } = featureAutomationActions;
     setupTestReportOfCategory({
       categoryId: id,
       axapis,
       path
-    }, fetchDocumentCategoriesWithReport);
+    }, /*fetchDocumentCategoriesWithReport*/);
   }
 
   onOwnersSave(id, owners) {
     const { featureAutomationActions } = this.props;
     const {
       setupTestReportOfCategory,
-      fetchDocumentCategoriesWithReport
+      // fetchDocumentCategoriesWithReport
     } = featureAutomationActions;
     setupTestReportOfCategory({
       categoryId: id,
       owners
-    }, fetchDocumentCategoriesWithReport);
+    }, /*fetchDocumentCategoriesWithReport*/);
   }
 
   onAxapiTestCreatedTimeChange(value) {
@@ -295,7 +295,7 @@ class FeatureAutomationPage extends Component {
       .filter(item => !filterOwner || (item.owners && item.owners.includes(filterOwner)) )
       .map((item) =>  item.fullpath ? item.fullpath.replace('root > ', '') : '' )
       .filter((categoryName)=> this.filterSearchCategoryName(searchCategoryName, categoryName))
-      .splice(0, 5);
+      .splice(0, 10);
   }
 
   render() {
