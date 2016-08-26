@@ -28,6 +28,11 @@ const testReportTypeTextMap = {
 };
 
 const notifyOwnersErrorsWithEmail = async (transporter, testReportType, createdAt)=> {
+  if (testReportType === 'axapiTest') {
+    console.log('skip axapiTest email sending');
+    return;
+  }
+
   const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
   const testReportTypeText = testReportTypeTextMap[testReportType];
   const errorReports = await r.db('work_genius').table('users')
@@ -48,6 +53,7 @@ const notifyOwnersErrorsWithEmail = async (transporter, testReportType, createdA
         .reduce((left, right)=> left.add(right)).default([])
     })
     .run(connection);
+
   if (errorReports.length === 0) {
     if (testReportType === 'end2endTest') {
       const HeaderMd = `Hi Team,  \nFeature Automation pass all the cases\n, everything is awesome.`;
