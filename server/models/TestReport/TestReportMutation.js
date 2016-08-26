@@ -28,11 +28,6 @@ const testReportTypeTextMap = {
 };
 
 const notifyOwnersErrorsWithEmail = async (transporter, testReportType, createdAt)=> {
-  if (testReportType === 'axapiTest') {
-    console.log('skip axapiTest email sending');
-    return;
-  }
-
   const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
   const testReportTypeText = testReportTypeTextMap[testReportType];
   const errorReports = await r.db('work_genius').table('users')
@@ -59,7 +54,7 @@ const notifyOwnersErrorsWithEmail = async (transporter, testReportType, createdA
       const HeaderMd = `Hi Team,  \nFeature Automation pass all the cases\n, everything is awesome.`;
       const mailOption = {
         from: MAILER_ADDRESS,
-        to: errorReports.map(item => item.email),
+        to: testReportType === 'axapiTest' ? ['kfong@a10networks.com', 'ZGao@a10networks.com'] : errorReports.map(item => item.email),
         subject: `[KB - Feature Automation] ${testReportTypeText} report`,
         html: parseMarkdown(HeaderMd),
         cc: MAIL_CC_LIST
@@ -92,7 +87,7 @@ ${JSON.stringify(simplifiedErrorReport, null, '  ')}\n
     }).join('\n');
   const mailOption = {
     from: MAILER_ADDRESS,
-    to: errorReports.map(item => item.email),
+    to: testReportType === 'axapiTest' ? ['kfong@a10networks.com', 'ZGao@a10networks.com'] : errorReports.map(item => item.email),
     subject: `[KB - Feature Automation] ${testReportTypeText} failed report`,
     html: parseMarkdown(HeaderMd + errorReportsMd),
     cc: MAIL_CC_LIST
@@ -125,11 +120,12 @@ export const addTestReportHandler = async (req, res) => {
   try {
     connection = await r.connect({ host: DB_HOST, port: DB_PORT });
     const { type } = req.params;
-    const { reports } = req.body;
+    const reports = req.body.reports || [];
     const createdAt = req.body.createdAt || new Date().getTime();
     const product = req.body.product || '';
     const build = req.body.build || '';
     const framework = req.body.framework || null;
+    const hasMoreReports = req.body.hasMoreReports || false;
 
     const data = reports.map((report)=> {
       const {
@@ -218,7 +214,11 @@ export const addTestReportHandler = async (req, res) => {
       });
 
     await connection.close();
-    await notifyOwnersErrorsWithEmail(transporter, testReportType, createdAt);
+    if (!hasMoreReports) {
+      await notifyOwnersErrorsWithEmail(transporter, testReportType, createdAt);
+    } else {
+      console.log('has more reports, so we put off sending email');
+    }
   } catch (err) {
     await connection.close();
     res.status(err.status)
