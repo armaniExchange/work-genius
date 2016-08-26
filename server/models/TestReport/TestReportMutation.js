@@ -54,10 +54,10 @@ const notifyOwnersErrorsWithEmail = async (transporter, testReportType, createdA
       const HeaderMd = `Hi Team,  \nFeature Automation pass all the cases\n, everything is awesome.`;
       const mailOption = {
         from: MAILER_ADDRESS,
-        to: testReportType === 'axapiTest' ? ['kfong@a10networks.com', 'ZGao@a10networks.com'] : errorReports.map(item => item.email),
+        to: errorReports.map(item => item.email),
         subject: `[KB - Feature Automation] ${testReportTypeText} report`,
         html: parseMarkdown(HeaderMd),
-        cc: testReportType === 'axapiTest' ? ['kfong@a10networks.com', 'ZGao@a10networks.com'] : MAIL_CC_LIST
+        cc: MAIL_CC_LIST
       };
       await transporter.sendMail(mailOption);
     } else {
@@ -87,10 +87,10 @@ ${JSON.stringify(simplifiedErrorReport, null, '  ')}\n
     }).join('\n');
   const mailOption = {
     from: MAILER_ADDRESS,
-    to: testReportType === 'axapiTest' ? ['kfong@a10networks.com', 'ZGao@a10networks.com'] : errorReports.map(item => item.email),
+    to: errorReports.map(item => item.email),
     subject: `[KB - Feature Automation] ${testReportTypeText} failed report`,
     html: parseMarkdown(HeaderMd + errorReportsMd),
-    cc: testReportType === 'axapiTest' ? ['kfong@a10networks.com', 'ZGao@a10networks.com'] : MAIL_CC_LIST
+    cc: MAIL_CC_LIST
   };
   await transporter.sendMail(mailOption);
 };
