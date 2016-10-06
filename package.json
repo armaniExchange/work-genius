@@ -72,6 +72,7 @@
     "react-datepicker": "^0.15.2",
     "react-dom": "^0.14.7",
     "react-dropzone": "^3.3.2",
+    "react-helmet": "^3.1.0",
     "react-highcharts": "^8.1.0",
     "react-highlight": "^0.7.0",
     "react-markdown": "^2.0.1",

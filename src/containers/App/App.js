@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // Component
 import Spinner from '../../components/Spinner/Spinner';
+import Helmet from 'react-helmet';
 // Actions
 import * as AppActions from '../../actions/app-actions';
 
@@ -29,6 +30,7 @@ class App extends Component {
 		return (
 			<div>
 				<Spinner hide={!isLoading} />
+				<Helmet title="Knowledge Base (KB)" />
 				{this.props.children}
 			</div>
 		);

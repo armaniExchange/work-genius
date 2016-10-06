@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Paper from 'material-ui/lib/paper';
+import Helmet from 'react-helmet';
 import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
 import ArticleToolbar from '../../components/ArticleToolbar/ArticleToolbar';
 import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
@@ -121,8 +122,10 @@ class ViewArticlePage extends Component {
       isConfirmDeleteArticleDialogVisible,
       isConfirmDeleteCommentDialogVisible
     } = this.state;
+    let documentTitle = 'KB Document - ' + title;
     return (
       <section className="view-article-page">
+        <Helmet title={documentTitle} />
         <Paper className="header" zDepth={1}>
           <h3>{title}</h3>
 
