@@ -159,7 +159,7 @@ class UTDocTaskRow extends Component {
       const user = allUsers.filter(eachUser=> eachUser.id === ownerId);
       return user ? user[0] : 'undefined';
     })
-    .map(eachUser=>eachUser.name) : owners;
+    .map(eachUser=> eachUser && eachUser.name) : owners;
 
     return (
       <TableRow>
