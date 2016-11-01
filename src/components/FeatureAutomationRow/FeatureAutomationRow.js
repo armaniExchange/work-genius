@@ -73,8 +73,10 @@ class FeatureAutomationRow extends Component {
 
     const hasChildren = children && children.length > 0;
     const ownerNames = (accumOwners || []).map( ownerId => {
-      return allUsers.filter(user => user.id === ownerId || [{name:''}])[0].name;
+      const result = allUsers.filter(user => user.id === ownerId);
+      return result && result.length > 0 ? result[0].name : '';
     });
+
     const MAX_DISPLAY_OWNERS_NUM = 2;
     const ownerStyle = {
       backgroundColor: '#f2f9fc',
