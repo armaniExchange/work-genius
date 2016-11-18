@@ -5,8 +5,10 @@ import {
   GraphQLList,
   GraphQLInt,
   GraphQLID,
-  GraphQLFloat
+  GraphQLFloat,
+  GraphQLBoolean
 } from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
 
 const TestReportCategorySetupType = new GraphQLObjectType({
   name: 'TestReportCategorySetup',
@@ -54,6 +56,12 @@ const TestReportCategorySetupType = new GraphQLObjectType({
     },
     'UTDoc': {
       type: GraphQLString
+    },
+    'checkList': {
+      type: GraphQLJSON
+    },
+    'isCheckListChecked': {
+      type: GraphQLBoolean
     }
   })
 });

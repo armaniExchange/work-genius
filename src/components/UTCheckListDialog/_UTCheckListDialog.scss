@@ -1,0 +1,24 @@
+.UTCheckListDialog table{
+  width: 100%;
+
+  th {
+    width: 20px;
+  }
+  th, td {
+    text-align: center;
+  }
+  th:first-child,
+  td:first-child {
+    text-align: left;
+  }
+  .UTCheckListDialog--create-new-bug {
+    cursor: pointer;
+  }
+  td {
+    border: none;
+  }
+
+  tr:hover {
+    background-color: #eee;
+  }
+}

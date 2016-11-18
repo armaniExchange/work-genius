@@ -15,7 +15,9 @@ import * as FeatureAutomationActions from '../../actions/feature-automation-page
 import * as ResourceMapActions from '../../actions/resource-map-actions';
 
 import UTDocTaskRow from '../../components/UTDocTaskRow/UTDocTaskRow';
+import UTCheckListDialog from '../../components/UTCheckListDialog/UTCheckListDialog';
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
+
 
 class UTDocTaskPage extends Component {
 
@@ -27,7 +29,11 @@ class UTDocTaskPage extends Component {
       flatCategories: [],
       filterOwner: privilege <= 5 ? id : null,
       filterRelease: 'root > 4.1',
-      filterReviewer: null
+      filterReviewer: null,
+      showCheckListDialog: false,
+      editingCategoryId: null,
+      editingFullpathWithOutRoot: '',
+      editingCheckList: {}
     };
   }
 
@@ -64,6 +70,19 @@ class UTDocTaskPage extends Component {
 
   onFilterReviewerChange(value) {
     this.setState({ filterReviewer: value });
+  }
+
+  onCreateBugClick({
+      categoryId,
+      fullpathWithOutRoot,
+    }) {
+    const { articleActions: { createArticle } }= this.props;
+    createArticle({
+      title: `Bug - ${fullpathWithOutRoot}`,
+      categoryId,
+      content: 'For bug',
+      documentType: 'bugs'
+    });
   }
 
   onUTDocClick({
@@ -118,6 +137,31 @@ class UTDocTaskPage extends Component {
     return result;
   }
 
+  openCheckList({id, checkList, fullpathWithOutRoot}) {
+    this.setState({
+      editingCategoryId: id,
+      showCheckListDialog: true,
+      editingCheckList: checkList,
+      editingFullpathWithOutRoot: fullpathWithOutRoot
+    });
+  }
+
+  closeCheckList() {
+    this.setState({
+      editingCategoryId: null,
+      showCheckListDialog: false,
+      editingCheckList: {},
+      editingFullpathWithOutRoot: ''
+    });
+  }
+
+  onUTCheckListDialogSubmit({categoryId, data}) {
+    this.setupTestReportOfCategory({
+      categoryId,
+      checkList: data
+    });
+  }
+
   render() {
     const {
       allUsers,
@@ -129,13 +173,26 @@ class UTDocTaskPage extends Component {
       flatCategories,
       filterRelease,
       filterOwner,
-      filterReviewer
+      filterReviewer,
+      showCheckListDialog,
+      editingCategoryId,
+      editingCheckList,
+      editingFullpathWithOutRoot
     } = this.state;
 
     const filterReleaseOptions = documentCategoriesWithSettings.children || [];
     const displayRows = flatCategories.filter(::this.combinedFilters);
     return (
       <div>
+        <UTCheckListDialog
+          open={showCheckListDialog}
+          onRequestClose={::this.closeCheckList}
+          onSubmit={::this.onUTCheckListDialogSubmit}
+          data={editingCheckList}
+          categoryId={editingCategoryId}
+          onCreateBugClick={::this.onCreateBugClick}
+          fullpathWithOutRoot={editingFullpathWithOutRoot}
+        />
         <div>
           <label>Release:&nbsp;</label>
           <DropDownList
@@ -174,12 +231,13 @@ class UTDocTaskPage extends Component {
                   <TableRow>
                     <TableHeaderColumn>Menu List</TableHeaderColumn>
                     <TableHeaderColumn style={{width: 150}}>Owner</TableHeaderColumn>
-                    <TableHeaderColumn style={{width: 200}}>Reviewers</TableHeaderColumn>
-                    <TableHeaderColumn style={{width: 130}}><i className="fa fa-calendar-o"/> Doc ETA</TableHeaderColumn>
-                    <TableHeaderColumn style={{width: 130}}>Doc Status</TableHeaderColumn>
-                    <TableHeaderColumn style={{width: 130}}><i className="fa fa-calendar-o"/> Code ETA</TableHeaderColumn>
-                    <TableHeaderColumn style={{width: 130}}>Code Status</TableHeaderColumn>
+                    <TableHeaderColumn style={{width: 180}}>Reviewers</TableHeaderColumn>
+                    <TableHeaderColumn style={{width: 120}}>Check List</TableHeaderColumn>
+                    <TableHeaderColumn style={{width: 130}}>Bugs</TableHeaderColumn>
+                    <TableHeaderColumn style={{width: 150}}><i className="fa fa-calendar-o"/> Code ETA</TableHeaderColumn>
+                    <TableHeaderColumn style={{width: 120}}>Code Status</TableHeaderColumn>
                     <TableHeaderColumn style={{width: 120}}>Status</TableHeaderColumn>
+
                   </TableRow>
                 </TableHeader>
                 <TableBody showRowHover={true}>
@@ -191,6 +249,7 @@ class UTDocTaskPage extends Component {
                           allUsers={allUsers}
                           isLoading={isLoading}
                           onUTDocClick={::this.onUTDocClick}
+                          openCheckList={::this.openCheckList}
                           setupTestReportOfCategory={::this.setupTestReportOfCategory}
                           upsertWorklogItem={::this.upsertWorklogItem}
                           readOnly={!filterOwner && !filterReviewer}

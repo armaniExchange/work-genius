@@ -1,14 +1,14 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import _ from 'lodash';
-
-// Styles
-import './_UTDocTaskRow.css';
 import { TableRow, TableRowColumn } from 'material-ui/lib/table';
 import DatePicker from 'material-ui/lib/date-picker/date-picker';
 import SelectField from 'material-ui/lib/select-field';
 import MenuItem from 'material-ui/lib/menus/menu-item';
 import moment from 'moment';
+
+// Styles
+import './_UTDocTaskRow.css';
 
 class UTDocTaskRow extends Component {
 
@@ -97,19 +97,19 @@ class UTDocTaskRow extends Component {
     this.save({docStatus: editingDocStatus});
   }
 
-  onUTDocClick() {
-    const {
-      id,
-      onUTDocClick,
-      UTDoc,
-      fullpathWithOutRoot,
-    } = this.props;
-    onUTDocClick({
-      UTDoc,
-      categoryId: id,
-      fullpathWithOutRoot,
-    });
-  }
+  // onUTDocClick() {
+  //   const {
+  //     id,
+  //     onUTDocClick,
+  //     UTDoc,
+  //     fullpathWithOutRoot,
+  //   } = this.props;
+  //   onUTDocClick({
+  //     UTDoc,
+  //     categoryId: id,
+  //     fullpathWithOutRoot,
+  //   });
+  // }
 
   getOverallStatus(){
     const {
@@ -123,22 +123,38 @@ class UTDocTaskRow extends Component {
     }
   }
 
+  renderCheckListStatistic() {
+    const { isCheckListChecked } = this.props;
+    if (isCheckListChecked){
+      return (<strong className="text-success">Checked</strong>);
+    } else {
+      return (<strong className="text-primary">Check</strong>);
+    }
+  }
+
+  renderBugs() {
+    return null;
+  }
+
   render() {
     const {
+      id,
       fullpathWithOutRoot,
       owners,
       allUsers,
       readOnly,
       readOnlyText,
       isEmpty,
-      UTDoc
+      // UTDoc,
+      openCheckList,
+      checkList
     } = this.props;
 
     const {
       editingCodeETA,
-      editingDocETA,
+      // editingDocETA,
       editingCodeStatus,
-      editingDocStatus,
+      // editingDocStatus,
     } = this.state;
 
     if (isEmpty) {
@@ -168,32 +184,13 @@ class UTDocTaskRow extends Component {
         </TableRowColumn>
         <TableRowColumn style={{width: 150}}>{ownersName[0]}</TableRowColumn>
         <TableRowColumn style={{width: 200}}>{ownersName.slice(1).join()}</TableRowColumn>
-        <TableRowColumn style={{width: 130}}>
-          <i
-            style={{cursor: 'pointer'}}
-            onClick={::this.onUTDocClick}
-            className={`fa ${UTDoc ? 'text-primary fa-file-text' : 'fa-file-text-o'}`} />
-          &nbsp;&nbsp;&nbsp;
-          {
-            readOnly ? editingDocETA && <span title={readOnlyText}>{moment(editingDocETA).format('M/D/YYYY')}</span> : (
-              <DatePicker
-                style={{display: 'inline-block'}}
-                hintText="Doc ETA"
-                value={editingDocETA && new Date(editingDocETA)}
-                onChange={::this.onDocETAChange} />
-            )
-          }
+        <TableRowColumn style={{width: 120}}>
+          <span onClick={openCheckList.bind(this, {id, checkList, fullpathWithOutRoot})}>
+            {this.renderCheckListStatistic()}
+          </span>
         </TableRowColumn>
-        <TableRowColumn style={{width: 130}}>
-        {
-          readOnly ? <span title={readOnlyText}>{editingDocStatus}</span> : (
-            <SelectField value={editingDocStatus || 'TODO'} onChange={::this.onDocStatusChange}>
-              <MenuItem value={"TODO"} primaryText="TODO"/>
-              <MenuItem value={"REVIEW"} primaryText="REVIEW"/>
-              <MenuItem value ={"DONE"} primaryText="DONE"/>
-            </SelectField>
-          )
-        }
+        <TableRowColumn style={{width: 120}}>
+          {this.renderBugs()}
         </TableRowColumn>
         <TableRowColumn style={{width: 130}}>
         {
@@ -238,7 +235,10 @@ UTDocTaskRow.propTypes = {
   readOnlyText: PropTypes.string,
   isEmpty: PropTypes.bool,
   UTDoc: PropTypes.string,
-  onUTDocClick: PropTypes.func
+  onUTDocClick: PropTypes.func,
+  openCheckList: PropTypes.func,
+  checkList: PropTypes.object,
+  isCheckListChecked: PropTypes.bool
 };
 
 UTDocTaskRow.defaultProps = {
@@ -251,7 +251,9 @@ UTDocTaskRow.defaultProps = {
   allUsers: [],
   readOnly: false,
   isEmpty: false,
-  UTDoc: null
+  UTDoc: null,
+  checkList: {},
+  isCheckListChecked: false
 };
 
 

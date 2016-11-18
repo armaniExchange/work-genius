@@ -113,7 +113,9 @@ export function fetchDocumentCategoriesWithSettings() {
           docStatus,
           codeETA,
           codeStatus,
-          UTDoc
+          UTDoc,
+          checkList,
+          isCheckListChecked
         }
       }`,
       headers: {
@@ -163,7 +165,8 @@ export function setupTestReportOfCategory({
   codeETA,
   docETA,
   codeStatus,
-  docStatus
+  docStatus,
+  checkList
 }, successAction) {
   return dispatch => {
     dispatch({
@@ -179,6 +182,7 @@ export function setupTestReportOfCategory({
     queryString += typeof docETA !== 'undefined' ? `docETA: ${docETA}` : '';
     queryString += typeof codeStatus !== 'undefined' ? `codeStatus: "${codeStatus}"` : '';
     queryString += typeof docStatus !== 'undefined' ? `docStatus: "${docStatus}"` : '';
+    queryString += typeof checkList !== 'undefined' ? `checkList: "${JSON.stringify(checkList).replace(/"/g, `\\\"`)}"` : '';
 
     const config = {
       method: 'POST',

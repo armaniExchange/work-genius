@@ -12,7 +12,7 @@ import {
   GraphQLInt,
   GraphQLFloat
 } from 'graphql';
-
+import GraphQLJSON from 'graphql-type-json';
 // RethinkDB
 import r from 'rethinkdb';
 
@@ -257,6 +257,9 @@ const mutation = {
       },
       docStatus: {
         type: GraphQLString
+      },
+      checkList: {
+        type: GraphQLString
       }
     },
     resolve: async (root, {
@@ -268,9 +271,15 @@ const mutation = {
       codeETA,
       docETA,
       codeStatus,
-      docStatus
+      docStatus,
+      checkList
     }) => {
       const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+      const parsedCheckList = typeof checkList !== 'undefined' && JSON.parse(checkList.replace(/\\\"/g, '"'));
+      const isCheckListChecked = typeof checkList !== 'undefined' ? Object.keys(parsedCheckList).reduce((accum, current) => {
+        return accum && parsedCheckList[current].pass && !parsedCheckList[current].fail;
+      }, true) : false;
+
       const data = Object.assign(
         { id: categoryId },
         typeof path !== 'undefined' ? { path } : null,
@@ -281,7 +290,12 @@ const mutation = {
         typeof docETA !== 'undefined' ? { docETA } : null,
         typeof codeStatus !== 'undefined' ? { codeStatus } : null,
         typeof docStatus !== 'undefined' ? { docStatus } : null,
+        typeof checkList !== 'undefined' ? {
+          checkList: parsedCheckList,
+          isCheckListChecked
+        } : null,
       );
+
       try {
         await r.db('work_genius')
           .table('test_report_categories')
