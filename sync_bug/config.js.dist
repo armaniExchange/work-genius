@@ -1,0 +1,12 @@
+module.exports = {
+	DB_HOST: '192.168.105.93',
+	DB_PORT: 38015,
+	location: 'BJ', // or TP
+	imageHost: '192.168.105.93',
+	imageUser: 'upgrade', 
+	imagePassword: 'upgrade',
+	BUG_DB_HOST: '192.168.3.24',
+	BUG_DB_USER: 'gatekeeper',
+	BUG_DB_PWD: 'a10b11c12',
+	BUG_TABLE: 'bugs'
+};
