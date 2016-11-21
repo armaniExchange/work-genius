@@ -78,7 +78,10 @@ class UTDocTaskPage extends Component {
       checkListId,
       categoryId,
       fullpathWithOutRoot,
-      bugArticle
+      bugArticle,
+      type,
+      subType,
+      name
     }) {
     const { articleActions: { createArticle } }= this.props;
     if (bugArticle) {
@@ -88,7 +91,7 @@ class UTDocTaskPage extends Component {
         title: `Bug - ${fullpathWithOutRoot}`,
         categoryId,
         checkListId,
-        content: 'For bug',
+        content: `${type} - ${subType}\n${name}`,
         documentType: 'bugs',
         updateCheckListBug: true,
       });
@@ -122,9 +125,13 @@ class UTDocTaskPage extends Component {
     const { featureAutomationActions } = this.props;
     const {
       setupTestReportOfCategory,
-      fetchDocumentCategoriesWithSettings
+      fetchDocumentCategoriesWithSettings,
+      fetchOverallBugStatistic
     } = featureAutomationActions;
-    setupTestReportOfCategory(options, ()=> fetchDocumentCategoriesWithSettings());
+    setupTestReportOfCategory(options, ()=> {
+      fetchDocumentCategoriesWithSettings();
+      fetchOverallBugStatistic();
+    });
   }
 
   upsertWorklogItem(options) {
@@ -184,7 +191,7 @@ class UTDocTaskPage extends Component {
         </label>
         <span>&nbsp;&nbsp;&nbsp;</span>
         <label>
-          Bugs: <span style={{color: 'red'}}>{pass}</span>/{total}
+          Bugs: <span style={{color: pass === total ? null : 'red'}}>{pass}</span>/{total}
         </label>
         <span>&nbsp;&nbsp;&nbsp;</span>
       </div>

@@ -9,18 +9,20 @@ import './_UTCheckListDialog.scss';
 
 function addCategoriesAndSubCategories(accum, current, currentIndex) {
   const lastItem = accum.length > 1 && accum[accum.length - 1];
-  if (!lastItem || current.category !== lastItem.category) {
+  if (!lastItem || current.type !== lastItem.type) {
     accum.push({
-      id: `category-${currentIndex}`,
-      isCategory: true,
-      name: current.category
+      id: `type-${currentIndex}`,
+      isType: true,
+      name: current.type
     });
   }
-  if (current.subCategory !== lastItem.subCategory) {
+  if (current.subType !== lastItem.subType) {
     accum.push({
-      id: `subCategory-${currentIndex}`,
-      isSubCategory: true,
-      name: current.subCategory
+      id: `subType-${currentIndex}`,
+      isSubType: true,
+      name: current.subType,
+      type: current.type,
+      subType: current.subType
     });
   }
   accum.push(current);
@@ -156,12 +158,14 @@ class UTCheckListDialog extends Component {
               const {
                 id,
                 name,
-                isCategory,
-                isSubCategory,
+                isType,
+                isSubType,
+                type,
+                subType
               } = item;
-              const isLeaf = !isCategory && !isSubCategory;
+              const isLeaf = !isType && !isSubType;
               const fontSize = isLeaf ? '1.2rem' : '1rem';
-              const paddingLeft = isCategory ? 0 : 8;
+              const paddingLeft = isType ? 0 : 8;
               const nameStyle = {
                 fontSize,
                 paddingLeft,
@@ -170,7 +174,10 @@ class UTCheckListDialog extends Component {
               const createBugArgs = {
                 categoryId, fullpathWithOutRoot,
                 bugArticle: (editingData && editingData[id]) ? editingData[id].bugArticle : null,
-                checkListId: id
+                checkListId: id,
+                name,
+                type,
+                subType
               };
               return (
                 <tr key={id}>
@@ -200,7 +207,7 @@ class UTCheckListDialog extends Component {
                   <td>
                     {
                       isLeaf ? (
-                        <i className="UTCheckListDialog--create-new-bug fa fa-plus"
+                        <i className={`UTCheckListDialog--create-new-bug fa ${ createBugArgs.bugArticle ? 'fa-edit' : 'fa-plus'}`}
                           onClick={onCreateBugClick.bind(this, createBugArgs)}
                         />
                       ): ''

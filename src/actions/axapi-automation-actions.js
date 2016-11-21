@@ -28,18 +28,18 @@ const jsonBuildDetail = (build, dels, mods, news, curMod, curModFile, tab, produ
   };
 };
 
-const jsonBuilds = (builds) => {
-  return {
-    builds
-  };
-};
+// const jsonBuilds = (builds) => {
+//   return {
+//     builds
+//   };
+// };
 
-const jsonProducts = (products) => {
-  return {
-    products
-  };
-};
-console.log(jsonBuildDetail, jsonBuilds, jsonProducts);
+// const jsonProducts = (products) => {
+//   return {
+//     products
+//   };
+// };
+// console.log(jsonBuildDetail, jsonBuilds, jsonProducts);
 
 const axapiAutomationApi = (handle, conf={}) => {
   return (dispatch) => {
