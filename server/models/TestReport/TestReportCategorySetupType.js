@@ -62,7 +62,16 @@ const TestReportCategorySetupType = new GraphQLObjectType({
     },
     'isCheckListChecked': {
       type: GraphQLBoolean
-    }
+    },
+    'bugStatistic': {
+      type: new GraphQLObjectType({
+        name: 'bugStatisticType',
+        fields: () => ({
+          total: { type: GraphQLFloat},
+          pass: { type: GraphQLFloat},
+        })
+      })
+    },
   })
 });
 

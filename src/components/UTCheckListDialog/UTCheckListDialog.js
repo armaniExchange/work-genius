@@ -167,6 +167,11 @@ class UTCheckListDialog extends Component {
                 paddingLeft,
                 fontWeight: isLeaf ? 'normal' : 'bold',
               };
+              const createBugArgs = {
+                categoryId, fullpathWithOutRoot,
+                bugArticle: (editingData && editingData[id]) ? editingData[id].bugArticle : null,
+                checkListId: id
+              };
               return (
                 <tr key={id}>
                   <td style={nameStyle}>
@@ -196,7 +201,7 @@ class UTCheckListDialog extends Component {
                     {
                       isLeaf ? (
                         <i className="UTCheckListDialog--create-new-bug fa fa-plus"
-                          onClick={onCreateBugClick.bind(this, {categoryId, fullpathWithOutRoot})}
+                          onClick={onCreateBugClick.bind(this, createBugArgs)}
                         />
                       ): ''
                     }

@@ -67,7 +67,9 @@ const ArticleInputType = new GraphQLInputObjectType({
       type: new GraphQLList(GraphQLString),
       description: 'Article\'s report to'
     },
-    updateTestReportUt: { type: GraphQLBoolean}
+    updateTestReportUt: { type: GraphQLBoolean },
+    updateCheckListBug: { type: GraphQLBoolean },
+    checkListId: { type: GraphQLString }
   })
 });
 

@@ -133,7 +133,15 @@ class UTDocTaskRow extends Component {
   }
 
   renderBugs() {
-    return null;
+    const { bugStatistic } = this.props;
+    const pass = bugStatistic ? bugStatistic.pass : 0;
+    const total = bugStatistic ? bugStatistic.total : 0;
+    const style = pass !== total ? { color: 'red' } : {};
+    return (
+      <strong style={style}>
+       {`${pass}/${total}`}
+      </strong>
+    );
   }
 
   render() {
@@ -238,7 +246,8 @@ UTDocTaskRow.propTypes = {
   onUTDocClick: PropTypes.func,
   openCheckList: PropTypes.func,
   checkList: PropTypes.object,
-  isCheckListChecked: PropTypes.bool
+  isCheckListChecked: PropTypes.bool,
+  bugStatistic: PropTypes.object
 };
 
 UTDocTaskRow.defaultProps = {
@@ -253,7 +262,8 @@ UTDocTaskRow.defaultProps = {
   isEmpty: false,
   UTDoc: null,
   checkList: {},
-  isCheckListChecked: false
+  isCheckListChecked: false,
+  bugStatistic: {total: 0, pass: 0}
 };
 
 

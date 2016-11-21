@@ -205,6 +205,37 @@ let CategoryQuery = {
       }
     }
   },
+  'getOverallBugStatistic': {
+    description: 'Get created time list',
+    type: new GraphQLObjectType({
+      name: 'getBugStatisticType',
+      fields: () => ({
+        total: { type: GraphQLFloat },
+        pass: { type: GraphQLFloat }
+      })
+    }),
+    resolve: async () => {
+      let connection = null;
+      try {
+        connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+        const bugStatistic = await r.db('work_genius').table('test_report_categories')
+          .filter(r.row('bugStatistic'))
+          .map(r.row('bugStatistic'))
+          .reduce((left, right)=> {
+            return {
+              pass: left('pass').add(right('pass')),
+              total: left('total').add(right('total')),
+            };
+          })
+          .run(connection);
+          await connection.close();
+          return bugStatistic;
+      } catch (err) {
+        await connection.close();
+        return err;
+      }
+    }
+  },
 };
 
 export default CategoryQuery;

@@ -115,7 +115,11 @@ export function fetchDocumentCategoriesWithSettings() {
           codeStatus,
           UTDoc,
           checkList,
-          isCheckListChecked
+          isCheckListChecked,
+          bugStatistic {
+            total,
+            pass
+          }
         }
       }`,
       headers: {
@@ -153,6 +157,59 @@ export function setupTestReportOfCategorySuccess() {
 export function setupTestReportOfCategoryFail() {
   return {
     type: actionTypes.SETUP_TEST_REPORT_OF_CATEGORY_FAIL
+  };
+}
+
+export function fetchOverallBugStatisticSuccess(overallBugStatistic) {
+  return {
+    type: actionTypes.FETCH_OVERALL_BUG_STATISTIC_SUCCESS,
+    overallBugStatistic
+  };
+}
+
+export function fetchOverallBugStatisticFail(error) {
+  return {
+    type: actionTypes.FETCH_OVERALL_BUG_STATISTIC_FAIL,
+    error
+  };
+}
+
+export function fetchOverallBugStatistic() {
+  return dispatch => {
+    dispatch({
+      type: actionTypes.FETCH_OVERALL_BUG_STATISTIC
+    });
+
+    const config = {
+      method: 'POST',
+      body: `{
+        getOverallBugStatistic {
+          total,
+          pass,
+        }
+      }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((body) => {
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
+        const { getOverallBugStatistic } = body.data;
+        dispatch(fetchOverallBugStatisticSuccess(getOverallBugStatistic));
+      })
+      .catch((error) => {
+        dispatch(apiFailure(error));
+      });
   };
 }
 

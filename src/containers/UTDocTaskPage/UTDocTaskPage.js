@@ -41,9 +41,11 @@ class UTDocTaskPage extends Component {
     const { fetchAllUsers } = this.props.documentActions;
     const {
       fetchDocumentCategoriesWithSettings,
+      fetchOverallBugStatistic
     } = this.props.featureAutomationActions;
     fetchAllUsers();
     fetchDocumentCategoriesWithSettings();
+    fetchOverallBugStatistic();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -73,16 +75,24 @@ class UTDocTaskPage extends Component {
   }
 
   onCreateBugClick({
+      checkListId,
       categoryId,
       fullpathWithOutRoot,
+      bugArticle
     }) {
     const { articleActions: { createArticle } }= this.props;
-    createArticle({
-      title: `Bug - ${fullpathWithOutRoot}`,
-      categoryId,
-      content: 'For bug',
-      documentType: 'bugs'
-    });
+    if (bugArticle) {
+      this.context.history.pushState(null, this.getUTDocArticleRoute(bugArticle));
+    } else {
+      createArticle({
+        title: `Bug - ${fullpathWithOutRoot}`,
+        categoryId,
+        checkListId,
+        content: 'For bug',
+        documentType: 'bugs',
+        updateCheckListBug: true,
+      });
+    }
   }
 
   onUTDocClick({
@@ -162,11 +172,30 @@ class UTDocTaskPage extends Component {
     });
   }
 
+  renderBugStatistic() {
+    const {
+      pass,
+      total
+    } = this.props.overallBugStatistic;
+    return (
+      <div className="pull-right" style={{lineHeight: '2.5em'}}>
+        <label>
+          {`Coverage: ${((pass*100 )/total).toFixed(2)}%`}
+        </label>
+        <span>&nbsp;&nbsp;&nbsp;</span>
+        <label>
+          Bugs: <span style={{color: 'red'}}>{pass}</span>/{total}
+        </label>
+        <span>&nbsp;&nbsp;&nbsp;</span>
+      </div>
+    );
+  }
+
   render() {
     const {
       allUsers,
       documentCategoriesWithSettings,
-      isLoading
+      isLoading,
     } = this.props;
 
     const {
@@ -221,6 +250,7 @@ class UTDocTaskPage extends Component {
               return { title: item.name, value: item.id};
             })}
           />
+          {this.renderBugStatistic()}
         </div>
         <br />
         <div style={{width: '100%', textAlign: 'center'}}>
@@ -280,12 +310,14 @@ UTDocTaskPage.propTypes = {
   currentUser: PropTypes.object,
   allUsers: PropTypes.array,
   isLoading: PropTypes.bool,
-  createdUtDocId: PropTypes.string
+  createdUtDocId: PropTypes.string,
+  overallBugStatistic: PropTypes.object
 };
 
 UTDocTaskPage.defaultProps = {
   documentCategoriesWithSettings: {},
-  allUsers: []
+  allUsers: [],
+  overallBugStatistic: { total: 0, pass: 0 }
 };
 
 UTDocTaskPage.contextTypes = { history: PropTypes.any };
@@ -294,11 +326,13 @@ function mapStateToProps(state) {
   const {
     documentCategoriesWithSettings,
     createdUtDocId,
-    isLoading
+    isLoading,
+    overallBugStatistic
   } = state.featureAutomation.toJS();
   const { currentUser } = state.app.toJS();
   const { allUsers } = state.documentation.toJS();
   return {
+    overallBugStatistic,
     documentCategoriesWithSettings,
     createdUtDocId,
     isLoading,

@@ -188,6 +188,8 @@ export default function featureAutomationReducer(state = initialState, action) {
       return state.set('testReportAxapiSuggestions', List(action.testReportAxapiSuggestions));
     case actionTypes.SEARCH_AUTOMATION_CATEGORY_BY_NAME:
       return state.set('searchCategoryName', action.searchCategoryName);
+    case actionTypes.FETCH_OVERALL_BUG_STATISTIC_SUCCESS:
+      return state.set('overallBugStatistic', action.overallBugStatistic);
     default:
       return state;
   }

@@ -92,9 +92,10 @@ const schema = new GraphQLSchema({
       getAllGroups                           : GroupQuery.getAllGroups,
       // test report
       getAllDocumentCategoriesWithTestReport : TestReportQuery.getAllDocumentCategoriesWithTestReport,
-      getAllDocumentCategoriesWithSettings  : TestReportQuery.getAllDocumentCategoriesWithSettings,
+      getAllDocumentCategoriesWithSettings   : TestReportQuery.getAllDocumentCategoriesWithSettings,
       getTestReportCreatedTimeList           : TestReportQuery.getTestReportCreatedTimeList,
       getTestReportAxapiSuggestion           : TestReportQuery.getTestReportAxapiSuggestion,
+      getOverallBugStatistic                 : TestReportQuery.getOverallBugStatistic,
 
       // device
       // versionInfo                            : DeviceQuery.versionInfo,
