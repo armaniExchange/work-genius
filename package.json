@@ -123,7 +123,6 @@
     "react-transform-catch-errors": "^1.0.0",
     "react-transform-hmr": "^1.0.1",
     "redbox-react": "^1.1.1",
-    "redux-logger": "^2.0.4",
     "rimraf": "^2.4.3",
     "style-loader": "^0.12.4",
     "url-loader": "^0.5.6",
