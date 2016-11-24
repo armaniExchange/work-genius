@@ -44,14 +44,15 @@ class UTCheckListDialog extends Component {
     if (!nextProps.open) {
       return;
     }
-    const { data } = nextProps;
+    let { data } = nextProps;
+    data = data || {};
     const editingData = CHECK_LIST.reduce((accum, current)=>{
-      accum[current.id] = accum[current.id] || {
-        pass: false,
-        fail: false
+      accum[current.id] = data[current.id] || {
+        checked: false,
+        skipped: false
       };
       return accum;
-    }, data ? Object.assign({}, data) : {});
+    }, {});
     this.setState({ editingData });
   }
 
@@ -79,28 +80,28 @@ class UTCheckListDialog extends Component {
     onRequestClose();
   }
 
-  onPassChange(id) {
+  onCheckedChange(id) {
     const {
       editingData
     } = this.state;
     let newEditingData = Object.assign({}, editingData);
-    newEditingData[id].pass = !editingData[id].pass;
-    if (newEditingData[id].pass) {
-      newEditingData[id].fail = false;
+    newEditingData[id].checked = !editingData[id].checked;
+    if (newEditingData[id].checked) {
+      newEditingData[id].skipped = false;
     }
     this.setState({
       editingData: newEditingData
     });
   }
 
-  onFailChange(id) {
+  onSkippedChange(id) {
     const {
       editingData
     } = this.state;
     let newEditingData = Object.assign({}, editingData);
-    newEditingData[id].fail = !editingData[id].fail;
-    if (newEditingData[id].fail) {
-      newEditingData[id].pass = false;
+    newEditingData[id].skipped = !editingData[id].skipped;
+    if (newEditingData[id].skipped) {
+      newEditingData[id].checked = false;
     }
     this.setState({
       editingData: newEditingData
@@ -147,8 +148,8 @@ class UTCheckListDialog extends Component {
           <thead>
             <tr>
               <th>Name</th>
-              <th>Pass</th>
-              <th>Fail</th>
+              <th>Checked</th>
+              <th>Skipped</th>
               <th>Bug</th>
             </tr>
           </thead>
@@ -188,8 +189,8 @@ class UTCheckListDialog extends Component {
                     {
                       isLeaf ? (
                         <input type="checkbox"
-                          checked={editingData[id] && editingData[id].pass}
-                          onChange={this.onPassChange.bind(this, id)}
+                          checked={editingData[id] && editingData[id].checked}
+                          onChange={this.onCheckedChange.bind(this, id)}
                         />
                       ) : ''
                     }
@@ -198,8 +199,8 @@ class UTCheckListDialog extends Component {
                     {
                       isLeaf ? (
                         <input type="checkbox"
-                          checked={editingData[id] && editingData[id].fail}
-                          onChange={this.onFailChange.bind(this, id)}
+                          checked={editingData[id] && editingData[id].skipped}
+                          onChange={this.onSkippedChange.bind(this, id)}
                         />
                       ) : ''
                     }

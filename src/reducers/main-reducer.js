@@ -44,6 +44,10 @@ const initialState = Map({
       {
         name: 'Device',
         url: '/main/resource/device'
+      },
+      {
+        name: 'UT status',
+        url: '/main/resource/ut-status'
       }
     ),
     'Knowledge': List.of(

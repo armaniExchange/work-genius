@@ -17,7 +17,6 @@ import { getArticleDetail } from './ArticleQuery';
 import { SERVER_HOST } from '../../../src/constants/config';
 import generateEmailMarkdown from '../../libraries/generateEmailMarkdown';
 import parseMarkdown from '../../libraries/parseMarkdown';
-import { updateBugCount } from '../TestReport/TestReportMutation';
 
 const parseArticle = (article) => {
   // only update give article property, if it didn't pass, keep original property
@@ -172,7 +171,6 @@ const ArticleMutation = {
               .get(article.categoryId)
               .update({ checkList: {[article.checkListId] : {bugArticle: id} }})
               .run(connection);
-            await updateBugCount(article.categoryId);
           }
 
           await connection.close();

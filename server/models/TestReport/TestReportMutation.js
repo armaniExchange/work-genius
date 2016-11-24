@@ -226,39 +226,6 @@ export const addTestReportHandler = async (req, res) => {
   }
 };
 
-export const updateBugCount = async (categoryId) => {
-  let connection = null;
-  try {
-    connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-    const testReportCategory = await r.db('work_genius')
-      .table('test_report_categories')
-      .get(categoryId)
-      .run(connection);
-
-    if (testReportCategory.checkList) {
-      const checkList = testReportCategory.checkList;
-      const bugStatistic = Object.keys(checkList).reduce((accum, current) => {
-        if (current.bugArticle) {
-          accum.total ++;
-        }
-        return {
-          total: checkList[current].bugArticle ? accum.total + 1 : accum.total,
-          pass: checkList[current].bugArticle && checkList[current].pass ? accum.pass + 1 : accum.pass
-        };
-      }, {total: 0, pass: 0});
-
-      await r.db('work_genius')
-        .table('test_report_categories')
-        .get(categoryId)
-        .update({bugStatistic})
-        .run(connection);
-    }
-    await connection.close();
-  } catch (error) {
-    await connection.close();
-  }
-};
-
 const mutation = {
   setupTestReportOfCategory: {
     type: GraphQLString,
@@ -309,8 +276,9 @@ const mutation = {
     }) => {
       const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
       const parsedCheckList = typeof checkList !== 'undefined' && JSON.parse(checkList.replace(/\\\"/g, '"'));
-      const isCheckListChecked = typeof checkList !== 'undefined' ? Object.keys(parsedCheckList).reduce((accum, current) => {
-        return accum && parsedCheckList[current].pass && !parsedCheckList[current].fail;
+
+      const isCheckListDone = typeof checkList !== 'undefined' ? Object.keys(parsedCheckList).reduce((accum, current) => {
+        return accum && (parsedCheckList[current].checked === true || parsedCheckList[current].skipped === true);
       }, true) : false;
 
       const data = Object.assign(
@@ -325,7 +293,7 @@ const mutation = {
         typeof docStatus !== 'undefined' ? { docStatus } : null,
         typeof checkList !== 'undefined' ? {
           checkList: parsedCheckList,
-          isCheckListChecked
+          isCheckListDone
         } : null,
       );
 
@@ -335,9 +303,6 @@ const mutation = {
           .insert(data, { conflict: 'update' })
           .run(connection);
         await connection.close();
-        if (typeof checkList !== 'undefined') {
-          updateBugCount(categoryId);
-        }
       } catch (err) {
         await connection.close();
         return `Error: ${err}`;

@@ -60,7 +60,7 @@ const TestReportCategorySetupType = new GraphQLObjectType({
     'checkList': {
       type: GraphQLJSON
     },
-    'isCheckListChecked': {
+    'isCheckListDone': {
       type: GraphQLBoolean
     },
     'bugStatistic': {

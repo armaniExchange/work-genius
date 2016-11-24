@@ -115,7 +115,7 @@ export function fetchDocumentCategoriesWithSettings() {
           codeStatus,
           UTDoc,
           checkList,
-          isCheckListChecked,
+          isCheckListDone,
           bugStatistic {
             total,
             pass

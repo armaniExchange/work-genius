@@ -123,9 +123,9 @@ class UTDocTaskRow extends Component {
     }
   }
 
-  renderCheckListStatistic() {
-    const { isCheckListChecked } = this.props;
-    if (isCheckListChecked){
+  renderCheckListResult() {
+    const { isCheckListDone } = this.props;
+    if (isCheckListDone){
       return (<strong className="text-success">Checked</strong>);
     } else {
       return (<strong className="text-primary">Check</strong>);
@@ -193,8 +193,8 @@ class UTDocTaskRow extends Component {
         <TableRowColumn style={{width: 150}}>{ownersName[0]}</TableRowColumn>
         <TableRowColumn style={{width: 200}}>{ownersName.slice(1).join()}</TableRowColumn>
         <TableRowColumn style={{width: 120}}>
-          <span onClick={openCheckList.bind(this, {id, checkList, fullpathWithOutRoot})}>
-            {this.renderCheckListStatistic()}
+          <span style={{cursor: 'pointer'}} onClick={openCheckList.bind(this, {id, checkList, fullpathWithOutRoot})}>
+            {this.renderCheckListResult()}
           </span>
         </TableRowColumn>
         <TableRowColumn style={{width: 120}}>
@@ -246,7 +246,7 @@ UTDocTaskRow.propTypes = {
   onUTDocClick: PropTypes.func,
   openCheckList: PropTypes.func,
   checkList: PropTypes.object,
-  isCheckListChecked: PropTypes.bool,
+  isCheckListDone: PropTypes.bool,
   bugStatistic: PropTypes.object
 };
 
@@ -262,7 +262,7 @@ UTDocTaskRow.defaultProps = {
   isEmpty: false,
   UTDoc: null,
   checkList: {},
-  isCheckListChecked: false,
+  isCheckListDone: false,
   bugStatistic: {total: 0, pass: 0}
 };
 
