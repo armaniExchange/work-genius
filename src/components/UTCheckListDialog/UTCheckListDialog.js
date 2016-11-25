@@ -114,6 +114,7 @@ class UTCheckListDialog extends Component {
       onRequestClose,
       categoryId,
       onCreateBugClick,
+      onRemoveBugClick,
       fullpathWithOutRoot
     } = this.props;
     const {
@@ -172,7 +173,7 @@ class UTCheckListDialog extends Component {
                 paddingLeft,
                 fontWeight: isLeaf ? 'normal' : 'bold',
               };
-              const createBugArgs = {
+              const bugArgs = {
                 categoryId, fullpathWithOutRoot,
                 bugArticle: (editingData && editingData[id]) ? editingData[id].bugArticle : null,
                 checkListId: id,
@@ -187,31 +188,43 @@ class UTCheckListDialog extends Component {
                   </td>
                   <td>
                     {
-                      isLeaf ? (
+                      isLeaf && (
                         <input type="checkbox"
                           checked={editingData[id] && editingData[id].checked}
                           onChange={this.onCheckedChange.bind(this, id)}
                         />
-                      ) : ''
+                      )
                     }
                   </td>
                   <td>
                     {
-                      isLeaf ? (
+                      isLeaf && (
                         <input type="checkbox"
                           checked={editingData[id] && editingData[id].skipped}
                           onChange={this.onSkippedChange.bind(this, id)}
                         />
-                      ) : ''
+                      )
                     }
                   </td>
                   <td>
                     {
-                      isLeaf ? (
-                        <i className={`UTCheckListDialog--create-new-bug fa ${ createBugArgs.bugArticle ? 'fa-edit' : 'fa-plus'}`}
-                          onClick={onCreateBugClick.bind(this, createBugArgs)}
-                        />
-                      ): ''
+                      isLeaf && (
+                        bugArgs.bugArticle ? (
+                          <div>
+                            <i className="UTCheckListDialog--create-new-bug fa fa-edit"
+                              onClick={onCreateBugClick.bind(this, bugArgs)}
+                            />
+                            &nbsp;&nbsp;&nbsp;
+                            <i className="UTCheckListDialog--create-new-bug fa fa-remove"
+                              onClick={onRemoveBugClick.bind(this, bugArgs)}
+                            />
+                          </div>
+                        ) : (
+                          <i className="UTCheckListDialog--create-new-bug fa fa-plus"
+                            onClick={onCreateBugClick.bind(this, bugArgs)}
+                          />
+                        )
+                      )
                     }
                   </td>
                 </tr>
@@ -234,7 +247,8 @@ UTCheckListDialog.propTypes = {
   data                : PropTypes.object,
   onRequestClose      : PropTypes.func.isRequired,
   onSubmit            : PropTypes.func.isRequired,
-  onCreateBugClick    : PropTypes.func
+  onCreateBugClick    : PropTypes.func,
+  onRemoveBugClick    : PropTypes.func
 };
 
 UTCheckListDialog.defaultProps = {

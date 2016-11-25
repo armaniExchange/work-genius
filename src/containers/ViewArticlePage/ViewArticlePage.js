@@ -6,6 +6,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Paper from 'material-ui/lib/paper';
 import Helmet from 'react-helmet';
+import SelectField from 'material-ui/lib/SelectField';
+import MenuItem from 'material-ui/lib/menus/menu-item';
+
 import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
 import ArticleToolbar from '../../components/ArticleToolbar/ArticleToolbar';
 import ArticleTagList from '../../components/ArticleTagList/ArticleTagList';
@@ -23,7 +26,8 @@ class ViewArticlePage extends Component {
     this.state = {
       isConfirmDeleteArticleDialogVisible: false,
       isConfirmDeleteCommentDialogVisible: false,
-      deletingCommentId: null
+      deletingCommentId: null,
+      editingBugStatus: null
     };
   }
 
@@ -41,6 +45,9 @@ class ViewArticlePage extends Component {
     if (this.props.isDeleting && !nextProps.isDeleting) {
       this.props.history.replace('/main/knowledge/document');
     }
+    this.setState({
+      editingBugStatus: nextProps.bugStatus
+    });
   }
 
   componentWillUnmount() {
@@ -106,6 +113,19 @@ class ViewArticlePage extends Component {
 
   }
 
+  onEditingBugStatus(event, index, value) {
+    const {
+      id,
+      articleActions: { updateArticle }
+    } = this.props;
+
+    updateArticle({
+      id,
+      bugStatus: value
+    });
+    // this.setState({ editingBugStatus: value });
+  }
+
   render() {
     const {
       id,
@@ -116,9 +136,11 @@ class ViewArticlePage extends Component {
       tags,
       comments,
       updatedAt,
-      currentUser
+      currentUser,
+      documentType,
     } = this.props;
     const {
+      editingBugStatus,
       isConfirmDeleteArticleDialogVisible,
       isConfirmDeleteCommentDialogVisible
     } = this.state;
@@ -128,7 +150,6 @@ class ViewArticlePage extends Component {
         <Helmet title={documentTitle} />
         <Paper className="header" zDepth={1}>
           <h3>{title}</h3>
-
           <hr />
           <ArticleMetadata
             author={author}
@@ -145,6 +166,26 @@ class ViewArticlePage extends Component {
         <Paper className="body" zDepth={1}>
           <HighlightMarkdown source={content} />
         </Paper>
+
+        {
+          documentType === 'bugs' && ([
+            <h5 key="bug-title">Bug</h5>,
+            <Paper key="bug-body" zDepth={1} className="bug">
+              <SelectField
+                // style={{position: 'absolute', right: 30, bottom: 10}}
+                floatingLabelText="Bug Status"
+                value={editingBugStatus}
+                onChange={::this.onEditingBugStatus}
+                autoWidth={false} >
+                <MenuItem value="new" primaryText="new" />
+                <MenuItem value="resolved" primaryText="resolved" />
+                <MenuItem value="verified" primaryText="verified" />
+                <MenuItem value="reopened" primaryText="reopened" />
+              </SelectField>
+            </Paper>
+          ])
+        }
+
         <h5>Comments</h5>
         {
           comments.map(comment => {
@@ -184,6 +225,7 @@ ViewArticlePage.propTypes = {
   title               : PropTypes.string,
   author              : PropTypes.shape({id: PropTypes.string, name: PropTypes.string}),
   tags                : PropTypes.arrayOf(PropTypes.string),
+  documentType        : PropTypes.string,
   files               : PropTypes.array,
   comments            : PropTypes.array,
   content             : PropTypes.string,
@@ -199,6 +241,7 @@ ViewArticlePage.propTypes = {
 ViewArticlePage.defaultProps = {
   id                  : '',
   content             : '',
+  bugStatus           : 'new',
   author              : { id: '', name: ''},
   tags                : [],
   files               : [],

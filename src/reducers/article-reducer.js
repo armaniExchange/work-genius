@@ -23,6 +23,7 @@ const initialState = OrderedMap({
   files: List(),
   comments: List(),
   reportTo: List(),
+  bugStatus: 'new',
   createdAt: 0,
   updatedAt: 0,
   isLoaded: false,
@@ -43,6 +44,7 @@ const articleToState = (state, action) => {
     .set('files', fromJS(action.files || []))
     .set('comments', fromJS(action.comments || []))
     .set('reportTo', List(action.reportTo || []))
+    .set('bugStatus', action.bugStatus)
     .set('content', action.content)
     .set('createdAt', action.createdAt)
     .set('updatedAt', action.updatedAt);

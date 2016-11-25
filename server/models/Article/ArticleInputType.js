@@ -69,7 +69,8 @@ const ArticleInputType = new GraphQLInputObjectType({
     },
     updateTestReportUt: { type: GraphQLBoolean },
     updateCheckListBug: { type: GraphQLBoolean },
-    checkListId: { type: GraphQLString }
+    checkListId: { type: GraphQLString },
+    bugStatus: { type: GraphQLString }
   })
 });
 

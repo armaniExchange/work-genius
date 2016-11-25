@@ -58,6 +58,7 @@ function _fetchArticle(id) {
         priority,
         milestone,
         reportTo,
+        bugStatus,
         createdAt,
         updatedAt
       }
@@ -182,15 +183,48 @@ export function updateArticle(newArticle) {
       type: actionTypes.UPDATE_ARTICLE
     });
     dispatch(setLoadingState(true));
-
-    newArticle.title = newArticle.title.replace(/\\/g, '\\\\');
-    newArticle.content = newArticle.content.replace(/\\/g, '\\\\');
+    if (newArticle.title) {
+      newArticle.title = newArticle.title.replace(/\\/g, '\\\\');
+    }
+    if (newArticle.content) {
+      newArticle.content = newArticle.content.replace(/\\/g, '\\\\');
+    }
     const config = {
       method: 'POST',
       body: `
         mutation RootMutationType {
           updateArticle ( article: ${stringifyObject(newArticle)}) {
-            id
+            id,
+            title,
+            content,
+            tags,
+            categoryId,
+            author {
+              id,
+              name
+            },
+            comments {
+              id,
+              content,
+              createdAt,
+              author {
+                id,
+                name
+              },
+            },
+            files {
+              id,
+              type,
+              name,
+              url
+            },
+            documentType,
+            priority,
+            milestone,
+            reportTo,
+            bugStatus,
+            createdAt,
+            updatedAt,
           }
         }
       `,
@@ -211,8 +245,7 @@ export function updateArticle(newArticle) {
         if (body.errors) {
           throw new Error(JSON.stringify(body.errors));
         }
-        const id = body.data.updateArticle.id;
-        dispatch(updateArticleSuccess({id}));
+        dispatch(updateArticleSuccess(body.data.updateArticle));
         dispatch(setLoadingState(false));
       })
       .catch((error) => {

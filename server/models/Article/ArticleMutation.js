@@ -135,7 +135,9 @@ const ArticleMutation = {
           authorId: user.id,
           createdAt: now,
           updatedAt: now
-        });
+        }, article.documentType === 'bugs' ? {
+          bugStatus: 'new'
+        }: null);
 
         result = await r.db('work_genius')
           .table('articles')

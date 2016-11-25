@@ -68,6 +68,10 @@ const ArticleType = new GraphQLObjectType({
     reportTo: {
       type: new GraphQLList(GraphQLString),
       description: 'Article\'s report to'
+    },
+    bugStatus: {
+      type: GraphQLString,
+      description: 'article\'s bug status'
     }
   })
 });

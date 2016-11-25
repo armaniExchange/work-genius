@@ -51,7 +51,7 @@ class UTDocTaskPage extends Component {
   componentWillReceiveProps(nextProps) {
     const { documentCategoriesWithSettings, createdUtDocId } = nextProps;
     if (this.props.createdUtDocId !== createdUtDocId) {
-      this.context.history.pushState(null, this.getUTDocArticleRoute(createdUtDocId));
+      this.context.history.pushState(null, this.getUTDocEditArticleRoute(createdUtDocId));
     }
     const thisDocumentCategoriesWithSettings = this.props.documentCategoriesWithSettings;
     if (thisDocumentCategoriesWithSettings !== documentCategoriesWithSettings ) {
@@ -85,7 +85,7 @@ class UTDocTaskPage extends Component {
     }) {
     const { articleActions: { createArticle } }= this.props;
     if (bugArticle) {
-      this.context.history.pushState(null, this.getUTDocArticleRoute(bugArticle));
+      this.context.history.pushState(null, this.getBugViewArticleRoute(bugArticle));
     } else {
       createArticle({
         title: `Bug - ${fullpathWithOutRoot}`,
@@ -98,13 +98,29 @@ class UTDocTaskPage extends Component {
     }
   }
 
+  onRemoveBugClick({
+    bugArticle,
+    checkListId,
+    categoryId,
+  }) {
+    const { articleActions: { deleteArticle } }= this.props;
+    deleteArticle(bugArticle);
+    const { editingCheckList } = this.state;
+    const data = Object.assign({}, editingCheckList);
+    data[checkListId].bugArticle = null;
+    this.setupTestReportOfCategory({
+      categoryId,
+      checkList: data
+    });
+  }
+
   onUTDocClick({
       UTDoc,
       categoryId,
       fullpathWithOutRoot,
     }) {
     if (UTDoc) {
-      this.context.history.pushState(null, this.getUTDocArticleRoute(UTDoc));
+      this.context.history.pushState(null, this.getUTDocEditArticleRoute(UTDoc));
     } else {
       const { articleActions: { createArticle } }= this.props;
       createArticle({
@@ -117,8 +133,12 @@ class UTDocTaskPage extends Component {
     }
   }
 
-  getUTDocArticleRoute(articleId) {
+  getUTDocEditArticleRoute(articleId) {
     return `/main/knowledge/document/edit/${articleId}?prev_page=${encodeURI('/main/resource/ut-status')}`;
+  }
+
+  getBugViewArticleRoute(articleId) {
+    return `/main/knowledge/document/${articleId}?prev_page=${encodeURI('/main/resource/ut-status')}`;
   }
 
   setupTestReportOfCategory(options) {
@@ -137,7 +157,6 @@ class UTDocTaskPage extends Component {
   upsertWorklogItem(options) {
     const { resourceMapActions } = this.props;
     const { upsertWorklogItem} = resourceMapActions;
-
     upsertWorklogItem(options);
   }
 
@@ -227,6 +246,7 @@ class UTDocTaskPage extends Component {
           data={editingCheckList}
           categoryId={editingCategoryId}
           onCreateBugClick={::this.onCreateBugClick}
+          onRemoveBugClick={::this.onRemoveBugClick}
           fullpathWithOutRoot={editingFullpathWithOutRoot}
         />
         <div>
