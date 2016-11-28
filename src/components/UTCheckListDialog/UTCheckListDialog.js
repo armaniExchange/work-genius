@@ -46,8 +46,13 @@ class UTCheckListDialog extends Component {
     }
     let { data } = nextProps;
     data = data || {};
+    const dictData = data.reduce((accum, current) => {
+      accum[current.id] = Object.assign({}, current);
+      return accum;
+    }, {});
+
     const editingData = CHECK_LIST.reduce((accum, current)=>{
-      accum[current.id] = data[current.id] || {
+      accum[current.id] = dictData[current.id] || {
         checked: false,
         skipped: false
       };
@@ -66,9 +71,18 @@ class UTCheckListDialog extends Component {
       editingData
     } = this.state;
 
+    const listData = Object.keys(editingData).map((id)=>{
+      const editingItemData = Object.assign({}, editingData[id]);
+      if (!editingItemData.bugArticle) {
+        delete editingItemData.bugArticle;
+      }
+
+      return Object.assign({}, editingItemData, {id});
+    });
+
     onSubmit({
       categoryId,
-      data: editingData
+      data: listData
     });
     onRequestClose();
   }
@@ -244,7 +258,7 @@ UTCheckListDialog.propTypes = {
   fullpathWithOutRoot : PropTypes.string,
   title               : PropTypes.string,
   open                : PropTypes.bool,
-  data                : PropTypes.object,
+  data                : PropTypes.array,
   onRequestClose      : PropTypes.func.isRequired,
   onSubmit            : PropTypes.func.isRequired,
   onCreateBugClick    : PropTypes.func,
@@ -252,7 +266,7 @@ UTCheckListDialog.propTypes = {
 };
 
 UTCheckListDialog.defaultProps = {
-  data: {}
+  data: []
 };
 
 export default UTCheckListDialog;

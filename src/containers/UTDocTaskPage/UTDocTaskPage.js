@@ -33,7 +33,7 @@ class UTDocTaskPage extends Component {
       showCheckListDialog: false,
       editingCategoryId: null,
       editingFullpathWithOutRoot: '',
-      editingCheckList: {}
+      editingCheckList: []
     };
   }
 
@@ -106,11 +106,15 @@ class UTDocTaskPage extends Component {
     const { articleActions: { deleteArticle } }= this.props;
     deleteArticle(bugArticle);
     const { editingCheckList } = this.state;
-    const data = Object.assign({}, editingCheckList);
-    data[checkListId].bugArticle = null;
+    const data = Object.assign([], editingCheckList);
     this.setupTestReportOfCategory({
       categoryId,
-      checkList: data
+      checkList: data.map(item=>{
+        if (item.id === checkListId || !item.bugArticle) {
+          delete item.bugArticle;
+        }
+        return item;
+      })
     });
   }
 

@@ -158,8 +158,6 @@ export default function featureAutomationReducer(state = initialState, action) {
     case actionTypes.SETUP_TEST_REPORT_OF_CATEGORY_FAIL:
       return state.set('isLoading', false);
     case actionTypes.CREATE_ARTICLE_SUCCESS:
-      console.log('actionTypes.CREATE_ARTICLE_SUCCESS');
-      console.log(action);
       return state.set('isLoading', false)
         .set('createdUtDocId', action.id);
     case actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_REPORT_TEST_SUCCESS:

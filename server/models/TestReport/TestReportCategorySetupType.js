@@ -8,7 +8,7 @@ import {
   GraphQLFloat,
   GraphQLBoolean
 } from 'graphql';
-import GraphQLJSON from 'graphql-type-json';
+import TestReportCategoryCheckItemType from './TestReportCategoryCheckItemType';
 
 const TestReportCategorySetupType = new GraphQLObjectType({
   name: 'TestReportCategorySetup',
@@ -58,7 +58,7 @@ const TestReportCategorySetupType = new GraphQLObjectType({
       type: GraphQLString
     },
     'checkList': {
-      type: GraphQLJSON
+      type: new GraphQLList(TestReportCategoryCheckItemType)
     },
     'isCheckListDone': {
       type: GraphQLBoolean

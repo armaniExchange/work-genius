@@ -245,7 +245,7 @@ UTDocTaskRow.propTypes = {
   UTDoc: PropTypes.string,
   onUTDocClick: PropTypes.func,
   openCheckList: PropTypes.func,
-  checkList: PropTypes.object,
+  checkList: PropTypes.array,
   isCheckListDone: PropTypes.bool,
   bugStatistic: PropTypes.object
 };
@@ -261,7 +261,7 @@ UTDocTaskRow.defaultProps = {
   readOnly: false,
   isEmpty: false,
   UTDoc: null,
-  checkList: {},
+  checkList: [],
   isCheckListDone: false,
   bugStatistic: {total: 0, pass: 0}
 };

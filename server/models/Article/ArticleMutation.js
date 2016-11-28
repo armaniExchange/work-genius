@@ -171,7 +171,14 @@ const ArticleMutation = {
             await r.db('work_genius')
               .table('test_report_categories')
               .get(article.categoryId)
-              .update({ checkList: {[article.checkListId] : {bugArticle: id} }})
+              .update({
+                checkList: r.row('checkList')
+                  .map(checkItem=>{
+                    return r.branch(checkItem('id').eq(article.checkListId),
+                      checkItem.merge({ bugArticle: id }),
+                      checkItem);
+                  })
+              })
               .run(connection);
           }
 

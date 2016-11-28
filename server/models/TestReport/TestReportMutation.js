@@ -12,7 +12,7 @@ import {
   GraphQLInt,
   GraphQLFloat
 } from 'graphql';
-import GraphQLJSON from 'graphql-type-json';
+
 // RethinkDB
 import r from 'rethinkdb';
 
@@ -20,6 +20,7 @@ import r from 'rethinkdb';
 import { DB_HOST, DB_PORT, MAILER_ADDRESS, MAIL_CC_LIST } from '../../constants/configurations.js';
 
 import parseMarkdown from '../../libraries/parseMarkdown';
+import { TestReportCategoryCheckItemInputType } from './TestReportCategoryCheckItemType';
 
 const testReportTypeTextMap = {
   axapiTest: 'AXAPI Test',
@@ -259,7 +260,7 @@ const mutation = {
         type: GraphQLString
       },
       checkList: {
-        type: GraphQLString
+        type: new GraphQLList(TestReportCategoryCheckItemInputType)
       }
     },
     resolve: async (root, {
@@ -275,10 +276,9 @@ const mutation = {
       checkList
     }) => {
       const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-      const parsedCheckList = typeof checkList !== 'undefined' && JSON.parse(checkList.replace(/\\\"/g, '"'));
 
-      const isCheckListDone = typeof checkList !== 'undefined' ? Object.keys(parsedCheckList).reduce((accum, current) => {
-        return accum && (parsedCheckList[current].checked === true || parsedCheckList[current].skipped === true);
+      const isCheckListDone = typeof checkList !== 'undefined' ? checkList.reduce((accum, current) => {
+        return accum && (current.checked === true || current.skipped === true);
       }, true) : false;
 
       const data = Object.assign(
@@ -292,7 +292,7 @@ const mutation = {
         typeof codeStatus !== 'undefined' ? { codeStatus } : null,
         typeof docStatus !== 'undefined' ? { docStatus } : null,
         typeof checkList !== 'undefined' ? {
-          checkList: parsedCheckList,
+          checkList,
           isCheckListDone
         } : null,
       );

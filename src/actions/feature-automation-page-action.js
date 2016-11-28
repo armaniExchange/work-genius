@@ -114,7 +114,12 @@ export function fetchDocumentCategoriesWithSettings() {
           codeETA,
           codeStatus,
           UTDoc,
-          checkList,
+          checkList {
+            id,
+            checked,
+            skipped,
+            bugArticle
+          },
           isCheckListDone,
           bugStatistic {
             total,
@@ -239,7 +244,7 @@ export function setupTestReportOfCategory({
     queryString += typeof docETA !== 'undefined' ? `docETA: ${docETA}` : '';
     queryString += typeof codeStatus !== 'undefined' ? `codeStatus: "${codeStatus}"` : '';
     queryString += typeof docStatus !== 'undefined' ? `docStatus: "${docStatus}"` : '';
-    queryString += typeof checkList !== 'undefined' ? `checkList: "${JSON.stringify(checkList).replace(/"/g, `\\\"`)}"` : '';
+    queryString += typeof checkList !== 'undefined' ? `checkList: ${stringifyObject(checkList)}` : '';
 
     const config = {
       method: 'POST',
