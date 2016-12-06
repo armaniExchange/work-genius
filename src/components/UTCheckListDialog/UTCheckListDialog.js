@@ -45,7 +45,7 @@ class UTCheckListDialog extends Component {
       return;
     }
     let { data } = nextProps;
-    data = data || {};
+    data = data || [];
     const dictData = data.reduce((accum, current) => {
       accum[current.id] = Object.assign({}, current);
       return accum;
@@ -76,6 +76,9 @@ class UTCheckListDialog extends Component {
       if (!editingItemData.bugArticle) {
         delete editingItemData.bugArticle;
       }
+
+      editingItemData.checked = (editingItemData.checked === true);
+      editingItemData.skipped = (editingItemData.skipped === true);
 
       return Object.assign({}, editingItemData, {id});
     });

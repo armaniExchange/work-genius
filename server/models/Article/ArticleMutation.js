@@ -176,18 +176,53 @@ const ArticleMutation = {
           }
 
           if (article.updateCheckListBug) {
-            await r.db('work_genius')
+
+            const hasCheckItem = await r.db('work_genius')
               .table('test_report_categories')
               .get(article.categoryId)
-              .update({
-                checkList: r.row('checkList')
-                  .map(checkItem=>{
-                    return r.branch(checkItem('id').eq(article.checkListId),
-                      checkItem.merge({ bugArticle: id }),
-                      checkItem);
-                  })
-              })
+              .getField('checkList')
+              .filter({'id': article.checkListId})
+              .default([])
+              .not()
+              .eq([])
               .run(connection);
+            console.log(`hasCheckItem:${hasCheckItem}`);
+            if (hasCheckItem) {
+              await r.db('work_genius')
+                .table('test_report_categories')
+                .get(article.categoryId)
+                .update({
+                  checkList: r.row('checkList')
+                    .map(checkItem=>{
+                      return r.branch(checkItem('id').eq(article.checkListId),
+                        checkItem.merge({ bugArticle: id }),
+                        checkItem);
+                    })
+                })
+                .run(connection);
+            } else {
+              const originalCheckList = await r.db('work_genius')
+                .table('test_report_categories')
+                .get(article.categoryId)
+                .getField('checkList')
+                .default([])
+                .run(connection);
+
+              console.log('originalCheckList');
+              console.log(originalCheckList);
+
+              await r.db('work_genius')
+                .table('test_report_categories')
+                .get(article.categoryId)
+                .update({
+                  checkList: [...originalCheckList, {
+                    id: article.checkListId,
+                    bugArticle: id,
+                  }]
+                })
+                .run(connection);
+            }
+
           }
 
           await connection.close();

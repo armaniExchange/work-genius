@@ -221,12 +221,14 @@ let CategoryQuery = {
         const bugStatistic = await r.db('work_genius').table('test_report_categories')
           .filter(r.row('bugStatistic'))
           .map(r.row('bugStatistic'))
+          .default([])
           .reduce((left, right)=> {
             return {
               pass: left('pass').add(right('pass')),
               total: left('total').add(right('total')),
             };
           })
+          .default({ pass: 0, total: 0 })
           .run(connection);
           await connection.close();
           return bugStatistic;
