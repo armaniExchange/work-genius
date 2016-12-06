@@ -78,10 +78,7 @@ class UTDocTaskPage extends Component {
       checkListId,
       categoryId,
       fullpathWithOutRoot,
-      bugArticle,
-      type,
-      subType,
-      name
+      bugArticle
     }) {
     const { articleActions: { createArticle } }= this.props;
     if (bugArticle) {
@@ -91,7 +88,6 @@ class UTDocTaskPage extends Component {
         title: `Bug - ${fullpathWithOutRoot}`,
         categoryId,
         checkListId,
-        content: `${type} - ${subType}\n${name}`,
         documentType: 'bugs',
         updateCheckListBug: true,
       });

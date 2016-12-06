@@ -123,7 +123,11 @@ export function createArticle(newArticle) {
     dispatch(setLoadingState(true));
 
     newArticle.title = newArticle.title.replace(/\\/g, '\\\\');
-    newArticle.content = newArticle.content.replace(/\\/g, '\\\\');
+    if (newArticle.content) {
+      newArticle.content.replace(/\\/g, '\\\\');
+    } else {
+      delete newArticle.content;
+    }
     const config = {
       method: 'POST',
       body: `

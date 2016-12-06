@@ -139,6 +139,14 @@ const ArticleMutation = {
           bugStatus: 'new'
         }: null);
 
+        if (!parsedArticle.content ) {
+          const template = await r.db('work_genius')
+            .table('document_templates')
+            .get(article.documentType)
+            .run(connection);
+          parsedArticle.content = template.content;
+        }
+
         result = await r.db('work_genius')
           .table('articles')
           .insert(parsedArticle)
