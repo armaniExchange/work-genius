@@ -25,7 +25,7 @@ class FeatureAutomationCount extends Component {
             <span>&nbsp;&nbsp;{item.errorMessage}</span>
           </div>
         ))
-        .concat(hasChildren && length > MAX_TOOLTIPS_IN_PARENT_NODE ? (<div className="text-info text-right">Exapnd children to see more ...</div>) : null)
+        .concat(hasChildren && length > MAX_TOOLTIPS_IN_PARENT_NODE ? (<div className="text-info text-right" key="hint">Exapnd children to see more ...</div>) : null)
     );
   }
 
