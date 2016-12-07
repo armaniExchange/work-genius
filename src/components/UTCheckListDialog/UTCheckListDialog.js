@@ -56,16 +56,17 @@ class UTCheckListDialog extends Component {
         checked: false,
         skipped: false
       };
+      accum[current.id].checked = (accum[current.id].checked === true);
+      accum[current.id].skipped = (accum[current.id].skipped === true);
       return accum;
     }, {});
     this.setState({ editingData });
   }
 
-  onSubmit() {
+  _submit() {
     const {
       categoryId,
-      onSubmit,
-      onRequestClose
+      onSubmit
     } = this.props;
     const {
       editingData
@@ -76,10 +77,6 @@ class UTCheckListDialog extends Component {
       if (!editingItemData.bugArticle) {
         delete editingItemData.bugArticle;
       }
-
-      editingItemData.checked = (editingItemData.checked === true);
-      editingItemData.skipped = (editingItemData.skipped === true);
-
       return Object.assign({}, editingItemData, {id});
     });
 
@@ -87,6 +84,11 @@ class UTCheckListDialog extends Component {
       categoryId,
       data: listData
     });
+  }
+
+  onSubmit() {
+    const { onRequestClose } = this.props;
+    this._submit();
     onRequestClose();
   }
 
@@ -125,12 +127,20 @@ class UTCheckListDialog extends Component {
     });
   }
 
+  onCreateBugClick(bugArgs){
+    const { onCreateBugClick } = this.props;
+    const answer = window.confirm('Save check list and create a bug?');
+    if (answer) {
+      this._submit();
+      onCreateBugClick(bugArgs);
+    }
+  }
+
   render() {
     const {
       open,
       onRequestClose,
       categoryId,
-      onCreateBugClick,
       onRemoveBugClick,
       fullpathWithOutRoot
     } = this.props;
@@ -229,7 +239,7 @@ class UTCheckListDialog extends Component {
                         bugArgs.bugArticle ? (
                           <div>
                             <i className="UTCheckListDialog--create-new-bug fa fa-edit"
-                              onClick={onCreateBugClick.bind(this, bugArgs)}
+                              onClick={this.onCreateBugClick.bind(this, bugArgs)}
                             />
                             &nbsp;&nbsp;&nbsp;
                             <i className="UTCheckListDialog--create-new-bug fa fa-remove"
@@ -238,7 +248,7 @@ class UTCheckListDialog extends Component {
                           </div>
                         ) : (
                           <i className="UTCheckListDialog--create-new-bug fa fa-plus"
-                            onClick={onCreateBugClick.bind(this, bugArgs)}
+                            onClick={this.onCreateBugClick.bind(this, bugArgs)}
                           />
                         )
                       )

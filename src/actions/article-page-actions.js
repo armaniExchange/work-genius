@@ -114,7 +114,7 @@ export function createArticleFail(error) {
   };
 }
 
-export function createArticle(newArticle) {
+export function createArticle(newArticle, callback= ()=>{}) {
   return dispatch => {
     dispatch({
       type: actionTypes.CREATE_ARTICLE,
@@ -157,6 +157,7 @@ export function createArticle(newArticle) {
         const id = body.data.createArticle.id;
         dispatch(createArticleSuccess({id}));
         dispatch(setLoadingState(false));
+        callback();
         return _fetchArticle(id);
       })
       .catch((error) => {

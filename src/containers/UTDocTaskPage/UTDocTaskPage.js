@@ -186,7 +186,7 @@ class UTDocTaskPage extends Component {
     this.setState({
       editingCategoryId: null,
       showCheckListDialog: false,
-      editingCheckList: {},
+      editingCheckList: [],
       editingFullpathWithOutRoot: ''
     });
   }
