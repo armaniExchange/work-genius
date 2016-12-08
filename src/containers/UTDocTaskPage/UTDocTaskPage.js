@@ -81,7 +81,10 @@ class UTDocTaskPage extends Component {
       fullpathWithOutRoot,
       bugArticle
     }) {
-    const { articleActions: { createArticle } }= this.props;
+    const {
+      articleActions: { createArticle },
+      featureAutomationActions: { fetchDocumentCategoriesWithSettings }
+    } = this.props;
     if (bugArticle) {
       window.open(this.getBugViewArticleRoute(bugArticle));
     } else {
@@ -92,6 +95,8 @@ class UTDocTaskPage extends Component {
         documentType: 'bugs',
         updateCheckListBug: true,
         draft: true
+      }, () => {
+        fetchDocumentCategoriesWithSettings();
       });
     }
   }

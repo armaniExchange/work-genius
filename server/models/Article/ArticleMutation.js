@@ -187,9 +187,9 @@ const ArticleMutation = {
               .get(article.categoryId)
               .getField('checkList')
               .filter({'id': article.checkListId})
-              .default([])
-              .not()
-              .eq([])
+              .count()
+              .gt(0)
+              .default(false)
               .run(connection);
             if (hasCheckItem) {
               await r.db('work_genius')
