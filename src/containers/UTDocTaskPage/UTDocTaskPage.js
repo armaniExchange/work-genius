@@ -33,7 +33,8 @@ class UTDocTaskPage extends Component {
       showCheckListDialog: false,
       editingCategoryId: null,
       editingFullpathWithOutRoot: '',
-      editingCheckList: []
+      editingCheckList: [],
+      editingCheckListDefinition: 'default'
     };
   }
 
@@ -182,7 +183,8 @@ class UTDocTaskPage extends Component {
       editingCategoryId: id,
       showCheckListDialog: true,
       editingCheckList: checkList,
-      editingFullpathWithOutRoot: fullpathWithOutRoot
+      editingFullpathWithOutRoot: fullpathWithOutRoot,
+      editingCheckListDefinition: fullpathWithOutRoot.split('>')[0].trim()
     });
   }
 
@@ -235,7 +237,8 @@ class UTDocTaskPage extends Component {
       showCheckListDialog,
       editingCategoryId,
       editingCheckList,
-      editingFullpathWithOutRoot
+      editingFullpathWithOutRoot,
+      editingCheckListDefinition
     } = this.state;
 
     const filterReleaseOptions = documentCategoriesWithSettings.children || [];
@@ -251,6 +254,7 @@ class UTDocTaskPage extends Component {
           onCreateBugClick={::this.onCreateBugClick}
           onRemoveBugClick={::this.onRemoveBugClick}
           fullpathWithOutRoot={editingFullpathWithOutRoot}
+          release={editingCheckListDefinition}
         />
         <div>
           <label>Release:&nbsp;</label>

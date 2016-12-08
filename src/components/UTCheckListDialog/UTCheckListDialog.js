@@ -29,7 +29,9 @@ function addCategoriesAndSubCategories(accum, current, currentIndex) {
   return accum;
 }
 
-const checkListReadyToRender = CHECK_LIST.reduce(addCategoriesAndSubCategories, []);
+const getCheckListReadyToRender = (checkListDefinition = 'default') =>{
+  return CHECK_LIST(checkListDefinition).reduce(addCategoriesAndSubCategories, []);
+};
 
 class UTCheckListDialog extends Component {
 
@@ -44,14 +46,14 @@ class UTCheckListDialog extends Component {
     if (!nextProps.open) {
       return;
     }
-    let { data } = nextProps;
+    let { data, checkListDefinition } = nextProps;
     data = data || [];
     const dictData = data.reduce((accum, current) => {
       accum[current.id] = Object.assign({}, current);
       return accum;
     }, {});
 
-    const editingData = CHECK_LIST.reduce((accum, current)=>{
+    const editingData = CHECK_LIST(checkListDefinition).reduce((accum, current)=>{
       accum[current.id] = dictData[current.id] || {
         checked: false,
         skipped: false
@@ -143,7 +145,8 @@ class UTCheckListDialog extends Component {
       onRequestClose,
       categoryId,
       onRemoveBugClick,
-      fullpathWithOutRoot
+      fullpathWithOutRoot,
+      checkListDefinition
     } = this.props;
     const {
       editingData
@@ -184,7 +187,7 @@ class UTCheckListDialog extends Component {
           </thead>
           <tbody>
           {
-            checkListReadyToRender.map((item)=>{
+            getCheckListReadyToRender(checkListDefinition).map((item)=>{
               const {
                 id,
                 name,
@@ -279,6 +282,7 @@ UTCheckListDialog.propTypes = {
   categoryId          : PropTypes.string,
   fullpathWithOutRoot : PropTypes.string,
   title               : PropTypes.string,
+  checkListDefinition : PropTypes.string,
   open                : PropTypes.bool,
   data                : PropTypes.array,
   onRequestClose      : PropTypes.func.isRequired,
