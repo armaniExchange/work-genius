@@ -128,11 +128,12 @@ class UTCheckListDialog extends Component {
   }
 
   onCreateBugClick(bugArgs){
-    const { onCreateBugClick } = this.props;
+    const { onCreateBugClick, onRequestClose } = this.props;
     const answer = window.confirm('Save check list and create a bug?');
     if (answer) {
       this._submit();
       onCreateBugClick(bugArgs);
+      onRequestClose();
     }
   }
 

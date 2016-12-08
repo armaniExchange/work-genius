@@ -90,6 +90,7 @@ class UTDocTaskPage extends Component {
         checkListId,
         documentType: 'bugs',
         updateCheckListBug: true,
+        draft: true
       });
     }
   }

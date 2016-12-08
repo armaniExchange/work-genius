@@ -119,7 +119,7 @@ const ArticleMutation = {
     type: ArticleType,
     description: 'Create a new article ',
     args: {
-      article: { type: ArticleInputType }
+      article: { type: ArticleInputType },
     },
     resolve: async ({ req, transporter }, { article }) => {
       let connection = null, result = null;
@@ -131,13 +131,14 @@ const ArticleMutation = {
           tags: [],
           reportTo: [],
           files: [],
+          draft: false
         }, parseArticle(article), {
           authorId: user.id,
           createdAt: now,
           updatedAt: now
         }, article.documentType === 'bugs' ? {
           bugStatus: 'new'
-        }: null);
+        } : null);
 
         if (!parsedArticle.content ) {
           const template = await r.db('work_genius')
@@ -176,7 +177,6 @@ const ArticleMutation = {
           }
 
           if (article.updateCheckListBug) {
-
             const hasCheckItem = await r.db('work_genius')
               .table('test_report_categories')
               .get(article.categoryId)
@@ -186,7 +186,6 @@ const ArticleMutation = {
               .not()
               .eq([])
               .run(connection);
-            console.log(`hasCheckItem:${hasCheckItem}`);
             if (hasCheckItem) {
               await r.db('work_genius')
                 .table('test_report_categories')
@@ -208,9 +207,6 @@ const ArticleMutation = {
                 .default([])
                 .run(connection);
 
-              console.log('originalCheckList');
-              console.log(originalCheckList);
-
               await r.db('work_genius')
                 .table('test_report_categories')
                 .get(article.categoryId)
@@ -227,7 +223,7 @@ const ArticleMutation = {
 
           await connection.close();
 
-          if (article.documentType !== 'test case') {
+          if (article.documentType !== 'test case' && !article.draft) {
             // skip test case
             await transporter.sendMail({
               from: MAILER_ADDRESS,
@@ -243,7 +239,7 @@ const ArticleMutation = {
               cc: MAIL_CC_LIST
             });
           } else {
-            console.log('skip test case email');
+            console.log('skip test case email and draft email');
           }
 
           return result;
@@ -268,9 +264,16 @@ const ArticleMutation = {
 
       try {
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-        const parsedArticle = Object.assign({}, parseArticle(article), {
+        const parsedArticle = Object.assign({
+          draft: false
+        }, parseArticle(article), {
           updatedAt: new Date().getTime()
         });
+
+        const originalArticle = await r.db('work_genius')
+          .table('articles')
+          .get(article.id)
+          .run(connection);
 
         await r.db('work_genius')
           .table('articles')
@@ -283,6 +286,26 @@ const ArticleMutation = {
           .get(article.id)
           .merge(getArticleDetail)
           .run(connection);
+
+        const user = req.decoded;
+        if (article.documentType !== 'test case' && originalArticle.draft && !parsedArticle.draft ) {
+          // skip test case
+          await transporter.sendMail({
+            from: MAILER_ADDRESS,
+            to: result.reportTo.map((emailName) => `${emailName}@a10networks.com`),
+            subject: `[KB - New Document] ${result.title}`,
+            html: parseMarkdown(generateEmailMarkdown({
+              to: 'teams',
+              beginning: `Thanks ${user.name} for sharing the knowledge on KB.`,
+              url: getArticleLink(article.id),
+              title: result.title,
+              content: result.content
+            })),
+            cc: MAIL_CC_LIST
+          });
+        } else {
+          console.log('skip test case email');
+        }
 
         await connection.close();
         return result;
