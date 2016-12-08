@@ -153,6 +153,80 @@ export function fetchDocumentCategoriesWithSettings() {
 }
 
 
+export function fetchDocumentCategoryWithSettingsSuccess(data) {
+  return {
+    type: actionTypes.FETCH_DOCUMENT_CATEGORY_WITH_SETTINGS_SUCCESS,
+    data
+  };
+}
+
+export function fetchDocumentCategoryWithSettingsFail(error) {
+  return {
+    type: actionTypes.FETCH_DOCUMENT_CATEGORY_WITH_SETTINGS_FAIL,
+    error
+  };
+}
+
+export function fetchDocumentCategoryWithSettings(categoryId) {
+  return dispatch => {
+    dispatch({
+      type: actionTypes.FETCH_DOCUMENT_CATEGORY_WITH_SETTINGS
+    });
+
+    const config = {
+      method: 'POST',
+      body: `{
+        getDocumentCategoryWithSettings (id: "${categoryId}") {
+          id,
+          parentId,
+          name,
+          path,
+          axapis,
+          owners,
+          docETA,
+          docStatus,
+          codeETA,
+          codeStatus,
+          UTDoc,
+          checkList {
+            id,
+            checked,
+            skipped,
+            bugArticle
+          },
+          isCheckListDone,
+          bugStatistic {
+            total,
+            pass
+          }
+        }
+      }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((body) => {
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
+        const { getDocumentCategoryWithSettings } = body.data;
+        dispatch(fetchDocumentCategoryWithSettingsSuccess(getDocumentCategoryWithSettings));
+      })
+      .catch((error) => {
+        dispatch(apiFailure(error));
+      });
+  };
+}
+
+
 export function setupTestReportOfCategorySuccess() {
   return {
     type: actionTypes.SETUP_TEST_REPORT_OF_CATEGORY_SUCCESS

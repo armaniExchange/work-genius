@@ -134,6 +134,7 @@ function transformToTree(dataArr) {
 const initialState = Map({
   documentCategoriesWithReportTest: Map({}),
   documentCategoriesWithSettings: Map({}),
+  plainDocumentCategoriesWithSettings: List.of(),
   unitTestCreatedTimeList: List.of(),
   end2endTestCreatedTimeList: List.of(),
   axapiTestCreatedTimeList: List.of(),
@@ -165,7 +166,14 @@ export default function featureAutomationReducer(state = initialState, action) {
         .set('isLoading', false);
     case actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_SETTINGS_SUCCESS:
       return state.set('documentCategoriesWithSettings', fromJS(transformToTree(action.data)))
+        .set('plainDocumentCategoriesWithSettings', action.data)
         .set('isLoading', false);
+
+    case actionTypes.FETCH_DOCUMENT_CATEGORY_WITH_SETTINGS_SUCCESS:
+      const plainDocumentCategoriesWithSettings = state.get('plainDocumentCategoriesWithSettings')
+        .map( item => item.id === action.data.id ? action.data : item );
+      return state.set('plainDocumentCategoriesWithSettings', plainDocumentCategoriesWithSettings)
+        .set('documentCategoriesWithSettings', fromJS(transformToTree(plainDocumentCategoriesWithSettings)));
     case actionTypes.FETCH_TEST_REPORT_CREATED_TIME_LIST_SUCCESS:
       return state.set('unitTestCreatedTimeList', List(action.unitTestCreatedTimeList))
         .set('end2endTestCreatedTimeList', List(action.end2endTestCreatedTimeList))

@@ -83,7 +83,7 @@ class UTDocTaskPage extends Component {
     }) {
     const {
       articleActions: { createArticle },
-      featureAutomationActions: { fetchDocumentCategoriesWithSettings }
+      featureAutomationActions: { fetchDocumentCategoryWithSettings }
     } = this.props;
     if (bugArticle) {
       window.open(this.getBugViewArticleRoute(bugArticle));
@@ -96,7 +96,7 @@ class UTDocTaskPage extends Component {
         updateCheckListBug: true,
         draft: true
       }, () => {
-        fetchDocumentCategoriesWithSettings();
+        fetchDocumentCategoryWithSettings(categoryId);
       });
     }
   }
@@ -110,14 +110,12 @@ class UTDocTaskPage extends Component {
     const { editingCheckList } = this.state;
     deleteArticle(bugArticle);
     const data = Object.assign([], editingCheckList);
-    debugger; // eslint-disable-line
     const checkList = data.map(item=>{
       if (item.id === checkListId || !item.bugArticle) {
         delete item.bugArticle;
       }
       return item;
     });
-    debugger; // eslint-disable-line
     this.setupTestReportOfCategory({
       categoryId,
       checkList
@@ -155,11 +153,11 @@ class UTDocTaskPage extends Component {
     const { featureAutomationActions } = this.props;
     const {
       setupTestReportOfCategory,
-      fetchDocumentCategoriesWithSettings,
+      fetchDocumentCategoryWithSettings,
       fetchOverallBugStatistic
     } = featureAutomationActions;
     setupTestReportOfCategory(options, ()=> {
-      fetchDocumentCategoriesWithSettings();
+      fetchDocumentCategoryWithSettings(options.categoryId);
       fetchOverallBugStatistic();
     });
   }

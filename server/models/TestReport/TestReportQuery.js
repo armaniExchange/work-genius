@@ -5,6 +5,7 @@
 // GraphQL
 import {
   GraphQLList,
+  GraphQLID,
   GraphQLObjectType,
   GraphQLFloat,
   GraphQLString,
@@ -197,6 +198,33 @@ let CategoryQuery = {
               .default({});
           })
           .coerceTo('array')
+          .run(connection);
+        await connection.close();
+        return result;
+      } catch (err) {
+        return err;
+      }
+    }
+  },
+  getDocumentCategoryWithSettings :{
+    type: TestReportCategorySetupType,
+    args: {
+      id: {
+        type: GraphQLID
+      }
+    },
+    resolve: async (root, {id}) => {
+      try {
+        const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+        const result = await r.db('work_genius')
+          .table('document_categories')
+          .get(id)
+          .merge(function(category) {
+            return r.db('work_genius')
+              .table('test_report_categories')
+              .get(category('id'))
+              .default({});
+          })
           .run(connection);
         await connection.close();
         return result;
