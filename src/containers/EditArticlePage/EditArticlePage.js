@@ -212,7 +212,12 @@ class EditArticlePage extends Component {
   }
 
   onCancel() {
-    this.props.history.go(-1);
+    const { query } = this.context.location;
+    if (query.close_window) {
+      window.close();
+    } else {
+      this.props.history.go(-1);
+    }
   }
 
   getJustUpdatedFile(thisFiles, nextFiles) {
