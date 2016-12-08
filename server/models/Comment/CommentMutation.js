@@ -94,9 +94,10 @@ const CommentMutation = {
               .get(articleId)
               .merge(article => {return {author: r.db('work_genius').table('users').get(article('authorId')).default(null)};})
               .run(connection);
+            const authorEmail = commentedArticle.author ? commentedArticle.author.email : null;
             await transporter.sendMail({
               from: MAILER_ADDRESS,
-              to: [commentedArticle.author.email, ...(commentedArticle.reportTo.map((emailName) => `${emailName}@a10networks.com`))],
+              to: [authorEmail, ...(commentedArticle.reportTo.map((emailName) => `${emailName}@a10networks.com`))],
               subject: `[KB New Comment] ${commentedArticle.title} `,
               html: parseMarkdown(generateEmailMarkdown({
                 to: commentedArticle.author.name,

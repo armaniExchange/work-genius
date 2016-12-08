@@ -56,6 +56,9 @@ class EditArticlePage extends Component {
       } else {
         this.props.history.replace(`/main/knowledge/document/${nextProps.id}`);
       }
+      if (query.close_window) {
+        window.close();
+      }
       return;
     }
 

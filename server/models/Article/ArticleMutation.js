@@ -92,13 +92,18 @@ const ArticleMutation = {
           .delete()
           .run(connection);
 
-        await r.db('work_genius').table('document_categories')
+
+        await r.branch(
+          r.db('work_genius').table('articles').get(id),
+          r.db('work_genius').table('document_categories')
           .get(
             r.db('work_genius').table('articles')
               .get(id)
               .getField('categoryId')
-          ).update({articlesCount: r.row('articlesCount').sub(1)})
-          .run(connection);
+          ).update({articlesCount: r.row('articlesCount').sub(1)}),
+          null
+        )
+        .run(connection);
 
         await r.db('work_genius')
           .table('articles')

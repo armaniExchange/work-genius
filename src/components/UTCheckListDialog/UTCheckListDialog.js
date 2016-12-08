@@ -168,7 +168,7 @@ class UTCheckListDialog extends Component {
         title={`CheckList ${fullpathWithOutRoot}`}
         className="UTCheckListDialog"
         actions={actions}
-        modal={false}
+        modal={true}
         open={open}
         onRequestClose={onRequestClose}
         autoScrollBodyContent={true}
@@ -209,6 +209,10 @@ class UTCheckListDialog extends Component {
                 type,
                 subType
               };
+              const labelStyle = {
+                width: '100%',
+                margin: 0
+              };
               return (
                 <tr key={id}>
                   <td style={nameStyle}>
@@ -217,20 +221,24 @@ class UTCheckListDialog extends Component {
                   <td>
                     {
                       isLeaf && (
-                        <input type="checkbox"
-                          checked={editingData[id] && editingData[id].checked}
-                          onChange={this.onCheckedChange.bind(this, id)}
-                        />
+                        <label style={labelStyle}>
+                          <input type="checkbox"
+                            checked={editingData[id] && editingData[id].checked}
+                            onChange={this.onCheckedChange.bind(this, id)}
+                          />
+                        </label>
                       )
                     }
                   </td>
                   <td>
                     {
                       isLeaf && (
-                        <input type="checkbox"
-                          checked={editingData[id] && editingData[id].skipped}
-                          onChange={this.onSkippedChange.bind(this, id)}
-                        />
+                        <label style={labelStyle}>
+                          <input type="checkbox"
+                            checked={editingData[id] && editingData[id].skipped}
+                            onChange={this.onSkippedChange.bind(this, id)}
+                          />
+                        </label>
                       )
                     }
                   </td>

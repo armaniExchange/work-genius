@@ -51,7 +51,7 @@ class UTDocTaskPage extends Component {
   componentWillReceiveProps(nextProps) {
     const { documentCategoriesWithSettings, createdUtDocId } = nextProps;
     if (this.props.createdUtDocId !== createdUtDocId) {
-      this.context.history.pushState(null, this.getUTDocEditArticleRoute(createdUtDocId));
+      window.open(this.getUTDocEditArticleRoute(createdUtDocId));
     }
     const thisDocumentCategoriesWithSettings = this.props.documentCategoriesWithSettings;
     if (thisDocumentCategoriesWithSettings !== documentCategoriesWithSettings ) {
@@ -82,7 +82,7 @@ class UTDocTaskPage extends Component {
     }) {
     const { articleActions: { createArticle } }= this.props;
     if (bugArticle) {
-      this.context.history.pushState(null, this.getBugViewArticleRoute(bugArticle));
+      window.open(this.getBugViewArticleRoute(bugArticle));
     } else {
       createArticle({
         title: `Bug - ${fullpathWithOutRoot}`,
@@ -101,17 +101,20 @@ class UTDocTaskPage extends Component {
     categoryId,
   }) {
     const { articleActions: { deleteArticle } }= this.props;
-    deleteArticle(bugArticle);
     const { editingCheckList } = this.state;
+    deleteArticle(bugArticle);
     const data = Object.assign([], editingCheckList);
+    debugger; // eslint-disable-line
+    const checkList = data.map(item=>{
+      if (item.id === checkListId || !item.bugArticle) {
+        delete item.bugArticle;
+      }
+      return item;
+    });
+    debugger; // eslint-disable-line
     this.setupTestReportOfCategory({
       categoryId,
-      checkList: data.map(item=>{
-        if (item.id === checkListId || !item.bugArticle) {
-          delete item.bugArticle;
-        }
-        return item;
-      })
+      checkList
     });
   }
 
@@ -135,11 +138,11 @@ class UTDocTaskPage extends Component {
   }
 
   getUTDocEditArticleRoute(articleId) {
-    return `/main/knowledge/document/edit/${articleId}?prev_page=${encodeURI('/main/resource/ut-status')}`;
+    return `/main/knowledge/document/edit/${articleId}?close_window=true`;
   }
 
   getBugViewArticleRoute(articleId) {
-    return `/main/knowledge/document/${articleId}?prev_page=${encodeURI('/main/resource/ut-status')}`;
+    return `/main/knowledge/document/${articleId}?close_window=true`;
   }
 
   setupTestReportOfCategory(options) {
@@ -224,7 +227,6 @@ class UTDocTaskPage extends Component {
       documentCategoriesWithSettings,
       isLoading,
     } = this.props;
-
     const {
       flatCategories,
       filterRelease,
