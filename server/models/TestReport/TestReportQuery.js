@@ -195,6 +195,7 @@ let CategoryQuery = {
             return r.db('work_genius')
               .table('test_report_categories')
               .get(category('id'))
+              .without('end2endTest', 'unitTest', 'axapiTest')
               .default({});
           })
           .coerceTo('array')
