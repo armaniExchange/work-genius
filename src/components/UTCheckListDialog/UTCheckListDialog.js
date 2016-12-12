@@ -129,9 +129,10 @@ class UTCheckListDialog extends Component {
     });
   }
 
-  onCreateBugClick(bugArgs){
+  onCreateBugClick(bugArgs, isNew){
     const { onCreateBugClick, onRequestClose } = this.props;
-    const answer = window.confirm('Save check list and create a bug?');
+    const answer = window.confirm( isNew ?
+      `Save check list and create a bug?` : `Save check list and view the bug?`);
     if (answer) {
       this._submit();
       onCreateBugClick(bugArgs);
@@ -251,7 +252,7 @@ class UTCheckListDialog extends Component {
                         bugArgs.bugArticle ? (
                           <div>
                             <i className="UTCheckListDialog--create-new-bug fa fa-edit"
-                              onClick={this.onCreateBugClick.bind(this, bugArgs)}
+                              onClick={this.onCreateBugClick.bind(this, bugArgs, false)}
                             />
                             &nbsp;&nbsp;&nbsp;
                             <i className="UTCheckListDialog--create-new-bug fa fa-remove"
@@ -260,7 +261,7 @@ class UTCheckListDialog extends Component {
                           </div>
                         ) : (
                           <i className="UTCheckListDialog--create-new-bug fa fa-plus"
-                            onClick={this.onCreateBugClick.bind(this, bugArgs)}
+                            onClick={this.onCreateBugClick.bind(this, bugArgs, true)}
                           />
                         )
                       )
