@@ -6,9 +6,9 @@ const initialState = Map({
     aryDifficulties: [],
     updateMsgOpacity: 0,
     categoryWaitToUpdate: {},
-	treeDataSource: Map({}),
+	  treeDataSource: Map({}),
     dataSource: List.of(),
-	currentLeaf: Map({}),
+	  currentLeaf: Map({}),
     currentTreeSelectedUserId: ''
 });
 

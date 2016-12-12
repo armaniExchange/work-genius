@@ -231,8 +231,38 @@ let CategoryQuery = {
       }
     }
   },
+
+  'getUtCoverage': {
+    type: new GraphQLObjectType({
+      name: 'getUtCoverageType',
+      fields: () => ({
+        total: { type: GraphQLFloat },
+        checked: { type: GraphQLFloat },
+        unchecked: { type: GraphQLFloat }
+      })
+    }),
+    resolve: async () => {
+      let connection = null;
+      try {
+        connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+        const utCoverage = await r.db('work_genius').table('test_report_categories')
+          .group((item)=> item('isCheckListDone').eq(true))
+          .count()
+          .ungroup()
+          .map(item=>[r.branch(item('group').eq(true), 'checked', 'unchecked'), item('reduction')])
+          .coerceTo('object')
+          .run(connection);
+          await connection.close();
+          utCoverage.total = utCoverage.checked + utCoverage.unchecked;
+          return utCoverage;
+      } catch (err) {
+        await connection.close();
+        return err;
+      }
+    }
+  },
+
   'getOverallBugStatistic': {
-    description: 'Get created time list',
     type: new GraphQLObjectType({
       name: 'getBugStatisticType',
       fields: () => ({

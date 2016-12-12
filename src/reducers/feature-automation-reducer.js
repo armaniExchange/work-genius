@@ -139,6 +139,8 @@ const initialState = Map({
   end2endTestCreatedTimeList: List.of(),
   axapiTestCreatedTimeList: List.of(),
   testReportAxapiSuggestions: List.of(),
+  overallBugStatistic: Map({}),
+  utCoverage: Map({}),
   filterOwner: null,
   filterRelease: null,
   filterCase: null,
@@ -196,6 +198,8 @@ export default function featureAutomationReducer(state = initialState, action) {
       return state.set('searchCategoryName', action.searchCategoryName);
     case actionTypes.FETCH_OVERALL_BUG_STATISTIC_SUCCESS:
       return state.set('overallBugStatistic', action.overallBugStatistic);
+    case actionTypes.FETCH_UT_COVERAGE_SUCCESS:
+      return state.set('utCoverage', action.utCoverage);
     default:
       return state;
   }

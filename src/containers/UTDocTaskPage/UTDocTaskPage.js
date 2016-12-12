@@ -43,11 +43,13 @@ class UTDocTaskPage extends Component {
     const { fetchAllUsers } = this.props.documentActions;
     const {
       fetchDocumentCategoriesWithSettings,
-      fetchOverallBugStatistic
+      fetchOverallBugStatistic,
+      fetchUtCoverage
     } = this.props.featureAutomationActions;
     fetchAllUsers();
     fetchDocumentCategoriesWithSettings();
     fetchOverallBugStatistic();
+    fetchUtCoverage();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -155,11 +157,13 @@ class UTDocTaskPage extends Component {
     const {
       setupTestReportOfCategory,
       fetchDocumentCategoryWithSettings,
-      fetchOverallBugStatistic
+      fetchOverallBugStatistic,
+      fetchUtCoverage
     } = featureAutomationActions;
     setupTestReportOfCategory(options, ()=> {
       fetchDocumentCategoryWithSettings(options.categoryId);
       fetchOverallBugStatistic();
+      fetchUtCoverage();
     });
   }
 
@@ -212,11 +216,13 @@ class UTDocTaskPage extends Component {
     const {
       featureAutomationActions: {
         fetchDocumentCategoriesWithSettings,
-        fetchOverallBugStatistic
+        fetchOverallBugStatistic,
+        fetchUtCoverage
       }
     } = this.props;
     fetchDocumentCategoriesWithSettings();
     fetchOverallBugStatistic();
+    fetchUtCoverage();
   }
 
   renderOverallBugStatistic() {
@@ -224,10 +230,11 @@ class UTDocTaskPage extends Component {
       verified,
       total
     } = this.props.overallBugStatistic;
+    const { utCoverage } = this.props;
     return (
       <div className="pull-right" style={{lineHeight: '2.5em'}}>
         <label>
-          {`Coverage: ${((verified*100 )/total).toFixed(2)}%`}
+          {`Coverage: ${((utCoverage.checked * 100 )/(utCoverage.total || 1)).toFixed(2)}%`}
         </label>
         <span>&nbsp;&nbsp;&nbsp;</span>
         <label>
@@ -366,7 +373,8 @@ UTDocTaskPage.propTypes = {
   allUsers: PropTypes.array,
   isLoading: PropTypes.bool,
   createdUtDocId: PropTypes.string,
-  overallBugStatistic: PropTypes.object
+  overallBugStatistic: PropTypes.object,
+  utCoverage: PropTypes.object
 };
 
 UTDocTaskPage.defaultProps = {
@@ -378,6 +386,11 @@ UTDocTaskPage.defaultProps = {
     reosolved: 0,
     reopened: 0,
     verified: 0
+  },
+  utCoverage: {
+    total: 0,
+    checked: 0,
+    unchecked: 0
   }
 };
 
@@ -388,12 +401,14 @@ function mapStateToProps(state) {
     documentCategoriesWithSettings,
     createdUtDocId,
     isLoading,
-    overallBugStatistic
+    overallBugStatistic,
+    utCoverage
   } = state.featureAutomation.toJS();
   const { currentUser } = state.app.toJS();
   const { allUsers } = state.documentation.toJS();
   return {
     overallBugStatistic,
+    utCoverage,
     documentCategoriesWithSettings,
     createdUtDocId,
     isLoading,

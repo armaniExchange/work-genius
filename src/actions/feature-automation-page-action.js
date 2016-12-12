@@ -305,6 +305,66 @@ export function fetchOverallBugStatistic() {
   };
 }
 
+
+
+export function fetchUtCoverageSuccess(utCoverage) {
+  return {
+    type: actionTypes.FETCH_UT_COVERAGE_SUCCESS,
+    utCoverage
+  };
+}
+
+export function fetchUtCoverageFail(error) {
+  return {
+    type: actionTypes.FETCH_UT_COVERAGE_FAIL,
+    error
+  };
+}
+
+export function fetchUtCoverage() {
+  return dispatch => {
+    dispatch(setLoadingState(true));
+    dispatch({
+      type: actionTypes.FETCH_UT_COVERAGE
+    });
+
+    const config = {
+      method: 'POST',
+      body: `{
+        getUtCoverage {
+          checked,
+          unchecked,
+          total
+        }
+      }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((body) => {
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
+        const { getUtCoverage } = body.data;
+        dispatch(fetchUtCoverageSuccess(getUtCoverage));
+        dispatch(setLoadingState(false));
+      })
+      .catch((error) => {
+        dispatch(apiFailure(error));
+        dispatch(setLoadingState(false));
+      });
+  };
+}
+
+
 export function setupTestReportOfCategory({
   categoryId,
   path,
