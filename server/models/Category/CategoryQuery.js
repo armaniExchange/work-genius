@@ -81,6 +81,7 @@ let CategoryQuery = {
           .orderBy(r.desc('reduction'))
           .map(r.row('group'))
           .slice(0, 30)
+          .default([])
           .run(connection);
 
         await connection.close();

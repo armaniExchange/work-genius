@@ -33,34 +33,6 @@ let User = Record({
     'username': ''
 });
 
-let loginPromise = function(username, password) {
-
-    let user = 'corp\\' + username;
-    let config = JSON.parse(JSON.stringify(LDAP));
-    let ad;
-
-    config['username'] = user;
-    config['password'] = password;
-
-    ad = new ActiveDirectory(config);
-
-    return new Promise((resolve, reject) => {
-        authenticateByLdapPromise(ad, user, password)
-            .then(function(auth) {
-                return findUserByLdapPromise(ad, username);
-            }, function(err) {
-                return findUserByDBPromise(username, password);
-            })
-            .then(function(user) {
-                resolve(user);
-            }, function(err) {
-                reject(err);
-            });
-    });
-
-
-};
-
 let authenticateByLdapPromise = function(ad, user, password) {
     return new Promise((resolve, reject) => {
         ad.authenticate(user, password, function(err, auth) {
@@ -72,6 +44,8 @@ let authenticateByLdapPromise = function(ad, user, password) {
             if (auth) {
                 resolve(auth);
             } else {
+                console.log('authenticateByLdapPromise');
+                console.log(err);
                 reject(new Error(err));
             }
 
@@ -139,6 +113,32 @@ let findUserByLdapPromise = function(ad, username) {
     });
 
 };
+
+let loginPromise = function(username, password) {
+  let user = 'corp\\' + username;
+  let config = JSON.parse(JSON.stringify(LDAP));
+  let ad;
+
+  config['username'] = user;
+  config['password'] = password;
+
+  ad = new ActiveDirectory(config);
+
+  return new Promise((resolve, reject) => {
+    authenticateByLdapPromise(ad, user, password)
+      .then(function(auth) {
+        return findUserByLdapPromise(ad, username);
+      }, function(err) {
+        return findUserByDBPromise(username, password);
+      })
+      .then(function(user) {
+        resolve(user);
+      }, function(err) {
+        reject(err);
+      });
+  });
+};
+
 
 let getPrivilege = function(username) {
     let privilege = 0;

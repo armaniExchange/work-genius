@@ -114,6 +114,45 @@ const TEST_REPORT_MAP = {
   }
 };
 
+export const updateBugStatistic = async (categoryId) => {
+  let connection = null;
+  try {
+    connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+    const bugStatisticDetailFromDb = await r.db('work_genius')
+      .table('test_report_categories')
+      .get(categoryId)
+      .getField('checkList')
+      .filter(r.row('bugArticle'))
+      .eqJoin('bugArticle', r.db('work_genius').table('articles'))
+      .zip()
+      .group('bugStatus')
+      .count()
+      .ungroup()
+      .map(item=> [ item('group'), item('reduction')])
+      .coerceTo('object')
+      .run(connection);
+    const bugStatistic = Object.assign({
+      new: 0,
+      resolved: 0,
+      verified: 0,
+      reopened: 0
+    }, bugStatisticDetailFromDb);
+    const bugStatisticWithTotal = Object.assign(bugStatistic, {
+      total: bugStatistic.new + bugStatistic.resolved+ bugStatistic.verified + bugStatistic.reopened
+    });
+
+    await r.db('work_genius')
+      .table('test_report_categories')
+      .get(categoryId)
+      .update({bugStatistic: bugStatisticWithTotal})
+      .run(connection);
+    await connection.close();
+  } catch (err) {
+    await connection.close();
+    throw Error(err);
+  }
+};
+
 export const addTestReportHandler = async (req, res) => {
   const { transporter } = req;
 
@@ -293,9 +332,13 @@ const mutation = {
         typeof docStatus !== 'undefined' ? { docStatus } : null,
         typeof checkList !== 'undefined' ? {
           checkList,
-          isCheckListDone
+          isCheckListDone,
         } : null,
       );
+
+      if (typeof checkList !== 'undefined') {
+        await updateBugStatistic(categoryId);
+      }
 
       try {
         await r.db('work_genius')

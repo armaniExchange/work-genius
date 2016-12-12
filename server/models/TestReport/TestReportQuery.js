@@ -65,6 +65,14 @@ const TestReportCreatedTimeType =  new GraphQLObjectType({
   }
 });
 
+const mergeDocumentCategoriesWithSettings = (category) => {
+  return r.db('work_genius')
+    .table('test_report_categories')
+    .get(category('id'))
+    .without('end2endTest', 'unitTest', 'axapiTest')
+    .default({});
+};
+
 let CategoryQuery = {
   'getTestReportCreatedTimeList' : {
     description: 'Get created time list',
@@ -191,13 +199,7 @@ let CategoryQuery = {
         const result = await r.db('work_genius')
           .table('document_categories')
           .filter({ isFeature: true })
-          .merge(function(category) {
-            return r.db('work_genius')
-              .table('test_report_categories')
-              .get(category('id'))
-              .without('end2endTest', 'unitTest', 'axapiTest')
-              .default({});
-          })
+          .merge(mergeDocumentCategoriesWithSettings)
           .coerceTo('array')
           .run(connection);
         await connection.close();
@@ -220,12 +222,7 @@ let CategoryQuery = {
         const result = await r.db('work_genius')
           .table('document_categories')
           .get(id)
-          .merge(function(category) {
-            return r.db('work_genius')
-              .table('test_report_categories')
-              .get(category('id'))
-              .default({});
-          })
+          .merge(mergeDocumentCategoriesWithSettings)
           .run(connection);
         await connection.close();
         return result;
@@ -240,7 +237,10 @@ let CategoryQuery = {
       name: 'getBugStatisticType',
       fields: () => ({
         total: { type: GraphQLFloat },
-        pass: { type: GraphQLFloat }
+        new: { type: GraphQLFloat },
+        resolved: { type: GraphQLFloat },
+        reopened: { type: GraphQLFloat },
+        verified: { type: GraphQLFloat },
       })
     }),
     resolve: async () => {
@@ -253,11 +253,13 @@ let CategoryQuery = {
           .default([])
           .reduce((left, right)=> {
             return {
-              pass: left('pass').add(right('pass')),
-              total: left('total').add(right('total')),
+              new: left('new').default(0).add(right('new').default(0)),
+              total: left('total').default(0).add(right('total').default(0)),
+              resolved: left('resolved').default(0).add(right('resolved').default(0)),
+              verified: left('verified').default(0).add(right('verified').default(0)),
+              reopened: left('reopened').default(0).add(right('reopened').default(0)),
             };
           })
-          .default({ pass: 0, total: 0 })
           .run(connection);
           await connection.close();
           return bugStatistic;

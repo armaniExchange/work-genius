@@ -122,8 +122,11 @@ export function fetchDocumentCategoriesWithSettings() {
           },
           isCheckListDone,
           bugStatistic {
-            total,
-            pass
+            new,
+            resolved,
+            verified,
+            reopened,
+            total
           }
         }
       }`,
@@ -196,8 +199,11 @@ export function fetchDocumentCategoryWithSettings(categoryId) {
           },
           isCheckListDone,
           bugStatistic {
-            total,
-            pass
+            new,
+            resolved,
+            verified,
+            reopened,
+            total
           }
         }
       }`,
@@ -233,9 +239,10 @@ export function setupTestReportOfCategorySuccess() {
   };
 }
 
-export function setupTestReportOfCategoryFail() {
+export function setupTestReportOfCategoryFail(error) {
   return {
-    type: actionTypes.SETUP_TEST_REPORT_OF_CATEGORY_FAIL
+    type: actionTypes.SETUP_TEST_REPORT_OF_CATEGORY_FAIL,
+    error
   };
 }
 
@@ -255,6 +262,7 @@ export function fetchOverallBugStatisticFail(error) {
 
 export function fetchOverallBugStatistic() {
   return dispatch => {
+    dispatch(setLoadingState(true));
     dispatch({
       type: actionTypes.FETCH_OVERALL_BUG_STATISTIC
     });
@@ -263,8 +271,11 @@ export function fetchOverallBugStatistic() {
       method: 'POST',
       body: `{
         getOverallBugStatistic {
-          total,
-          pass,
+          new,
+          resolved,
+          verified,
+          reopened,
+          total
         }
       }`,
       headers: {
@@ -285,9 +296,11 @@ export function fetchOverallBugStatistic() {
         }
         const { getOverallBugStatistic } = body.data;
         dispatch(fetchOverallBugStatisticSuccess(getOverallBugStatistic));
+        dispatch(setLoadingState(false));
       })
       .catch((error) => {
         dispatch(apiFailure(error));
+        dispatch(setLoadingState(false));
       });
   };
 }

@@ -18,6 +18,8 @@ import { SERVER_HOST } from '../../../src/constants/config';
 import generateEmailMarkdown from '../../libraries/generateEmailMarkdown';
 import parseMarkdown from '../../libraries/parseMarkdown';
 
+import { updateBugStatistic } from '../TestReport/TestReportMutation';
+
 const parseArticle = (article) => {
   // only update give article property, if it didn't pass, keep original property
   // ex: article = {id: '123', files: ['567']}
@@ -65,33 +67,30 @@ const ArticleMutation = {
       let connection = null;
       try {
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-        const deletingFiles = await r.db('work_genius')
+
+        const {
+          filesId,
+          commentsId,
+          documentType,
+          categoryId
+        } = await r.db('work_genius')
           .table('articles')
           .get(id)
-          .getField('filesId')
-          .default(null)
           .run(connection);
 
-        if (deletingFiles) {
+
+        if (filesId) {
           // TODO: rewrite this into parallel form
-          for (let i = 0, l = deletingFiles.length; i < l ; i++) {
-            await deleteFile(deletingFiles[i]);
+          for (let i = 0, l = filesId.length; i < l ; i++) {
+            await deleteFile(filesId[i]);
           }
         }
 
-        const deletingComments = await r.db('work_genius')
-          .table('articles')
-          .get(id)
-          .getField('commentsId')
-          .default(['prevent-empty-error'])
-          .run(connection);
-
         await r.db('work_genius')
           .table('comments')
-          .getAll(r.args(deletingComments))
+          .getAll(r.args(commentsId || []))
           .delete()
           .run(connection);
-
 
         await r.branch(
           r.db('work_genius').table('articles').get(id),
@@ -110,6 +109,10 @@ const ArticleMutation = {
           .get(id)
           .delete()
           .run(connection);
+
+        if (documentType === 'bugs') {
+          await updateBugStatistic(categoryId);
+        }
 
         await connection.close();
       } catch (err) {
@@ -151,6 +154,10 @@ const ArticleMutation = {
             .get(article.documentType)
             .run(connection);
           parsedArticle.content = template.content;
+        }
+
+        if (article.documentType === 'bugs') {
+          await updateBugStatistic(article.categoryId);
         }
 
         result = await r.db('work_genius')
@@ -201,7 +208,10 @@ const ArticleMutation = {
                       return r.branch(checkItem('id').eq(article.checkListId),
                         checkItem.merge({ bugArticle: id }),
                         checkItem);
-                    })
+                    }),
+                  // bugStatistic: {
+                  //   total: r.row('bugStatistic')('total').add(1)
+                  // }
                 })
                 .run(connection);
             } else {
@@ -219,7 +229,10 @@ const ArticleMutation = {
                   checkList: [...originalCheckList, {
                     id: article.checkListId,
                     bugArticle: id,
-                  }]
+                  }],
+                  // bugStatistic: {
+                  //   total: r.row('bugStatistic')('total').add(1)
+                  // }
                 })
                 .run(connection);
             }
@@ -291,6 +304,10 @@ const ArticleMutation = {
           .get(article.id)
           .merge(getArticleDetail)
           .run(connection);
+
+        if (originalArticle.documentType === 'bugs' || parsedArticle.documentType === 'bugs') {
+          await updateBugStatistic(originalArticle.categoryId);
+        }
 
         const user = req.decoded;
         if (article.documentType !== 'test case' && originalArticle.draft && !parsedArticle.draft ) {

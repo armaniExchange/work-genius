@@ -67,8 +67,11 @@ const TestReportCategorySetupType = new GraphQLObjectType({
       type: new GraphQLObjectType({
         name: 'bugStatisticType',
         fields: () => ({
-          total: { type: GraphQLFloat},
-          pass: { type: GraphQLFloat},
+          new: { type: GraphQLFloat},
+          resolved: { type: GraphQLFloat},
+          verified: { type: GraphQLFloat},
+          reopened: { type: GraphQLFloat},
+          total: { type: GraphQLFloat}
         })
       })
     },

@@ -12,7 +12,8 @@ export function setLoadingState(state) {
 };
 
 export function apiFailure(err) {
-  let msg = err.message ? err.message : err;
+  let msg = err.message ? err.message :
+    err.stack ? err.stack : err;
   return (dispatch) => {
     dispatch(setLoadingState(false));
     dispatch({

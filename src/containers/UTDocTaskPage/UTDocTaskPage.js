@@ -4,6 +4,7 @@ import './_UTDocTaskPage.scss';
 import React, { Component, PropTypes } from 'react';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow } from 'material-ui/lib/table';
 import CircularProgress from 'material-ui/lib/circular-progress';
+import RaisedButton from 'material-ui/lib/raised-button';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -207,19 +208,30 @@ class UTDocTaskPage extends Component {
     });
   }
 
-  renderBugStatistic() {
+  refresh() {
     const {
-      pass,
+      featureAutomationActions: {
+        fetchDocumentCategoriesWithSettings,
+        fetchOverallBugStatistic
+      }
+    } = this.props;
+    fetchDocumentCategoriesWithSettings();
+    fetchOverallBugStatistic();
+  }
+
+  renderOverallBugStatistic() {
+    const {
+      verified,
       total
     } = this.props.overallBugStatistic;
     return (
       <div className="pull-right" style={{lineHeight: '2.5em'}}>
         <label>
-          {`Coverage: ${((pass*100 )/total).toFixed(2)}%`}
+          {`Coverage: ${((verified*100 )/total).toFixed(2)}%`}
         </label>
         <span>&nbsp;&nbsp;&nbsp;</span>
         <label>
-          Bugs: <span style={{color: pass === total ? null : 'red'}}>{pass}</span>/{total}
+          Bugs: <span style={{color: verified === total ? null : 'red'}}>{verified}</span>/{total}
         </label>
         <span>&nbsp;&nbsp;&nbsp;</span>
       </div>
@@ -287,7 +299,13 @@ class UTDocTaskPage extends Component {
               return { title: item.name, value: item.id};
             })}
           />
-          {this.renderBugStatistic()}
+          <RaisedButton
+            secondary={true}
+            style={{float: 'right'}}
+            onClick={::this.refresh}
+            label="refresh"
+          />
+          {this.renderOverallBugStatistic()}
         </div>
         <br />
         <div style={{width: '100%', textAlign: 'center'}}>
@@ -354,7 +372,13 @@ UTDocTaskPage.propTypes = {
 UTDocTaskPage.defaultProps = {
   documentCategoriesWithSettings: {},
   allUsers: [],
-  overallBugStatistic: { total: 0, pass: 0 }
+  overallBugStatistic: {
+    total: 0,
+    new: 0,
+    reosolved: 0,
+    reopened: 0,
+    verified: 0
+  }
 };
 
 UTDocTaskPage.contextTypes = { history: PropTypes.any };

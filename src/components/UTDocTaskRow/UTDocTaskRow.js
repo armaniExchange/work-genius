@@ -134,7 +134,7 @@ class UTDocTaskRow extends Component {
 
   renderBugs() {
     const { bugStatistic } = this.props;
-    const pass = bugStatistic ? bugStatistic.pass : 0;
+    const pass = bugStatistic ? bugStatistic.verified || 0 : 0;
     const total = bugStatistic ? bugStatistic.total : 0;
     const style = pass !== total ? { color: 'red' } : {};
     return (
@@ -263,7 +263,13 @@ UTDocTaskRow.defaultProps = {
   UTDoc: null,
   checkList: [],
   isCheckListDone: false,
-  bugStatistic: {total: 0, pass: 0}
+  bugStatistic: {
+    new: 0,
+    resolved: 0,
+    verified: 0,
+    reopened: 0,
+    total: 0
+  }
 };
 
 
