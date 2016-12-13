@@ -42,14 +42,10 @@ class UTDocTaskPage extends Component {
   componentDidMount() {
     const { fetchAllUsers } = this.props.documentActions;
     const {
-      fetchDocumentCategoriesWithSettings,
-      fetchOverallBugStatistic,
-      fetchUtCoverage
+      fetchDocumentCategoriesWithSettings
     } = this.props.featureAutomationActions;
     fetchAllUsers();
     fetchDocumentCategoriesWithSettings();
-    fetchOverallBugStatistic();
-    fetchUtCoverage();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -156,14 +152,10 @@ class UTDocTaskPage extends Component {
     const { featureAutomationActions } = this.props;
     const {
       setupTestReportOfCategory,
-      fetchDocumentCategoryWithSettings,
-      fetchOverallBugStatistic,
-      fetchUtCoverage
+      fetchDocumentCategoryWithSettings
     } = featureAutomationActions;
     setupTestReportOfCategory(options, ()=> {
       fetchDocumentCategoryWithSettings(options.categoryId);
-      fetchOverallBugStatistic();
-      fetchUtCoverage();
     });
   }
 
@@ -215,30 +207,41 @@ class UTDocTaskPage extends Component {
   refresh() {
     const {
       featureAutomationActions: {
-        fetchDocumentCategoriesWithSettings,
-        fetchOverallBugStatistic,
-        fetchUtCoverage
+        fetchDocumentCategoriesWithSettings
       }
     } = this.props;
     fetchDocumentCategoriesWithSettings();
-    fetchOverallBugStatistic();
-    fetchUtCoverage();
   }
 
-  renderOverallBugStatistic() {
-    const {
-      verified,
-      total
-    } = this.props.overallBugStatistic;
-    const { utCoverage } = this.props;
+  renderDisplayBugStatistic(displayRows) {
+    const totalCategoriesLength = displayRows.length || 1;
+    const CategoriesisCheckListDoneLength = displayRows.filter(item=>item.isCheckListDone).length;
+    const bugStatistic = displayRows
+      .map(item=>item.bugStatistic)
+      .reduce((accum, current)=>{
+        return current ? {
+          new:  accum.new + current.new ,
+          resolved:  accum.resolved + current.resolved ,
+          verified:  accum.verified + current.verified ,
+          reopened:  accum.reopened + current.reopened ,
+          total: accum.total + current.total
+        } : accum;
+      }, {
+        new: 0,
+        resolved: 0,
+        verified: 0,
+        reopened: 0,
+        total: 0
+      });
+
     return (
       <div className="pull-right" style={{lineHeight: '2.5em'}}>
         <label>
-          {`Coverage: ${((utCoverage.checked * 100 )/(utCoverage.total || 1)).toFixed(2)}%`}
+          {`Coverage: ${((CategoriesisCheckListDoneLength * 100 )/(totalCategoriesLength)).toFixed(2)}%`}
         </label>
         <span>&nbsp;&nbsp;&nbsp;</span>
         <label>
-          Bugs: <span style={{color: verified === total ? null : 'red'}}>{verified}</span>/{total}
+          Bugs: <span style={{color: bugStatistic.verified === bugStatistic.total ? null : 'red'}}>{bugStatistic.verified}</span>/{bugStatistic.total}
         </label>
         <span>&nbsp;&nbsp;&nbsp;</span>
       </div>
@@ -312,7 +315,7 @@ class UTDocTaskPage extends Component {
             onClick={::this.refresh}
             label="refresh"
           />
-          {this.renderOverallBugStatistic()}
+          {this.renderDisplayBugStatistic(displayRows)}
         </div>
         <br />
         <div style={{width: '100%', textAlign: 'center'}}>
@@ -372,26 +375,12 @@ UTDocTaskPage.propTypes = {
   currentUser: PropTypes.object,
   allUsers: PropTypes.array,
   isLoading: PropTypes.bool,
-  createdUtDocId: PropTypes.string,
-  overallBugStatistic: PropTypes.object,
-  utCoverage: PropTypes.object
+  createdUtDocId: PropTypes.string
 };
 
 UTDocTaskPage.defaultProps = {
   documentCategoriesWithSettings: {},
-  allUsers: [],
-  overallBugStatistic: {
-    total: 0,
-    new: 0,
-    reosolved: 0,
-    reopened: 0,
-    verified: 0
-  },
-  utCoverage: {
-    total: 0,
-    checked: 0,
-    unchecked: 0
-  }
+  allUsers: []
 };
 
 UTDocTaskPage.contextTypes = { history: PropTypes.any };
@@ -400,15 +389,11 @@ function mapStateToProps(state) {
   const {
     documentCategoriesWithSettings,
     createdUtDocId,
-    isLoading,
-    overallBugStatistic,
-    utCoverage
+    isLoading
   } = state.featureAutomation.toJS();
   const { currentUser } = state.app.toJS();
   const { allUsers } = state.documentation.toJS();
   return {
-    overallBugStatistic,
-    utCoverage,
     documentCategoriesWithSettings,
     createdUtDocId,
     isLoading,

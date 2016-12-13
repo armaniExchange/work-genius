@@ -230,75 +230,7 @@ let CategoryQuery = {
         return err;
       }
     }
-  },
-
-  'getUtCoverage': {
-    type: new GraphQLObjectType({
-      name: 'getUtCoverageType',
-      fields: () => ({
-        total: { type: GraphQLFloat },
-        checked: { type: GraphQLFloat },
-        unchecked: { type: GraphQLFloat }
-      })
-    }),
-    resolve: async () => {
-      let connection = null;
-      try {
-        connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-        const utCoverage = await r.db('work_genius').table('test_report_categories')
-          .group((item)=> item('isCheckListDone').eq(true))
-          .count()
-          .ungroup()
-          .map(item=>[r.branch(item('group').eq(true), 'checked', 'unchecked'), item('reduction')])
-          .coerceTo('object')
-          .run(connection);
-          await connection.close();
-          utCoverage.total = utCoverage.checked + utCoverage.unchecked;
-          return utCoverage;
-      } catch (err) {
-        await connection.close();
-        return err;
-      }
-    }
-  },
-
-  'getOverallBugStatistic': {
-    type: new GraphQLObjectType({
-      name: 'getBugStatisticType',
-      fields: () => ({
-        total: { type: GraphQLFloat },
-        new: { type: GraphQLFloat },
-        resolved: { type: GraphQLFloat },
-        reopened: { type: GraphQLFloat },
-        verified: { type: GraphQLFloat },
-      })
-    }),
-    resolve: async () => {
-      let connection = null;
-      try {
-        connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-        const bugStatistic = await r.db('work_genius').table('test_report_categories')
-          .filter(r.row('bugStatistic'))
-          .map(r.row('bugStatistic'))
-          .default([])
-          .reduce((left, right)=> {
-            return {
-              new: left('new').default(0).add(right('new').default(0)),
-              total: left('total').default(0).add(right('total').default(0)),
-              resolved: left('resolved').default(0).add(right('resolved').default(0)),
-              verified: left('verified').default(0).add(right('verified').default(0)),
-              reopened: left('reopened').default(0).add(right('reopened').default(0)),
-            };
-          })
-          .run(connection);
-          await connection.close();
-          return bugStatistic;
-      } catch (err) {
-        await connection.close();
-        return err;
-      }
-    }
-  },
+  }
 };
 
 export default CategoryQuery;
