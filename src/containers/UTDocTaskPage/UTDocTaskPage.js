@@ -105,6 +105,10 @@ class UTDocTaskPage extends Component {
     checkListId,
     categoryId,
   }) {
+    const answer = window.confirm('Do you want to delete to bug?');
+    if (!answer) {
+      return;
+    }
     const { articleActions: { deleteArticle } }= this.props;
     const { editingCheckList } = this.state;
     deleteArticle(bugArticle);
