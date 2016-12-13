@@ -130,6 +130,13 @@ export const updateBugStatistic = async (categoryId) => {
       .ungroup()
       .map(item=> [ item('group'), item('reduction')])
       .coerceTo('object')
+      .default({
+        new: 0,
+        resolved: 0,
+        verified: 0,
+        reopened: 0,
+        total: 0
+      })
       .run(connection);
     const bugStatistic = Object.assign({
       new: 0,
