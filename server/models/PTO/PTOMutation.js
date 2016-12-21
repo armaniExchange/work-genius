@@ -135,11 +135,13 @@ let TaskMutation = {
 					if (!result) {
 						mutationQuery = r.db('work_genius').table('overtime_summary').insert({
 							id: userId,
-							hours
+							hours,
+              logs: r.row('logs').default([]).append({type: APPROVED, hours, createdAt: new Date()})
 						});
 					} else {
 						mutationQuery = r.db('work_genius').table('overtime_summary').get(userId).update({
-							hours: result.hours + hours
+							hours: result.hours + hours,
+              logs: r.row('logs').default([]).append({type: APPROVED, hours, createdAt: new Date()})
 						});
 					}
 					await mutationQuery.run(connection);

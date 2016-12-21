@@ -46,13 +46,15 @@ export async function updatePTOStatus(id, status, hours){
 			if (!result) {
 				mutationQuery = r.db('work_genius').table('overtime_summary').insert({
 					id: userId,
-					hours: 0
+					hours: 0,
+          logs: [{type: 'init', hours: 0, createdAt: new Date()}]
 				});
 			} else {
 				let leftoverHours = result.hours - hours;
 				if (leftoverHours >= 0) {
 					mutationQuery = r.db('work_genius').table('overtime_summary').get(userId).update({
-						hours: leftoverHours
+						hours: leftoverHours,
+            logs: r.row('logs').default([]).append({type: APPROVED, hours: leftoverHours, createdAt: new Date()})
 					});
 				} else {
 					mutationQuery = r.db('work_genius').table('pto').get(id).update({
@@ -60,7 +62,8 @@ export async function updatePTOStatus(id, status, hours){
 					});
 					await mutationQuery.run(connection);
 					mutationQuery = r.db('work_genius').table('overtime_summary').get(userId).update({
-						hours: 0
+						hours: 0,
+            logs: r.row('logs').default([]).append({type: APPROVED, hours: 0, createdAt: new Date()})
 					});
 				}
 			}
@@ -69,7 +72,12 @@ export async function updatePTOStatus(id, status, hours){
 			let hoursToDeduct = result.changes[0].new_val.hoursToDeduct || 0;
 			userId = result.changes[0].new_val.applicant_id;
 			mutationQuery = r.db('work_genius').table('overtime_summary').get(userId).update({
-			    hours: r.row('hours').add(hours).sub(hoursToDeduct).default(0)
+			    hours: r.row('hours').add(hours).sub(hoursToDeduct).default(0),
+          logs: r.row('logs').default([]).append({
+            type: CANCEL_REQUEST_APPROVED,
+            hours: r.row('hours').add(hours).sub(hoursToDeduct).default(0),
+            createdAt: new Date()
+          })
 			});
 			await mutationQuery.run(connection);
 		}
