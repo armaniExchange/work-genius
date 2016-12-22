@@ -337,15 +337,19 @@ function getCachedDocumentCategoriesOrFetchIt(dispatch, config) {
   return new Promise((resolve, reject) => {
     const localDocumentCategoriesBody = localStorage['documentCategoriesBody'];
     if (localDocumentCategoriesBody) {
-      const parsedDocumentCategoriesBody = JSON.parse(localDocumentCategoriesBody);
-      if (!parsedDocumentCategoriesBody.enableForceUpdate &&
-        new Date().getTime() - parsedDocumentCategoriesBody.updatedAt < DOCUMENT_CATEGORY_UPDATE_TIME_MIN * 60 *1000) {
-        resolve(parsedDocumentCategoriesBody);
-      }
-      if (!parsedDocumentCategoriesBody.enableForceUpdate) {
-        // return a cached categories from document first
-        dispatch(fetchDocumentCategoriesSuccess(parsedDocumentCategoriesBody.data.getAllDocumentCategories));
-        dispatch(setLoadingState(false));
+      try {
+        const parsedDocumentCategoriesBody = JSON.parse(localDocumentCategoriesBody);
+        if (!parsedDocumentCategoriesBody.enableForceUpdate &&
+          new Date().getTime() - parsedDocumentCategoriesBody.updatedAt < DOCUMENT_CATEGORY_UPDATE_TIME_MIN * 60 *1000) {
+          resolve(parsedDocumentCategoriesBody);
+        }
+        if (!parsedDocumentCategoriesBody.enableForceUpdate) {
+          // return a cached categories from document first
+          dispatch(fetchDocumentCategoriesSuccess(parsedDocumentCategoriesBody.data.getAllDocumentCategories));
+          dispatch(setLoadingState(false));
+        }
+      } catch (e) {
+        localStorage.removeItem('documentCategoriesBody');
       }
     }
     // event use cached result, still fetch in background for next time
