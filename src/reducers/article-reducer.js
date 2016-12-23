@@ -26,6 +26,7 @@ const initialState = OrderedMap({
   bugStatus: 'new',
   createdAt: 0,
   updatedAt: 0,
+  isDeleted: false,
   isLoaded: false,
   isEditing: true,
   isDeleting: false,
@@ -47,7 +48,8 @@ const articleToState = (state, action) => {
     .set('bugStatus', action.bugStatus)
     .set('content', action.content)
     .set('createdAt', action.createdAt)
-    .set('updatedAt', action.updatedAt);
+    .set('updatedAt', action.updatedAt)
+    .set('isDeleted', action.isDeleted);
 };
 
 export default function articleReducer(state = initialState, action) {

@@ -4,7 +4,8 @@ import {
 	GraphQLString,
   GraphQLFloat,
 	GraphQLID,
-  GraphQLList
+  GraphQLList,
+  GraphQLBoolean
 } from 'graphql';
 import UserType from '../User/UserType';
 import CommentType from '../Comment/CommentType';
@@ -72,7 +73,8 @@ const ArticleType = new GraphQLObjectType({
     bugStatus: {
       type: GraphQLString,
       description: 'article\'s bug status'
-    }
+    },
+    isDeleted: { type: GraphQLBoolean },
   })
 });
 

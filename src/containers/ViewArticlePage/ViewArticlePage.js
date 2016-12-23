@@ -138,6 +138,7 @@ class ViewArticlePage extends Component {
       updatedAt,
       currentUser,
       documentType,
+      isDeleted
     } = this.props;
     const {
       editingBugStatus,
@@ -149,7 +150,7 @@ class ViewArticlePage extends Component {
       <section className="view-article-page">
         <Helmet title={documentTitle} />
         <Paper className="header" zDepth={1}>
-          <h3>{title}</h3>
+           <h3>{isDeleted ? <small>[DELETED]</small> : ''}{title}</h3>
           <hr />
           <ArticleMetadata
             author={author}
@@ -160,6 +161,7 @@ class ViewArticlePage extends Component {
           <ArticleTagList tags={tags} />
           <ArticleToolbar
             id={id}
+            hideDelete={isDeleted}
             onDelete={::this.onArticleDelete}
           />
         </Paper>
@@ -235,7 +237,8 @@ ViewArticlePage.propTypes = {
   isDeleting          : PropTypes.bool,
   history             : PropTypes.object,
   currentUser         : PropTypes.object,
-  articleActions      : PropTypes.object.isRequired
+  articleActions      : PropTypes.object.isRequired,
+  isDeleted           : PropTypes.bool,
 };
 
 ViewArticlePage.defaultProps = {
@@ -248,7 +251,8 @@ ViewArticlePage.defaultProps = {
   comments            : [],
   content             : '',
   createdAt           : 0,
-  updatedAt           : 0
+  updatedAt           : 0,
+  isDeleted           : false
 };
 
 function mapStateToProps(state) {

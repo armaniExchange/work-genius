@@ -69,8 +69,8 @@ const ArticleMutation = {
         connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 
         const {
-          filesId,
-          commentsId,
+          // filesId,
+          // commentsId,
           documentType,
           categoryId
         } = await r.db('work_genius')
@@ -79,18 +79,18 @@ const ArticleMutation = {
           .run(connection);
 
 
-        if (filesId) {
-          // TODO: rewrite this into parallel form
-          for (let i = 0, l = filesId.length; i < l ; i++) {
-            await deleteFile(filesId[i]);
-          }
-        }
+        // if (filesId) {
+        //   // TODO: rewrite this into parallel form
+        //   for (let i = 0, l = filesId.length; i < l ; i++) {
+        //     await deleteFile(filesId[i]);
+        //   }
+        // }
 
-        await r.db('work_genius')
-          .table('comments')
-          .getAll(r.args(commentsId || []))
-          .delete()
-          .run(connection);
+        // await r.db('work_genius')
+        //   .table('comments')
+        //   .getAll(r.args(commentsId || []))
+        //   .delete()
+        //   .run(connection);
 
         await r.branch(
           r.db('work_genius').table('articles').get(id),
@@ -107,7 +107,9 @@ const ArticleMutation = {
         await r.db('work_genius')
           .table('articles')
           .get(id)
-          .delete()
+          .update({
+            isDeleted: true
+          })
           .run(connection);
 
         if (documentType === 'bugs') {

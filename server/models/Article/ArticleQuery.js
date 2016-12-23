@@ -129,6 +129,7 @@ let ArticleQuery = {
 
         query = r.db('work_genius')
           .table('articles')
+          .filter(row=> row('isDeleted').eq(true).not().default(true))
           .filter(filterObj)
           .filter(filterFunc);
 

@@ -299,7 +299,8 @@ class EditArticlePage extends Component {
       params,
       files,
       documentCategories,
-      documentHotTags
+      documentHotTags,
+      isDeleted
     } = this.props;
 
     const editorStyle = {
@@ -311,7 +312,7 @@ class EditArticlePage extends Component {
 
     return (
       <section className="edit-article-page">
-        <h3>{pageTitle}</h3>
+        <h3>{isDeleted ? <small>[DELETED]</small> : ''}{pageTitle}</h3>
         <div className="article-editor-wrapper" style={editorStyle}>
           <ArticleEditor
             ref="articleEditor"
@@ -394,7 +395,8 @@ EditArticlePage.propTypes = {
   articleActions     : PropTypes.object.isRequired,
   documentActions    : PropTypes.object.isRequired,
   history            : PropTypes.object,
-  documentTemplate   : PropTypes.object
+  documentTemplate   : PropTypes.object,
+  isDeleted          : PropTypes.bool
 };
 
 EditArticlePage.defaultProps = {
@@ -408,7 +410,8 @@ EditArticlePage.defaultProps = {
   createdAt          : 0,
   updatedAt          : 0,
   documentCategories : {},
-  documentTemplate   : {}
+  documentTemplate   : {},
+  isDeleted          : false
 };
 
 function mapStateToProps(state) {

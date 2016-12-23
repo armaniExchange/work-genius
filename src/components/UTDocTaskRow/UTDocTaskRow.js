@@ -1,6 +1,7 @@
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import _ from 'lodash';
+import { Link } from 'react-router';
 import { TableRow, TableRowColumn } from 'material-ui/lib/table';
 import DatePicker from 'material-ui/lib/date-picker/date-picker';
 import SelectField from 'material-ui/lib/select-field';
@@ -132,14 +133,16 @@ class UTDocTaskRow extends Component {
   }
 
   renderBugs() {
-    const { bugStatistic } = this.props;
+    const { id, bugStatistic } = this.props;
     const pass = bugStatistic ? bugStatistic.verified || 0 : 0;
     const total = bugStatistic ? bugStatistic.total : 0;
     const style = pass !== total ? { color: 'red' } : {};
     return (
-      <strong style={style}>
-       {`${pass}/${total}`}
-      </strong>
+      <Link to={`/main/knowledge/document?documentType=bugs&categoryId=${id}`}>
+        <strong style={style}>
+         {`${pass}/${total}`}
+        </strong>
+      </Link>
     );
   }
 

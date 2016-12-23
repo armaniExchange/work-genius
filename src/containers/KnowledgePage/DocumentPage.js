@@ -46,7 +46,17 @@ class DocumentPage extends Component {
     fetchDocumentHotTags();
     fetchAllUsers();
     fetchAllMilestones();
-    this.queryArticles();
+
+    const {
+      documentType = '',
+      categoryId = ''
+    } = this.context.location.query;
+
+    this.props.documentActions.updateArticlesQuery({
+      documentType,
+      categoryId
+    });
+    setTimeout(() => this.queryArticles(), 0);
   }
 
   // fetch articles with query
@@ -294,6 +304,10 @@ DocumentPage.propTypes = {
   milestone               : PropTypes.string,
   owner                   : PropTypes.string,
   categoryId              : PropTypes.string,
+};
+
+DocumentPage.contextTypes = {
+    location: PropTypes.object
 };
 
 function mapStateToProps(state) {

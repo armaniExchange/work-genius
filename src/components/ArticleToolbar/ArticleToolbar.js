@@ -22,7 +22,7 @@ class ArticleToolbar extends Component {
   }
 
   render() {
-    const { id } = this.props;
+    const { id, hideDelete } = this.props;
     const buttonTextStyle = {
       top: 4,
       position: 'relative',
@@ -46,7 +46,10 @@ class ArticleToolbar extends Component {
           <Link to={`/main/knowledge/document/edit/${id}`}>
             <MenuItem primaryText="Edit" leftIcon={<i className="fa fa-edit" style={{fontSize: 24}}/>} />
           </Link>
-          <MenuItem primaryText="Delete" leftIcon={<i className="fa fa-trash" style={{fontSize: 24}}/>} onClick={::this.onDelete}/>
+          {
+            !hideDelete && <MenuItem primaryText="Delete" leftIcon={<i className="fa fa-trash" style={{fontSize: 24}}/>} onClick={::this.onDelete}/>
+          }
+
           <Divider />
           <a href={`${SERVER_EXPORT_URL}/document/${id}?token=${localStorage.token}`} download>
             <MenuItem primaryText="Article PDF" leftIcon={<i className="fa fa-download" style={{fontSize: 24}}/>}/>
@@ -63,13 +66,15 @@ class ArticleToolbar extends Component {
 
 ArticleToolbar.propTypes = {
   id              : PropTypes.string,
-  onDelete        : PropTypes.func
+  onDelete        : PropTypes.func,
+  hideDelete      : PropTypes.bool
 };
 
 
 ArticleToolbar.defaultProps = {
   id              : '',
-  index           : null
+  index           : null,
+  hideDelete      : false
 };
 
 export default ArticleToolbar;
