@@ -26,9 +26,9 @@ class UTDocTaskRow extends Component {
   updateStateFromProps(props) {
     return {
       editingCodeETA: props.codeETA,
-      editingDocETA: props.docETA,
+      // editingDocETA: props.docETA,
       editingCodeStatus: props.codeStatus,
-      editingDocStatus: props.docStatus,
+      // editingDocStatus: props.docStatus,
     };
   }
 
@@ -79,11 +79,11 @@ class UTDocTaskRow extends Component {
     this.save({codeETA: editingCodeETA});
   }
 
-  onDocETAChange(event, eta) {
-    const editingDocETA = eta.getTime();
-    this.setState({ editingDocETA });
-    this.save({docETA: editingDocETA});
-  }
+  // onDocETAChange(event, eta) {
+  //   const editingDocETA = eta.getTime();
+  //   this.setState({ editingDocETA });
+  //   this.save({docETA: editingDocETA});
+  // }
 
   onCodeStatusChange(event, index, value) {
     const editingCodeStatus = value;
@@ -112,11 +112,10 @@ class UTDocTaskRow extends Component {
   // }
 
   getOverallStatus(){
-    const {
-      editingDocStatus,
-      editingCodeStatus
-    } = this.state;
-    if (editingDocStatus === 'DONE' && editingCodeStatus === 'DONE') {
+    const { editingCodeStatus } = this.state;
+    const { isCheckListDone } = this.props;
+
+    if (isCheckListDone && editingCodeStatus === 'DONE') {
      return <strong className="text-success">FINISHED</strong>;
     } else {
       return <strong className="text-primary">ASSIGNED</strong>;
