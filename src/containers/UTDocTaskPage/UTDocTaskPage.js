@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow } from 'material-ui/lib/table';
 import CircularProgress from 'material-ui/lib/circular-progress';
 import RaisedButton from 'material-ui/lib/raised-button';
+import Toggle from 'material-ui/lib/toggle';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -31,6 +32,7 @@ class UTDocTaskPage extends Component {
       filterOwner: privilege <= 5 ? id : null,
       filterRelease: 'root > 4.1',
       filterReviewer: null,
+      filterShowEmptyOwner: true,
       showCheckListDialog: false,
       editingCategoryId: null,
       editingFullpathWithOutRoot: '',
@@ -173,12 +175,14 @@ class UTDocTaskPage extends Component {
     const {
       filterRelease,
       filterOwner,
-      filterReviewer
+      filterReviewer,
+      filterShowEmptyOwner
     } = this.state;
     let result = true;
     result = result && (filterRelease ? item.fullpath && item.fullpath.includes(filterRelease) : true);
     result = result && (filterOwner ? item.owners && item.owners[0] === filterOwner : true);
     result = result && (filterReviewer ? item.owners && item.owners.slice(1).includes(filterReviewer): true);
+    result = result && (filterShowEmptyOwner ? true : item.owners.length > 0);
     return result;
   }
 
@@ -206,6 +210,10 @@ class UTDocTaskPage extends Component {
       categoryId,
       checkList: data
     });
+  }
+
+  onShowEmptyOwnerToggle() {
+    this.setState({filterShowEmptyOwner: !this.state.filterShowEmptyOwner});
   }
 
   refresh() {
@@ -264,6 +272,7 @@ class UTDocTaskPage extends Component {
       filterOwner,
       filterReviewer,
       showCheckListDialog,
+      filterShowEmptyOwner,
       editingCategoryId,
       editingCheckList,
       editingFullpathWithOutRoot,
@@ -313,6 +322,23 @@ class UTDocTaskPage extends Component {
               return { title: item.name, value: item.id};
             })}
           />
+          {
+            !filterOwner && (
+              <Toggle
+                label="Show Empty Owner"
+                defaultToggled={true}
+                toggle={filterShowEmptyOwner}
+                onToggle={::this.onShowEmptyOwnerToggle}
+                style={{
+                  display: 'inline-block',
+                  verticalAlign: 'middle',
+                  width: 180,
+                  marginTop: 5,
+                  marginRight: 10
+                }}
+              />
+            )
+          }
           <RaisedButton
             secondary={true}
             style={{float: 'right'}}
