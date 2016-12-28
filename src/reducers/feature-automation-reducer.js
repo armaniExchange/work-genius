@@ -178,7 +178,8 @@ export default function featureAutomationReducer(state = initialState, action) {
         .set('flatDocumentCategoriesWithSettings', action.data)
         .set('isLoading', false);
     case actionTypes.FETCH_DOCUMENT_CATEGORY_WITH_SETTINGS_SUCCESS:
-      const flatDocumentCategoriesWithSettings = state.get('flatDocumentCategoriesWithSettings');
+      const flatDocumentCategoriesWithSettings = state.get('flatDocumentCategoriesWithSettings')
+        .map( item => item.id === action.data.id ? action.data : item );
       return state.set('flatDocumentCategoriesWithSettings', flatDocumentCategoriesWithSettings)
         .set('documentCategoriesWithSettings', fromJS(transformToTree(flatDocumentCategoriesWithSettings)));
     case actionTypes.FETCH_TEST_REPORT_CREATED_TIME_LIST_SUCCESS:
