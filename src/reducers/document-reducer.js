@@ -22,6 +22,7 @@ function transformToTree(dataArr) {
     let tree = generateTree(rest, root, { path: '' }, (node, parent) => {
       return {
         path: node.name === 'root' ? 'root' : `${parent.path}/${node.name}`,
+        production: parent.path.split('/')[1] || node.name, // should load this field, from server, if empty assign it
         isCollapsed: node.name === 'root' ? false : true
       };
     });

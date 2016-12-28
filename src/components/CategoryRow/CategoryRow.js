@@ -62,25 +62,27 @@ class CategoryRow extends Component {
   }
 
   saveSubcategory(event) {
-    const { id, onSave } = this.props;
+    const { id, production, onSave } = this.props;
     const { editingChildName, isEditingChildFeature } = this.state;
     event.preventDefault();
     this.setState({isCreatingChild: false});
     onSave({
       parentId: id,
+      production,
       name: editingChildName,
-      isFeature: isEditingChildFeature
+      isFeature: isEditingChildFeature,
     });
   }
 
   save(event) {
-    const { id, parentId, onSave } = this.props;
+    const { id, parentId, production, onSave } = this.props;
     const { editingName, isEditingFeature } = this.state;
     event.preventDefault();
     this.setState({isEditing: false});
     onSave({
       id,
       parentId,
+      production,
       name: editingName,
       isFeature: isEditingFeature
     });
@@ -235,6 +237,7 @@ class CategoryRow extends Component {
 
 CategoryRow.propTypes = {
   id             : PropTypes.string,
+  production     : PropTypes.string,
   parentId       : PropTypes.string,
   name           : PropTypes.string,
   isFeature      : PropTypes.bool,

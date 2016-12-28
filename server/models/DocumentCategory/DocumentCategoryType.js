@@ -35,6 +35,10 @@ const DOCUMENT_CATEGORY_TYPE = new GraphQLObjectType({
       'isFeature' : {
         type: GraphQLBoolean,
         description: 'Category is a feature, for automation usage'
+      },
+      'production': {
+        type: GraphQLString,
+        description: 'Category\'s production name'
       }
     })
 });

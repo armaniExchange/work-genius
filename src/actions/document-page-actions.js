@@ -383,7 +383,8 @@ export function fetchDocumentCategories() {
           parentId,
           name,
           articlesCount,
-          isFeature
+          isFeature,
+          production
         }
       }`,
       headers: {
