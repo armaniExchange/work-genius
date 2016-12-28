@@ -19,6 +19,7 @@ import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT, MAILER_ADDRESS, MAIL_CC_LIST } from '../../constants/configurations.js';
 
+import TestReportCategoryType from './TestReportCategoryType';
 import parseMarkdown from '../../libraries/parseMarkdown';
 import { TestReportCategoryCheckItemInputType } from './TestReportCategoryCheckItemType';
 
@@ -169,10 +170,17 @@ export const addTestReportHandler = async (req, res) => {
     const { type } = req.params;
     const reports = req.body.reports || [];
     const createdAt = req.body.createdAt || new Date().getTime();
-    const product = req.body.product || '';
+    const production = req.body.production || null;
     const build = req.body.build || '';
     const framework = req.body.framework || null;
     const hasMoreReports = req.body.hasMoreReports || false;
+
+    if (!production) {
+      throw {
+        status: 403,
+        msg: `Error! Api changes. Please specifiy "production" field`
+      };
+    }
 
     const data = reports.map((report)=> {
       const {
@@ -193,7 +201,7 @@ export const addTestReportHandler = async (req, res) => {
         type,
         meta,
         createdAt,
-        product,
+        production,
         build
       }, PathOrApiProperty, framework ? { framework } : null);
     });
@@ -220,6 +228,9 @@ export const addTestReportHandler = async (req, res) => {
         .group('right')
         .map(function(row){return row('left');})
         .ungroup()
+        .eqJoin(r.row('group')('id'), r.db('work_genius').table('document_categories'))
+        .filter(r.row('right')('production').eq(production))
+        .map(r.row('left'))
         .map(function(item){
           return item('group').merge({
             [testReportType]: item('group')(testReportType).default([]).add(item('reduction'))
@@ -275,7 +286,7 @@ export const addTestReportHandler = async (req, res) => {
 
 const mutation = {
   setupTestReportOfCategory: {
-    type: GraphQLString,
+    type: TestReportCategoryType,
     description: 'setup test report related in category',
     args: {
       categoryId: {
@@ -348,11 +359,14 @@ const mutation = {
       }
 
       try {
-        await r.db('work_genius')
+        const result = await r.db('work_genius')
           .table('test_report_categories')
-          .insert(data, { conflict: 'update' })
+          .insert(data, { conflict: 'update', returnChanges: true })
           .run(connection);
         await connection.close();
+        if (result && result.changes.length > 0) {
+          return result.changes[0].new_val;
+        }
       } catch (err) {
         await connection.close();
         return `Error: ${err}`;

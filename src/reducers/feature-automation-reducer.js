@@ -134,7 +134,8 @@ function transformToTree(dataArr) {
 const initialState = Map({
   documentCategoriesWithReportTest: Map({}),
   documentCategoriesWithSettings: Map({}),
-  plainDocumentCategoriesWithSettings: List.of(),
+  flatDocumentCategoriesWithSettings: [],
+  flatDocumentCategoriesWithReportTest: [],
   unitTestCreatedTimeList: List.of(),
   end2endTestCreatedTimeList: List.of(),
   axapiTestCreatedTimeList: List.of(),
@@ -162,18 +163,24 @@ export default function featureAutomationReducer(state = initialState, action) {
       return state.set('isLoading', false)
         .set('createdUtDocId', action.id);
     case actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_REPORT_TEST_SUCCESS:
-      return state.set('documentCategoriesWithReportTest', fromJS(transformToTree(action.data)))
+      return state.set('flatDocumentCategoriesWithReportTest', action.data)
+        .set('documentCategoriesWithReportTest', fromJS(transformToTree(action.data)))
+        .set('isLoading', false);
+    case actionTypes.SETUP_TEST_REPORT_OF_CATEGORY_SUCCESS:
+      if (!action.data) { return state; }
+      const flatDocumentCategoriesWithReportTest = state.get('flatDocumentCategoriesWithReportTest')
+        .map( item => item.id === action.data.id ?  Object.assign({}, item, action.data) : item );
+      return state.set('flatDocumentCategoriesWithReportTest', flatDocumentCategoriesWithReportTest)
+        .set('documentCategoriesWithReportTest', fromJS(transformToTree(flatDocumentCategoriesWithReportTest)))
         .set('isLoading', false);
     case actionTypes.FETCH_DOCUMENT_CATEGORIES_WITH_SETTINGS_SUCCESS:
       return state.set('documentCategoriesWithSettings', fromJS(transformToTree(action.data)))
-        .set('plainDocumentCategoriesWithSettings', action.data)
+        .set('flatDocumentCategoriesWithSettings', action.data)
         .set('isLoading', false);
-
     case actionTypes.FETCH_DOCUMENT_CATEGORY_WITH_SETTINGS_SUCCESS:
-      const plainDocumentCategoriesWithSettings = state.get('plainDocumentCategoriesWithSettings')
-        .map( item => item.id === action.data.id ? action.data : item );
-      return state.set('plainDocumentCategoriesWithSettings', plainDocumentCategoriesWithSettings)
-        .set('documentCategoriesWithSettings', fromJS(transformToTree(plainDocumentCategoriesWithSettings)));
+      const flatDocumentCategoriesWithSettings = state.get('flatDocumentCategoriesWithSettings');
+      return state.set('flatDocumentCategoriesWithSettings', flatDocumentCategoriesWithSettings)
+        .set('documentCategoriesWithSettings', fromJS(transformToTree(flatDocumentCategoriesWithSettings)));
     case actionTypes.FETCH_TEST_REPORT_CREATED_TIME_LIST_SUCCESS:
       return state.set('unitTestCreatedTimeList', List(action.unitTestCreatedTimeList))
         .set('end2endTestCreatedTimeList', List(action.end2endTestCreatedTimeList))

@@ -233,9 +233,10 @@ export function fetchDocumentCategoryWithSettings(categoryId) {
 }
 
 
-export function setupTestReportOfCategorySuccess() {
+export function setupTestReportOfCategorySuccess(data) {
   return {
-    type: actionTypes.SETUP_TEST_REPORT_OF_CATEGORY_SUCCESS
+    type: actionTypes.SETUP_TEST_REPORT_OF_CATEGORY_SUCCESS,
+    data
   };
 }
 
@@ -280,7 +281,16 @@ export function setupTestReportOfCategory({
         setupTestReportOfCategory (
           categoryId: "${categoryId}",
           ${queryString}
-        )
+        ) {
+          id,
+          path,
+          axapis,
+          owners,
+          difficulty,
+          axapiTest { isSuccess, errorMessage, api },
+          unitTest { isSuccess, errorMessage, path, framework },
+          end2endTest { isSuccess, errorMessage, path  }
+        }
       }`,
       headers: {
         'Content-Type': 'application/graphql',
@@ -294,11 +304,11 @@ export function setupTestReportOfCategory({
         }
         return res.json();
       })
-      .then(() => {
+      .then((body) => {
         if (successAction) {
           dispatch(successAction);
         }
-        dispatch(setupTestReportOfCategorySuccess());
+        dispatch(setupTestReportOfCategorySuccess(body.data.setupTestReportOfCategory));
       })
       .catch((error) => {
         dispatch(setupTestReportOfCategoryFail());
