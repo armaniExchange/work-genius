@@ -134,10 +134,12 @@ class UTDocTaskRow extends Component {
 
   renderBugs() {
     const { id, bugStatistic } = this.props;
-    const pass = bugStatistic ? bugStatistic.verified || 0 : 0;
+    const pass = bugStatistic ? bugStatistic.verified + bugStatistic.wontfix || 0 : 0;
     const total = bugStatistic ? bugStatistic.total : 0;
     const style = pass !== total ? { color: 'red' } : {};
-    return (
+    return total === 0 || pass === total ? (
+        <strong>0</strong>
+      ):(
       <Link to={`/main/knowledge/document?documentType=bugs&categoryId=${id}`}>
         <strong style={style}>
          {`${pass}/${total}`}
@@ -269,6 +271,7 @@ UTDocTaskRow.defaultProps = {
     new: 0,
     resolved: 0,
     verified: 0,
+    wontfix: 0,
     reopened: 0,
     total: 0
   }

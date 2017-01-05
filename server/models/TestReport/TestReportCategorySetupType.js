@@ -70,6 +70,7 @@ const TestReportCategorySetupType = new GraphQLObjectType({
           new: { type: GraphQLFloat},
           resolved: { type: GraphQLFloat},
           verified: { type: GraphQLFloat},
+          wontfix: { type: GraphQLFloat},
           reopened: { type: GraphQLFloat},
           total: { type: GraphQLFloat}
         })

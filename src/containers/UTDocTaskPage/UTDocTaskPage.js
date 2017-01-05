@@ -235,6 +235,7 @@ class UTDocTaskPage extends Component {
           new:  accum.new + current.new ,
           resolved:  accum.resolved + current.resolved ,
           verified:  accum.verified + current.verified ,
+          wontfix:  accum.wontfix + current.wontfix ,
           reopened:  accum.reopened + current.reopened ,
           total: accum.total + current.total
         } : accum;
@@ -242,6 +243,7 @@ class UTDocTaskPage extends Component {
         new: 0,
         resolved: 0,
         verified: 0,
+        wontfix: 0,
         reopened: 0,
         total: 0
       });
@@ -253,7 +255,10 @@ class UTDocTaskPage extends Component {
         </label>
         <span>&nbsp;&nbsp;&nbsp;</span>
         <label>
-          Bugs: <span style={{color: bugStatistic.verified === bugStatistic.total ? null : 'red'}}>{bugStatistic.verified}</span>/{bugStatistic.total}
+          Bugs:
+          <span style={{color: bugStatistic.verified + bugStatistic.wontfix === bugStatistic.total ? null : 'red'}}>
+            {bugStatistic.verified+bugStatistic.wontfix}
+          </span>/{bugStatistic.total}
         </label>
         <span>&nbsp;&nbsp;&nbsp;</span>
       </div>

@@ -100,7 +100,7 @@ const CommentMutation = {
               to: [authorEmail, ...(commentedArticle.reportTo.map((emailName) => `${emailName}@a10networks.com`))],
               subject: `[KB New Comment] ${commentedArticle.title} `,
               html: parseMarkdown(generateEmailMarkdown({
-                to: commentedArticle.author.name,
+                to: commentedArticle && commentedArticle.author && commentedArticle.author.name,
                 beginning: `${user.name} commented your document on KB.`,
                 url: getArticleLink(articleId),
                 title: commentedArticle.title,

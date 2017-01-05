@@ -182,6 +182,7 @@ class ViewArticlePage extends Component {
                 <MenuItem value="new" primaryText="new" />
                 <MenuItem value="resolved" primaryText="resolved" />
                 <MenuItem value="verified" primaryText="verified" />
+                <MenuItem value="wontfix" primaryText="wontfix" />
                 <MenuItem value="reopened" primaryText="reopened" />
               </SelectField>
             </Paper>
@@ -194,7 +195,7 @@ class ViewArticlePage extends Component {
             return (
               <CommentListItem
                 {...comment}
-                key={comment.id}
+                key={comment && comment.id}
                 currentUser={currentUser}
                 onDeleteClick={::this.onCommentDelete}
                 onSubmit={::this.onCommentUpdate}/>

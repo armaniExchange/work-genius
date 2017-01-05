@@ -135,6 +135,7 @@ export const updateBugStatistic = async (categoryId) => {
         new: 0,
         resolved: 0,
         verified: 0,
+        wontfix: 0,
         reopened: 0,
         total: 0
       })
@@ -143,10 +144,11 @@ export const updateBugStatistic = async (categoryId) => {
       new: 0,
       resolved: 0,
       verified: 0,
+      wontfix: 0,
       reopened: 0
     }, bugStatisticDetailFromDb);
     const bugStatisticWithTotal = Object.assign(bugStatistic, {
-      total: bugStatistic.new + bugStatistic.resolved+ bugStatistic.verified + bugStatistic.reopened
+      total: bugStatistic.new + bugStatistic.resolved+ bugStatistic.verified + bugStatistic.wontfix + bugStatistic.reopened
     });
 
     await r.db('work_genius')

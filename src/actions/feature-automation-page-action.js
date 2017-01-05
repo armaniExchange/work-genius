@@ -125,6 +125,7 @@ export function fetchDocumentCategoriesWithSettings() {
             new,
             resolved,
             verified,
+            wontfix,
             reopened,
             total
           }
@@ -202,6 +203,7 @@ export function fetchDocumentCategoryWithSettings(categoryId) {
             new,
             resolved,
             verified,
+            wontfix,
             reopened,
             total
           }

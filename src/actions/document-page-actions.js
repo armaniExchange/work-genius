@@ -51,6 +51,8 @@ export function fetchArticles(query = {}) {
             content,
             tags,
             categoryId,
+            documentType,
+            bugStatus,
             author {
               id,
               name

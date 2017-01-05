@@ -35,6 +35,8 @@ class ArticleListItem extends Component {
       author,
       tags,
       files,
+      documentType,
+      bugStatus,
       comments,
       updatedAt,
       onDelete,
@@ -77,6 +79,15 @@ class ArticleListItem extends Component {
           value={activeTag}
           onChange={onActiveTagChange}
         />
+        {
+          documentType === 'bugs' && bugStatus && (
+            <span style={{
+              padding: 5,
+              background: '#3f51b5',
+              color: 'white'
+            }}>{bugStatus}</span>
+          )
+        }
       </Paper>
     );
   }
@@ -88,6 +99,8 @@ ArticleListItem.propTypes = {
   title           : PropTypes.string,
   author          : PropTypes.shape({id: PropTypes.string, name: PropTypes.string}),
   tags            : PropTypes.arrayOf(PropTypes.string),
+  documentType    : PropTypes.string,
+  bugStatus       : PropTypes.string,
   files           : PropTypes.array,
   comments        : PropTypes.array,
   content         : PropTypes.string,
