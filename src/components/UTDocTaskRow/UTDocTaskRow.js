@@ -138,7 +138,7 @@ class UTDocTaskRow extends Component {
     const total = bugStatistic ? bugStatistic.total : 0;
     const style = pass !== total ? { color: 'red' } : {};
     return total === 0 || pass === total ? (
-        <strong>0</strong>
+        <strong>{ total === 0 ? 0 : `${pass}/${total}` }</strong>
       ):(
       <Link to={`/main/knowledge/document?documentType=bugs&categoryId=${id}`}>
         <strong style={style}>

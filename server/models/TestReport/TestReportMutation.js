@@ -126,6 +126,7 @@ export const updateBugStatistic = async (categoryId) => {
       .filter(r.row('bugArticle'))
       .eqJoin('bugArticle', r.db('work_genius').table('articles'))
       .zip()
+      .filter(row=> row('isDeleted').eq(true).not().default(true))
       .group('bugStatus')
       .count()
       .ungroup()
