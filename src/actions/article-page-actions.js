@@ -37,7 +37,8 @@ function _fetchArticle(id) {
         categoryId,
         author {
           id,
-          name
+          name,
+          email
         },
         comments {
           id,
@@ -45,7 +46,8 @@ function _fetchArticle(id) {
           createdAt,
           author {
             id,
-            name
+            name,
+            email
           },
         },
         files {
