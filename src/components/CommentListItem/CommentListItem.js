@@ -75,7 +75,7 @@ class CommentListItem extends Component {
         <Paper className="message">
           <HighlightMarkdown source={content} />
           {
-            isAuthorCurrentUser && isHovered && (
+            (!author || isAuthorCurrentUser) && isHovered && (
               <div className="toolbar">
                 <FlatButton
                   label="Edit"

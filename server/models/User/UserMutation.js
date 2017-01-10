@@ -83,6 +83,50 @@ let findUserByDBPromise = function(username, password) {
     });
 };
 
+let getExistingUserId = function(email){
+  return new Promise((resolve, reject)=>{
+    let connection = r.connect({ host: DB_HOST, port: DB_PORT });
+    let query = r.db(DB_NAME).table('users').filter({'email': email}).getField('id');
+
+    connection.then((conn) => {
+        query.run(conn, (error, cursor) => {
+            if (error) throw error;
+
+            cursor.next(async (err, result) => {
+                if (err) {
+                    if (((err.name === 'ReqlDriverError') && err.message === 'No more rows in the cursor.')) {
+                        resolve({noRecord: true});
+                    } else {
+                        reject(err);
+                    }
+
+                } else {
+                    resolve({userId: result});
+                }
+            });
+        });
+    });
+  });
+};
+
+let getPrivilege = function(username) {
+    let privilege = 0;
+
+    switch(username) {
+        case 'zli':
+        case 'stsai':
+        case 'chuang':
+        case 'kjia':
+            privilege = 10;
+            break;
+        default:
+            privilege = 5;
+    }
+
+    return privilege;
+};
+
+
 let findUserByLdapPromise = function(ad, username) {
     return new Promise((resolve, reject) => {
         let query = {
@@ -96,18 +140,20 @@ let findUserByLdapPromise = function(ad, username) {
             }
 
             if (results) {
-
-                let user = new User({
-                    'id': results['uSNCreated'],
-                    'name': results['displayName'],
-                    'nickname': results['givenName'],
-                    'email': results['mail'],
-                    'title': results['title'],
-                    'privilege': getPrivilege(results['sAMAccountName']),
-                    'username': results['sAMAccountName']
+              getExistingUserId(results['mail'])
+                .then(function(dbResult){
+                    const id = dbResult.noRecord ? results['uSNCreated'] : dbResult.userId;
+                    let user = new User({
+                        'id': id,
+                        'name': results['displayName'],
+                        'nickname': results['givenName'],
+                        'email': results['mail'],
+                        'title': results['title'],
+                        'privilege': getPrivilege(results['sAMAccountName']),
+                        'username': results['sAMAccountName']
+                    });
+                    resolve(user);
                 });
-
-                resolve(user);
             }
         });
     });
@@ -140,22 +186,6 @@ let loginPromise = function(username, password) {
 };
 
 
-let getPrivilege = function(username) {
-    let privilege = 0;
-
-    switch(username) {
-        case 'zli':
-        case 'stsai':
-        case 'chuang':
-        case 'kjia':
-            privilege = 10;
-            break;
-        default:
-            privilege = 5;
-    }
-
-    return privilege;
-};
 
 let UserMutation = {
     'updateUserPrivilege': {
