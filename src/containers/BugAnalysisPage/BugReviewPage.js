@@ -144,7 +144,9 @@ class BugReviewPage extends Component {
             resolvedReasonTypes,
             resolvedReasonTypeChange,
             optionsReviewTags,
+            optionsIntroduced,
             changeReviewTagOptions,
+            changeIntroducedTagOptions,
             optionsMenus,
             changeMenuTagOptions,
             changeReviewText
@@ -206,7 +208,9 @@ class BugReviewPage extends Component {
                     resolvedReasonTypes={resolvedReasonTypes}
                     resolvedReasonTypeChange={resolvedReasonTypeChange}
                     optionsReviewTags={optionsReviewTags}
+                    optionsIntroduced={optionsIntroduced}
                     changeReviewTagOptions={changeReviewTagOptions}
+                    changeIntroducedTagOptions={changeIntroducedTagOptions}
                     optionsMenus={optionsMenus}
                     changeMenuTagOptions={changeMenuTagOptions}
                     changeReviewText={changeReviewText}
@@ -236,6 +240,7 @@ BugReviewPage.propTypes = {
     allProjectVersions:        PropTypes.array,
     allUsers:                  PropTypes.array,
     resolvedReasonTypes:       PropTypes.array,
+    optionsIntroduced:         PropTypes.array,
     optionsReviewTags:         PropTypes.array,
     optionsMenus:              PropTypes.array,
     currentSelectUser:         PropTypes.object,
@@ -246,7 +251,8 @@ BugReviewPage.propTypes = {
     resolvedReasonTypeChange:  PropTypes.func,
     changeReviewTagOptions:    PropTypes.func,
     changeMenuTagOptions:      PropTypes.func,
-    changeReviewText:          PropTypes.func
+    changeReviewText:          PropTypes.func,
+    changeIntroducedTagOptions:PropTypes.func
 };
 
 BugReviewPage.defaultProps = {

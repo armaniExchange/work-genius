@@ -85,6 +85,7 @@ BugReviewTable.propTypes = {
     titleKeyMap          : PropTypes.array.isRequired,
     resolvedReasonTypes  : PropTypes.array.isRequired,
     optionsReviewTags    : PropTypes.array.isRequired,
+    optionsIntroduced    : PropTypes.array.isRequired,
     optionsMenus         : PropTypes.array.isRequired,
     enableSort           : PropTypes.bool,
     sortBy               : PropTypes.object,
@@ -94,7 +95,8 @@ BugReviewTable.propTypes = {
     resolvedReasonTypeChange: PropTypes.func,
     changeReviewTagOptions: PropTypes.func,
     changeMenuTagOptions: PropTypes.func,
-    changeReviewText:   PropTypes.func
+    changeReviewText:   PropTypes.func,
+    changeIntroducedTagOptions: PropTypes.func
 };
 
 BugReviewTable.defaultProps = {

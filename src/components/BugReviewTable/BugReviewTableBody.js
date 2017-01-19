@@ -12,7 +12,10 @@ class BugReviewTableBody extends Component {
 
     render () {
         const {
-            data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, optionsMenus, changeReviewText, resolvedReasonTypeChange, changeReviewTagOptions, changeMenuTagOptions
+            data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, optionsMenus, changeReviewText,
+            optionsIntroduced,
+            resolvedReasonTypeChange, changeReviewTagOptions, changeMenuTagOptions,
+            changeIntroducedTagOptions
         } = this.props;
 
         var titleLength = 0;
@@ -48,6 +51,10 @@ class BugReviewTableBody extends Component {
                     var menuChange = function (type) {
                         let arr = type.split(',');
                         changeMenuTagOptions(review, arr);
+                    };
+                    var introducedChange = function (type) {
+                        let arr = type.split(',');
+                        changeIntroducedTagOptions(review, arr);
                     };
                     var spanClassName = ' ';
                     var textareaClassName = 'mdl-textfield__input element-hide';
@@ -109,6 +116,22 @@ class BugReviewTableBody extends Component {
                                     value={menu}
                                     options={optionsMenus}
                                     onChange={menuChange}
+                                />
+                            </Td>
+                        );
+                    case 'introduced_by':
+                        let introduced = review[header['key']];
+                        introduced = (introduced) ? introduced.join(',') : introduced;
+                        return (
+                            <Td key={cellIndex}
+                                isAlignLeft={true}
+                                colSpan={header['colspan']}
+                            >
+                                <Select
+                                    value={introduced}
+                                    name="menu_tag"
+                                    options={optionsIntroduced}
+                                    onChange={introducedChange}
                                 />
                             </Td>
                         );
@@ -182,6 +205,7 @@ BugReviewTableBody.propTypes = {
     titleKeyMap          : PropTypes.array.isRequired,
     resolvedReasonTypes  : PropTypes.array.isRequired,
     optionsReviewTags    : PropTypes.array.isRequired,
+    optionsIntroduced    : PropTypes.array.isRequired,
     optionsMenus         : PropTypes.array.isRequired,
     enableSort           : PropTypes.bool,
     sortBy               : PropTypes.object,
@@ -191,7 +215,8 @@ BugReviewTableBody.propTypes = {
     resolvedReasonTypeChange: PropTypes.func,
     changeReviewTagOptions: PropTypes.func,
     changeMenuTagOptions: PropTypes.func,
-    changeReviewText:   PropTypes.func
+    changeReviewText:   PropTypes.func,
+    changeIntroducedTagOptions: PropTypes.func
 };
 
 export default BugReviewTableBody;

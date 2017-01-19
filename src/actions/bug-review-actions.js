@@ -149,6 +149,15 @@ export function resolvedReasonTypeChange(review, reasonType){
   };
 };
 
+export function changeIntroducedTagOptions(review, reasonType){
+  review['introduced_by'] = reasonType;
+
+  return (dispatch) => {
+    updateBug(dispatch, review);
+  };
+  // console.log(review, reasonType);
+};
+
 export function changeReviewTagOptions(review, reviewTagList){
   // reviewTagList.map((tag) => {
   //   createBugReviewTag(tag);
@@ -348,4 +357,3 @@ export function fetchBugReviewPageData(pager, version, userAlisa, menu, rootCaus
         // dispatch(fetchBugReviewApplicationsSuccess(tmpData));
     };
 };
-

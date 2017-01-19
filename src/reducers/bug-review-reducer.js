@@ -15,20 +15,14 @@ const initialState = Map({
     bugReviewTitleKeyMap: List.of(
         Map({ title: 'Bug ID', key: 'id', colspan: 1}),
         Map({ title: 'Title', key: 'title', colspan: 3}),
-        Map({ title: 'Root Cause', key: 'resolved_type', colspan: 3}),
-        Map({ title: 'Prevent Tags', key: 'tags', colspan: 3}),
+        Map({ title: 'Root Cause', key: 'resolved_type', colspan: 2}),
+        Map({ title: 'Prevent Tags', key: 'tags', colspan: 2}),
         Map({ title: 'Belongs To Menu', key: 'menu', colspan: 2}),
         Map({ title: 'Owner', key: 'assigned_to', colspan: 1}),
+        Map({ title: 'Introduced By', key: 'introduced_by', colspan: 2}),
         Map({ title: 'Resolved Status', key: 'resolved_status', colspan: 2}),
         Map({ title: 'Root Cause Detail', key: 'review', colspan: 2})
     ),
-    // allProjectVersions: List.of('4.1.0', '3.2.1', '3.2.0'),
-    // allProjectVersions: List.of(
-    //     Map({title: '4.1.1', value: '4.1.1'}),
-    //     Map({title: '4.1.0', value: '4.1.0'}),
-    //     Map({title: '3.2.0', value: '3.2.0'}),
-    //     Map({title: '3.2.1', value: '3.2.1'})
-    // ),
     allProjectVersions: List.of(),
     currentProjectVersion: '',
     currentSelectPreventTag: '',
@@ -56,6 +50,13 @@ const initialState = Map({
     optionsReviewTags: List.of(
         Map({ value: 'test_more', label: 'Test More'}),
         Map({ value: 'deep_test', label: 'Deep Test'})
+    ),
+    optionsIntroduced: List.of(
+      Map({ value: 'a', label: 'A'}),
+      Map({ value: 'b', label: 'B'}),
+      Map({ value: 'c', label: 'C'}),
+      Map({ value: 'd', label: 'D'}),
+      Map({ value: 'e', label: 'E'})
     ),
     optionsMenus: List.of(
         Map({ value: 'Dashboard', label: 'Dashboard'}),
