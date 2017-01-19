@@ -52,11 +52,10 @@ const initialState = Map({
         Map({ value: 'deep_test', label: 'Deep Test'})
     ),
     optionsIntroduced: List.of(
-      Map({ value: 'a', label: 'A'}),
-      Map({ value: 'b', label: 'B'}),
-      Map({ value: 'c', label: 'C'}),
-      Map({ value: 'd', label: 'D'}),
-      Map({ value: 'e', label: 'E'})
+      Map({ value: 'New feature', label: 'New feature'}),
+      Map({ value: 'Your own module', label: 'Your own module'}),
+      Map({ value: 'Help other team member', label: 'Help other team member'}),
+      Map({ value: 'Enhancement bug/won’t fix/reproducible', label: 'Enhancement bug/won’t fix/reproducible'})
     ),
     optionsMenus: List.of(
         Map({ value: 'Dashboard', label: 'Dashboard'}),

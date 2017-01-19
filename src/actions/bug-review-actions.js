@@ -221,7 +221,8 @@ export function fetchBugReviewApplications(pager, version, userAlisa, menu, root
                         tags,
                         title,
                         resolution,
-                        total_row
+                        total_row,
+                        introduced_by
                     }
             }`,
             headers: {
