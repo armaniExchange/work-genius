@@ -8,6 +8,7 @@ const initialState = Map({
     tagsTableData: List.of(),
     ownerTableData: List.of(),
     ownerTotalData: List.of(),
+    introducedTableData: List.of(),
     rootCauseTableTitleKeyMap: List.of(
         Map({ title: 'Root Cause', key: 'name', colspan: 1}),
         Map({ title: 'Num', key: 'number', colspan: 1}),
@@ -26,6 +27,15 @@ const initialState = Map({
         Map({ title: 'Requirement Change', key: 'item4', colspan: 1}),
         Map({ title: 'Browser Related', key: 'item5', colspan: 1}),
         Map({ title: 'Others', key: 'item6', colspan: 1})
+    ),
+    introducedTableTitleKeyMap: List.of(
+        Map({ title: 'Owner', key: 'name', colspan: 1}),
+        Map({ title: 'New Feature', key: 'item1', colspan: 1}),
+        Map({ title: 'Your Own Module', key: 'item2', colspan: 1}),
+        Map({ title: 'Help Other Team Memeber', key: 'item3', colspan: 1}),
+        Map({ title: 'Enhancement', key: 'item4', colspan: 1}),
+        Map({ title: 'Seniority', key: 'seniority', colspan: 1}),
+        Map({ title: 'Score', key: 'score', colspan: 1})
     ),
     // allProjectVersions: List.of('4.1.0', '3.2.1', '3.2.0'),
     allProjectVersions: List.of(),
@@ -80,6 +90,11 @@ function setOwnerTableData(state, data) {
         .set(`ownerTableData`, formatedData);
 }
 
+function setIntroducedTableData(state, data) {
+  let formatedData = formatResponse(data);
+  return state.set('introducedTableData', formatedData);
+}
+
 function setReleaseState(state, data) {
     var releases = [];
     data.map(release => {
@@ -99,6 +114,9 @@ export default function bugReportReducer(state = initialState, action) {
             return nextState;
         case actionTypes.FETCH_BUG_REPORT_OWNER_SUCCESS:
             nextState = setOwnerTableData(state, action.data);
+            return nextState;
+        case actionTypes.FETCH_BUG_REPORT_INTRODUCED_SUCCESS:
+            nextState = setIntroducedTableData(state, action.data);
             return nextState;
         case actionTypes.FETCH_BUG_REPORT_OWNER_TOTAL_SUCCESS:
             nextState = setOwnerTotalData(state, action.data);

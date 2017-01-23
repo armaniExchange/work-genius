@@ -15,6 +15,13 @@ export function fetchBugReportRootCauseSuccess(data){
     };
 };
 
+export function fetechBugReportIntroducedSuccess(data) {
+  return {
+    type: actionTypes.FETCH_BUG_REPORT_INTRODUCED_SUCCESS,
+    data
+  };
+}
+
 export function fetchBugReportTagsSuccess(data){
     return {
         type: actionTypes.FETCH_BUG_REPORT_TAGS_SUCCESS,
@@ -168,6 +175,41 @@ export function fetchBugReportOwnerTotal(version) {
     };
 };
 
+
+export function fetchBugReportIntroduced() {
+    return (dispatch) => {
+        let config = {
+            method: 'POST',
+            body: `{
+                getBugPerformance{
+                    name,
+                    item1,
+                    item2,
+                    item3,
+                    item4,
+                    item5,
+                    seniority,
+                    score
+                }
+            }`,
+            headers: {
+                'Content-Type': 'application/graphql',
+                'x-access-token': localStorage.token
+            }
+        };
+
+        return fetch(SERVER_API_URL, config)
+            .then((res) => res.json())
+            .then((body) => {
+                console.log(body.data);
+                dispatch(fetechBugReportIntroducedSuccess(body.data.getBugPerformance));
+            })
+            .catch((err) => {
+                throw new Error(err);
+            });
+    };
+};
+
 export function fetchBugReportPageData(version) {
     version = version ? version : '4.1.0';
     return (dispatch) => {
@@ -177,7 +219,8 @@ export function fetchBugReportPageData(version) {
             dispatch(fetchBugReportTags(version)),
             dispatch(fetchBugReportOwner(version)),
             dispatch(fetchBugReportOwnerTotal(version)),
-            dispatch(fetchReleaseList(fetchStateRelease))
+            dispatch(fetchReleaseList(fetchStateRelease)),
+            dispatch(fetchBugReportIntroduced())
         ]).then(
             () => {
                 dispatch(setLoadingState(false));
@@ -189,4 +232,3 @@ export function fetchBugReportPageData(version) {
         );
     };
 };
-
