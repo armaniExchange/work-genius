@@ -345,7 +345,6 @@ let BugStats = {
 				let perfSummary = await query.run(connection);
 
 				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID)))
-				.filter({"id" : "250232"})
 				.filter(function(user){
 					return user('groups').default([]).contains(GUI_GROUP);
 				})
@@ -370,12 +369,14 @@ let BugStats = {
 					item.item1 = item.item1 || 0;
 					item.item2 = item.item2 || 0;
 					item.item3 = item.item3 || 0;
+					item.item4 = item.item4 || 0;
+					item.item5 = item.item5 || 0;
 
 					// (a+b) === 0
 					if( (item.item1 + item.item2) === 0){
 						item["score"] = 0;
 					} else{
-						item["score"] = item.item3/(item.item1 + item.item2) * item["seniority"];
+						item["score"] = Math.floor(item.item3 * 100/(item.item1 + item.item2) * item["seniority"]) / 100;
 					}
 					result.push(item);
 				}
