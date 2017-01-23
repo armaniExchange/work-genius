@@ -12,6 +12,7 @@ import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT , ADMIN_ID,TESTER_ID } from '../../constants/configurations.js';
 import { GUI_GROUP } from '../../constants/group-constant.js';
+const MGR_EMAIL = ["chuang@a10networks.com"];
 
 let BugStats = {
 	'getRootCauseSummary': {
@@ -352,6 +353,9 @@ let BugStats = {
 
 				let userList = await query.run(connection);
 				for(let user of userList){
+					if(MGR_EMAIL.indexOf(user.email) > -1){
+						continue;
+					}
 					let item = { "name": user.name , "seniority" : 1.0};
 					for(let perf of perfSummary){
 						if(perf.group && perf.group.length > 0 && perf.group[0] === user.email.replace('@a10networks.com','').toLowerCase()){
