@@ -10,6 +10,7 @@ import * as mainActions from '../../actions/main-actions';
 
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 import BugReportTable from '../../components/BugReportTable/BugReportTable.js';
+import BugIntroducedTable from '../../components/BugIntroducedTable/BugIntroducedTable.js';
 import ReactHighcharts from 'react-highcharts';
 
 import Breadcrumb from '../../components/A10-UI/Breadcrumb';
@@ -131,9 +132,11 @@ class BugReportPage extends Component {
             tagsTableData,
             ownerTableData,
             ownerTotalData,
+            introducedTableData,
             rootCauseTableTitleKeyMap,
             tagsTableTitleKeyMap,
             ownerTableTitleKeyMap,
+            introducedTableTitleKeyMap,
             allProjectVersions,
         } = this.props;
 
@@ -214,6 +217,7 @@ class BugReportPage extends Component {
                 <div className="col-md-12 col-lg-12">
                     <br/>
                 </div>
+
                 <div className="col-md-12 col-lg-12">
                   <div className="col-md-12 col-lg-12">
                     <label>Owner Summary:&nbsp;</label>
@@ -226,6 +230,22 @@ class BugReportPage extends Component {
                   </div>
                   <div className="col-md-12 col-lg-4">
                     <ReactHighcharts config={HIGHCHARTS_DEFAULT_CONFIG_OWNER} />
+                  </div>
+                </div>
+                <div className="col-md-12 col-lg-12">
+                    <br/>
+                </div>
+                <div className="col-md-12 col-lg-12">
+                  <div className="col-md-12 col-lg-12">
+                    <label>Bug Introduced:&nbsp;</label>
+                  </div>
+                  <div className="col-md-12 col-lg-8">
+                      <BugIntroducedTable
+                          data={introducedTableData}
+                          titleKeyMap={introducedTableTitleKeyMap}
+                      />
+                  </div>
+                  <div className="col-md-12 col-lg-4">
                   </div>
                 </div>
                 <div className="col-md-12 col-lg-12">
@@ -242,9 +262,11 @@ BugReportPage.propTypes = {
     tagsTableData:             PropTypes.array,
     ownerTotalData:            PropTypes.array,
     ownerTableData:            PropTypes.array,
+    introducedTableData:       PropTypes.array,
     rootCauseTableTitleKeyMap: PropTypes.array,
     tagsTableTitleKeyMap:      PropTypes.array,
     ownerTableTitleKeyMap:     PropTypes.array,
+    introducedTableTitleKeyMap:PropTypes.array,
     allProjectVersions:        PropTypes.array,
     fetchBugReportPageData:    PropTypes.func
 };
