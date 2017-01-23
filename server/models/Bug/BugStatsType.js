@@ -2,7 +2,8 @@
 import {
 	GraphQLObjectType,
 	GraphQLString,
-    GraphQLInt
+    GraphQLInt,
+    GraphQLFloat
 } from 'graphql';
 
 const BUG_STATS_TYPE = new GraphQLObjectType({
@@ -68,6 +69,14 @@ const BUG_STATS_TYPE = new GraphQLObjectType({
         'item12': {
             type: GraphQLInt,
             description: 'stats item 12'
+        },
+        'score':{
+            type: GraphQLFloat,
+            description: 'score'
+        },
+        'seniority':{
+            type: GraphQLFloat,
+            description: 'seniority'
         }
     })
 });

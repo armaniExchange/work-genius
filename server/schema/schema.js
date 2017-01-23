@@ -81,6 +81,7 @@ const schema = new GraphQLSchema({
       getOwnerSummary                        : BugStats.getOwnerSummary,
       getTagSummary                          : BugStats.getBugSummary,
       getOwnerRootCauseSummary               : BugStats.getOwnerRootCauseSummary,
+      getBugPerformance                      : BugStats.getBugPerformance,
       //worklog
       getWorkLogByEmployeeId                 : WorkLogQuery.getWorkLogByEmployeeId,
       getWorkLogList                         : WorkLogQuery.getWorkLogList,

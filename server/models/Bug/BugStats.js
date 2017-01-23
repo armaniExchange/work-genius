@@ -307,6 +307,85 @@ let BugStats = {
 			}
 			return result;
 		}
+	},
+	'getBugPerformance': {
+		type: new GraphQLList(BUG_STATS_TYPE),
+		description: 'Get bugs performance',
+        args: {
+			
+		},
+		resolve: async (root, { }) => {
+			let connection = null,
+			    result = [],
+			    labelList = [
+					"4.1.1",
+					"4.1.1-p1",
+					"4.1.1-p2",
+					"4.1.0-p5",
+					"4.1.0-p6",
+					"4.1.0-p7",
+					"4.1.0-p8"
+				],
+				introducedByList = [
+					"New feature",   //a
+					"Your own module",  //b
+					'Help other team member',  //c 
+					"Enhancement bug/won’t fix/reproducible",
+					null
+				],
+				nullIndex = String(introducedByList.indexOf(null) + 1),
+			    filter = bug => {
+			    	return r.expr(labelList).contains(bug('label'));
+			    },
+				query = null;
+
+			try {
+				query = r.db('work_genius').table('bugs_review').filter(filter).group('assigned_to', 'introduced_by').count();
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				let perfSummary = await query.run(connection);
+
+				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID)))
+				.filter({"id" : "250232"})
+				.filter(function(user){
+					return user('groups').default([]).contains(GUI_GROUP);
+				})
+				.pluck('name','email').coerceTo('array');
+
+				let userList = await query.run(connection);
+				for(let user of userList){
+					let item = { "name": user.name , "seniority" : 1.0};
+					for(let perf of perfSummary){
+						if(perf.group && perf.group.length > 0 && perf.group[0] === user.email.replace('@a10networks.com','').toLowerCase()){
+							if(perf.group.length > 1 ){
+								if(perf.group[1] !== null && perf.group[1].length > 0){
+									let introduced_by = perf.group[1][0];
+									item["item" + String(introducedByList.indexOf(introduced_by)+1)] = perf.reduction || 0;
+								}else{
+									item["item" + nullIndex] = perf.reduction || 0;
+								}	
+							}
+						}
+					}
+					//cal method c/(a+b)e
+					item.item1 = item.item1 || 0;
+					item.item2 = item.item2 || 0;
+					item.item3 = item.item3 || 0;
+
+					// (a+b) === 0
+					if( (item.item1 + item.item2) === 0){
+						item["score"] = 0;
+					} else{
+						item["score"] = item.item3/(item.item1 + item.item2) * item["seniority"];
+					}
+					result.push(item);
+				}
+
+				await connection.close();
+			} catch (err) {
+				return err;
+			}
+			return result;
+		}
 	}
 };
 
