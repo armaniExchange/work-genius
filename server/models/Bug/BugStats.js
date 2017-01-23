@@ -12,7 +12,7 @@ import r from 'rethinkdb';
 // Constants
 import { DB_HOST, DB_PORT , ADMIN_ID,TESTER_ID } from '../../constants/configurations.js';
 import { GUI_GROUP } from '../../constants/group-constant.js';
-const MGR_EMAIL = ["chuang@a10networks.com"];
+const MGR_EMAIL = ["chuang@a10networks.com", "ZLi@a10networks.com", "PChuang@a10networks.com"];
 
 let BugStats = {
 	'getRootCauseSummary': {
