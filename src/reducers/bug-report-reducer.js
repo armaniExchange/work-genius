@@ -32,8 +32,8 @@ const initialState = Map({
         Map({ title: 'Owner', key: 'name', colspan: 1}),
         Map({ title: 'New Feature', key: 'item1', colspan: 1}),
         Map({ title: 'Your Own Module', key: 'item2', colspan: 1}),
-        Map({ title: 'Help Other Team Memeber', key: 'item3', colspan: 1}),
-        Map({ title: 'Enhancement', key: 'item4', colspan: 1}),
+        Map({ title: 'Help Other', key: 'item3', colspan: 1}),
+        Map({ title: 'Enhancement/won’t fix/reproducible', key: 'item4', colspan: 1}),
         Map({ title: 'Seniority', key: 'seniority', colspan: 1}),
         Map({ title: 'Score', key: 'score', colspan: 1})
     ),
