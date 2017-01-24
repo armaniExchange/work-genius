@@ -23,15 +23,11 @@ let BugMutation = {
 				query = null;
 
 			try {
-				console.log('data:');
-				console.log(data);
 				let bug = JSON.parse(data);
 				//total_row is used for pagination, don't need to be insert into db
 				if('total_row' in bug){
 					delete bug['total_row'];
 				}
-				console.log('bug:');
-				console.log(bug);
 				let id = null;
 				if(!!bug.id){
 					id = bug.id;
@@ -39,6 +35,18 @@ let BugMutation = {
 				}
 				if(!id){
 					return 'Fail to update bug!';
+				}
+				
+				try{
+					if(('owner' in bug) && typeof bug.owner === 'object') {
+						if(bug.owner.length > 0){
+							bug.owner = bug.owner[0];
+						}else{
+							bug.owner = "";
+						}
+					}
+				} catch(err){
+					bug.owner = "";
 				}
 				query = r.db('work_genius').table('bugs_review').get(id).update(bug);
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
