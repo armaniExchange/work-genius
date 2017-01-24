@@ -20,7 +20,7 @@ const initialState = Map({
         Map({ title: 'Percentage', key: 'percentage', colspan: 1})
     ),
     ownerTableTitleKeyMap: List.of(
-        Map({ title: 'Owner', key: 'name', colspan: 1}),
+        Map({ title: 'Fixer', key: 'name', colspan: 2}),
         Map({ title: 'GUI Code Issue', key: 'item1', colspan: 1}),
         Map({ title: 'AXAPI', key: 'item2', colspan: 1}),
         Map({ title: 'Look and Feel', key: 'item3', colspan: 1}),
@@ -29,7 +29,7 @@ const initialState = Map({
         Map({ title: 'Others', key: 'item6', colspan: 1})
     ),
     introducedTableTitleKeyMap: List.of(
-        Map({ title: 'Owner', key: 'name', colspan: 1}),
+        Map({ title: 'Fixer', key: 'name', colspan: 2}),
         Map({ title: 'New Feature', key: 'item1', colspan: 1}),
         Map({ title: 'Your Own Module', key: 'item2', colspan: 1}),
         Map({ title: 'Help Other', key: 'item3', colspan: 1}),

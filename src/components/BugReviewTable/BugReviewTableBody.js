@@ -14,8 +14,10 @@ class BugReviewTableBody extends Component {
         const {
             data, titleKeyMap, resolvedReasonTypes, optionsReviewTags, optionsMenus, changeReviewText,
             optionsIntroduced,
+            allUsers,
             resolvedReasonTypeChange, changeReviewTagOptions, changeMenuTagOptions,
-            changeIntroducedTagOptions
+            changeIntroducedTagOptions,
+            changeOwnerUserOptions
         } = this.props;
 
         var titleLength = 0;
@@ -55,6 +57,10 @@ class BugReviewTableBody extends Component {
                     var introducedChange = function (type) {
                         let arr = type.split(',');
                         changeIntroducedTagOptions(review, arr);
+                    };
+                    var changeOwner = function (type) {
+                        let arr = type.split(',');
+                        changeOwnerUserOptions(review, arr);
                     };
                     var spanClassName = ' ';
                     var textareaClassName = 'mdl-textfield__input element-hide';
@@ -174,6 +180,23 @@ class BugReviewTableBody extends Component {
                             className={'pto-table__body--empty'}
                             colSpan={header['colspan']}>{review[header['key']]}</Td>
                         );
+                    case 'owner':
+                        let ownerName = review[header['key']];
+                        return (
+                          <Td key={cellIndex}
+                              isAlignLeft={true}
+                              colSpan={header['colspan']}
+                          >
+                            <Select
+                                value={ownerName}
+                                name="owner"
+                                options={allUsers.map((user) => {
+                                  return {label: user.title, value: user.value};
+                                })}
+                                onChange={changeOwner}
+                            />
+                          </Td>
+                        );
                     default:
                         return (
                             <Td key={cellIndex}
@@ -209,6 +232,7 @@ BugReviewTableBody.propTypes = {
     optionsMenus         : PropTypes.array.isRequired,
     enableSort           : PropTypes.bool,
     sortBy               : PropTypes.object,
+    allUsers             : PropTypes.array,
     onSortHandler        : PropTypes.func,
     onStatusUpdateHandler: PropTypes.func,
     onDeleteHandler      : PropTypes.func,
@@ -216,7 +240,8 @@ BugReviewTableBody.propTypes = {
     changeReviewTagOptions: PropTypes.func,
     changeMenuTagOptions: PropTypes.func,
     changeReviewText:   PropTypes.func,
-    changeIntroducedTagOptions: PropTypes.func
+    changeIntroducedTagOptions: PropTypes.func,
+    changeOwnerUserOptions : PropTypes.func
 };
 
 export default BugReviewTableBody;
