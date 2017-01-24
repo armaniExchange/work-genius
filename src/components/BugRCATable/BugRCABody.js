@@ -20,7 +20,7 @@ class BugRCABody extends Component {
     }
 
     changeInput(counter, event) {
-      counter.bug_count = event.target.value;
+      counter.bug_count = +event.target.value;
 
       const { data } = this.state;
       data.map((con) => {
