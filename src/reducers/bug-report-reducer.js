@@ -4,10 +4,12 @@ import Immutable, { Map, List, OrderedMap} from 'immutable';
 import actionTypes from '../constants/action-types';
 
 const initialState = Map({
+    currentUser: Map(),
     rootCauseTableData: List.of(),
     tagsTableData: List.of(),
     ownerTableData: List.of(),
     ownerTotalData: List.of(),
+    rcaTableData: List.of(),
     introducedTableData: List.of(),
     rootCauseTableTitleKeyMap: List.of(
         Map({ title: 'Root Cause', key: 'name', colspan: 1}),
@@ -36,6 +38,10 @@ const initialState = Map({
         Map({ title: 'Enhancement/won’t fix/unreproducible', key: 'item4', colspan: 1}),
         Map({ title: 'Seniority', key: 'seniority', colspan: 1}),
         Map({ title: 'Score', key: 'score', colspan: 1})
+    ),
+    rcaTableTitleKeyMap: List.of(
+        Map({ title: 'Owner', key: 'employee_name', colspan: 1}),
+        Map({ title: 'Count', key: 'bug_count', colspan: 1})
     ),
     // allProjectVersions: List.of('4.1.0', '3.2.1', '3.2.0'),
     allProjectVersions: List.of(),
@@ -90,6 +96,12 @@ function setOwnerTableData(state, data) {
         .set(`ownerTableData`, formatedData);
 }
 
+function setRCATableData(state, data) {
+    let formatedData = formatResponse(data);
+    return state
+      .set('rcaTableData', formatedData);
+}
+
 function setIntroducedTableData(state, data) {
   let formatedData = formatResponse(data);
   return state.set('introducedTableData', formatedData);
@@ -114,6 +126,12 @@ export default function bugReportReducer(state = initialState, action) {
             return nextState;
         case actionTypes.FETCH_BUG_REPORT_OWNER_SUCCESS:
             nextState = setOwnerTableData(state, action.data);
+            return nextState;
+        case actionTypes.FETCH_BUG_RCA_SUCCESS:
+            nextState = setRCATableData(state, action.data);
+            return nextState;
+        case actionTypes.FETCH_BUG_REPORT_CURRENT_USER:
+            nextState = state.set('currentUser', action.data);
             return nextState;
         case actionTypes.FETCH_BUG_REPORT_INTRODUCED_SUCCESS:
             nextState = setIntroducedTableData(state, action.data);

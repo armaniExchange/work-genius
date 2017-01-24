@@ -6,7 +6,7 @@ import classnames from 'classnames';
 
 import Table from '../A10-UI/Table/Table';
 import Th from '../A10-UI/Table/Th';
-import BugIntroducedBody from './BugIntroducedBody';
+import BugRACBody from './BugRCABody';
 
 let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort}) => {
     let headerHtml = titleKeyMap.map((headerObj, index) => {
@@ -56,7 +56,7 @@ let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort}) => {
     );
 };
 
-class BugIntroducedTable extends Component {
+class BugRACTable extends Component {
     constructor(props) {
         super(props);
         this._onSortHandler = ::this._onSortHandler;
@@ -70,24 +70,26 @@ class BugIntroducedTable extends Component {
             <div className="bug-report-table">
                 <Table className="bug-report-table">
                     <TableHeaders {...this.props} />
-                    <BugIntroducedBody {...this.props} />
+                    <BugRACBody {...this.props} />
                 </Table>
             </div>
         );
     }
 }
 
-BugIntroducedTable.propTypes = {
+BugRACTable.propTypes = {
+    currentUser          : PropTypes.object,
     data                 : PropTypes.array.isRequired,
     titleKeyMap          : PropTypes.array.isRequired,
     enableSort           : PropTypes.bool,
     sortBy               : PropTypes.object,
+    bugRCAUpdate         : PropTypes.func,
     onSortHandler        : PropTypes.func,
     onStatusUpdateHandler: PropTypes.func,
     onDeleteHandler      : PropTypes.func,
 };
 
-BugIntroducedTable.defaultProps = {
+BugRACTable.defaultProps = {
     enableSort: false,
     sortBy: {
         category: '',
@@ -98,4 +100,4 @@ BugIntroducedTable.defaultProps = {
     onDeleteHandler      : () => {}
 };
 
-export default BugIntroducedTable;
+export default BugRACTable;

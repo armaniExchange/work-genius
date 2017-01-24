@@ -36,13 +36,6 @@ export function fetchPreventTagsOptionsSuccess(data){
     };
 }
 
-export function fetchBugOwnerOptionsSuccess(data) {
-    return {
-        type: actionTypes.FETCH_BUG_REVIEW_OWNER_OPTIONS,
-        data
-    };
-}
-
 export function fetchStateRelease(data) {
     return {
         type: actionTypes.FETCH_BUG_REVIEW_RELEASE,
