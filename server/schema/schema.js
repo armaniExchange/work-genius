@@ -40,6 +40,8 @@ import DeviceQuery from '../models/Devices/DeviceQuery';
 import DeviceMutation from '../models/Devices/DeviceMutation';
 import ReleaseMutation from '../models/Release/ReleaseMutation.js';
 import ReleaseQuery from '../models/Release/ReleaseQuery.js';
+import RCABugQuery from '../models/RCABugs/RCABugQuery.js';
+import RCABugMutation from '../models/RCABugs/RCABugMutation.js'
 
 const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -101,9 +103,11 @@ const schema = new GraphQLSchema({
       // versionInfo                            : DeviceQuery.versionInfo,
       allDevices                             : DeviceQuery.allDevices,
       // releaseInfo                            : DeviceQuery.releaseInfo
-      getAllGroups             : GroupQuery.getAllGroups,
+      getAllGroups                           : GroupQuery.getAllGroups,
       //release
-      getReleaseList           : ReleaseQuery.getReleaseList
+      getReleaseList                         : ReleaseQuery.getReleaseList,
+      //rca bug count
+      getRCABugCount                         : RCABugQuery.getRCABugCount
     }
   }),
   mutation: new GraphQLObjectType({
@@ -166,7 +170,10 @@ const schema = new GraphQLSchema({
 
       // system upgrade
       // upgrade                         : DeviceMutation.upgrade,
-      updateDevice                    : DeviceMutation.updateDevice
+      updateDevice                    : DeviceMutation.updateDevice,
+
+      //rca bug count
+      updateRCABugCount               : RCABugMutation.updateRCABugCount
     }
   })
 });
