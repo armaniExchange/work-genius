@@ -56,7 +56,7 @@ const initialState = Map({
       Map({ value: 'New feature', label: 'New feature'}),
       Map({ value: 'Your own module', label: 'Your own module'}),
       Map({ value: 'Help other team member', label: 'Help other team member'}),
-      Map({ value: 'Enhancement bug/won’t fix/reproducible', label: 'Enhancement bug/won’t fix/reproducible'})
+      Map({ value: 'Enhancement bug/won’t fix/unreproducible', label: 'Enhancement bug/won’t fix/unreproducible'})
     ),
     optionsMenus: List.of(
         Map({ value: 'Dashboard', label: 'Dashboard'}),

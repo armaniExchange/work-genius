@@ -220,7 +220,7 @@ class BugReportPage extends Component {
 
                 <div className="col-md-12 col-lg-12">
                   <div className="col-md-12 col-lg-12">
-                    <label>Owner Summary:&nbsp;</label>
+                    <label>Fixer Summary:&nbsp;</label>
                   </div>
                   <div className="col-md-12 col-lg-8">
                       <BugReportTable

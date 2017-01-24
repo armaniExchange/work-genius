@@ -33,7 +33,7 @@ const initialState = Map({
         Map({ title: 'New Feature', key: 'item1', colspan: 1}),
         Map({ title: 'Your Own Module', key: 'item2', colspan: 1}),
         Map({ title: 'Help Other', key: 'item3', colspan: 1}),
-        Map({ title: 'Enhancement/won’t fix/reproducible', key: 'item4', colspan: 1}),
+        Map({ title: 'Enhancement/won’t fix/unreproducible', key: 'item4', colspan: 1}),
         Map({ title: 'Seniority', key: 'seniority', colspan: 1}),
         Map({ title: 'Score', key: 'score', colspan: 1})
     ),

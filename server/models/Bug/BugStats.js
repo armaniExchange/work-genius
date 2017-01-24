@@ -331,7 +331,7 @@ let BugStats = {
 					"New feature",   //a
 					"Your own module",  //b
 					'Help other team member',  //c 
-					"Enhancement bug/won’t fix/reproducible",
+					"Enhancement bug/won’t fix/unreproducible",
 					null
 				],
 				nullIndex = String(introducedByList.indexOf(null) + 1),
