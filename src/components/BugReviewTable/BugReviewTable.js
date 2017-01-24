@@ -89,6 +89,7 @@ BugReviewTable.propTypes = {
     optionsMenus         : PropTypes.array.isRequired,
     enableSort           : PropTypes.bool,
     sortBy               : PropTypes.object,
+    allUsers             : PropTypes.array,
     onSortHandler        : PropTypes.func,
     onStatusUpdateHandler: PropTypes.func,
     onDeleteHandler      : PropTypes.func,
@@ -96,7 +97,8 @@ BugReviewTable.propTypes = {
     changeReviewTagOptions: PropTypes.func,
     changeMenuTagOptions: PropTypes.func,
     changeReviewText:   PropTypes.func,
-    changeIntroducedTagOptions: PropTypes.func
+    changeIntroducedTagOptions: PropTypes.func,
+    changeOwnerUserOptions: PropTypes.func
 };
 
 BugReviewTable.defaultProps = {

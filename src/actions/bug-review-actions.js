@@ -36,6 +36,13 @@ export function fetchPreventTagsOptionsSuccess(data){
     };
 }
 
+export function fetchBugOwnerOptionsSuccess(data) {
+    return {
+        type: actionTypes.FETCH_BUG_REVIEW_OWNER_OPTIONS,
+        data
+    };
+}
+
 export function fetchStateRelease(data) {
     return {
         type: actionTypes.FETCH_BUG_REVIEW_RELEASE,
@@ -151,12 +158,23 @@ export function resolvedReasonTypeChange(review, reasonType){
 
 export function changeIntroducedTagOptions(review, reasonType){
   review['introduced_by'] = reasonType;
-
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    if (reasonType) {
+      if (reasonType.indexOf('New feature') !== -1 || reasonType.indexOf('Your own module') !== -1) {
+        review['owner'] = getState().app.toJS().currentUser.email.split('@')[0];
+      }
+    }
     updateBug(dispatch, review);
   };
   // console.log(review, reasonType);
 };
+
+export function changeOwnerUserOptions(review, reasonType) {
+  review['owner'] = reasonType;
+  return (dispatch) => {
+    updateBug(dispatch, review);
+  };
+}
 
 export function changeReviewTagOptions(review, reviewTagList){
   // reviewTagList.map((tag) => {
@@ -222,7 +240,8 @@ export function fetchBugReviewApplications(pager, version, userAlisa, menu, root
                         title,
                         resolution,
                         total_row,
-                        introduced_by
+                        introduced_by,
+                        owner
                     }
             }`,
             headers: {

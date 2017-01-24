@@ -147,6 +147,7 @@ class BugReviewPage extends Component {
             optionsIntroduced,
             changeReviewTagOptions,
             changeIntroducedTagOptions,
+            changeOwnerUserOptions,
             optionsMenus,
             changeMenuTagOptions,
             changeReviewText
@@ -166,7 +167,7 @@ class BugReviewPage extends Component {
                     aryOptionConfig={allProjectVersions}
                 />
                 {/* Owner */}
-                <label>&nbsp;&nbsp;Owner:&nbsp;</label>
+                <label>&nbsp;&nbsp;Fixer:&nbsp;</label>
                 <DropDownList
                     isNeedAll={true}
                     title={currentSelectUser.title}
@@ -205,11 +206,13 @@ class BugReviewPage extends Component {
                 />
                 <BugReviewTable
                     data={applications}
+                    allUsers={allUsers}
                     resolvedReasonTypes={resolvedReasonTypes}
                     resolvedReasonTypeChange={resolvedReasonTypeChange}
                     optionsReviewTags={optionsReviewTags}
                     optionsIntroduced={optionsIntroduced}
                     changeReviewTagOptions={changeReviewTagOptions}
+                    changeOwnerUserOptions={changeOwnerUserOptions}
                     changeIntroducedTagOptions={changeIntroducedTagOptions}
                     optionsMenus={optionsMenus}
                     changeMenuTagOptions={changeMenuTagOptions}
@@ -249,6 +252,7 @@ BugReviewPage.propTypes = {
     fetchPreventTagsOptions:   PropTypes.func,
     fetchAllUsers:             PropTypes.func,
     resolvedReasonTypeChange:  PropTypes.func,
+    changeOwnerUserOptions:    PropTypes.func,
     changeReviewTagOptions:    PropTypes.func,
     changeMenuTagOptions:      PropTypes.func,
     changeReviewText:          PropTypes.func,
