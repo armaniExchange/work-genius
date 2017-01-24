@@ -63,6 +63,10 @@ const BUG_TYPE = new GraphQLObjectType({
 		'introduced_by': {
 			type: new GraphQLList(GraphQLString),
             description: 'menu'
+		},
+		'owner': {
+			type: GraphQLString,
+			description: "Bug module owner"
 		}
     })
 });
