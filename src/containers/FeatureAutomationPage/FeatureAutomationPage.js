@@ -39,7 +39,10 @@ class FeatureAutomationPage extends Component {
       fetchTestReportAxapiSuggestions,
       filterTestReport
     } = this.props.featureAutomationActions;
-    const { fetchAllUsers } = this.props.documentActions;
+    const {
+      // fetchAllUsers,
+      fetchAllUsersNotOnlyGuiTeam
+    } = this.props.documentActions;
     const { currentUser } = this.props;
     const { privilege, id } = currentUser;
 
@@ -49,7 +52,8 @@ class FeatureAutomationPage extends Component {
     fetchTestReportAxapiSuggestions();
     fetchTestReportCreatedTimeList();
     fetchDocumentCategoriesWithReport();
-    fetchAllUsers();
+    // fetchAllUsers();
+    fetchAllUsersNotOnlyGuiTeam();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -304,12 +308,14 @@ class FeatureAutomationPage extends Component {
       end2endTestCreatedTimeList,
       axapiTestCreatedTimeList,
       testReportAxapiSuggestions,
-      allUsers,
+      // allUsers,
+      allUsersNotOnlyGuiTeam,
       isLoading,
       filterOwner,
       filterRelease,
       filterCase
     } = this.props;
+    const allUsers = allUsersNotOnlyGuiTeam.filter(user=>user.isGuiTeam);
     const {
       isAxapiEditDialogDisplay,
       editingCategoryId,
@@ -440,7 +446,7 @@ class FeatureAutomationPage extends Component {
                 return (
                   <FeatureAutomationRow
                     key={row.id}
-                    allUsers={allUsers}
+                    allUsers={allUsersNotOnlyGuiTeam}
                     onEditAxapis={::this.openAxapisEditDialog}
                     onOwnersSave={::this.onOwnersSave}
                     toggleChildren={::this.toggleChildren}
@@ -474,7 +480,8 @@ FeatureAutomationPage.propTypes = {
   unitTestCreatedTimeList          : PropTypes.array,
   end2endTestCreatedTimeList       : PropTypes.array,
   axapiTestCreatedTimeList         : PropTypes.array,
-  allUsers                         : PropTypes.array,
+  // allUsers                         : PropTypes.array,
+  allUsersNotOnlyGuiTeam           : PropTypes.array,
   testReportAxapiSuggestions       : PropTypes.array,
   isLoading                        : PropTypes.bool,
   filterOwner                      : PropTypes.string,
@@ -489,7 +496,8 @@ FeatureAutomationPage.defaultProps = {
   end2endTestCreatedTimeList       : [],
   axapiTestCreatedTimeList         : [],
   testReportAxapiSuggestions       : [],
-  allUsers                         : []
+  // allUsers                         : [],
+  allUsersNotOnlyGuiTeam           : []
 };
 
 function mapStateToProps(state) {
@@ -508,7 +516,10 @@ function mapStateToProps(state) {
   const {
     currentUser
   } = state.app.toJS();
-  const { allUsers } = state.documentation.toJS();
+  const {
+    // allUsers,
+    allUsersNotOnlyGuiTeam
+  } = state.documentation.toJS();
   return {
     isLoading,
     currentUser,
@@ -521,7 +532,8 @@ function mapStateToProps(state) {
     end2endTestCreatedTimeList,
     axapiTestCreatedTimeList,
     testReportAxapiSuggestions,
-    allUsers
+    // allUsers,
+    allUsersNotOnlyGuiTeam
   };
 }
 

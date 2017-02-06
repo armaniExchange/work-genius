@@ -254,6 +254,58 @@ export function fetchAllUsers() {
 }
 
 
+export function fetchAllUsersNotOnlyGuiTeamFail(error) {
+  return {
+    type: actionTypes.FETCH_ALL_USERS_NOT_ONLY_GUI_TEAM_FAIL,
+    error
+  };
+}
+
+export function fetchAllUsersNotOnlyGuiTeamSuccess(allUsers) {
+  return {
+    type: actionTypes.FETCH_ALL_USERS_NOT_ONLY_GUI_TEAM_SUCCESS,
+    allUsers
+  };
+}
+
+export function fetchAllUsersNotOnlyGuiTeam() {
+  return dispatch => {
+    dispatch({
+      type: actionTypes.FETCH_ALL_USERS_NOT_ONLY_GUI_TEAM
+    });
+
+    const config = {
+      method: 'POST',
+      body: `{
+        allUsers (notOnlyGui: true) {id, name, isGuiTeam}
+      }`,
+      headers: {
+        'Content-Type': 'application/graphql',
+        'x-access-token': localStorage.token
+      }
+    };
+    return fetch(SERVER_API_URL, config)
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        return res.json();
+      })
+      .then((body) => {
+        if (body.errors) {
+          throw new Error(body.erros);
+        }
+        dispatch(fetchAllUsersNotOnlyGuiTeamSuccess(body.data.allUsers));
+      })
+      .catch((error) => {
+        dispatch(fetchAllUsersNotOnlyGuiTeamFail(error));
+        dispatch(apiFailure(error));
+      });
+  };
+}
+
+
+
 export function fetchAllMilestonesFail(error) {
   return {
     type: actionTypes.FETCH_ALL_MILESTONES_FAIL,

@@ -4,7 +4,8 @@ import {
 	GraphQLString,
 	GraphQLInt,
 	GraphQLList,
-	GraphQLFloat
+	GraphQLFloat,
+  GraphQLBoolean
 } from 'graphql';
 import PTOType from '../PTO/PTOType.js';
 import TaskType from '../Task/TaskType.js';
@@ -134,7 +135,10 @@ let UserType = new GraphQLObjectType({
 		groups: {
 			type: new GraphQLList(GroupType),
 			description: 'user groups'
-		}
+		},
+    isGuiTeam: {
+      type: GraphQLBoolean
+    }
 	})
 });
 

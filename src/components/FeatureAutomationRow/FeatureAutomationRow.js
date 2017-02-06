@@ -71,9 +71,15 @@ class FeatureAutomationRow extends Component {
       accumOwners,
     } = this.props;
 
+    const modifiedAllUsers = allUsers.map(user=>{
+      return Object.assign({}, user, user.isGuiTeam === false ? {
+        name: `* ${user.name}`
+      } : {});
+    });
+
     const hasChildren = children && children.length > 0;
     const ownerNames = (accumOwners || []).map( ownerId => {
-      const result = allUsers.filter(user => user.id === ownerId);
+      const result = modifiedAllUsers.filter(user => user.id === ownerId);
       return result && result.length > 0 ? result[0].name : '';
     });
 
@@ -97,7 +103,7 @@ class FeatureAutomationRow extends Component {
           multi={true}
           value={owners}
           onChange={::this.onOwnersSave}
-          options={allUsers.map(item => {
+          options={modifiedAllUsers.map(item => {
             return { label: item.name, value: item.id};
           })}
         />

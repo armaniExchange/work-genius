@@ -67,6 +67,7 @@ const initialState = Map({
   currentSelectedCategory: Map({}),
   documentHotTags: List.of(),
   allUsers: List.of(),
+  allUsersNotOnlyGuiTeam: List.of(),
   allMilestones: List.of(),
   isArticleLoading: true,
   // query object
@@ -105,6 +106,8 @@ export default function documentReducer(state = initialState, action) {
       }));
     case actionTypes.FETCH_ALL_USERS_SUCCESS:
       return state.set('allUsers', fromJS(action.allUsers));
+    case actionTypes.FETCH_ALL_USERS_NOT_ONLY_GUI_TEAM_SUCCESS:
+      return state.set('allUsersNotOnlyGuiTeam', fromJS(action.allUsers));
     case actionTypes.FETCH_DOCUMENT_CATEGORIES_SUCCESS:
       return state.set('documentCategories', fromJS(transformToTree(action.data)));
     case actionTypes.FETCH_ALL_MILESTONES_SUCCESS:

@@ -1,6 +1,7 @@
 // GraphQL
 import {
-	GraphQLList
+	GraphQLList,
+  GraphQLBoolean
 } from 'graphql';
 // Types
 import UserType from './UserType.js';
@@ -160,18 +161,27 @@ let UserQuery = {
 	'allUsers':{
 		type: new GraphQLList(UserType),
 		description: 'Get all users',
-		resolve: async () => {
+    args: {
+      notOnlyGui: {
+        type: GraphQLBoolean,
+        description: 'included all user'
+      },
+    },
+		resolve: async (root, { notOnlyGui}) => {
 			let connection = null,
 				users = null,
 			    query = null;
-
+      notOnlyGui = notOnlyGui || false;
 			try {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				query = r.db('work_genius').table('users')
 				.filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID)))
-				.filter(function(user){
-					return user('groups').default([]).contains(GUI_GROUP);
+				.filter(user => {
+					return r.branch(notOnlyGui, true, user('groups').default([]).contains(GUI_GROUP));
 				})
+        .merge((user) => {
+          return r.branch(notOnlyGui, { isGuiTeam: user('groups').default([]).contains(GUI_GROUP)} , {});
+        })
 				.coerceTo('array');
 				users = await query.run(connection);
 				for (let user of users) {
