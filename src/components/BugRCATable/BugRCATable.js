@@ -1,15 +1,12 @@
 // Styles
-import './BugReviewTable.css';
 import 'react-select/dist/react-select.css';
 // Libraries
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
-// Constants
+
 import Table from '../A10-UI/Table/Table';
 import Th from '../A10-UI/Table/Th';
-// import Td from '../A10-UI/Table/Td';
-// import Select from 'react-select';
-import BugReviewTableBody from './BugReviewTableBody';
+import BugRACBody from './BugRCABody';
 
 let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort}) => {
     let headerHtml = titleKeyMap.map((headerObj, index) => {
@@ -40,7 +37,7 @@ let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort}) => {
         return (
             <Th
                 key={index}
-                className="pto-table__header"
+                className="bug-report-table__header"
                 data-name={header}
                 onClick={onSortHandler}
                 colSpan={colSpan}
@@ -59,7 +56,7 @@ let TableHeaders = ({ titleKeyMap, onSortHandler, sortBy, enableSort}) => {
     );
 };
 
-class BugReviewTable extends Component {
+class BugRACTable extends Component {
     constructor(props) {
         super(props);
         this._onSortHandler = ::this._onSortHandler;
@@ -70,38 +67,29 @@ class BugReviewTable extends Component {
     }
     render() {
         return (
-            <div className="pto-table">
-                <Table className="bug-review-table">
+            <div className="bug-report-table">
+                <Table className="bug-report-table">
                     <TableHeaders {...this.props} />
-                    <BugReviewTableBody    {...this.props} />
+                    <BugRACBody {...this.props} />
                 </Table>
             </div>
         );
     }
 }
 
-BugReviewTable.propTypes = {
+BugRACTable.propTypes = {
+    currentUser          : PropTypes.object,
     data                 : PropTypes.array.isRequired,
     titleKeyMap          : PropTypes.array.isRequired,
-    resolvedReasonTypes  : PropTypes.array.isRequired,
-    optionsReviewTags    : PropTypes.array.isRequired,
-    optionsIntroduced    : PropTypes.array.isRequired,
-    optionsMenus         : PropTypes.array.isRequired,
     enableSort           : PropTypes.bool,
     sortBy               : PropTypes.object,
-    allUsers             : PropTypes.array,
+    bugRCAUpdate         : PropTypes.func,
     onSortHandler        : PropTypes.func,
     onStatusUpdateHandler: PropTypes.func,
     onDeleteHandler      : PropTypes.func,
-    resolvedReasonTypeChange: PropTypes.func,
-    changeReviewTagOptions: PropTypes.func,
-    changeMenuTagOptions: PropTypes.func,
-    changeReviewText:   PropTypes.func,
-    changeIntroducedTagOptions: PropTypes.func,
-    changeOwnerUserOptions: PropTypes.func
 };
 
-BugReviewTable.defaultProps = {
+BugRACTable.defaultProps = {
     enableSort: false,
     sortBy: {
         category: '',
@@ -112,4 +100,4 @@ BugReviewTable.defaultProps = {
     onDeleteHandler      : () => {}
 };
 
-export default BugReviewTable;
+export default BugRACTable;

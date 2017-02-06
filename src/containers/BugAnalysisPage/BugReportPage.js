@@ -10,6 +10,8 @@ import * as mainActions from '../../actions/main-actions';
 
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
 import BugReportTable from '../../components/BugReportTable/BugReportTable.js';
+import BugIntroducedTable from '../../components/BugIntroducedTable/BugIntroducedTable.js';
+import BugRCATable from '../../components/BugRCATable/BugRCATable.js';
 import ReactHighcharts from 'react-highcharts';
 
 import Breadcrumb from '../../components/A10-UI/Breadcrumb';
@@ -126,14 +128,20 @@ class BugReportPage extends Component {
 
     render() {
         const {
+            currentUser,
             currentProjectVersion,
             rootCauseTableData,
             tagsTableData,
             ownerTableData,
             ownerTotalData,
+            rcaTableData,
+            introducedTableData,
             rootCauseTableTitleKeyMap,
             tagsTableTitleKeyMap,
             ownerTableTitleKeyMap,
+            rcaTableTitleKeyMap,
+            fetchBugRCAUpdate,
+            introducedTableTitleKeyMap,
             allProjectVersions,
         } = this.props;
 
@@ -169,6 +177,24 @@ class BugReportPage extends Component {
         return (
             <section>
                 <Breadcrumb data={BREADCRUMB.analysisreport} />
+                <div className="col-md-12 col-lg-12">
+                  <div className="col-md-12 col-lg-12">
+                    <label>RCA Bug Count Summary:&nbsp;</label>
+                  </div>
+                  <div className="col-md-12 col-lg-8">
+                      <BugRCATable
+                          currentUser={currentUser}
+                          bugRCAUpdate={fetchBugRCAUpdate}
+                          data={rcaTableData}
+                          titleKeyMap={rcaTableTitleKeyMap}
+                      />
+                  </div>
+                  <div className="col-md-12 col-lg-4">
+                  </div>
+                </div>
+                <div className="col-md-12 col-lg-12">
+                    <br/>
+                </div>
                 {/* Project Version */}
                 <div className="col-md-12 col-lg-12">
                     <label>Project:&nbsp;</label>
@@ -214,9 +240,10 @@ class BugReportPage extends Component {
                 <div className="col-md-12 col-lg-12">
                     <br/>
                 </div>
+
                 <div className="col-md-12 col-lg-12">
                   <div className="col-md-12 col-lg-12">
-                    <label>Owner Summary:&nbsp;</label>
+                    <label>Fixer Summary:&nbsp;</label>
                   </div>
                   <div className="col-md-12 col-lg-8">
                       <BugReportTable
@@ -229,6 +256,22 @@ class BugReportPage extends Component {
                   </div>
                 </div>
                 <div className="col-md-12 col-lg-12">
+                    <br/>
+                </div>
+                <div className="col-md-12 col-lg-12">
+                  <div className="col-md-12 col-lg-12">
+                    <label>Bug Performance:&nbsp;</label>
+                  </div>
+                  <div className="col-md-12 col-lg-8">
+                      <BugIntroducedTable
+                          data={introducedTableData}
+                          titleKeyMap={introducedTableTitleKeyMap}
+                      />
+                  </div>
+                  <div className="col-md-12 col-lg-4">
+                  </div>
+                </div>
+                <div className="col-md-12 col-lg-12">
                     <br/><br/><br/><br/><br/>
                 </div>
             </section>
@@ -237,15 +280,21 @@ class BugReportPage extends Component {
 }
 
 BugReportPage.propTypes = {
+    currentUser:               PropTypes.object,
     currentProjectVersion:     PropTypes.string,
     rootCauseTableData:        PropTypes.array,
     tagsTableData:             PropTypes.array,
     ownerTotalData:            PropTypes.array,
     ownerTableData:            PropTypes.array,
+    rcaTableData:              PropTypes.array,
+    introducedTableData:       PropTypes.array,
     rootCauseTableTitleKeyMap: PropTypes.array,
     tagsTableTitleKeyMap:      PropTypes.array,
     ownerTableTitleKeyMap:     PropTypes.array,
+    rcaTableTitleKeyMap:       PropTypes.array,
+    introducedTableTitleKeyMap:PropTypes.array,
     allProjectVersions:        PropTypes.array,
+    fetchBugRCAUpdate:         PropTypes.func,
     fetchBugReportPageData:    PropTypes.func
 };
 

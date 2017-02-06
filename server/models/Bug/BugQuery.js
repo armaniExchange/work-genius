@@ -37,6 +37,10 @@ let BugQuery = {
 				type: GraphQLString,
 				description: 'prevent Tag'
 			},
+			introduced_by:{
+				type: GraphQLString,
+				description: 'bug introduced by'
+			},
 			pageSize: {
 				type: GraphQLInt,
 				description: 'page size'
@@ -46,7 +50,7 @@ let BugQuery = {
 				description: 'page index'
 			}
 		},
-		resolve: async (root, { label, assignedTo,menu,rootCause,preventTag, pageSize, pageIndex }) => {
+		resolve: async (root, { label, assignedTo,menu,rootCause,preventTag,introduced_by, pageSize, pageIndex }) => {
 			let connection = null,
 			    result = null,
                 filter = {},

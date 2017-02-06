@@ -59,6 +59,14 @@ const BUG_TYPE = new GraphQLObjectType({
 		'total_row': {
 			type: GraphQLInt,
             description: 'total row (for pagination)'
+		},
+		'introduced_by': {
+			type: new GraphQLList(GraphQLString),
+            description: 'menu'
+		},
+		'owner': {
+			type: GraphQLString,
+			description: "Bug module owner"
 		}
     })
 });
