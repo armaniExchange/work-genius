@@ -95,9 +95,7 @@ let ArticleQuery = {
       page,
       pageLimit
     }) => {
-      let result,
-        connection = null,
-        count = 0,
+      let connection = null,
         filterFunc = article => {
           let predicate = r.expr(true);
           if (categoryId) {
@@ -134,17 +132,15 @@ let ArticleQuery = {
           .filter(filterObj)
           .filter(filterFunc);
 
-        result = await query
+        const getArticlesResult = query
           .slice((page - 1) * pageLimit, page * pageLimit)
           .merge(getArticleDetail)
           .coerceTo('array')
           .run(connection);
 
-        if (!result ){
-          throw 'No result';
-        }
+        const getCount = query.count().run(connection);
+        const { result = [], count = 0 } = await Promise.all([ getArticlesResult(), getCount() ]);
 
-        count = await query.count().run(connection);
         await connection.close();
         return {
           articles: result,
