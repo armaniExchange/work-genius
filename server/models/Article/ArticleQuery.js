@@ -129,13 +129,15 @@ let ArticleQuery = {
 
         query = r.db('work_genius')
           .table('articles')
+          .orderBy({ index: r.desc('createdAt') })
           .filter(row=> row('isDeleted').eq(true).not().default(true))
           .filter(filterObj)
           .filter(filterFunc);
 
-        result = await query.merge(getArticleDetail)
-          .orderBy(r.desc('createdAt'))
+        result = await query
           .slice((page - 1) * pageLimit, page * pageLimit)
+          .merge(getArticleDetail)
+          .coerceTo('array')
           .run(connection);
 
         if (!result ){
