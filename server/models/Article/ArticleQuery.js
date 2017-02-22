@@ -95,7 +95,9 @@ let ArticleQuery = {
       page,
       pageLimit
     }) => {
-      let connection = null,
+      let result,
+        connection = null,
+        count = 0,
         filterFunc = article => {
           let predicate = r.expr(true);
           if (categoryId) {
@@ -126,21 +128,23 @@ let ArticleQuery = {
           });
 
         query = r.db('work_genius')
-          .table('articles')
+          .table('articles', { readMode: 'outdated' })
           .orderBy({ index: r.desc('createdAt') })
           .filter(row=> row('isDeleted').eq(true).not().default(true))
           .filter(filterObj)
           .filter(filterFunc);
 
-        const getArticlesResult = query
+        result = await query
           .slice((page - 1) * pageLimit, page * pageLimit)
           .merge(getArticleDetail)
           .coerceTo('array')
           .run(connection);
 
-        const getCount = query.count().run(connection);
-        const { result = [], count = 0 } = await Promise.all([ getArticlesResult(), getCount() ]);
+        if (!result ){
+          throw 'No result';
+        }
 
+        count = await query.count().run(connection);
         await connection.close();
         return {
           articles: result,

@@ -275,7 +275,7 @@ const ArticleMutation = {
 
   updateArticle: {
     type: ArticleType,
-    description: 'edit a article ',
+    description: 'edit an article ',
     args: {
       article: { type: ArticleInputType }
     },
