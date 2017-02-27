@@ -136,9 +136,13 @@ let UserType = new GraphQLObjectType({
 			type: new GraphQLList(GroupType),
 			description: 'user groups'
 		},
-    isGuiTeam: {
-      type: GraphQLBoolean
-    }
+	    isGuiTeam: {
+	      type: GraphQLBoolean
+	    },
+	    seniority: {
+	    	type: GraphQLFloat,
+			description: 'seniority'
+	    }
 	})
 });
 

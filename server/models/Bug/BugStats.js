@@ -207,8 +207,6 @@ let BugStats = {
 					.count().ungroup().orderBy(r.desc('reduction'));
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				let bugSummary = await query.run(connection);
-				console.log('bugSummary:');
-				console.log(bugSummary);
 				if(bugSummary){
 					bugSummary = bugSummary.slice(0,10);
 				}
@@ -313,20 +311,15 @@ let BugStats = {
 		type: new GraphQLList(BUG_STATS_TYPE),
 		description: 'Get bugs performance',
         args: {
-			
+			label: {
+				type: GraphQLString,
+				description: 'project'
+			}
 		},
-		resolve: async (root, { }) => {
+		resolve: async (root, { label}) => {
 			let connection = null,
 			    result = [],
-			    labelList = [
-					"4.1.1",
-					"4.1.1-p1",
-					"4.1.1-p2",
-					"4.1.0-p5",
-					"4.1.0-p6",
-					"4.1.0-p7",
-					"4.1.0-p8"
-				],
+			    labelList = label.split(','),
 				introducedByList = [
 					"New feature",   //a
 					"Your own module",  //b
@@ -335,10 +328,13 @@ let BugStats = {
 					null
 				],
 				nullIndex = String(introducedByList.indexOf(null) + 1),
-			    filter = bug => {
-			    	return r.expr(labelList).contains(bug('label'));
-			    },
 				query = null;
+				labelList = labelList.map(function(label){
+					return label.replace(/^\s/, '');
+				});
+				let filter = bug => {
+			    	return r.expr(labelList).contains(bug('label'));
+			    };
 
 			try {
 				query = r.db('work_genius').table('bugs_review').filter(filter).group('assigned_to', 'introduced_by').count();
@@ -349,14 +345,14 @@ let BugStats = {
 				.filter(function(user){
 					return user('groups').default([]).contains(GUI_GROUP);
 				})
-				.pluck('name','email').coerceTo('array');
+				.pluck('name','email', 'seniority').coerceTo('array');
 
 				let userList = await query.run(connection);
 				for(let user of userList){
 					if(MGR_EMAIL.indexOf(user.email) > -1){
 						continue;
 					}
-					let item = { "name": user.name , "seniority" : 1.0};
+					let item = { "name": user.name , "seniority" : user.seniority ? user.seniority : 1.0};
 					for(let perf of perfSummary){
 						if(perf.group && perf.group.length > 0 && perf.group[0] === user.email.replace('@a10networks.com','').toLowerCase()){
 							if(perf.group.length > 1 ){
@@ -385,6 +381,60 @@ let BugStats = {
 					result.push(item);
 				}
 
+				await connection.close();
+			} catch (err) {
+				return err;
+			}
+			return result;
+		}
+	},
+	'getModuleBugs': {
+		type: new GraphQLList(BUG_STATS_TYPE),
+		description: 'Get Module bugs',
+        args: {
+			label: {
+				type: GraphQLString,
+				description: 'project'
+			}
+		},
+		resolve: async (root, { label }) => {
+			let connection = null,
+				labelList = label.split(','),
+			    result = [],
+				query = null;
+				labelList = labelList.map(function(label){
+					return label.replace(/^\s/, '');
+				});
+				let filter = bug => {
+			    	return r.expr(labelList).contains(bug('label'));
+			    };
+			try {
+
+				query = r.db('work_genius').table('bugs_review').filter(filter).group('owner').count();
+				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
+				let moduleSummary = await query.run(connection);
+
+
+				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID)))
+				.filter(function(user){
+					return user('groups').default([]).contains(GUI_GROUP);
+				})
+				.pluck('name','email').coerceTo('array');
+				let userList = await query.run(connection);
+
+				for(let group of moduleSummary){
+					if(group.group){
+						let userArr = userList.filter(function(user){
+							return user.email.replace('@a10networks.com', '').toLowerCase() === group.group.toLowerCase();
+						})
+						if(userArr && userArr.length > 0){
+							result.push({
+								'name': userArr[0].name,
+								'item1': group.reduction
+							});
+						}
+					}
+				}
 				await connection.close();
 			} catch (err) {
 				return err;
