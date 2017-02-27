@@ -1,3 +1,10 @@
 .table_layout_center {
     text-align: center;
 }
+.pl-15{
+	padding-left: 15px;
+}
+.row .bug-report-table{
+	margin-left: 10px;
+	margin-right: 10px;
+}

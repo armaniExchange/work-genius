@@ -86,6 +86,10 @@ const initialState = Map({
       {
         name: 'Analysis Reports',
         url: '/main/bug-analysis/bug-report'
+      },
+      {
+        name: 'Bug Performance',
+        url: '/main/bug-analysis/bug-perf'
       }
     ),
 		// 'Page Assignment': List.of(

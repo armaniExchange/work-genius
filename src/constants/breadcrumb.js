@@ -17,6 +17,7 @@ let BREADCRUMB = {
   buganalysis: [{txt:'Bug Analysis', url: BASE_URL + '/bug-analysis/bug-analysis'}],
   bugrootcause: [{txt:'Root Causes', url: BASE_URL + '/bug-analysis/bug-analysis'}],
   analysisreport: [{txt:'Analysis Reports', url: BASE_URL + '/bug-analysis/bug-report'}],
+  bugperf: [{txt:'Bug Performance', url: BASE_URL + '/bug-analysis/bug-perf'}],
 
   // pageassignment: [{txt:'Page Assignment', url: BASE_URL + '/feature-analysis'}],
   treepageassignment: [{txt:'Tree View', url: BASE_URL + '/feature-analysis'}],

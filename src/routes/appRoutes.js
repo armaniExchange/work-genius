@@ -18,6 +18,7 @@ import PTOSummary from '../containers/PTOPage/PTO-Summary';
 import BugAnalysisPage from '../containers/BugAnalysisPage/BugAnalysisPage';
 import BugReviewPage from '../containers/BugAnalysisPage/BugReviewPage';
 import BugReportPage from '../containers/BugAnalysisPage/BugReportPage';
+import BugPerformancePage from '../containers/BugAnalysisPage/BugPerformancePage';
 import ResourcePage from '../containers/ResourcePage/ResourcePage.js';
 import ResourceMapPage from '../containers/ResourcePage/ResourceMapPage.js';
 import DevicePage from '../containers/ResourcePage/DevicePage.js';
@@ -67,6 +68,7 @@ const appRoutes = () => (
         <Route path="bug-analysis" component={requireAuth(BugAnalysisPage)}>
           <Route path="bug-analysis" component={requireAuth(BugReviewPage)} /> {/*-- Root Causes*/}
           <Route path="bug-report" component={requireAuth(BugReportPage)} /> {/*-- Analysis Reports*/}
+          <Route path="bug-perf" component={requireAuth(BugPerformancePage)} />
         </Route>
 
         {/* resource*/}

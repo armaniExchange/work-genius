@@ -14,6 +14,7 @@ import article from './article-reducer';
 import featureAnalysis from './feature-analysis-reducer';
 import bugReview from './bug-review-reducer';
 import bugReport from './bug-report-reducer';
+import bugPerformance from './bug-performance-reducer';
 import resourceMap from './resource-map-reducer';
 import workLog from './work-log-reducer';
 import documentTemplate from './document-template-reducer';
@@ -38,6 +39,7 @@ const rootReducer = combineReducers({
   resourceMap,
   workLog,
   bugReport,
+  bugPerformance,
   featureAnalysis,
   documentTemplate,
   featureAutomation

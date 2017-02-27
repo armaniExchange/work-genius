@@ -195,6 +195,9 @@ export default keyMirror({
     FETCH_BUG_REPORT_RELEASE: null,
     SET_BUG_REPORT_PROJECT_VERSION: null,
 
+    //Bug Performance page actions
+    FETCH_MODULE_BUGS_STATS_SUCCESS: null,
+
     // Resource Map page actions
     FETCH_RESOURCE_MAP_DATA: null,
     FETCH_RESOURCE_MAP_MODAL: null,
