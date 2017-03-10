@@ -531,6 +531,7 @@ class ResourceMapModalWorkLog extends Component {
               max="100"
               className="text-area-duration-style"
               defaultValue={defaultModalInfos.duration}
+              autoComplete="off"
               ref="durationField" />
             <span>hours</span>
           </div>
