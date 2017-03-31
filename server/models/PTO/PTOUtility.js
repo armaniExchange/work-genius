@@ -5,6 +5,7 @@ import { DB_HOST, DB_PORT } from '../../constants/configurations.js';
 import { APPROVED, CANCEL_REQUEST_APPROVED, CANCEL_REQUEST_PENDING } from '../../../src/constants/pto-constants';
 
 export async function createPTO(data){
+  console.log('createPTO');
 	let connection = null,
 		mutationQuery = null,
 		finalData = JSON.parse(data);
@@ -17,6 +18,10 @@ export async function createPTO(data){
 			...finalData,
 			work_day_hours: hours - finalData.hours < 0 ? -(hours - finalData.hours) : 0
 		});
+    console.log({
+      ...finalData,
+      work_day_hours: hours - finalData.hours < 0 ? -(hours - finalData.hours) : 0
+    });
 		await mutationQuery.run(connection);
 		await connection.close();
 	} catch (err) {
