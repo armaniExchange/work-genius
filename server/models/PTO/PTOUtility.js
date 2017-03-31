@@ -18,10 +18,6 @@ export async function createPTO(data){
 			...finalData,
 			work_day_hours: hours - finalData.hours < 0 ? -(hours - finalData.hours) : 0
 		});
-    console.log({
-      ...finalData,
-      work_day_hours: hours - finalData.hours < 0 ? -(hours - finalData.hours) : 0
-    });
 		await mutationQuery.run(connection);
 		await connection.close();
 	} catch (err) {
