@@ -48,7 +48,7 @@ class PTOApplication extends Component {
         let finalData = {
                 start_time: data.startTimeStamp,
                 end_time: data.endTimeStamp,
-                memo: data.memo,
+                memo: data.memo.replace(/\n/g, '\\n'),
                 hours: data.hours,
                 apply_time: moment().format('x'),
                 applicant_id: currentUser.id,
