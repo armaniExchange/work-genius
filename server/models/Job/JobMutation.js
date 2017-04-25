@@ -29,29 +29,9 @@ let JobMutation = {
 			try {
 				
 				let obj = JSON.parse(data);
-				let job = { ...obj};
-				if('content' in job){
-					delete job.content;
-				}
-				if('tags' in job){
-					delete job.tags;
-				}
-				job.create_time = Number.parseFloat(moment().format('x'));
-				job.update_time = job.create_time;
-				let id = await createJob(job);
-		        if (id && !id.includes('Fail')){
-		          //create related worklog
-		          if(obj.content || obj.tags){
-		          	let worklog = {
-		          		content : obj.content || '',
-		          		author_id : obj.employee_id,
-		          		create_date : moment().format('x'),
-		          		job_id : id,
-		          		tags : obj.tags || []
-		          	}
-		          	await createWorkLog(worklog);
-		          }
-		        }
+				obj.create_time = Number.parseFloat(moment().format('x'));
+				obj.update_time = obj.create_time;
+				let id = await createJob(obj);
 		        return id;
 			} catch (err) {
 				console.log(err);
@@ -79,42 +59,8 @@ let JobMutation = {
 			try {
 				
 				let obj = JSON.parse(data);
-				let job = {...obj};
-				if('content' in job){
-					delete job.content;
-				}
-				if('tags' in job){
-					delete job.tags;
-				}
-				job.update_time = Number.parseFloat(moment().format('x'));
-				await updateJob(id, job); 
-				
-				//update related worklog
-				if(obj.content || obj.tags){
-					connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-					query = r.db('work_genius').table('worklog').filter({job_id:id}).coerceTo('array');
-					// the related worklog exists, we need to update it
-					let worklogList = await query.run(connection);
-					if(worklogList && worklogList.length > 0){
-						let worklog = {
-			          		content : obj.content || worklogList[0].content,
-			          		author_id : worklogList[0].author_id,
-			          		update_date : moment().format('x'),
-			          		tags : obj.tags || worklogList[0].tags
-			          	}
-			          	await updateWorkLog(worklogList[0].id,worklog);
-					}else{
-						// the related worklog doesn't exist, we need to create it
-						let worklog = {
-			          		content : obj.content || '',
-			          		author_id : obj.employee_id,
-			          		create_date : moment().format('x'),
-			          		job_id : id,
-			          		tags : obj.tags || []
-			          	}
-			          	await createWorkLog(worklog);
-					}
-				}
+				obj.update_time = Number.parseFloat(moment().format('x'));
+				await updateJob(id, obj); 
 				await connection.close();
 			} catch (err) {
 				return 'Fail to update a job!';
@@ -139,10 +85,6 @@ let JobMutation = {
 				
 				query = r.db('work_genius').table('jobs').get(id).delete();
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
-				await query.run(connection);
-
-				//delete the related worklog
-				query = r.db('work_genius').table('worklog').filter({job_id:id}).delete();
 				await query.run(connection);
 
 				await connection.close();

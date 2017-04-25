@@ -45,6 +45,7 @@ let JobQuery = {
 				if(dateRange <= 0){
 					return result;
 				}
+				console.time('get user list');
 				let endDate = startDate + (dateRange -1) * 1000 * 3600 * 24;
 				query = r.db('work_genius').table('users').filter(r.row('id').ne(ADMIN_ID).and(r.row('id').ne(TESTER_ID)))
 					.filter(function(user){
@@ -54,23 +55,36 @@ let JobQuery = {
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				//get all users
 				let users = await query.run(connection);
+				console.timeEnd('get user list');
 
 				//get all PTO data
+				console.time('get pto list');
 				query = r.db('work_genius').table('pto')
 					.filter(r.row('status').eq('PENDING').or(r.row('status').eq('APPROVED')))
 					.pluck('applicant_id','start_time','end_time','hours').coerceTo('array');
 				let ptoList = await query.run(connection);
+				console.timeEnd('get pto list');
 
 
 				//get all uncompleted job list
-				query = r.db('work_genius').table('worklog').eqJoin('job_id',r.db('work_genius').table('jobs'))
-					.without({left:"job_id"}).zip()
+				console.time('get all job list');
+				// query = r.db('work_genius').table('worklog').eqJoin('job_id',r.db('work_genius').table('jobs'))
+				// 	.without({left:"job_id"}).zip()
+				// 	.filter(r.js('(function(row){ \
+				// 		return (row.start_date >= '+startDate+' && row.start_date <= '+endDate+') \
+				// 			|| (row.start_date < '+startDate+' && row.end_date >= '+startDate+' )\
+				// 		})'))
+				// 	.coerceTo('array');
+				// let jobList = await query.run(connection);
+
+				query = r.db('work_genius').table('jobs')
 					.filter(r.js('(function(row){ \
 						return (row.start_date >= '+startDate+' && row.start_date <= '+endDate+') \
 							|| (row.start_date < '+startDate+' && row.end_date >= '+startDate+' )\
 						})'))
 					.coerceTo('array');
 				let jobList = await query.run(connection);
+				console.timeEnd('get all job list');
 
 				//get all dates and check if the date is weekend or not
 				let dateList = [];
@@ -83,10 +97,64 @@ let JobQuery = {
 				} 
 
 				//get all public holiday
+				console.time('get all holiday list');
 				query = r.db('work_genius').table('holiday').coerceTo('array');  
 				let holidayList = await query.run(connection);
+				console.timeEnd('get all holiday list');
+
+				//get the total workday number of the job
+				let getTotalDays = (jobStartDate,jobEndDate,createdTimezone, userItem) =>{
+					let totalDays = 0;
+
+					while(moment(jobStartDate).utcOffset(createdTimezone).isBefore(jobEndDate,'day') 
+						|| moment(jobStartDate).utcOffset(createdTimezone).isSame(jobEndDate,'day')){
+						let findPTO = ptoList.find( pto => {
+							let startTime = Number.parseFloat(pto.start_time);
+							let endtTime = Number.parseFloat(pto.end_time);
+							if(moment(startTime).utcOffset(createdTimezone).isSame(endtTime,'day')){
+								return pto.applicant_id == userItem.id
+									&& moment(jobStartDate).utcOffset(createdTimezone).isSame(startTime,'day');
+							}else{
+								return pto.applicant_id == userItem.id && 
+										(moment(jobStartDate).utcOffset(createdTimezone).isBetween(startTime,endtTime)
+										|| moment(jobStartDate).utcOffset(createdTimezone).isSame(startTime,'day')
+										|| moment(jobStartDate).utcOffset(createdTimezone).isSame(endtTime,'day'));
+							}
+						});
+						if(!!findPTO){
+							if(findPTO.hours >= 8){
+								jobStartDate = jobStartDate + 1000 * 60 * 60 * 24;
+								continue;
+							}
+						}
+
+						//set public holiday info
+						let findHoliday = holidayList.find( holiday => {
+							return moment(holiday.date).utcOffset(createdTimezone).isSame(jobStartDate,'day') 
+								&& holiday.location == userItem.location;
+						});
+						if(!!findHoliday){
+							if(findHoliday.type == 'holiday'){
+								jobStartDate = jobStartDate + 1000 * 60 * 60 * 24;
+								continue;
+							}
+							
+						}else{
+							let day = moment(jobStartDate).utcOffset(createdTimezone).day();
+							if([0,6].includes(moment(jobStartDate).utcOffset(createdTimezone).day()) 
+								&& [0,6].includes(day)){
+								jobStartDate = jobStartDate + 1000 * 60 * 60 * 24;
+								continue;
+							}
+						}
+						totalDays++ ;
+						jobStartDate = jobStartDate + 1000 * 60 * 60 * 24;
+					}
+					return totalDays;
+				};
 
 				//construct the result array
+				console.time('construct the array');
 				for(let user of users){
 					let userItem = {...user,jobs:[]};
 					for(let dateItem of dateList){
@@ -167,56 +235,6 @@ let JobQuery = {
 						});
 					}
 
-					//get the total workday number of the job
-					let getTotalDays = (jobStartDate,jobEndDate,createdTimezone) =>{
-						let totalDays = 0;
-
-						while(moment(jobStartDate).utcOffset(createdTimezone).isBefore(jobEndDate,'day') 
-							|| moment(jobStartDate).utcOffset(createdTimezone).isSame(jobEndDate,'day')){
-							let findPTO = ptoList.find( pto => {
-								let startTime = Number.parseFloat(pto.start_time);
-								let endtTime = Number.parseFloat(pto.end_time);
-								if(moment(startTime).utcOffset(createdTimezone).isSame(endtTime,'day')){
-									return pto.applicant_id == user.id
-										&& moment(jobStartDate).utcOffset(createdTimezone).isSame(startTime,'day');
-								}else{
-									return pto.applicant_id == user.id && 
-											(moment(jobStartDate).utcOffset(createdTimezone).isBetween(startTime,endtTime)
-											|| moment(jobStartDate).utcOffset(createdTimezone).isSame(startTime,'day')
-											|| moment(jobStartDate).utcOffset(createdTimezone).isSame(endtTime,'day'));
-								}
-							});
-							if(!!findPTO){
-								if(findPTO.hours >= 8){
-									jobStartDate = jobStartDate + 1000 * 60 * 60 * 24;
-									continue;
-								}
-							}
-
-							//set public holiday info
-							let findHoliday = holidayList.find( holiday => {
-								return moment(holiday.date).utcOffset(createdTimezone).isSame(jobStartDate,'day') 
-									&& holiday.location == userItem.location;
-							});
-							if(!!findHoliday){
-								if(findHoliday.type == 'holiday'){
-									jobStartDate = jobStartDate + 1000 * 60 * 60 * 24;
-									continue;
-								}
-								
-							}else{
-								let day = moment(jobStartDate).utcOffset(createdTimezone).day();
-								if([0,6].includes(moment(jobStartDate).utcOffset(createdTimezone).day()) 
-									&& [0,6].includes(day)){
-									jobStartDate = jobStartDate + 1000 * 60 * 60 * 24;
-									continue;
-								}
-							}
-							totalDays++ ;
-							jobStartDate = jobStartDate + 1000 * 60 * 60 * 24;
-						}
-						return totalDays;
-					};
 
 					//set the daily percentage
 					for(let job of userItem.jobs){
@@ -224,7 +242,7 @@ let JobQuery = {
 						if(job.job_items && job.job_items.length >0){
 							job.job_items.forEach(job_item => {
 								let createdTimezone = job_item.timezone ? job_item.timezone : user.timezone;
-								job_item.daily_duration = job_item.duration / getTotalDays(job_item.start_date,job_item.end_date,createdTimezone,timezone);
+								job_item.daily_duration = job_item.duration / getTotalDays(job_item.start_date,job_item.end_date,createdTimezone,timezone, userItem);
 								job_item.daily_percentage = Math.round(job_item.daily_duration / DAY_DURATION * 100);
 							});
 						}
@@ -232,6 +250,7 @@ let JobQuery = {
 					
 					result.push(userItem);
 				}
+				console.timeEnd('construct the array');
 				await connection.close();
 				return result;
 			} catch (err) {
@@ -286,8 +305,7 @@ let JobQuery = {
 				let ptoList = await query.run(connection);
 
 				//get all uncompleted job list
-				query = r.db('work_genius').table('worklog').eqJoin('job_id',r.db('work_genius').table('jobs'))
-					.without({left:"job_id"}).zip()
+				query = r.db('work_genius').table('jobs')
 					.filter({employee_id: employeeId})
 					.filter(r.js('(function(row){ \
 						return (row.start_date >= '+startDate+' && row.start_date <= '+endDate+') \
