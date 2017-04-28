@@ -1,4 +1,5 @@
 import stringifyObject from '../libraries/stringifyObject';
+import escapeQuoteAndBackSlash from '../libraries/escapeQuoteAndBackSlash';
 
 import actionTypes from '../constants/action-types';
 import {
@@ -124,9 +125,9 @@ export function createArticle(newArticle, callback= ()=>{}) {
     });
     dispatch(setLoadingState(true));
 
-    newArticle.title = newArticle.title.replace(/\\/g, '\\\\');
+    newArticle.title = escapeQuoteAndBackSlash(newArticle.title);
     if (newArticle.content) {
-      newArticle.content.replace(/\\/g, '\\\\');
+      newArticle.content = escapeQuoteAndBackSlash(newArticle.content);
     } else {
       delete newArticle.content;
     }
@@ -191,10 +192,10 @@ export function updateArticle(newArticle) {
     });
     dispatch(setLoadingState(true));
     if (newArticle.title) {
-      newArticle.title = newArticle.title.replace(/\\/g, '\\\\');
+      newArticle.title = escapeQuoteAndBackSlash(newArticle.title);
     }
     if (newArticle.content) {
-      newArticle.content = newArticle.content.replace(/\\/g, '\\\\');
+      newArticle.content = escapeQuoteAndBackSlash(newArticle.content);
     }
     const config = {
       method: 'POST',
