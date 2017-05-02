@@ -58,7 +58,9 @@ let findUserByDBPromise = function(username, password) {
     return new Promise((resolve, reject) => {
         let pwd = crypto.createHash(HASH_LEVEL).update(password).digest('base64');
         let connection = r.connect({ host: DB_HOST, port: DB_PORT });
-        let query = r.db(DB_NAME).table('users').filter({'username': username, 'password': pwd});
+        let query = r.db(DB_NAME)
+          .table('users', { readMode: 'outdated' })
+          .filter({'username': username, 'password': pwd});
 
         connection.then((conn) => {
             query.run(conn, (error, cursor) => {
@@ -86,7 +88,10 @@ let findUserByDBPromise = function(username, password) {
 let getExistingUserId = function(email){
   return new Promise((resolve, reject)=>{
     let connection = r.connect({ host: DB_HOST, port: DB_PORT });
-    let query = r.db(DB_NAME).table('users').filter({'email': email}).getField('id');
+    let query = r.db(DB_NAME)
+      .table('users', { readMode: 'outdated' })
+      .filter({'email': email})
+      .getField('id');
 
     connection.then((conn) => {
         query.run(conn, (error, cursor) => {
@@ -236,7 +241,9 @@ export const loginHandler = async (req, res) => {
             query = null;
 
         connection = r.connect({ host: DB_HOST, port: DB_PORT });
-        query = r.db(DB_NAME).table('users').filter({'email': user['email']});
+        query = r.db(DB_NAME)
+          .table('users', {readMode: 'outdated'})
+          .filter({'email': user['email']});
 
         connection.then((conn) => {
             query.run(conn, (err, cursor) => {
