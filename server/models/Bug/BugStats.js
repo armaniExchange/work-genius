@@ -109,7 +109,8 @@ let BugStats = {
 				'Duplicate',
 				'NAB/By Design',
 				'Working in current build',
-				'Enhancement'
+				'Enhancement',
+				'Usability',
 			];
 
 			try {
