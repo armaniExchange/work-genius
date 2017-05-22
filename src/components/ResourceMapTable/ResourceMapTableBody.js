@@ -94,7 +94,7 @@ class ResourceMapTableBody extends Component {
                         if (item.progress > 0) {
                           panel += '   Progress: ' + item.progress + '%\n';
                         }
-                        if (item.content !== undefined && item.content !== '') {
+                        if (item.content !== null && item.content !== undefined && item.content !== '') {
                           panel += '   Work log: \n      ';
                           panel += item.content.replace(/\n/ig, '\n      ') + '\n';
                         }
