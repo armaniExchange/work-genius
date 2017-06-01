@@ -50,7 +50,6 @@ const initialState = Map({
 
 function customizeTaskData(task) {
     let result = Map();
-
     Object.keys(task).forEach((key) => {
         switch (key) {
             default:
@@ -63,12 +62,12 @@ function customizeTaskData(task) {
 
 function formatResponse(data) {
     let result = List.of();
-
-    data.forEach((task) => {
-        let updatedTask = customizeTaskData(task);
-        result = result.push(OrderedMap(updatedTask));
-    });
-
+    if (data && Array.isArray(data)) {
+        data.forEach((task) => {
+            let updatedTask = customizeTaskData(task);
+            result = result.push(OrderedMap(updatedTask));
+        });
+    }
     return result;
 }
 

@@ -189,7 +189,6 @@ export function fetchBugRCA() {
         return fetch(SERVER_API_URL, config)
             .then((res) => res.json())
             .then((body) => {
-                console.log(body.data.getRCABugCount);
                 dispatch(fetchBugReportRCASuccess(body.data.getRCABugCount));
             })
             .catch((err) => {
@@ -282,7 +281,6 @@ export function fetchBugReportIntroduced() {
         return fetch(SERVER_API_URL, config)
             .then((res) => res.json())
             .then((body) => {
-                console.log(body.data);
                 dispatch(fetechBugReportIntroducedSuccess(body.data.getBugPerformance));
             })
             .catch((err) => {
