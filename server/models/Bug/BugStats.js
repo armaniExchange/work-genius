@@ -204,7 +204,7 @@ let BugStats = {
 				if(label){
 					filter.label = label;
 				}
-				query = r.db('work_genius').table('bugs_review').group(r.row('tags'), {multi: true})
+				query = r.db('work_genius').table('bugs_review').filter(filter).group(r.row('tags'), {multi: true})
 					.count().ungroup().orderBy(r.desc('reduction'));
 				connection = await r.connect({ host: DB_HOST, port: DB_PORT });
 				let bugSummary = await query.run(connection);
