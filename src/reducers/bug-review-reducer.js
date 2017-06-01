@@ -88,7 +88,6 @@ function customizeTaskData(task) {
 
 function formatResponse(data) {
     let result = List.of();
-
     data.forEach((task) => {
         let updatedTask = customizeTaskData(task);
         result = result.push(OrderedMap(updatedTask));
