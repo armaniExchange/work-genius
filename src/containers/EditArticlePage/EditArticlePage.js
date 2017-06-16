@@ -13,6 +13,7 @@ import ArticleEditor from '../../components/ArticleEditor/ArticleEditor';
 import * as ArticleActions from '../../actions/article-page-actions';
 import * as DocumentActions from '../../actions/document-page-actions';
 
+const AUTO_SAVE_ARTICLE_INTERVAL_MS = 30000;
 
 class EditArticlePage extends Component {
 
@@ -35,6 +36,8 @@ class EditArticlePage extends Component {
 
     if (!this.isCreate()) {
       articleActions.fetchArticle(params.articleId);
+    } else {
+      this.startToAutoSaveArticle();
     }
     documentActions.fetchDocumentCategories();
     documentActions.fetchDocumentHotTags();
@@ -46,11 +49,14 @@ class EditArticlePage extends Component {
       // first time loaded
       const newState = this.getEditingStateFromProps(nextProps, this.context);
       this.setState(newState, () => {::this.ValidateForm();});
+      this.startToAutoSaveArticle();
       return;
     }
 
     if (this.props.isEditing && !nextProps.isEditing) {
       const { query } = this.context.location;
+      const articleId = this.props.id || 'new';
+      this.deleteSavedArticleFromLocalStorage(articleId);
       if (query.prev_page) {
         this.props.history.push(query.prev_page);
       } else {
@@ -85,6 +91,87 @@ class EditArticlePage extends Component {
 
   componentWillUnmount() {
     this.props.articleActions.clearArticle();
+    clearInterval(this.savetoLocalStorageId);
+  }
+
+  startToAutoSaveArticle() {
+    setTimeout(()=>{
+      this.loadArticleFromLocalStorage();
+    }, 1);
+    clearInterval(this.savetoLocalStorageId);
+    this.savetoLocalStorageId = setInterval(this.saveArticleToLocalStorage.bind(this), AUTO_SAVE_ARTICLE_INTERVAL_MS);
+  }
+
+  loadArticleFromLocalStorage() {
+    const { params:{ articleId } } = this.props;
+    const savedArticle = JSON.parse(localStorage.getItem('article') || '{}');
+
+    if (savedArticle[articleId] && confirm('Do you want to load previous status?')) {
+      const {
+        title,
+        tags,
+        categoryId,
+        content,
+        documentType,
+        priority,
+        milestone,
+        reportTo
+      } = savedArticle[articleId];
+      this.setState({
+        editingTitle: title,
+        editingTags: tags,
+        editingCategoryId: categoryId,
+        editingContent: content,
+        editingDocumentType: documentType,
+        editingPriority: priority,
+        editingMilestone: milestone,
+        editingReportTo: reportTo,
+      });
+      this.ValidateForm();
+    } else {
+      this.deleteSavedArticleFromLocalStorage(articleId);
+    }
+  }
+
+  saveArticleToLocalStorage() {
+    console.log('auto saving...');
+    const {
+      files,
+      params:{
+        articleId
+      }
+    } = this.props;
+    const {
+      editingTitle,
+      editingTags,
+      editingCategoryId,
+      editingContent,
+      editingDocumentType,
+      editingPriority,
+      editingMilestone,
+      editingReportTo,
+    } = this.state;
+    const savedArticle = JSON.parse(localStorage.getItem('article') || '{}');
+
+    savedArticle[articleId] = {
+      title: editingTitle,
+      tags: editingTags,
+      categoryId: editingCategoryId,
+      content: editingContent,
+      documentType: editingDocumentType || '',
+      priority: editingPriority || '',
+      milestone: editingMilestone || '',
+      reportTo: editingReportTo,
+      files: files.map(file => {return {id: file.id};})
+    };
+    localStorage.setItem('article', JSON.stringify(savedArticle));
+  }
+
+  deleteSavedArticleFromLocalStorage(articleId) {
+    console.log('deleteSavedArticleFromLocalStorage');
+    const savedArticle = JSON.parse(localStorage.getItem('article') || '{}');
+    delete savedArticle[articleId];
+    localStorage.setItem('article', JSON.stringify(savedArticle));
   }
 
   isCreate() {
