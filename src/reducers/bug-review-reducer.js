@@ -33,6 +33,7 @@ const initialState = Map({
     currentSelectUser: Map({}),
     pager: Map({ totalRow: 0, pageRow: 25, rowIndex: 1, pageSize: 0 }),
     resolvedReasonTypes: List.of(
+        Map({ label: 'Usability', value: 'Usability' }),
         Map({ label: 'GUI Code Issue', value: 'GUI Code Issue' }),
         // Map({ label: 'AXAPI', value: 'AXAPI' }),
         Map({ label: 'AXAPI Changed', value: 'AXAPI Changed' }),
@@ -87,7 +88,6 @@ function customizeTaskData(task) {
 
 function formatResponse(data) {
     let result = List.of();
-
     data.forEach((task) => {
         let updatedTask = customizeTaskData(task);
         result = result.push(OrderedMap(updatedTask));
