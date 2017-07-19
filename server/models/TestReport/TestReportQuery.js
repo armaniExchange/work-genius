@@ -150,11 +150,11 @@ let CategoryQuery = {
 
         const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
         const result = await r.db('work_genius')
-          .table('document_categories')
+          .table('document_categories', {readMode: 'outdated'})
           .filter({ isFeature: true })
           .merge(function(category) {
             return r.db('work_genius')
-              .table('test_report_categories')
+              .table('test_report_categories', {readMode: 'outdated'})
               .get(category('id'))
               .default({});
           })
