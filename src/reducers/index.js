@@ -20,6 +20,7 @@ import workLog from './work-log-reducer';
 import documentTemplate from './document-template-reducer';
 import featureAutomation from './feature-automation-reducer';
 import device from './device-reducer';
+import bugWeeklyReport from './bug-weekly-report-reducer';
 
 const rootReducer = combineReducers({
   app,
@@ -42,7 +43,8 @@ const rootReducer = combineReducers({
   bugPerformance,
   featureAnalysis,
   documentTemplate,
-  featureAutomation
+  featureAutomation,
+  bugWeeklyReport
 });
 
 export default rootReducer;

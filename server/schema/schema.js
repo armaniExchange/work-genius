@@ -41,7 +41,7 @@ import DeviceMutation from '../models/Devices/DeviceMutation';
 import ReleaseMutation from '../models/Release/ReleaseMutation.js';
 import ReleaseQuery from '../models/Release/ReleaseQuery.js';
 import RCABugQuery from '../models/RCABugs/RCABugQuery.js';
-import RCABugMutation from '../models/RCABugs/RCABugMutation.js'
+import RCABugMutation from '../models/RCABugs/RCABugMutation.js';
 
 const schema = new GraphQLSchema({
   query: new GraphQLObjectType({

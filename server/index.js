@@ -18,6 +18,8 @@ import { fetchProductHandler, fetchBuildNumberHandler, changeProductHandler, cha
   changeModifiedFilenameHandler, changeTabHandler,
   changeCreatedAtHandler
 } from './models/AxapiAutomation/AxapiAutomationQuery';
+import { getBugCheckPointsHandler, getWeeklyBugHandler, saveWeeklyBugReportHandler, removeCheckpoint,
+  approvalCheckpoint } from './models/BugCheckPoint';
 import { searchArticleHandler, searchFileHandler, searchWorklogHandler, searchCommentHandler, searchBugtrackingHandler } from './models/Search/SearchQuery';
 import {
   IS_PRODUCTION,
@@ -110,6 +112,10 @@ app.route('/axapi_automation_api/change_build_number/').get(changeBuildNumberHan
 app.route('/axapi_automation_api/change_createdat/').get(changeCreatedAtHandler);
 app.route('/axapi_automation_api/change_modified_filename/').get(changeModifiedFilenameHandler);
 app.route('/axapi_automation_api/change_tab/').get(changeTabHandler); // for http://localhost:3000/axapi_automation_api/change_tab?product=4_1_1&build=2&tab=TAB___CLI
+
+app.route('/bug_weekly_report/checkpoint/').get(getBugCheckPointsHandler).delete(removeCheckpoint).put(approvalCheckpoint);
+app.route('/bug_weekly_report/').get(getWeeklyBugHandler);
+app.route('/bug_weekly_report/').post(saveWeeklyBugReportHandler);
 
 app.route('/search')
   .get((req, res)=>{

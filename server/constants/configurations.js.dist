@@ -20,6 +20,9 @@ export const GK2_REFERER_URL = 'https://gk2.a10networks.com/login/?next=/';
 export const ADMIN_ID = '00000';
 export const TESTER_ID = '99999';
 
+export const MYSQL_HOST = '';
+export const MYSQL_USERNAME = '';
+export const MYSQL_PASSWORD = '';
 
 export const MAILER_ADDRESS = '"Knowlege Base" <kb@a10networks.com>';
 export const MAIL_CC_LIST = [

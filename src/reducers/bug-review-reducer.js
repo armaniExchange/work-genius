@@ -134,7 +134,7 @@ function addReviewTagData(state, data){
 function setAllUsers(state, data){
     let result = List.of();
     data.forEach((user) => {
-        let updateUser = Map({title: user.name, value: user.alias});
+        let updateUser = Map({title: user.name, value: user.alias, id: user.id});
         result = result.push(updateUser);
     });
     return state.set(`allUsers`, result);

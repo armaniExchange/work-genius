@@ -90,6 +90,10 @@ const initialState = Map({
       {
         name: 'Bug Performance',
         url: '/main/bug-analysis/bug-perf'
+      },
+      {
+        name: 'Weekly Report',
+        url: '/main/bug-analysis/bug-weekly-report'
       }
     ),
 		// 'Page Assignment': List.of(

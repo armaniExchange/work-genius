@@ -41,6 +41,7 @@ import EditDocumentCategoryPage from '../containers/EditDocumentCategoryPage/Edi
 import FeatureAutomationPage from '../containers/FeatureAutomationPage/FeatureAutomationPage';
 import WorkLogPage from '../containers/WorkLogPage/WorkLogPage';
 import UTDocTaskPage from '../containers/UTDocTaskPage/UTDocTaskPage';
+import BugWeeklyReport from '../containers/BugAnalysisPage/BugWeeklyReport';
 
 // Utilities
 import requireAuth from '../containers/Require-Auth/Require-Auth';
@@ -69,6 +70,7 @@ const appRoutes = () => (
           <Route path="bug-analysis" component={requireAuth(BugReviewPage)} /> {/*-- Root Causes*/}
           <Route path="bug-report" component={requireAuth(BugReportPage)} /> {/*-- Analysis Reports*/}
           <Route path="bug-perf" component={requireAuth(BugPerformancePage)} />
+          <Route path="bug-weekly-report" component={requireAuth(BugWeeklyReport)} />
         </Route>
 
         {/* resource*/}
