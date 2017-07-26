@@ -38,7 +38,7 @@ class BugWeeklyReport extends Component {
     checkPoints:                          PropTypes.array,
     checkPointsObj:                       PropTypes.object,
     weeklyBugReport:                      PropTypes.object,
-    fetchAllUsers:                        PropTypes.func,
+    fetchAllUsersRequest:                 PropTypes.func,
     fetchWeeklyReport:                    PropTypes.func,
     fetchCheckpoint:                      PropTypes.func,
     updateBugReport:                      PropTypes.func,
@@ -59,10 +59,10 @@ class BugWeeklyReport extends Component {
   }
 
   componentWillMount() {
-    const { fetchAllUsers, fetchCheckpoint, currentUser, fetchWeeklyReport, queryResourceMapData } = this.props;
+    const { fetchAllUsersRequest, fetchCheckpoint, currentUser, fetchWeeklyReport, queryResourceMapData } = this.props;
     const value = currentUser.email.substring(0, currentUser.email.indexOf('@'));
     const startDate = moment().weekday(0).format('YYYY-MM-DD');
-    fetchAllUsers();
+    fetchAllUsersRequest();
     fetchCheckpoint();
     fetchWeeklyReport(currentUser.id, value, startDate);
     queryResourceMapData(startDate, 7, currentUser.id);
@@ -161,19 +161,19 @@ class BugWeeklyReport extends Component {
       };
     } else {
       for (var i = 0; i < allUsers.length; i++) {
-        if (allUsers[i].value !== user) {
+        if (allUsers[i].id !== user) {
           continue;
         }
         result = {
-          title: allUsers[i].title,
-          value: user,
+          title: allUsers[i].name,
+          value: allUsers[i].alias,
           id: allUsers[i].id
         };
         break;
       }
     }
 
-    fetchWeeklyReport(result.id, user, startDate);
+    fetchWeeklyReport(result.id, result.value, startDate);
     queryResourceMapData(startDate, 7, result.id);
     this.setState({
       currentUser: result
@@ -474,7 +474,9 @@ ${weeklyBugReport.summary || ''}\n\n-------\n\n`;
           isNeedAll={false}
           title={currentUser.title}
           onOptionClick={this.onChangeSelectUser}
-          aryOptionConfig={allUsers}
+          aryOptionConfig={allUsers.map((user) => {
+            return {title: user.name, value: user.id};
+          })}
         />
 
         <label>&nbsp;&nbsp;Date:&nbsp;</label>

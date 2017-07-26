@@ -159,25 +159,30 @@ export async function saveWeeklyBugReportHandler(req, res) {
       if (bugReport.checkpoint) {
         const newCheckpoint = bugReport.checkpoint.substring(12).split('/');
         let newCheckpointKey = bugReport.checkpointKey;
+        bugReport.checkpointKey = null;
         if (newCheckpointKey) {
-          const oldCheckpoint = await r.db('work_genius').table('bug_check_points')
-            .filter({key: newCheckpointKey}).coerceTo('array').run(connection);
-          if (oldCheckpoint && oldCheckpoint.length) {
-            bugReport.checkpoint = oldCheckpoint[0].id;
-          } else {
-            let finalCheckpoint;
-            for (let i = newCheckpointKey.split('-').length - 1; i < newCheckpoint.length; i++) {
-              const result = await r.db('work_genius').table('bug_check_points')
-                .insert({
-                  value: newCheckpoint[newCheckpoint.length - 1],
-                  key: newCheckpointKey,
-                  createBy: user,
-                  isApproval: false
-                }).run(connection);
-              finalCheckpoint = result['generated_keys'][0];
-              newCheckpointKey += '-0';
+          if (newCheckpoint.length > 0) {
+            const oldCheckpoint = await r.db('work_genius').table('bug_check_points')
+              .filter({key: newCheckpointKey}).coerceTo('array').run(connection);
+            if (oldCheckpoint && oldCheckpoint.length) {
+              bugReport.checkpoint = oldCheckpoint[0].id;
+            } else {
+              let finalCheckpoint;
+              for (let i = newCheckpointKey.split('-').length - 1; i < newCheckpoint.length; i++) {
+                const result = await r.db('work_genius').table('bug_check_points')
+                  .insert({
+                    value: newCheckpoint[newCheckpoint.length - 1],
+                    key: newCheckpointKey,
+                    createBy: user,
+                    isApproval: false
+                  }).run(connection);
+                finalCheckpoint = result['generated_keys'][0];
+                newCheckpointKey += '-0';
+              }
+              bugReport.checkpoint = finalCheckpoint;
             }
-            bugReport.checkpoint = finalCheckpoint;
+          }  else {
+            bugReport.checkpoint = null;
           }
         }
       }
@@ -191,6 +196,7 @@ export async function saveWeeklyBugReportHandler(req, res) {
       report
     };
     if (result && result.length) {
+      console.log(weeklyReport.report.bugs['395615']);
       result = await r.db('work_genius').table('weekly_review_bugs').filter({ user, startDate }).update(weeklyReport).run(connection);
     } else {
       result = await r.db('work_genius').table('weekly_review_bugs').insert(weeklyReport).run(connection);
