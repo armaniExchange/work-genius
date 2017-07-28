@@ -296,7 +296,7 @@ ${weeklyBugReport.summary || ''}\n\n-------\n\n`;
 
     result += `## Task detail${this.getWeeklyTaskContentStr()}\n\n-------\n\n`;
 
-    if (weeklyBugReport.bugs && weeklyBugReport.bugs.length) {
+    if (weeklyBugReport.bugs && Object.keys(weeklyBugReport.bugs).length) {
       result += '## Bugs Analysis\n';
       for (const key in weeklyBugReport.bugs) {
         if (!weeklyBugReport.bugs.hasOwnProperty(key)) {
