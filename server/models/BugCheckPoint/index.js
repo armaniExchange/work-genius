@@ -62,7 +62,8 @@ function getBugList(username, startDate, endDate) {
         FROM bugs
         LEFT JOIN profiles ON bugs.assigned_to = profiles.userid
         WHERE extern_id = '${username}' 
-          AND creation_ts BETWEEN '${startDate}' AND '${endDate}'`, 
+          AND lastdiffed BETWEEN '${startDate}' AND '${endDate}'
+          AND (bug_status LIKE 'VERIFIED' OR bug_status LIKE 'RESOLVED' OR bug_status LIKE 'CLOSED')`, 
       function (error, results, fields) {
         if (error) reject(error);
         resolve(results);

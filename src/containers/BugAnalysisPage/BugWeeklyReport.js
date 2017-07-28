@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import ReactDOMServer from 'react-dom/server';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { bindActionCreators } from 'redux';
@@ -13,7 +14,7 @@ import * as appActions from '../../actions/app-actions';
 import * as mainActions from '../../actions/main-actions';
 import * as resourceMapActions from '../../actions/resource-map-actions';
 import DropDownList from '../../components/A10-UI/Input/Drop-Down-List.js';
-// import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
+import HighlightMarkdown from '../../components/HighlightMarkdown/HighlightMarkdown';
 import Editor from '../../components/Editor/Editor';
 import Clipboard from 'clipboard';
 
@@ -47,6 +48,7 @@ class BugWeeklyReport extends Component {
     removeCheckpoint:                     PropTypes.func,
     approvalCheckpoint:                   PropTypes.func,
     queryResourceMapData:                 PropTypes.func,
+    sendMail:                             PropTypes.func,
     data:                                 PropTypes.array.isRequired
   };
 
@@ -55,6 +57,7 @@ class BugWeeklyReport extends Component {
     this.state = {
       currentUser: null,
       newCheckPoint: {},
+      preview: false
     };
   }
 
@@ -285,33 +288,35 @@ class BugWeeklyReport extends Component {
     const { startDate, currentUser } = this.state;
 
     let result = `# Summary\n
-Owner: ${currentUser.title}
-Due: ${startDate} to ${moment(startDate, 'YYYY-MM-DD').add(7, 'days').format('YYYY-MM-DD')}
+Owner: ${currentUser.title}\n
+Due: ${startDate} to ${moment(startDate, 'YYYY-MM-DD').add(7, 'days').format('YYYY-MM-DD')}\n
 Report Date: ${moment().format('YYYY-MM-DD hh:mm')}\n
 --------------\n
 ${weeklyBugReport.summary || ''}\n\n-------\n\n`;
 
     result += `## Task detail${this.getWeeklyTaskContentStr()}\n\n-------\n\n`;
 
-    result += '## Bugs Analysis\n';
-    for (const key in weeklyBugReport.bugs) {
-      if (!weeklyBugReport.bugs.hasOwnProperty(key)) {
-        continue;
-      }
-      const bug = weeklyBugReport.bugs[key];
+    if (weeklyBugReport.bugs && weeklyBugReport.bugs.length) {
+      result += '## Bugs Analysis\n';
+      for (const key in weeklyBugReport.bugs) {
+        if (!weeklyBugReport.bugs.hasOwnProperty(key)) {
+          continue;
+        }
+        const bug = weeklyBugReport.bugs[key];
 
-      let checkpointStr = '';
-      if (bug['checkpoint'] && checkPointsObj[bug['checkpoint']]) {
-        checkpointStr = checkPointsObj[bug['checkpoint']].value;
-      }
+        let checkpointStr = '';
+        if (bug['checkpoint'] && checkPointsObj[bug['checkpoint']]) {
+          checkpointStr = checkPointsObj[bug['checkpoint']].value;
+        }
 
-      result += `### ${key}:\n
+        result += `### ${key}:\n
 - title: \n${bug['short_desc']}\n
-- RCA: \n${(bug['rca'] || '')}\n
+- RCA: \n${(bug['rca'] || '--')}\n
 - Check Point: \n${checkpointStr}\n
-- Prevention in the feature: \n${(bug['prevent'] || '')}\n
+- Prevention in the feature: \n${(bug['prevent'] || '--')}\n
 - Issue by me: \n${bug['isIssueByMe'] || 'No'}\n
 -------\n\n`;
+      }
     }
 
     return result;
@@ -405,6 +410,10 @@ ${weeklyBugReport.summary || ''}\n\n-------\n\n`;
     });
   }
 
+  previewReport = () => {
+    this.setState({ preview: true });
+  }
+
   renderContent() {
     const { weeklyBugReport, updateSummary } = this.props;
 
@@ -430,6 +439,10 @@ ${weeklyBugReport.summary || ''}\n\n-------\n\n`;
           label="Save"
           style={{marginRight: 10}}
           onClick={this.saveBugReport} />
+        <RaisedButton
+          label="Preview"
+          style={{marginRight: 10}}
+          onClick={this.previewReport} />
         <RaisedButton 
           id="copy-weekly-report"
           label="Copy"
@@ -454,15 +467,44 @@ ${weeklyBugReport.summary || ''}\n\n-------\n\n`;
         const date = moment(day.date).format('YYYY-MM-DD');
         str += `\n- ${date}:\n`;
         day['job_items'].forEach(function(job) {
-          str += `${job.title}: ${job.progress}\n`;
+          str += `${job.title}: ${job.progress}%\n`;
         });
       });
     });
     return str;
   }
 
+  renderPreviewContent() {
+    const reportStr = this.getCopyReportStr();
+    const previewReport = <HighlightMarkdown source={reportStr} />;
+    return (
+      <div>
+        {previewReport}
+        <RaisedButton
+          label="Edit"
+          style={{marginRight: 10}}
+          onClick={() => {
+            this.setState({ preview: false });
+          }} />
+        <RaisedButton 
+          label="Send"
+          style={{marginLeft: 10}}
+          onClick={() => {
+            const { currentUser } = this.state;
+            const { sendMail } = this.props;
+            sendMail(
+              [], 
+              ['ax-web-DL@a10networks.com', `${currentUser.value}@a10networks.com`], '',
+              `${currentUser.title} - Weekly Report`, 
+              ReactDOMServer.renderToStaticMarkup(previewReport).replace(/\n/g, '').replace(/"/g, '\\"'), 
+              true);
+          }} />
+      </div>
+    );
+  }
+
   render() {
-    const { currentUser, startDate } = this.state;
+    const { currentUser, startDate, preview } = this.state;
     const { allUsers } = this.props;
 
     return (
@@ -485,7 +527,9 @@ ${weeklyBugReport.summary || ''}\n\n-------\n\n`;
           onChange={this.changeStartDate}
           dateFormat="YYYY-MM-DD"/>
 
-        {this.renderContent()}
+        {
+          preview ? this.renderPreviewContent() : this.renderContent()
+        }
       </section>
     );
   }
