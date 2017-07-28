@@ -494,8 +494,10 @@ ${weeklyBugReport.summary || ''}\n\n-------\n\n`;
             const { sendMail } = this.props;
             sendMail(
               [], 
-              ['ax-web-DL@a10networks.com', `${currentUser.value}@a10networks.com`], '',
+              ['ax-web-DL@a10networks.com', `${currentUser.value}@a10networks.com`], 
+              '',
               `${currentUser.title} - Weekly Report`, 
+              reportStr,
               ReactDOMServer.renderToStaticMarkup(previewReport).replace(/\n/g, '').replace(/"/g, '\\"'), 
               true);
           }} />
