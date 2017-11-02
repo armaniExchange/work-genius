@@ -1,4 +1,5 @@
 import request from 'request';
+import https from 'https';
 import r from 'rethinkdb';
 import { DB_HOST, DB_PORT, PRODUCTION_MODE } from '../../constants/configurations.js';
 import glob from 'glob';
@@ -8,14 +9,21 @@ export default class AxapiRequest {
         headers: {'Connection': 'close', 'Authorization': ''}
     }
 
+    defaultOptions = {
+        port: '443',
+        rejectUnauthorized: false,
+        headers: {
+            'Content-Type': 'Application/json'
+        }
+    }
+
     host = '192.168.105.72'
 
     constructor(apiHost='192.168.105.72') {
-        // console.log('setApiHost', apiHost);
         this.host = apiHost;
     }
 
-    async getDeviceInfo(ip) 
+    async getDeviceInfo(ip)
     {
         let connection = null,
             result = [],
@@ -32,13 +40,29 @@ export default class AxapiRequest {
         }
     }
 
+    axapiHttpsPromise(options, payload) {
+        return new Promise((resolve, reject) => {
+            const request = https.request(options, (res) => {
+                res.on('data', (buffer) => {
+                    resolve(JSON.parse(buffer.toString()));
+                });
+            });
+            request.on('error', (e) => {
+                reject(e);
+            });
+            if (payload) {
+                request.write(JSON.stringify(payload));
+            }
+            request.end();
+        });
+    }
+
     axapiPromise (options) {
         return new Promise((resolve, reject) => {
             request(options, function(err, response, result) {
                 if (err) {
                     reject(new Error(err));
                 }
-                // console.log(response);
                 if (!err && response.statusCode === 200) {
                     resolve(result);
                 } else {
@@ -55,41 +79,52 @@ export default class AxapiRequest {
     }
 
     async getAuthToken() {
-        // let deviceInfo = this.getDeviceInfo(this.host);
         let deviceInfo = {username: 'admin', password: 'a10'};
-        // console.log('=============== device info ==============', deviceInfo);
-        let authOptions = Object.assign({}, this.options, {
-            url: this.buildAXAPI('auth'),
+        let authOptions = {
+            hostname: this.host,
+            port: '443',
+            path: '/axapi/v3/auth',
             method: 'POST',
-            body: {
-                credentials:{username: deviceInfo['username'], password: deviceInfo['password']}
+            rejectUnauthorized: false,
+            headers: {
+                'Content-Type': 'Application/json'
             }
-        });
+        };
+        const payload = {
+            credentials: {
+                username: deviceInfo['username'],
+                password: deviceInfo['password']
+            }
+        };
 
-        let result =  await this.axapiPromise(authOptions);
+        let result =  await this.axapiHttpsPromise(authOptions, payload);
         return 'A10 ' + result.authresponse.signature;
     }
 
     async logOff() {
-        let authOptions = Object.assign({}, this.options, {
-            url: this.buildAXAPI('logoff'),
-            method: 'POST',
-            body: {}
+        // let authOptions = Object.assign({}, this.options, {
+        //     url: this.buildAXAPI('logoff'),
+        //     method: 'POST',
+        //     body: {}
+        // });
+        let authOptions = Object.assign({}, this.defaultOptions, {
+            hostname: this.host,
+            path: '/axapi/v3/logoff',
+            method: 'POST'
         });
-
-        return await this.axapiPromise(authOptions);
+        return await this.axapiHttpsPromise(authOptions);
     }
 
     async getVersion() {
         let token = await this.getAuthToken();
         this.options.headers['Authorization'] = token;
-        let authOptions = Object.assign({}, this.options, {
-            url: this.buildAXAPI('version/oper'),
-            method: 'GET',
+        this.defaultOptions.headers['Authorization'] = token;
+        let authOptions = Object.assign({}, this.defaultOptions, {
+            hostname: this.host,
+            path: '/axapi/v3/version/oper',
+            method: 'GET'
         });
-        // console.log('get version auth options', authOptions);
-        let result =  await this.axapiPromise(authOptions);
-        // console.log('result is : ' , result);
+        let result =  await this.axapiHttpsPromise(authOptions);
         this.logOff();
         return result;
     }
@@ -131,12 +166,10 @@ export default class AxapiRequest {
         } else {
             let dataDemo = require('./release_demo_data');
             data = dataDemo.default;
-            // console.log('data from lib', data.default);
         }
 
         // let data = JSON.parse(stdout);
         let outputs = {};
-        // console.log(data, 'is data');
         data.map((v) => {
             let secs = v.split('/');
             let build = secs[3];
@@ -152,7 +185,7 @@ export default class AxapiRequest {
             if (!outputs[releaseNo][releaseBuild]) {
                 outputs[releaseNo][releaseBuild] = [];
             }
-            outputs[releaseNo][releaseBuild].push([releaseDate, v]); 
+            outputs[releaseNo][releaseBuild].push([releaseDate, v]);
         });
         return outputs;
     }
@@ -165,7 +198,6 @@ export default class AxapiRequest {
     // }
 
     async upgrade(imageHost, query) {
-        console.log(query);
         let buildImagePath = this.buildImagePath(imageHost, query.release, query.build, query.fpga);
         if (!buildImagePath) {
             return {msg: {err: 'Cannot find image file.'}}
@@ -185,7 +217,6 @@ export default class AxapiRequest {
                 }
             }
         });
-        console.log(authOptions);
         // let result = {};
         let result =  await this.axapiPromise(authOptions);
         // this.logOff();
