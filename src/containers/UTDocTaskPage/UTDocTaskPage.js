@@ -250,6 +250,10 @@ class UTDocTaskPage extends Component {
 
     return (
       <div className="pull-right" style={{lineHeight: '2.5em'}}>
+        <label>{`Pages: ${displayRows.length}`}</label>
+        <span>&nbsp;&nbsp;&nbsp;</span>
+        <label>{`Weight: ${displayRows.length}`}</label>
+        <span>&nbsp;&nbsp;&nbsp;</span>
         <label>
           {`Coverage: ${((CategoriesisCheckListDoneLength * 100 )/(totalCategoriesLength)).toFixed(2)}%`}
         </label>
