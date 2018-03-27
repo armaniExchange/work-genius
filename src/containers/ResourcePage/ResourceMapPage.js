@@ -26,7 +26,10 @@ class ResourceMapPage extends Component{
 		super();
 		this._changeStartDate = ::this._changeStartDate;
         this._selectUser = ::this._selectUser;
-        this.state = {startDate: '2016-07-10'};
+        this.state = {
+            startDate: '2016-07-10',
+            totalDays: 7
+        };
 	}
 
 	componentWillMount() {
@@ -56,11 +59,12 @@ class ResourceMapPage extends Component{
 
 	_changeStartDate(date) {
 		const {
-            totalDays,
             currentUserId,
 			queryResourceMapData
-		} = this.props;
-		queryResourceMapData(date, totalDays, currentUserId);
+        } = this.props;
+        this.setState({ startDate: date }, () => {
+            queryResourceMapData(date, this.state.totalDays, currentUserId);
+        });
 	}
 
     prevMonthResourceMap() {
@@ -91,15 +95,30 @@ class ResourceMapPage extends Component{
         // console.log(startDate, newDate);
     }
 
+    showMouthMap() {
+        const totalDays = 30;
+        const { queryResourceMapData, currentUserId } = this.props;
+        this.setState({ totalDays: totalDays }, () => {
+            queryResourceMapData(this.state.startDate, this.state.totalDays, currentUserId);
+        });
+    }
+
+    showWeekMap() {
+        const totalDays = 7;
+        const { queryResourceMapData, currentUserId } = this.props;
+        this.setState({ totalDays: totalDays }, () => {
+            queryResourceMapData(this.state.startDate, this.state.totalDays, currentUserId);
+        });
+    }
+
 
     _selectUser(user) {
         const {
-            totalDays,
             startDate,
             queryResourceMapData
         } = this.props;
         let defaultStartDate = moment(startDate).format('YYYY-MM-DD');
-        queryResourceMapData(defaultStartDate, totalDays, user);
+        queryResourceMapData(defaultStartDate, this.state.totalDays, user);
     }
 
 	render () {
@@ -170,6 +189,21 @@ class ResourceMapPage extends Component{
                                 })}
                         />
                     </div>
+                    <div className = "top-selector pull-left">
+                        &nbsp;&nbsp;&nbsp;
+                        <RaisedButton
+                            title="Week"
+                            label="Week"
+                            style={style}
+                            disabled={this.state.totalDays === 7}
+                            onClick={ ::this.showWeekMap } />
+                        <RaisedButton
+                            title="Month"
+                            label="Month"
+                            style={style}
+                            disabled={this.state.totalDays === 30}
+                            onClick={ ::this.showMouthMap } />
+                    </div>
                     <div className = "top-selector pull-right">
                         <button className="mdl-button mdl-js-button mdl-button--icon">
                             <Tooltip
@@ -201,6 +235,7 @@ class ResourceMapPage extends Component{
                     onAddTagHandler={addResourceMapTag}
                     onAddReleaseHandler={addResourceMapRelease}
 					{...this.props}
+                    totalDays={this.state.totalDays}
 				/>
 			</section>
 		);

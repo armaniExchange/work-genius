@@ -28,9 +28,13 @@ class ResourceMapTable extends Component {
             defaultModalInfos,
             onAddTagHandler,
             onAddReleaseHandler
-		} = this.props;
+        } = this.props;
+        let styles = {};
+        if (totalDays > 7) {
+            styles = { overflow: 'scroll', width: '100%', maxHeight: '600px' };
+        }
 		return (
-			<div>
+			<div style={styles}>
 				<Table className="bug-review-table">
 					<ResourceMapTableHeader
 						startDate={startDate}

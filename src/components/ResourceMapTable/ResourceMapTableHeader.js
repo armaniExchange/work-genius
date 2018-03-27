@@ -34,21 +34,34 @@ class ResourceMapTableHeader extends Component {
       let day = headerObj.day;
       if (day === 6 || day === 7) {
         className += 'weekend-style';
-      }
-			return (
-				<Th
-					className={className}
-					key={index}
-					colSpan={1}
-				>
-					{headerObj.format}
-				</Th>
-			);
+			}
+			if (totalDays === 7) {
+				return (
+					<Th
+						className={className}
+						key={index}
+						colSpan={1}
+					>
+						{headerObj.format}
+					</Th>
+				);
+			} else {
+				return (
+					<Th
+						className={className}
+						key={index}
+						style={{ width: '150px', position: 'relative' }}
+					>
+						{headerObj.format}
+					</Th>
+				);
+			}
+
 		});
 		return (
 			<thead>
 	            <tr>
-	            	<Th className={'table_header_style'}/>
+	            	<Th className={'table_header_style'} style={{ width: '150px' }}/>
 	            	{headerHtml}
 	            </tr>
             </thead>
