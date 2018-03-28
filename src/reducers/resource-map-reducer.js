@@ -144,7 +144,7 @@ var taskStateActions = {
         }else {
             return state;
         }
-        
+
     },
     byUserHandle: function (state, itemList) {
         //var self = this;
@@ -339,6 +339,10 @@ export default function resourceMapReducer(state = initialState, action) {
         return nextState;
     case actionTypes.FETCH_RESOURCE_MAP_TITLE:
         nextState = nextState.set('titles', Immutable.fromJS(action.titles));
+        return nextState;
+    case actionTypes.FETCH_RESOURCE_MAP_TOTALDAYS:
+        console.log(action);
+        nextState = nextState.set('totalDays', Immutable.fromJS(action.totalDays));
         return nextState;
 	default:
 		return nextState;

@@ -97,16 +97,18 @@ class ResourceMapPage extends Component{
 
     showMouthMap() {
         const totalDays = 30;
-        const { queryResourceMapData, currentUserId } = this.props;
+        const { queryResourceMapData, currentUserId, fetechReourceMapTotalDays } = this.props;
         this.setState({ totalDays: totalDays }, () => {
+            fetechReourceMapTotalDays(totalDays);
             queryResourceMapData(this.state.startDate, this.state.totalDays, currentUserId);
         });
     }
 
     showWeekMap() {
         const totalDays = 7;
-        const { queryResourceMapData, currentUserId } = this.props;
+        const { queryResourceMapData, currentUserId, fetechReourceMapTotalDays } = this.props;
         this.setState({ totalDays: totalDays }, () => {
+            fetechReourceMapTotalDays(totalDays);
             queryResourceMapData(this.state.startDate, this.state.totalDays, currentUserId);
         });
     }
@@ -267,7 +269,8 @@ ResourceMapPage.propTypes = {
     show                           : PropTypes.bool.isRequired,
     defaultModalInfos              : PropTypes.object.isRequired,
     upsertWorklogItem              : PropTypes.func.isRequired,
-    fetchResourceMapModalHandler   : PropTypes.func.isRequired
+    fetchResourceMapModalHandler   : PropTypes.func.isRequired,
+    fetechReourceMapTotalDays      : PropTypes.func.isRequired
 };
 
 ResourceMapPage.defaultProps = {

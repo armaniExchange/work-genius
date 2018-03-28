@@ -3,6 +3,7 @@ import './ResourceMapTable.css';
 import React, { Component, PropTypes } from 'react';
 
 import Th from '../A10-UI/Table/Th';
+import Table from '../A10-UI/Table/Table';
 import moment from 'moment';
 
 const getDateList = function (startDate, totalDays) {
@@ -29,6 +30,7 @@ class ResourceMapTableHeader extends Component {
 		} = this.props;
 
     var dateList = getDateList(startDate, totalDays);
+		let styles = totalDays === 30 ? { width: '4650px' } : {};
 		var headerHtml = dateList.map((headerObj, index) => {
       let className = 'table_header_style ';
       let day = headerObj.day;
@@ -56,16 +58,28 @@ class ResourceMapTableHeader extends Component {
 					</Th>
 				);
 			}
-
 		});
+
+		if ( totalDays === 7) {
+			return (
+				<thead>
+					<tr style={styles}>
+						<Th className={'table_header_style'} style={{ width: '150px' }}/>
+						{headerHtml}
+					</tr>
+				</thead>
+			);
+		}
 		return (
-			<thead>
-	            <tr>
-	            	<Th className={'table_header_style'} style={{ width: '150px' }}/>
-	            	{headerHtml}
-	            </tr>
-            </thead>
-        );
+			<Table className="bug-review-table">
+					<thead>
+					<tr style={styles}>
+						<Th className={'table_header_style'} style={{ width: '150px' }}/>
+						{headerHtml}
+					</tr>
+				</thead>
+			</Table>
+		);
 	};
 }
 

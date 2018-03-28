@@ -38,6 +38,13 @@ function fetchWorklogItems(items) {
     };
 }
 
+export function fetechReourceMapTotalDays(totalDays) {
+    return {
+        type: actionTypes.FETCH_RESOURCE_MAP_TOTALDAYS,
+        totalDays
+    };
+}
+
 export function fetchResourceMapModalHandler(show, info){
 	return {
 		type: actionTypes.FETCH_RESOURCE_MAP_MODAL,

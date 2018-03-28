@@ -209,6 +209,7 @@ export default keyMirror({
     FETCH_RESOURCE_MAP_ALL_RELEASE: null,
     FETCH_RESOURCE_MAP_NEW_RELEASE: null,
     FETCH_RESOURCE_MAP_TITLE: null,
+    FETCH_RESOURCE_MAP_TOTALDAYS: null,
 
     // Resource Device
     FETCH_RESOURCE_DEVIE_INFO: null,

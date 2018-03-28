@@ -185,3 +185,7 @@ td {
 .left-align{
   text-align: left;
 }
+
+.month-table td {
+  width: 150px;
+}

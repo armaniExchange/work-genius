@@ -10,6 +10,16 @@ import ResourceMapModalWorkLog from './ResourceMapModalWorkLog.js';
 
 class ResourceMapTable extends Component {
 
+    constructor() {
+        super();
+    }
+
+    onScrollTable(e) {
+        if (this.headTable) {
+            this.headTable.scrollLeft = e.target.scrollLeft;
+        }
+    }
+
 	render() {
 
 		const {
@@ -30,30 +40,62 @@ class ResourceMapTable extends Component {
             onAddReleaseHandler
         } = this.props;
         let styles = {};
-        if (totalDays > 7) {
-            styles = { overflow: 'scroll', width: '100%', maxHeight: '600px' };
-        }
-		return (
-			<div style={styles}>
-				<Table className="bug-review-table">
-					<ResourceMapTableHeader
-						startDate={startDate}
-						totalDays={totalDays}
-					/>
-					<ResourceMapTableBody
-                        data={data}
-                        startDate={startDate}
+        if (totalDays === 7) {
+		    return (
+                <div style={styles}>
+                    <Table className="bug-review-table">
+                        <ResourceMapTableHeader
+                            startDate={startDate}
+                            totalDays={totalDays}
+                        />
+                        <ResourceMapTableBody
+                            data={data}
+                            startDate={startDate}
+                            onModalHander={onModalHander}
+                            onSubmitStatus={onSubmitStatus}
+                            onDeleteItemHander={onDeleteItemHander}
+                        />
+                    </Table>
+                    <ResourceMapModalWorkLog
+                        show={show}
+                        tags={tags}
+                        titles={titles}
+                        releases={releases}
                         onModalHander={onModalHander}
-                        onSubmitStatus={onSubmitStatus}
-                        onDeleteItemHander={onDeleteItemHander}
+                        onModalSubmit={upsertWorklogItem}
+                        onModalSubmitMulti={onSubmitMulti}
+                        defaultModalInfos={defaultModalInfos}
+                        onAddTagHandler={onAddTagHandler}
+                        onAddReleaseHandler={onAddReleaseHandler}
                     />
-                </Table>
+                </div>
+            );
+        }
+        return (
+            <div style={{ width: '100%', maxHeight: '600px', overflow: 'hidden' }}>
+                <div style={{ overflow: 'hidden' }} ref={(node) => this.headTable = node}>
+                    <ResourceMapTableHeader
+                        startDate={startDate}
+                        totalDays={totalDays}
+                    />
+                </div>
+                <div style={{overflow: 'scroll', maxHeight: '540px' }} onScroll={::this.onScrollTable}>
+                    <Table className="bug-review-table month-table">
+                        <ResourceMapTableBody
+                            data={data}
+                            startDate={startDate}
+                            onModalHander={onModalHander}
+                            onSubmitStatus={onSubmitStatus}
+                            onDeleteItemHander={onDeleteItemHander}
+                        />
+                    </Table>
+                </div>
                 <ResourceMapModalWorkLog
-                	show={show}
+                    show={show}
                     tags={tags}
                     titles={titles}
                     releases={releases}
-                	onModalHander={onModalHander}
+                    onModalHander={onModalHander}
                     onModalSubmit={upsertWorklogItem}
                     onModalSubmitMulti={onSubmitMulti}
                     defaultModalInfos={defaultModalInfos}
