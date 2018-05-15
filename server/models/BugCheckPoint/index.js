@@ -95,18 +95,47 @@ export async function getBugCheckPointsHandler(req, res) {
 
 async function getWeeklyReport(user, account, date) {
   let weeklyBugReport = {
-    summary: `## Feature Status
-### Shipped to QA : 2
- 1. Feature name 1
- 1.  Feature name2
- 
-### Checked in: 2
- 1. Feature name 1
- 1. Feature name2
+    summary: `# My Meat
+Watch your meat, never let it being rapped by others, please update this report by daily
+## Daily Tasks
+1. Check GK2 Project Status(ETA, documents, bugs, tasks, escalation)
+* 4.1.4-p2
+* 3.2.3
+* 3.2.2-p5
 
-### Demostrated: 2
- 1. Feature name 1 [Craig]
- 1. Feature name2 [Zuoping]`,
+1. Domain knowledge Learning
+1. Update daily jobs at here
+
+-----
+## Tasks
+By priority(High to Row)
+### DOING
+1. Doing task 1
+Paste the execute steps as your work log
+
+1. Doing task 2
+* sub item  1
+* sub item 2
+
+### TO DO
+Once tasks assigned to you, please paste the tasks below, by priority
+1. To do task 1
+  comments here, 
+1. To do task 2
+  * sub item 1
+  * sub item 2
+
+### DONE
+Everyday once you finished your jobs, please move your doing tasks under here
+1. task1
+1. task2
+
+-----
+## Daily learned
+What you learned and studied, will review at Friday 3:00 to 4:00 PM each friday
+* 5/15
+Team managerment is also a project, to manage the team better, we need a higher but can be achieved goal,
+to achieve this goal, we need a plan, the plan splitted many phases`,
     bugs: {}
   };
 
