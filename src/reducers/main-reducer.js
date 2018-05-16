@@ -48,6 +48,10 @@ const initialState = Map({
       {
         name: 'UT status',
         url: '/main/resource/ut-status'
+      },
+      {
+        name: 'Daily Report',
+        url: '/main/bug-analysis/bug-weekly-report'
       }
     ),
     'Knowledge': List.of(
