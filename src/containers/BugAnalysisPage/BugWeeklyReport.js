@@ -254,6 +254,17 @@ class BugWeeklyReport extends Component {
     saveBugReport(currentUser.id, currentUser.value, startDate, weeklyBugReport);
   };
 
+  handleKeyDown = (event) => {
+    if (event.ctrlKey && event.which === 83){
+      console.log('ctrl s! ');
+      event.preventDefault(); 
+      this.saveBugReport();
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   transformStrToTreeData(str) {
     const data = str.split('/');
     const result = [];
@@ -427,7 +438,7 @@ ${weeklyBugReport.summary || ''}\n\n-------\n\n`;
       );
     }
     return (
-      <div>
+      <div onKeyDown={this.handleKeyDown}>
         {fixedBugSec}
 
         <div className="weekly-summary">
