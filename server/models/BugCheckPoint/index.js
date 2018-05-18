@@ -65,6 +65,7 @@ function getBugList(username, startDate, endDate) {
           AND lastdiffed BETWEEN '${startDate}' AND '${endDate}'
           AND (bug_status LIKE 'VERIFIED' OR bug_status LIKE 'RESOLVED' OR bug_status LIKE 'CLOSED')`, 
       function (error, results, fields) {
+        console.log('error:', error);
         if (error) reject(error);
         resolve(results);
       }
@@ -144,11 +145,13 @@ to achieve this goal, we need a plan, the plan splitted many phases`,
 
   // bug list from bugliza
   const bugList = await getBugList(account, startDate, endDate);
+  console.log('bugList:', bugList);
   // weekly review bugs
   try {
     const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
     const result = await r.db('work_genius').table('weekly_review_bugs').filter({ user, startDate }).limit(1).coerceTo('array').run(connection);
     await connection.close();
+
     if (result[0]) {
       weeklyBugReport = result[0].report;
     }
@@ -164,7 +167,7 @@ to achieve this goal, we need a plan, the plan splitted many phases`,
       ...(weeklyBugReport.bugs[bug['bug_id']] || {})
     }
   }
-
+  console.log('weeklyBugReport:', weeklyBugReport);
   return weeklyBugReport;
 }
 

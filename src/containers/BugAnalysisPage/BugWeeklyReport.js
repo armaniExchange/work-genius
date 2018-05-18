@@ -514,7 +514,7 @@ ${weeklyBugReport.summary || ''}\n\n-------\n\n`;
               '',
               `${currentUser.title} - Weekly Report`, 
               reportStr.replace(/\n/g, ''),
-              ReactDOMServer.renderToStaticMarkup(previewReport).replace(/\n/g, '').replace(/"/g, '\\"'), 
+              ReactDOMServer.renderToStaticMarkup(previewReport).replace(/\n/g, '').replace(/"/g, '\\"').replace(/&/g, ' '), 
               true);
           }} />
       </div>
