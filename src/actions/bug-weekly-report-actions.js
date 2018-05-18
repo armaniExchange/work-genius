@@ -69,7 +69,7 @@ export function updateSummary(content) {
   };
 }
 
-export function saveBugReport(user, account, date, report) {
+export function saveBugReport(user, account, date, report, callback) {
   return (dispatch) => {
     var data = [
       `user=${user}`,
@@ -90,6 +90,7 @@ export function saveBugReport(user, account, date, report) {
       if (res.status >= 400) {
         throw new Error(res.statusText);
       }
+      callback && callback();
       return res.json();
     })
     .then(res => {

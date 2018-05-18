@@ -3,7 +3,7 @@ import ReactDOMServer from 'react-dom/server';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { bindActionCreators } from 'redux';
-import { Row, Col, Input, TreeSelect, Icon, Checkbox } from 'antd';
+import { Row, Col, Input, TreeSelect, Icon, Checkbox, message } from 'antd';
 import RaisedButton from 'material-ui/lib/raised-button';
 import { DateField } from 'react-date-picker';
 // import CircularProgress from 'material-ui/lib/circular-progress';
@@ -28,6 +28,7 @@ import 'antd/lib/input/style/index.css';
 import 'antd/lib/tree-select/style/index.css';
 import 'antd/lib/select/style/index.css';
 import 'antd/lib/checkbox/style/index.css';
+import 'antd/lib/message/style/index.css';
 
 class BugWeeklyReport extends Component {
 
@@ -233,7 +234,12 @@ class BugWeeklyReport extends Component {
     return result;
   }
 
+  displaySuccessMsg() {
+    message.success('The report is saved successfully!');
+  }
+
   saveBugReport = () => {
+    return;
     const { currentUser, startDate } = this.state;
     const { saveBugReport, weeklyBugReport, checkPoints } = this.props;
 
@@ -251,7 +257,7 @@ class BugWeeklyReport extends Component {
     }
 
     this.setState({newCheckPoint: {}});
-    saveBugReport(currentUser.id, currentUser.value, startDate, weeklyBugReport);
+    saveBugReport(currentUser.id, currentUser.value, startDate, weeklyBugReport, this.displaySuccessMsg);
   };
 
   handleKeyDown = (event) => {
