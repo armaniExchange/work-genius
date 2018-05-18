@@ -239,7 +239,6 @@ class BugWeeklyReport extends Component {
   }
 
   saveBugReport = () => {
-    return;
     const { currentUser, startDate } = this.state;
     const { saveBugReport, weeklyBugReport, checkPoints } = this.props;
 
