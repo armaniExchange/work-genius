@@ -513,7 +513,7 @@ ${weeklyBugReport.summary || ''}\n\n-------\n\n`;
               ['ax-web-DL@a10networks.com', `${currentUser.value}@a10networks.com`], 
               '',
               `${currentUser.title} - Weekly Report`, 
-              reportStr.replace(/\n/g, ''),
+              reportStr.replace(/\n/g, '').replace(/"/g, '\\"'),
               ReactDOMServer.renderToStaticMarkup(previewReport).replace(/\n/g, '').replace(/"/g, '\\"'), 
               true);
           }} />
