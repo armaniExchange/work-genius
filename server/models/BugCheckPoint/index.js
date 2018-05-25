@@ -184,7 +184,7 @@ export async function saveWeeklyBugReportHandler(req, res) {
     const date = req.body['date'];
     const user = req.body['user'];
     const account = req.body['account'];
-    const report = JSON.parse(req.body['report']);
+    const report = JSON.parse(unescape(req.body['report']));
 
     const connection = await r.connect({ host: DB_HOST, port: DB_PORT });
     for (const key in report.bugs) {

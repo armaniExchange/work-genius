@@ -75,7 +75,7 @@ export function saveBugReport(user, account, date, report, callback) {
       `user=${user}`,
       `account=${account}`,
       `date=${date}`,
-      `report=${JSON.stringify(report).replace(/&/gi, ' ')}`
+      `report=${escape(JSON.stringify(report))}`
     ];
     return fetch(`${SERVER_BASIC_URL}bug_weekly_report`, {
       method: 'POST',
