@@ -76,7 +76,7 @@ class BugWeeklyReport extends Component {
         value: value,
         id: currentUser.id
       },
-      startDate: startDate, 
+      startDate: startDate,
     });
   }
 
@@ -128,7 +128,7 @@ class BugWeeklyReport extends Component {
           <Icon type="close"
             style={{color: 'red'}}
             onClick={e => {
-              e.preventDefault(); 
+              e.preventDefault();
               e.stopPropagation();
               removeCheckpoint(item.id);
             }} />
@@ -154,7 +154,7 @@ class BugWeeklyReport extends Component {
     const {
       allUsers, fetchWeeklyReport, queryResourceMapData
     } = this.props;
-    const { 
+    const {
       startDate,
     } = this.state;
     var result = {};
@@ -209,7 +209,7 @@ class BugWeeklyReport extends Component {
 
   changeStartDate = date => {
     const { currentUser } = this.state;
-    const { fetchWeeklyReport, queryResourceMapData } = this.props; 
+    const { fetchWeeklyReport, queryResourceMapData } = this.props;
     fetchWeeklyReport(currentUser.id, currentUser.value, date);
     queryResourceMapData(date, 7, currentUser.id);
     this.setState({
@@ -246,7 +246,7 @@ class BugWeeklyReport extends Component {
       if (!weeklyBugReport.bugs.hasOwnProperty(key)) {
         continue;
       }
-      
+
       const bug = weeklyBugReport.bugs[key];
       if (bug.checkpoint && bug.checkpoint.indexOf('$$_newitem: ') === 0) {
         const newCheckpoint = bug.checkpoint.substring(12).split('/');
@@ -262,7 +262,7 @@ class BugWeeklyReport extends Component {
   handleKeyDown = (event) => {
     if (event.ctrlKey && event.which === 83){
       console.log('ctrl s! ');
-      event.preventDefault(); 
+      event.preventDefault();
       this.saveBugReport();
       return false;
     } else {
@@ -338,7 +338,7 @@ ${weeklyBugReport.summary || ''}\n\n-------\n\n`;
     return result;
   };
 
-  renderWeeklyBugReport() {    
+  renderWeeklyBugReport() {
     const { newCheckPoint } = this.state;
     const { weeklyBugReport, checkPoints } = this.props;
     const checkpointTreeData = this.getRenderCheckpointTreeData(checkPoints);
@@ -451,7 +451,7 @@ ${weeklyBugReport.summary || ''}\n\n-------\n\n`;
           <Editor ref="editor" value={weeklyBugReport.summary} onChange={updateSummary} />
         </div>
 
-        <RaisedButton 
+        <RaisedButton
           label="Save"
           style={{marginRight: 10}}
           onClick={this.saveBugReport} />
@@ -459,7 +459,7 @@ ${weeklyBugReport.summary || ''}\n\n-------\n\n`;
           label="Preview"
           style={{marginRight: 10}}
           onClick={this.previewReport} />
-        <RaisedButton 
+        <RaisedButton
           id="copy-weekly-report"
           label="Copy"
           style={{marginLeft: 10}}
@@ -502,19 +502,20 @@ ${weeklyBugReport.summary || ''}\n\n-------\n\n`;
           onClick={() => {
             this.setState({ preview: false });
           }} />
-        <RaisedButton 
+        <RaisedButton
           label="Send"
           style={{marginLeft: 10}}
           onClick={() => {
             const { currentUser } = this.state;
             const { sendMail } = this.props;
+            this.saveBugReport();
             sendMail(
-              [], 
-              ['ax-web-DL@a10networks.com', `${currentUser.value}@a10networks.com`], 
+              [],
+              ['ax-web-DL@a10networks.com', `${currentUser.value}@a10networks.com`],
               '',
-              `${currentUser.title} - Weekly Report`, 
+              `${currentUser.title} - Weekly Report`,
               reportStr.replace(/\n/g, '').replace(/"/g, '\\"'),
-              ReactDOMServer.renderToStaticMarkup(previewReport).replace(/\n/g, '').replace(/"/g, '\\"'), 
+              ReactDOMServer.renderToStaticMarkup(previewReport).replace(/\n/g, '').replace(/"/g, '\\"'),
               true);
           }} />
       </div>
