@@ -108,6 +108,10 @@ Watch your meat, never let it being rapped by others, please update this report 
 1. Update daily jobs at here
 
 -----
+
+## Free Status
+Possible Free Date: 3/??
+
 ## Tasks
 By priority(High to Row)
 ### DOING
