@@ -2,7 +2,7 @@
  * @author Howard Chang
  */
 // Libraries
-import Immutable, { Map, List, OrderedMap} from 'immutable';
+import Immutable, { Map, List, OrderedMap } from 'immutable';
 // Constants
 import actionTypes from '../constants/action-types';
 // import { ADMIN_ID } from '../../server/constants/configurations.js';
@@ -13,16 +13,16 @@ import actionTypes from '../constants/action-types';
 const initialState = Map({
     applications: List.of(),
     bugReviewTitleKeyMap: List.of(
-        Map({ title: 'Bug ID', key: 'id', colspan: 1}),
-        Map({ title: 'Title', key: 'title', colspan: 3}),
-        Map({ title: 'Root Cause', key: 'resolved_type', colspan: 2}),
-        Map({ title: 'Prevent Tags', key: 'tags', colspan: 2}),
-        Map({ title: 'Belongs To Menu', key: 'menu', colspan: 2}),
-        Map({ title: 'Fixer', key: 'assigned_to', colspan: 1}),
-        Map({ title: 'Owner', key: 'owner', colspan: 2}),
-        Map({ title: 'Introduced By', key: 'introduced_by', colspan: 2}),
-        Map({ title: 'Resolved Status', key: 'resolved_status', colspan: 2}),
-        Map({ title: 'Root Cause Detail', key: 'review', colspan: 2})
+        Map({ title: 'Bug ID', key: 'id', colspan: 1 }),
+        Map({ title: 'Title', key: 'title', colspan: 3 }),
+        Map({ title: 'Root Cause', key: 'resolved_type', colspan: 2 }),
+        Map({ title: 'Prevent Tags', key: 'tags', colspan: 2 }),
+        Map({ title: 'Belongs To Menu', key: 'menu', colspan: 2 }),
+        Map({ title: 'Fixer', key: 'assigned_to', colspan: 1 }),
+        Map({ title: 'Owner', key: 'owner', colspan: 2 }),
+        Map({ title: 'Introduced By', key: 'introduced_by', colspan: 2 }),
+        Map({ title: 'Resolved Status', key: 'resolved_status', colspan: 2 }),
+        Map({ title: 'Root Cause Detail', key: 'review', colspan: 2 })
     ),
     allProjectVersions: List.of(),
     currentProjectVersion: '',
@@ -33,43 +33,59 @@ const initialState = Map({
     currentSelectUser: Map({}),
     pager: Map({ totalRow: 0, pageRow: 25, rowIndex: 1, pageSize: 0 }),
     resolvedReasonTypes: List.of(
-        Map({ label: 'Usability', value: 'Usability' }),
-        Map({ label: 'GUI Code Issue', value: 'GUI Code Issue' }),
-        // Map({ label: 'AXAPI', value: 'AXAPI' }),
-        Map({ label: 'AXAPI Changed', value: 'AXAPI Changed' }),
-        Map({ label: 'Look and Feel', value: 'Look and Feel' }),
-        Map({ label: 'Requirement Change', value: 'Requirement Change' }),
-        Map({ label: 'Browser Related', value: 'Browser Related' }),
-        Map({ label: 'Cannot be Reproduced', value: 'Cannot be Reproduced' }),
-        Map({ label: 'AXAPI Not Supported', value: 'AXAPI Not Supported' }),
-        Map({ label: 'GUI Not Supported', value: 'GUI Not Supported' }),
-        Map({ label: 'Duplicate', value: 'Duplicate' }),
-        Map({ label: 'NAB/By Design', value: 'NAB/By Design' }),
-        Map({ label: 'Working in current build', value: 'Working in current build' }),
-        Map({ label: 'Enhancement', value: 'Enhancement' }),
-        Map({ label: 'Others', value: 'Others' })
+        // For Acos
+        // Map({ label: 'Usability', value: 'Usability' }),
+        // Map({ label: 'GUI Code Issue', value: 'GUI Code Issue' }),
+        // // Map({ label: 'AXAPI', value: 'AXAPI' }),
+        // Map({ label: 'AXAPI Changed', value: 'AXAPI Changed' }),
+        // Map({ label: 'Look and Feel', value: 'Look and Feel' }),
+        // Map({ label: 'Requirement Change', value: 'Requirement Change' }),
+        // Map({ label: 'Browser Related', value: 'Browser Related' }),
+        // Map({ label: 'Cannot be Reproduced', value: 'Cannot be Reproduced' }),
+        // Map({ label: 'AXAPI Not Supported', value: 'AXAPI Not Supported' }),
+        // Map({ label: 'GUI Not Supported', value: 'GUI Not Supported' }),
+        // Map({ label: 'Duplicate', value: 'Duplicate' }),
+        // Map({ label: 'NAB/By Design', value: 'NAB/By Design' }),
+        // Map({ label: 'Working in current build', value: 'Working in current build' }),
+        // Map({ label: 'Enhancement', value: 'Enhancement' }),
+        // Map({ label: 'Others', value: 'Others' })
+        // For HC
+        Map({ label: 'GOE', value: 'GOE' }),
+        Map({ label: 'REQUIREMENT', value: 'REQUIREMENT' }),
+        Map({ label: 'USABILITY', value: 'USABILITY' }),
+        Map({ label: 'LOOK_FEEL', value: 'LOOK_FEEL' }),
+        Map({ label: 'WONTFIX', value: 'WONTFIX' }),
+        Map({ label: 'DUPLICATE', value: 'DUPLICATE' }),
+        Map({ label: 'UNREPRODUCE', value: 'UNREPRODUCE' }),
+        Map({ label: 'AUTOFORM_VALIDATION', value: 'AUTOFORM_VALIDATION' }),
+        Map({ label: 'AUTOFORM_BACKEND_CHANGE', value: 'AUTOFORM_BACKEND_CHANGE' }),
+        Map({ label: 'AUTOFORM_CUSTOM', value: 'AUTOFORM_CUSTOM' }),
+        Map({ label: 'AUTOFORM_UI_STYLE', value: 'AUTOFORM_UI_STYLE' }),
+        Map({ label: 'AUTOFORM_TAG_ERROR', value: 'AUTOFORM_TAG_ERROR' }),
+        Map({ label: 'AUTOFORM_ENHANCEMENT', value: 'AUTOFORM_ENHANCEMENT' }),
+        Map({ label: 'AUTOFORM_CODE_ISSUE', value: 'AUTOFORM_CODE_ISSUE' })
     ),
     optionsReviewTags: List.of(
-        Map({ value: 'test_more', label: 'Test More'}),
-        Map({ value: 'deep_test', label: 'Deep Test'})
+        Map({ value: 'test_more', label: 'Test More' }),
+        Map({ value: 'deep_test', label: 'Deep Test' })
     ),
     optionsIntroduced: List.of(
-      Map({ value: 'New feature', label: 'New feature'}),
-      Map({ value: 'Your own module', label: 'Your own module'}),
-      Map({ value: 'Help other team member', label: 'Help other team member'}),
-      Map({ value: 'Enhancement bug/won’t fix/unreproducible', label: 'Enhancement bug/won’t fix/unreproducible'})
+        Map({ value: 'New feature', label: 'New feature' }),
+        Map({ value: 'Your own module', label: 'Your own module' }),
+        Map({ value: 'Help other team member', label: 'Help other team member' }),
+        Map({ value: 'Enhancement bug/won’t fix/unreproducible', label: 'Enhancement bug/won’t fix/unreproducible' })
     ),
     optionsMenus: List.of(
-        Map({ value: 'Dashboard', label: 'Dashboard'}),
-        Map({ value: 'ADC', label: 'ADC'}),
-        Map({ value: 'SLB', label: 'SLB'}),
-        Map({ value: 'GSLB', label: 'GSLB'}),
-        Map({ value: 'Security', label: 'Security'}),
-        Map({ value: 'SSLi', label: 'SSLi'}),
-        Map({ value: 'AAM', label: 'AAM'}),
-        Map({ value: 'CGN', label: 'CGN'}),
-        Map({ value: 'Network', label: 'Network'}),
-        Map({ value: 'System', label: 'System'})
+        Map({ value: 'Dashboard', label: 'Dashboard' }),
+        Map({ value: 'ADC', label: 'ADC' }),
+        Map({ value: 'SLB', label: 'SLB' }),
+        Map({ value: 'GSLB', label: 'GSLB' }),
+        Map({ value: 'Security', label: 'Security' }),
+        Map({ value: 'SSLi', label: 'SSLi' }),
+        Map({ value: 'AAM', label: 'AAM' }),
+        Map({ value: 'CGN', label: 'CGN' }),
+        Map({ value: 'Network', label: 'Network' }),
+        Map({ value: 'System', label: 'System' })
     )
 });
 
@@ -98,7 +114,7 @@ function formatResponse(data) {
 
 function setTableData(state, data, pager) {
     let formatedData = formatResponse(data);
-    if ( formatedData.size > 0 ) {
+    if (formatedData.size > 0) {
         let one = formatedData.get(0);
         let totalRow = one.get('total_row');
         pager.totalRow = totalRow;
@@ -117,30 +133,30 @@ function setTableData(state, data, pager) {
 function setPreventTagData(state, data) {
     let result = List.of();
     data.forEach((tag) => {
-        let updateTag = Map({value: tag.tag_name, label: tag.tag_name});
+        let updateTag = Map({ value: tag.tag_name, label: tag.tag_name });
         result = result.push(updateTag);
     });
     return state.set(`optionsReviewTags`, result);
 }
 
-function addReviewTagData(state, data){
+function addReviewTagData(state, data) {
     var options = state.get(`optionsReviewTags`);
     if (data) {
-        options = options.push(Map({value: data, label: data}));
+        options = options.push(Map({ value: data, label: data }));
     }
     return state.set('optionsReviewTags', options);
 }
 
-function setAllUsers(state, data){
+function setAllUsers(state, data) {
     let result = List.of();
     data.forEach((user) => {
-        let updateUser = Map({title: user.name, value: user.alias, id: user.id});
+        let updateUser = Map({ title: user.name, value: user.alias, id: user.id });
         result = result.push(updateUser);
     });
     return state.set(`allUsers`, result);
 }
 
-function setSelectUser(state, userAlisa){
+function setSelectUser(state, userAlisa) {
     let allUsers = state.get(`allUsers`);
     let isAll = true;
     allUsers.forEach((userMap) => {
@@ -151,7 +167,7 @@ function setSelectUser(state, userAlisa){
         }
     });
     if (isAll) {
-        state = state.set(`currentSelectUser`, Map({title: 'All'}));
+        state = state.set(`currentSelectUser`, Map({ title: 'All' }));
     }
     return state;
 }
@@ -160,7 +176,7 @@ function changeOptions(state, data) {
     var applications = state.get(`applications`);
     var result = List.of();
     applications.forEach((application) => {
-        if ( String(application.get(`id`)) === String(data.id)){
+        if (String(application.get(`id`)) === String(data.id)) {
             result = result.push(OrderedMap(customizeTaskData(data)));
         } else {
             result = result.push(application);
@@ -172,7 +188,7 @@ function changeOptions(state, data) {
 function setReleaseState(state, data) {
     var releases = [];
     data.map(release => {
-        releases.push({title: release.name, value: release.name});
+        releases.push({ title: release.name, value: release.name });
     });
     return state.set('allProjectVersions', Immutable.fromJS(releases));
 }
