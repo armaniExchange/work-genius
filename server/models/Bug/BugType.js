@@ -3,72 +3,80 @@ import {
 	GraphQLObjectType,
 	GraphQLString,
 	GraphQLID,
-    GraphQLInt,
+	GraphQLInt,
 	GraphQLList
 } from 'graphql';
 
 const BUG_TYPE = new GraphQLObjectType({
-    name: 'Bug',
-    descriptyion: 'An bug object',
-    fields: () => ({
-        'id': {
-            type: GraphQLID,
-            description: 'Bug ID'
-        },
+	name: 'Bug',
+	descriptyion: 'An bug object',
+	fields: () => ({
+		'id': {
+			type: GraphQLID,
+			description: 'Bug ID'
+		},
 		//addtional property list
+		'display_id': {
+			type: GraphQLString,
+			description: 'display_id'
+		},
+		'group': {
+			type: GraphQLString,
+			description: 'group'
+		},
 		'assigned_to': {
 			type: GraphQLString,
-            description: 'assigned_to'
+			description: 'assigned_to'
 		},
 		'bug_severity': {
 			type: GraphQLString,
-            description: 'bug_severity'
+			description: 'bug_severity'
 		},
 		'bug_status': {
 			type: GraphQLString,
-            description: 'bug_status'
+			description: 'bug_status'
 		},
 		'label': {
 			type: GraphQLString,
-            description: 'label'
+			description: 'label'
 		},
 		'menu': {
 			type: new GraphQLList(GraphQLString),
-            description: 'menu'
+			description: 'menu'
 		},
 		'resolved_type': {
 			type: GraphQLString,
-            description: 'resolved_type'
+			description: 'resolved_type'
 		},
 		'review': {
 			type: GraphQLString,
-            description: 'review'
+			description: 'review'
 		},
 		'tags': {
 			type: new GraphQLList(GraphQLString),
-            description: 'tags'
+			description: 'tags'
 		},
 		'title': {
 			type: GraphQLString,
-            description: 'title'
+			description: 'title'
 		},
 		'resolution': {
 			type: GraphQLString,
-            description: 'resolution'
+			description: 'resolution'
 		},
 		'total_row': {
 			type: GraphQLInt,
-            description: 'total row (for pagination)'
+			description: 'total row (for pagination)'
 		},
 		'introduced_by': {
 			type: new GraphQLList(GraphQLString),
-            description: 'menu'
+			description: 'menu'
 		},
 		'owner': {
 			type: GraphQLString,
 			description: "Bug module owner"
 		}
-    })
+	})
 });
 
 export default BUG_TYPE;

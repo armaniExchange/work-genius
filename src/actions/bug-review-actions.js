@@ -15,21 +15,21 @@ import {
 import { fetchReleaseList } from './dashboard-page-actions';
 //import { setCurrentSelectedUserId } from './main-actions';
 
-export function fetchBugReviewApplicationsSuccess(data){
+export function fetchBugReviewApplicationsSuccess(data) {
     return {
         type: actionTypes.FETCH_BUG_REVIEW_APPLICATION_SUCCESS,
         data
     };
 };
 
-export function fetchAllUsersSuccess(data){
+export function fetchAllUsersSuccess(data) {
     return {
         type: actionTypes.FETCH_BUG_REVIEW_ALL_USERS,
         data
     };
 };
 
-export function fetchPreventTagsOptionsSuccess(data){
+export function fetchPreventTagsOptionsSuccess(data) {
     return {
         type: actionTypes.FETCH_BUG_REVIEW_PREVENT_TAGS_OPTIONS,
         data
@@ -56,14 +56,14 @@ export function fetchBugReviewQueryData(data, version, user, menu, tag, cause, p
     };
 }
 
-export function fetchBugReviewChangeOptionsChangeSuccess(data){
+export function fetchBugReviewChangeOptionsChangeSuccess(data) {
     return {
         type: actionTypes.FETCH_BUG_REVIEW_CHANGE_OPTIONS_SUCCESS,
         data
     };
 };
 
-export function fetchBugReviewAddOptionsChangeSuccess(data){
+export function fetchBugReviewAddOptionsChangeSuccess(data) {
     return {
         type: actionTypes.FETCH_BUG_REVIEW_ADD_OPTIONS_SUCCESS,
         data
@@ -71,66 +71,66 @@ export function fetchBugReviewAddOptionsChangeSuccess(data){
 }
 
 let updateBug = (dispatch, data) => {
-  data['id'] = parseInt(data['id']);
+    data['id'] = parseInt(data['id']);
 
-  let config = {
-      method: 'POST',
-      body: `mutation RootMutationType {
+    let config = {
+        method: 'POST',
+        body: `mutation RootMutationType {
           updateBug(data:"${JSON.stringify(data).replace(/\\/gi, '\\\\').replace(/\"/gi, '\\"')}")
       }`,
-      headers: {
-        'Content-Type': 'application/graphql',
-        'x-access-token': localStorage.token
-      }
+        headers: {
+            'Content-Type': 'application/graphql',
+            'x-access-token': localStorage.token
+        }
     };
 
-  return fetch(SERVER_API_URL, config)
-    .then((res) => res.json())
-    .then(() => {
-      dispatch(setLoadingState(false));
-      dispatch(fetchBugReviewChangeOptionsChangeSuccess(data));
-      // dispatch(fetchBugReviewApplications());
-    })
-    .catch((err) => {
-      dispatch(setLoadingState(false));
-      dispatch(apiFailure(err));
-    });
+    return fetch(SERVER_API_URL, config)
+        .then((res) => res.json())
+        .then(() => {
+            dispatch(setLoadingState(false));
+            dispatch(fetchBugReviewChangeOptionsChangeSuccess(data));
+            // dispatch(fetchBugReviewApplications());
+        })
+        .catch((err) => {
+            dispatch(setLoadingState(false));
+            dispatch(apiFailure(err));
+        });
 };
 
 function createBugReviewTag(tag) {
-  let data = {};
-  data['tag_name'] = tag;
+    let data = {};
+    data['tag_name'] = tag;
 
-  let config = {
-      method: 'POST',
-      body: `mutation RootMutationType {
+    let config = {
+        method: 'POST',
+        body: `mutation RootMutationType {
           createBugTag(data:"${JSON.stringify(data).replace(/\"/gi, '\\"')}")
       }`,
-      headers: {
-        'Content-Type': 'application/graphql',
-        'x-access-token': localStorage.token
-      }
+        headers: {
+            'Content-Type': 'application/graphql',
+            'x-access-token': localStorage.token
+        }
     };
 
-  return (dispatch) => {
-    fetch(SERVER_API_URL, config)
-        .then((res) => {
-          res.json();
-          dispatch(fetchBugReviewAddOptionsChangeSuccess(tag));
-        })
-        .then(() => {
-        })
-        .catch(() => {
-        });
+    return (dispatch) => {
+        fetch(SERVER_API_URL, config)
+            .then((res) => {
+                res.json();
+                dispatch(fetchBugReviewAddOptionsChangeSuccess(tag));
+            })
+            .then(() => {
+            })
+            .catch(() => {
+            });
     };
 };
 
-function changeOptionsReviewTags(dispatch, optionsReviewTags, tagList){
+function changeOptionsReviewTags(dispatch, optionsReviewTags, tagList) {
 
     tagList.forEach((tag) => {
         let notIn = true;
         optionsReviewTags.forEach((option) => {
-            if (option.value === tag){
+            if (option.value === tag) {
                 notIn = false;
             }
         });
@@ -141,62 +141,62 @@ function changeOptionsReviewTags(dispatch, optionsReviewTags, tagList){
 
 }
 
-export function resolvedReasonTypeChange(review, reasonType){
-  review['resolved_type'] = reasonType;
+export function resolvedReasonTypeChange(review, reasonType) {
+    review['resolved_type'] = reasonType;
 
-  return (dispatch) => {
-    updateBug(dispatch, review);
-  };
+    return (dispatch) => {
+        updateBug(dispatch, review);
+    };
 };
 
-export function changeIntroducedTagOptions(review, reasonType){
-  review['introduced_by'] = reasonType;
-  return (dispatch, getState) => {
-    if (reasonType) {
-      if (reasonType.indexOf('New feature') !== -1 || reasonType.indexOf('Your own module') !== -1) {
-        review['owner'] = getState().app.toJS().currentUser.email.split('@')[0];
-      }
-    }
-    updateBug(dispatch, review);
-  };
-  // console.log(review, reasonType);
+export function changeIntroducedTagOptions(review, reasonType) {
+    review['introduced_by'] = reasonType;
+    return (dispatch, getState) => {
+        if (reasonType) {
+            if (reasonType.indexOf('New feature') !== -1 || reasonType.indexOf('Your own module') !== -1) {
+                review['owner'] = getState().app.toJS().currentUser.email.split('@')[0];
+            }
+        }
+        updateBug(dispatch, review);
+    };
+    // console.log(review, reasonType);
 };
 
 export function changeOwnerUserOptions(review, reasonType) {
-  review['owner'] = reasonType;
-  return (dispatch) => {
-    updateBug(dispatch, review);
-  };
+    review['owner'] = reasonType;
+    return (dispatch) => {
+        updateBug(dispatch, review);
+    };
 }
 
-export function changeReviewTagOptions(review, reviewTagList){
-  // reviewTagList.map((tag) => {
-  //   createBugReviewTag(tag);
-  // });
+export function changeReviewTagOptions(review, reviewTagList) {
+    // reviewTagList.map((tag) => {
+    //   createBugReviewTag(tag);
+    // });
 
-  review['tags'] = reviewTagList;
+    review['tags'] = reviewTagList;
 
-  return (dispatch, getState) => {
-    var optionsReviewTags = getState().bugReview.toJS().optionsReviewTags;
-    changeOptionsReviewTags(dispatch, optionsReviewTags, reviewTagList);
-    updateBug(dispatch, review);
-  };
+    return (dispatch, getState) => {
+        var optionsReviewTags = getState().bugReview.toJS().optionsReviewTags;
+        changeOptionsReviewTags(dispatch, optionsReviewTags, reviewTagList);
+        updateBug(dispatch, review);
+    };
 };
 
-export function changeMenuTagOptions(review, menuTag){
-  review['menu'] = menuTag;
+export function changeMenuTagOptions(review, menuTag) {
+    review['menu'] = menuTag;
 
-  return (dispatch) => {
-    updateBug(dispatch, review);
-  };
+    return (dispatch) => {
+        updateBug(dispatch, review);
+    };
 };
 
-export function changeReviewText(review, reviewText){
-  review['review'] = reviewText;
+export function changeReviewText(review, reviewText) {
+    review['review'] = reviewText;
 
-  return (dispatch) => {
-    updateBug(dispatch, review);
-  };
+    return (dispatch) => {
+        updateBug(dispatch, review);
+    };
 };
 
 export function fetchBugReviewApplications(pager, version, userAlisa, menu, rootCause, preventTag) {
@@ -207,21 +207,23 @@ export function fetchBugReviewApplications(pager, version, userAlisa, menu, root
         }
         menu = menu ? menu : '';
         rootCause = rootCause ? rootCause : '';
-        preventTag = preventTag ? preventTag: '';
+        preventTag = preventTag ? preventTag : '';
         let pageRow = pager['pageRow'];
         let rowIndex = pager['rowIndex'];
         let config = {
             method: 'POST',
             body: `{
                     getAllBugs(label:"` + version + `",assignedTo:"` + user +
-                        `",menu:"` + menu +
-                        `",rootCause:"`+ rootCause +
-                        `",preventTag:"` + preventTag +
-                        `",pageSize:` + pageRow +
-                        `,pageIndex:` + rowIndex +
-                        `){
+                `",menu:"` + menu +
+                `",rootCause:"` + rootCause +
+                `",preventTag:"` + preventTag +
+                `",pageSize:` + pageRow +
+                `,pageIndex:` + rowIndex +
+                `){
 
                         id,
+                        display_id,
+                        group,
                         assigned_to,
                         bug_severity,
                         bug_status,
@@ -289,11 +291,11 @@ export function fetchPreventTagsOptionRequest() {
     };
 }
 
-export function fetchPreventTagsOptions(){
+export function fetchPreventTagsOptions() {
     return (dispatch) => {
-      Promise.all(
-          [dispatch(fetchPreventTagsOptionRequest())]
-      ).then(
+        Promise.all(
+            [dispatch(fetchPreventTagsOptionRequest())]
+        ).then(
             () => {
                 dispatch(setLoadingState(false));
             },
@@ -305,8 +307,8 @@ export function fetchPreventTagsOptions(){
     };
 }
 
-export function fetchAllUsersRequest(){
-  return (dispatch) => {
+export function fetchAllUsersRequest() {
+    return (dispatch) => {
         let config = {
             method: 'POST',
             body: `{
@@ -334,12 +336,12 @@ export function fetchAllUsersRequest(){
     };
 }
 
-export function fetchAllUsers(){
+export function fetchAllUsers() {
     return (dispatch) => {
-      Promise.all(
-          [dispatch(fetchAllUsersRequest()),
-           dispatch(fetchReleaseList(fetchStateRelease))]
-      ).then(
+        Promise.all(
+            [dispatch(fetchAllUsersRequest()),
+            dispatch(fetchReleaseList(fetchStateRelease))]
+        ).then(
             () => {
                 dispatch(setLoadingState(false));
             },
