@@ -15,7 +15,7 @@ const initialState = Map({
     bugReviewTitleKeyMap: List.of(
         Map({ title: 'Bug ID', key: 'id', colspan: 1 }),
         Map({ title: 'Title', key: 'title', colspan: 3 }),
-        Map({ title: 'Root Cause', key: 'resolved_type', colspan: 2 }),
+        Map({ title: 'Root Cause', key: 'resolved_type', colspan: 3 }),
         Map({ title: 'Prevent Tags', key: 'tags', colspan: 2 }),
         Map({ title: 'Belongs To Menu', key: 'menu', colspan: 2 }),
         Map({ title: 'Fixer', key: 'assigned_to', colspan: 1 }),
