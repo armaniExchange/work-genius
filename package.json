@@ -105,7 +105,7 @@
     "history": "^1.17.0",
     "html-webpack-plugin": "^2.15.0",
     "json-loader": "^0.5.4",
-    "node-sass": "^3.4.1",
+    "node-sass": "^4.14.1",
     "nodemon": "^1.7.1",
     "npmconf": "^2.1.2",
     "opn": "^3.0.2",
